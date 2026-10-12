@@ -37,7 +37,6 @@ D 0x7429 0x7431 tabla_p740F  8 bytes: 0x7429 lo lee p01:740F y 0x742D p01:7402
 D 0x7442 0x7444 tabla_p743D  2 bytes que lee p01:743D (ld hl,0x7442)
 D 0x765B 0x7663 tabla_p7645  8 bytes que lee p01:7645 (ld hl,0x765B)
 D 0x7DAD 0x7DB1 tabla_p7D53  4 bytes que lee p01:7D53 (ld hl,0x7DAD)
-
 C 0x6017 la demo: 0xC00A cuenta los cuadros de la tecla en curso
 C 0x601D al acabar, la siguiente de la tabla de la ruina (p01:603C)
 C 0x6025 0xFF: se acaba la demo
@@ -51,12 +50,10 @@ C 0x6260 E distinto de cero: hacia el otro (B = 2)
 C 0x6266 ninguno: 0xC264 y 0xC268 otra vez a cero
 C 0x644C E = -8: la casilla de debajo
 C 0x644E la velocidad X (0xC24A, la parte alta): si va hacia la izquierda, D al otro lado
-C 0x650D 0xC265: el disparo ya esta pedido
 C 0x6512 se pide y acarreo
 C 0x65E9 las teclas izquierda/derecha (bits 2 y 3)
 C 0x65EF ninguna o las dos: B = 0
 C 0x65F7 derecha: B = 1, D = 1
-C 0x6600 izquierda: B = 2, D = 0
 C 0x68F6 cada sprite del personaje: Y y X del personaje mas el desplazamiento de HL'
 C 0x690B el patron (C) y los colores del personaje
 C 0x6914 el siguiente patron, 4 mas
@@ -175,9 +172,237 @@ C 0x7F47 la primera posicion: Y = nibble alto + 0x14, X = nibble bajo * 16 + 8
 C 0x7F5D (ix+0x16) = 0x30: cuantas lineas tiene
 C 0x7F63 la segunda posicion, igual: a donde va
 C 0x7F74 el siguiente bloque, 0x40 bytes mas alla
-
 C 0x7E9D sube una linea cada 0x3C cuadros ((ix+0x11) cuenta)
 C 0x7EAA la Y - 1 y una linea mas ocupada
+C 0x6002 el sonido 0: para todo
+C 0x6010 ya no se sale
+C 0x601A un cuadro menos de la tecla en curso
+C 0x6021 HL = 0xC00A, detras del paso
+C 0x6027 0xFF: fin de la demo (p01:6000, para el sonido)
+C 0x602D las teclas del paso en curso...
+C 0x6030 ...como si se pulsaran (0xC007 y las nuevas en 0xC006)
+C 0x603C el paso de la demo (0xC009)
+C 0x6044 la tabla de la demo de cada ruina
+C 0x604A dos bytes por paso
+C 0x604F [teclas]...
+C 0x6051 ...[cuadros]
+C 0x605D en los cuadros impares (0xC003)...
+C 0x6061 ...los actores, los objetos y los sprites (p01:6092)
+C 0x606D con la pausa, nada mas
+C 0x608F y lo de la sala 5
+C 0x60B0 solo en partida
+C 0x60B6 ni muriendo
+C 0x60BC ni con 0xC21C puesto (no queda ningun 0x19)
+C 0x60C1 la tecla especial 0 (F1)
+C 0x60C8 el sonido especial 0xFD (para la musica)
+C 0x60CD acarreo: en pausa
+C 0x60D3 solo en la sala 5...
+C 0x60D8 ...con 0xC21C puesto...
+C 0x60DC ...y saliendo por la derecha (X >= 0xF0)...
+C 0x60DF ...se acaba la ruina (0xC217 = 1)
+C 0x613C el acarreo de p06:B7F5
+C 0x6157 dos bytes antes
+C 0x6174 la X + 3...
+C 0x6178 ...Z al llegar a 0xF8
+C 0x6194 0x10 lineas de 0x20 puntos
+C 0x6199 de 0x20 puntos, color 0xFF, en la pagina 0
+C 0x61A2 la siguiente, un punto a la derecha
+C 0x61A3 y una espera de 0x80 x 256 vueltas
+C 0x61B4 ruina * 5
+C 0x61C5 B = pantalla * 2...
+C 0x61C7 en la pantalla 2, solo la puerta 5 (el templo)
+C 0x61CF en las otras, la segunda puerta si la X pasa de 0x90
+C 0x61D4 de 1 a 5
+C 0x61D6 en la escalera, tambien arriba y abajo (0x0F)
+C 0x61E1 si no, solo izquierda y derecha (0x0C)
+C 0x61E9 las que hay...
+C 0x61EB ...ninguna: se guarda 0
+C 0x61ED si alguna es nueva, se guardan las nuevas
+C 0x61F3 si no, las que siguen desde el cuadro anterior
+C 0x61F7 y si ninguna sigue, las que hay
+C 0x6200 la vida a cero...
+C 0x6203 (si no, nada)
+C 0x6205 ...0xC271 = 0 y muere
+C 0x6212 con 0xC271 puesto, el personaje no se mueve
+C 0x6238 el personaje 0...
+C 0x623D ...o el 1
+C 0x6273 acarreo si pasa de 0xD0
+C 0x6278 0xFF: sin vecina abajo
+C 0x627A acarreo si la hay
+C 0x6286 acarreo: cae a la pantalla de abajo
+C 0x6288 la accion 0 (en el suelo)
+C 0x628C con la tecla nueva de arriba o de salto (0x21)...
+C 0x6291 ...salta o sube (p01:637D)
+C 0x6294 con abajo (0x02)...
+C 0x6299 ...baja la escalera (p01:6399)
+C 0x629C la velocidad Y de caida, 0x100
+C 0x62AB sin suelo debajo: p01:62C7
+C 0x62B4 con la izquierda...
+C 0x62B6 ...anda a la izquierda (p01:6415)
+C 0x62BC con la derecha...
+C 0x62BE ...a la derecha
+C 0x62C1 sin teclas: parado (0xC255 = 1)
+C 0x62CE ...con el cartucho 07 52 en otra ranura...
+C 0x62D5 ...o con el estado 0...
+C 0x62DB ...y una direccion pulsada...
+C 0x62E9 con la cuenta en 1, se acaba
+C 0x62EE la direccion guardada en 0xC267...
+C 0x6304 ...y la direccion
+C 0x6309 el sonido 0x8D (la muerte)
+C 0x630E sin invencible
+C 0x6315 la accion 4: muere
+C 0x631A 0x80 cuadros para el dibujo de la muerte
+C 0x6322 en X - 8...
+C 0x632C ...e Y - 0x27 (personaje 0) o Y - 0x21 (personaje 1)...
+C 0x6337 ...se guarda el fondo de 16 x 0x18 en (0x98, 0x20) de la pagina 1 (LMMM)
+C 0x6346 ...sin disparo pedido...
+C 0x6359 en la escalera...
+C 0x635E ...es otra cosa (p01:636A)
+C 0x6360 el sentido + 1: la direccion del salto (1 o 2)
+C 0x636D sin suelo, parado
+C 0x6380 con salto (0x20)...
+C 0x6382 ...salta
+C 0x6384 con arriba: si hay escalera encima...
+C 0x6387 ...a la escalera (p01:63E0)
+C 0x6391 la accion 1: en el aire
+C 0x6399 con abajo: si hay escalera debajo...
+C 0x639E ...o dos puntos a la izquierda...
+C 0x63AE ...a la escalera
+C 0x63B6 al suelo: sin disparo pedido ni salto
+C 0x63C0 con 0xCCB0 (sobre una plataforma) no se ajusta la Y
+C 0x63C6 la Y a la fila de 8 + 3
+C 0x63D8 la accion 0, en el suelo
+C 0x63E0 a la escalera: la X al centro de su casilla de 16
+C 0x63E5 en la mitad izquierda...
+C 0x63EC ...el centro de esta
+C 0x63F2 en la derecha, el de la siguiente
+C 0x63FC escalera debajo...
+C 0x63FE ...o encima
+C 0x6220 despacha la accion 0xC24B (tabla p01:6226; 4 muere, 5 escalera)
+C 0x6349 ...y la accion 3 (sin suelo debajo)
+C 0x636F en la escalera: la Y 16 lineas arriba
+C 0x63B0 si no, la accion 2
+C 0x650D el doble salto ya usado?
+C 0x6401 escalera debajo o encima: a ella
+C 0x6403 si no, la X vuelve 8 atras
+C 0x640B la accion 5: en la escalera
+C 0x6411 a la derecha (sentido 1)
+C 0x6415 a la izquierda (sentido 0)
+C 0x6425 con pared, no avanza (acarreo)
+C 0x6429 sin acarreo: ha avanzado
+C 0x6430 pared: acarreo
+C 0x6431 sobre una plataforma que se mueve (0xCCB1/0xCCB2)...
+C 0x6439 ...acarreo tambien
+C 0x643B prueba a avanzar...
+C 0x6442 ...mira si queda suelo...
+C 0x6445 ...y deshace el avance
+C 0x6455 a la izquierda, D = -D - 1
+C 0x6461 Z si no cambia
+C 0x6466 sin cambio, nada
+C 0x6468 si cambia, el cuadro de parado
+C 0x647A a la izquierda (0), la velocidad en negativo
+C 0x64B4 X + velocidad X
+C 0x64C0 Y + velocidad Y
+C 0x64C5 accion 1 (en el aire): el doble salto...
+C 0x64C8 ...vuelve a empezar el salto (p01:637D)
+C 0x64CE acarreo: a la pantalla de abajo
+C 0x64D8 con techo, se para la subida
+C 0x64DE con pared, se para la X
+C 0x64E4 con suelo, aterriza (p01:66A6)
+C 0x64EB sobre una plataforma (0xCCB3), sin 0xC251
+C 0x64EE y la Y y la X avanzan
+C 0x64F5 solo si 0xC264 esta a cero
+C 0x64F9 una pulsacion nueva de salto (0x21)
+C 0x6500 solo Wit
+C 0x6506 con el cartucho 07 52, siempre
+C 0x650C si no, solo con el estado 0
+C 0x6511 una sola vez por salto
+C 0x6522 en el salto, sin tecla de salto (0x21)...
+C 0x6529 ...se corta la subida (0xC251 = 0)
+C 0x652F la direccion del salto: 1 a la derecha...
+C 0x6533 ...2 a la izquierda; 0, ninguna:
+C 0x6538 en un salto vertical, con izquierda...
+C 0x653A ...la velocidad X - 0x80...
+C 0x6542 ...y con derecha + 0 (D = 0, E = 0x80)
+C 0x6549 la velocidad X + DE
+C 0x6550 su signo: el sentido
+C 0x655D en un salto a la izquierda, con la derecha...
+C 0x6565 en uno a la derecha, con la izquierda...
+C 0x6568 ...la velocidad X - 0x80, sin pasar de cero
+C 0x6583 con 0xC264...
+C 0x6584 ...tambien la 2
+C 0x6588 si no, la de su nivel de salto (ix+2)
+C 0x6596 el paso del salto (0xC24E)...
+C 0x659A ...el primer byte de la tabla: cuando se corta la subida
+C 0x65A1 0xFF: el salto acaba
+C 0x65A8 a la accion 3
+C 0x65B0 el byte del paso
+C 0x65B6 con direccion, la velocidad X 0x200 a su lado
+C 0x65C8 la velocidad Y del paso...
+C 0x65CC ...hacia arriba (negativa) mientras 0xC251
+C 0x65DD el paso siguiente
+C 0x65E3 bajando, el paso va hacia atras
+C 0x6579 con el doble salto (0xC265 no cero)...
+C 0x657C ...A = 2, pero este `jr z` nunca salta (Z sigue a cero): cae en p01:6580
+C 0x6600 izquierda: B = 2, D = 0
+C 0x6604 las dos o ninguna: B = 0
+C 0x6629 la accion 3 (sin suelo): cae a 0x100
+C 0x6632 sin suelo, sigue cayendo
+C 0x663C con la postura de disparo, su cuenta
+C 0x6643 sin abajo, al suelo (p01:63D2)
+C 0x6649 con izquierda, el sentido 0
+C 0x6652 con derecha, el 1
+C 0x6663 la accion 6
+C 0x666A cae a 0x600
+C 0x6673 con derecha...
+C 0x667A ...o izquierda, se mueve de lado
+C 0x6681 sin teclas: con suelo, aterriza
+C 0x6686 izquierda: sentido 0 y velocidad X -1
+C 0x668B derecha: sentido 1 y velocidad X +1
+C 0x6698 con suelo, aterriza
+C 0x66A0 con pared, sin X
+C 0x66A6 el sonido 3: aterriza
+C 0x66AE la accion 4 (muere): la cuenta de 0xC260
+C 0x66B6 a cero: el personaje ha caido
+C 0x66C1 si han caido los dos...
+C 0x66C2 ...se acaba la fase (p01:66DF)
+C 0x66C4 si no: 0xC270 = esta fase...
+C 0x66CA ...fuera los actores...
+C 0x66D0 ...y el actor 0x30 en (0x20, 0x80)
+C 0x66DF la fase se para
+C 0x66FD la accion 5 (escalera): la direccion de las teclas
+C 0x6705 abajo
+C 0x670A arriba
+C 0x670F izquierda: 1
+C 0x6714 derecha: 2
+C 0x6726 con escalera debajo, sigue en ella
+C 0x672A baja la escalera: la velocidad Y de su nivel
+C 0x672D escalera debajo...
+C 0x6732 ...o dos puntos a la izquierda
+C 0x6744 la ficha dos lineas mas arriba
+C 0x674D sin ella, al suelo
+C 0x6753 con suelo, al suelo
+C 0x675E sube la escalera: la velocidad Y de su nivel, hacia arriba
+C 0x676F por debajo de 0xC8...
+C 0x6773 ...o por encima de 0x30, sin mirar el suelo
+C 0x677C prueba con la velocidad -0x2000...
+C 0x6788 ...y con -0x1800: si hay suelo, se para
+C 0x679D con escalera encima, sube
+C 0x67A5 la ficha 4 lineas mas abajo
+C 0x67B1 sin escalera: sube del todo y al suelo
+C 0x67BF parado (0xC255 = 0) y avanza
+C 0x67CA con 0xC258...
+C 0x67D0 ...o sin morir
+C 0x67DA sin invencible, los colores normales
+C 0x67DF la cuenta de invencible...
+C 0x67E2 ...acabada
+C 0x67E8 invencible: en cuadros alternos, los colores 0x0D y 0x4A
+C 0x62C7 sin suelo debajo: solo Cles...
+C 0x62E2 ...sigue andando sobre el vacio: 0xC266 cuenta 0x20 cuadros
+C 0x62F8 ...si cambia, cae
+C 0x62FA la misma: sigue andando
+C 0x62FC al llegar al borde: 0x20 cuadros...
+C 0x6342 cae: sin cuenta de andar sin suelo...
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x6017 teclas_de_la_demo la demo: 0xC00A cuenta los cuadros de la tecla; al acabar, la siguiente de p01:603C (0xFF acaba)
@@ -214,7 +439,7 @@ L 0x646D velocidad_x 0xC249 = la velocidad X de p01:6485[(ix+1)], con el signo d
 L 0x648F velocidad_y 0xC247 = la velocidad Y de p01:64A0[(ix+1)]
 L 0x64AD suma_velocidad_x 0xC245 = 0xC245 + 0xC249: la X de 16 bits
 L 0x64B9 suma_velocidad_y 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
-L 0x64F1 mira_disparo con la tecla 0x21 y el personaje 0, el disparo (0xC205 bit 3)
+L 0x64F1 doble_salto en el aire, con salto nuevo (0x21): Wit con el estado 0 o con el cartucho 07 52 (0xC205 bit 3) salta otra vez, una sola (0xC265); acarreo
 L 0x6519 borra_c251 0xC251 = 0
 L 0x651E salto el salto: teclas, 0xC254 y la velocidad Y
 L 0x6576 salto_de_tabla con 15: la tabla de salto p15:BE16[(ix+2)]
@@ -352,8 +577,6 @@ C 0x600D bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x6011 guarda el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0x6014 cambia_de_pantalla_y_enciende: p00:5E7A y la pantalla encendida
 C 0x6022 tecla_de_la_demo: con 9: A = las teclas y C = los cuadros del paso C de la demo de la ruina (p09:BCD6)
-C 0x602D tecla_de_la_demo: con 9: A = las teclas y C = los cuadros del paso C de la demo de la ruina (p09:BCD6)
-C 0x6030 teclas_c007: p00:5005 con HL = 0xC007: las teclas y las nuevas
 C 0x6033 lee_teclas: A = teclas de las filas 6 y 7 de la matriz
 C 0x6036 apunta a las teclas especiales que hay
 C 0x6039 teclas_nuevas: (HL) = las teclas de A; (HL - 1) = las que no estaban antes
@@ -362,8 +585,7 @@ C 0x6041 lee la ruina (0-4)
 C 0x6047 palabra_a: HL = la palabra A de la tabla HL
 C 0x604C hl_mas_a: HL = HL + A
 C 0x6054 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-C 0x605A copia_e8: copia 5 x 0 de (0xE8, 0) a (0xE8, 0) de la pagina 1 a la 1 (HMMM)
-C 0x605D lee la cuenta de cuadros
+C 0x605A copia_e8: copia 256 x 5 lineas de (0, 0xE8) de la pagina 0 a la 1 (HMMM; B = 0 es 256)
 C 0x6063 apunta a la cuenta de cuadros del juego
 C 0x6067 lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 C 0x606A pausa: en partida, si se pulsa la tecla de 0xC00E bit 0: 0xC008 = 1 y el sonido 0xFD
@@ -453,7 +675,6 @@ C 0x61CC lee la X en la antesala
 C 0x61DA lee la accion del personaje (4 muere, 5 escalera)
 C 0x61E3 apunta a las teclas izquierda/derecha del cuadro anterior
 C 0x61E6 lee las teclas que hay
-C 0x61ED lee las teclas nuevas
 C 0x61FA lee la accion del personaje (4 muere, 5 escalera)
 C 0x6209 muere: sonido 0x8D, accion 4 (0xC24B), paleta y el dibujo de la muerte
 C 0x620C ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
@@ -461,29 +682,20 @@ C 0x620F mira_suelo_del_actor: si (ix+5) es cero y no se muere (0xC24B != 4): p0
 C 0x6217 mando_horizontal: las teclas izquierda/derecha (0x0C) de 0xC007 con las de 0xC275
 C 0x621A empujon: si 0xCCB4/0xCCB5 traen algo: se aplica y se limpian
 C 0x621D invencible: la cuenta de 0xC24F mientras 0xC256 y los colores del personaje
-C 0x6220 lee la accion del personaje (4 muere, 5 escalera)
 C 0x6223 despacha: salta a la palabra A de la tabla pegada detras del `call`
 C 0x6234 apunta a la ficha del personaje 0 (14 bytes)
-C 0x6238 lee el personaje que se lleva (0 o 1)
-C 0x623D apunta a la ficha del personaje 1 (14 bytes)
 C 0x626E lee la Y del personaje
 C 0x6275 lee la vecina de abajo
 C 0x627C la vida del personaje (a cero muere, p01:61FA) = 0x00
 C 0x6280 muere: sonido 0x8D, accion 4 (0xC24B), paleta y el dibujo de la muerte
 C 0x6283 para_x_y_y: velocidades X e Y a cero
-C 0x628C lee las teclas nuevas
-C 0x6294 lee las teclas que hay
 C 0x629F guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x62A2 para_x: 0xC249 = 0: velocidad X a cero
 C 0x62A5 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x62A8 para_y: 0xC247 = 0: velocidad Y a cero
+C 0x62AE guarda la cuenta de Cles andando sin suelo (0x20 cuadros)
 C 0x62B1 lee las teclas izquierda/derecha del cuadro anterior
 C 0x62B9 lee las teclas izquierda/derecha del cuadro anterior
-C 0x62BE avanza_horizontal: mueve en X con la velocidad de p01:6485 y mira las paredes
-C 0x62C7 lee el personaje que se lleva (0 o 1)
-C 0x62CE lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
-C 0x62D5 lee el estado del personaje (0-3)
-C 0x62DB lee las teclas izquierda/derecha del cuadro anterior
 C 0x62F2 lee las teclas izquierda/derecha del cuadro anterior
 C 0x62FF lee las teclas izquierda/derecha del cuadro anterior
 C 0x630B sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
@@ -491,39 +703,31 @@ C 0x630F guarda invencible
 C 0x6317 guarda la accion del personaje (4 muere, 5 escalera)
 C 0x631C guarda la cuenta de invencible
 C 0x631F paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
-C 0x6322 lee la X del personaje
 C 0x6328 lee el personaje que se lleva (0 o 1)
 C 0x6332 lee la Y del personaje
 C 0x633F copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x6343 guarda la cuenta de Cles andando sin suelo (0x20 cuadros)
 C 0x634B guarda la accion del personaje (4 muere, 5 escalera)
 C 0x634E para_x: 0xC249 = 0: velocidad X a cero
-C 0x6359 lee la accion del personaje (4 muere, 5 escalera)
-C 0x6360 lee el sentido del personaje
 C 0x6365 pon_c254: 0xC254 = B
 C 0x636A suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
-C 0x636F lee la Y del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x6378 guarda la Y del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x637D lee las teclas nuevas
-C 0x6384 ficha_arriba: la ficha 4 puntos por encima del personaje si esta centrado en la casilla
 C 0x638A lee_direccion: B = 0, 1 o 2 segun las teclas izquierda/derecha (0xC254)
 C 0x6395 guarda la accion del personaje (4 muere, 5 escalera)
-C 0x6399 ficha_abajo: la ficha 13 puntos por debajo del personaje si esta centrado en la casilla
-C 0x639E lee la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x63A4 guarda la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x63A7 ficha_abajo: la ficha 13 puntos por debajo del personaje si esta centrado en la casilla
 C 0x63AB guarda la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x63B2 guarda la accion del personaje (4 muere, 5 escalera)
-C 0x63C6 lee la Y del personaje
+C 0x63B7 guarda el doble salto ya usado
 C 0x63CF guarda la Y del personaje
 C 0x63D2 para_x_y_y: velocidades X e Y a cero
 C 0x63D5 cuadro_parado: el cuadro de animacion parado o el de p01:69E6[(ix+1)]
+C 0x63D9 guarda la cuenta de Cles andando sin suelo (0x20 cuadros)
 C 0x63DC guarda la accion del personaje (4 muere, 5 escalera)
-C 0x63E0 lee la X del personaje
 C 0x63E7 lee la X del personaje
 C 0x63F6 guarda la X del personaje
 C 0x63F9 ficha_abajo: la ficha 13 puntos por debajo del personaje si esta centrado en la casilla
-C 0x63FE ficha_arriba: la ficha 4 puntos por encima del personaje si esta centrado en la casilla
-C 0x6403 lee la X del personaje
 C 0x6408 guarda la X del personaje
 C 0x640D guarda la accion del personaje (4 muere, 5 escalera)
 C 0x6416 apunta a la cuenta de cuadros del paso del personaje
@@ -532,13 +736,10 @@ C 0x641E velocidad_x: 0xC249 = la velocidad X de p01:6485[(ix+1)], con el signo 
 C 0x6422 prueba_pared_6: p01:644C con D = 6
 C 0x6426 suma_velocidad_x: 0xC245 = 0xC245 + 0xC249: la X de 16 bits
 C 0x642D prueba_pared_d: mira la casilla a D puntos en el sentido de la velocidad (p01:70D2)
-C 0x643B lee la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x643F suma_velocidad_x: 0xC245 = 0xC245 + 0xC249: la X de 16 bits
-C 0x6442 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x6446 guarda la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x645E lee el sentido del personaje
 C 0x6463 guarda el sentido del personaje
-C 0x6468 cuadro_parado: el cuadro de animacion parado o el de p01:69E6[(ix+1)]
 C 0x6470 lee el nivel de velocidad del personaje (indice de p01:6485)
 C 0x6473 palabra_a: HL = la palabra A de la tabla HL
 C 0x6477 lee el sentido del personaje
@@ -556,41 +757,33 @@ C 0x64B5 guarda la X del personaje (16 bits, fraccion) y el byte siguiente (16 b
 C 0x64B9 lee la Y del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x64BD lee la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x64C1 guarda la Y del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
-C 0x64C5 mira_disparo: con la tecla 0x21 y el personaje 0, el disparo (0xC205 bit 3)
 C 0x64CB cae_por_abajo: acarreo si la Y pasa de 0xD0 y hay vecina abajo
 C 0x64CF salto_de_tabla: con 15: la tabla de salto p15:BE16[(ix+2)]
 C 0x64D2 salto: el salto: teclas, 0xC254 y la velocidad Y
 C 0x64D5 techo_del_personaje: las fichas encima del personaje (p01:7132)
-C 0x64D8 para_y: 0xC247 = 0: velocidad Y a cero
 C 0x64DB prueba_pared: acarreo si hay pared a D puntos (p01:644C)
-C 0x64DE direccion_y_para: p01:65E9 y velocidad X a cero
 C 0x64E1 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
-C 0x64EB borra_c251: 0xC251 = 0
 C 0x64F6 lee las teclas nuevas
 C 0x64FC lee el personaje que se lleva (0 o 1)
 C 0x6501 lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 C 0x6508 lee el estado del personaje (0-3)
+C 0x6514 guarda el doble salto ya usado
 C 0x6524 lee las teclas que hay
-C 0x6529 borra_c251: 0xC251 = 0
 C 0x652C lee la direccion de las teclas (0, 1, 2)
 C 0x6535 lee las teclas izquierda/derecha del cuadro anterior
 C 0x653F lee las teclas izquierda/derecha del cuadro anterior
-C 0x6549 lee la velocidad X del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x654D guarda la velocidad X del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x6556 guarda el sentido del personaje
 C 0x655A lee las teclas izquierda/derecha del cuadro anterior
 C 0x6562 lee las teclas izquierda/derecha del cuadro anterior
-C 0x6568 lee la velocidad X del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x6572 guarda la velocidad X del personaje (16 bits) y el byte siguiente (16 bits)
-C 0x6588 lee el nivel de salto del personaje (indice de p15:BE16)
+C 0x6576 lee el doble salto ya usado
 C 0x658C banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
 C 0x6593 palabra_a: HL = la palabra A de la tabla HL
 C 0x659D borra_c251: 0xC251 = 0
 C 0x65A4 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x65AC banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
-C 0x65B0 hl_mas_a: HL = HL + A
 C 0x65B3 para_x: 0xC249 = 0: velocidad X a cero
-C 0x65B6 lee la direccion de las teclas (0, 1, 2)
 C 0x65C1 niega_de: DE = -DE
 C 0x65C4 guarda la velocidad X del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x65C9 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -611,7 +804,6 @@ C 0x6646 lee las teclas izquierda/derecha del cuadro anterior
 C 0x664F lee las teclas izquierda/derecha del cuadro anterior
 C 0x6659 apunta a la cuenta de la postura de disparo (4 u 8)
 C 0x665F guarda el sentido del personaje
-C 0x6663 cae_por_abajo: acarreo si la Y pasa de 0xD0 y hay vecina abajo
 C 0x6667 para_x: 0xC249 = 0: velocidad X a cero
 C 0x666D guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x6670 lee las teclas izquierda/derecha del cuadro anterior
@@ -620,14 +812,9 @@ C 0x667E suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente
 C 0x668E guarda el sentido del personaje
 C 0x6695 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x669B prueba_pared: acarreo si hay pared a D puntos (p01:644C)
-C 0x66A0 para_x: 0xC249 = 0: velocidad X a cero
 C 0x66A8 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
-C 0x66AE apunta a la cuenta de invencible
-C 0x66B6 si el personaje esta (0: no) = 0x01
 C 0x66BA lee la ficha del personaje 0 (14 bytes)
 C 0x66BE lee la ficha del personaje 1 (14 bytes)
-C 0x66C4 lee la fase (1-25: ruina * 5 + puerta)
-C 0x66CA borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
 C 0x66CD recorre_cd00: p01:76DA con los 9 actores de 0xCD00
 C 0x66D7 crea_actor_0: p02:8615 con B = 0
 C 0x66DC juego_30: el juego de sprites 0x30 (p00:55F0)
@@ -638,18 +825,13 @@ C 0x66FE guarda la direccion de las teclas (0, 1, 2)
 C 0x6701 lee las teclas izquierda/derecha del cuadro anterior
 C 0x671F guarda la direccion de las teclas (0, 1, 2)
 C 0x6723 ficha_abajo: la ficha 13 puntos por debajo del personaje si esta centrado en la casilla
-C 0x672A velocidad_y: 0xC247 = la velocidad Y de p01:64A0[(ix+1)]
-C 0x672D ficha_abajo: la ficha 13 puntos por debajo del personaje si esta centrado en la casilla
-C 0x6732 lee la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x6738 guarda la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x673B ficha_abajo: la ficha 13 puntos por debajo del personaje si esta centrado en la casilla
 C 0x673F guarda la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
-C 0x6744 lee la Y del personaje
 C 0x674A ficha_en_x: la ficha en (X del personaje, A) (p01:7176)
 C 0x6750 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x6756 suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
 C 0x6759 apunta a la cuenta de cuadros del paso del personaje
-C 0x675E velocidad_y: 0xC247 = la velocidad Y de p01:64A0[(ix+1)]
 C 0x6761 lee la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x6765 niega_de: DE = -DE
 C 0x6768 guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
@@ -657,7 +839,6 @@ C 0x676C lee la Y del personaje
 C 0x6777 lee la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x677F guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x6783 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
-C 0x6788 apunta a bufer de fichas decodificadas
 C 0x678B guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x678F suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x6793 guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
@@ -667,12 +848,10 @@ C 0x679F mira_y_cae: p01:70AC y, si no hay acarreo, p01:63B6
 C 0x67A2 lee la Y del personaje
 C 0x67A7 ficha_en_x: la ficha en (X del personaje, A) (p01:7176)
 C 0x67AC suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
-C 0x67B1 suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
 C 0x67B7 suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
 C 0x67BA apunta a la cuenta de cuadros del paso del personaje
 C 0x67C3 avanza_horizontal: mueve en X con la velocidad de p01:6485 y mira las paredes
 C 0x67C6 suma_velocidad_x: 0xC245 = 0xC245 + 0xC249: la X de 16 bits
-C 0x67D0 lee la accion del personaje (4 muere, 5 escalera)
 C 0x67D6 lee invencible
 C 0x67E3 guarda invencible
 C 0x67EB lee la cuenta de cuadros del juego
@@ -728,6 +907,7 @@ C 0x6988 apunta a los colores de los sprites en RAM (16 por sprite)
 C 0x6995 ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 C 0x6998 lee la accion del personaje (4 muere, 5 escalera)
 C 0x699B despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x69B8 lee la cuenta de Cles andando sin suelo (0x20 cuadros)
 C 0x69C1 lee el nivel de velocidad del personaje (indice de p01:6485)
 C 0x69C4 hl_mas_a: HL = HL + A
 C 0x69C7 lee la cuenta de cuadros del paso del personaje

@@ -361,10 +361,10 @@ L_4291:
 	cp 002h		;4294   ; en las pantallas 0-1 de la antesala...
 	jr nc,L_42A2		;4296   ; (la 2 es la del templo)
 	ld a,(0c2b0h)		;4298   ; lee la ficha del personaje 0 (14 bytes)
-	ld b,a			;429b   ; si viven los dos...
+	ld b,a			;429b   ; si ha caido alguno...
 	ld a,(0c2d0h)		;429c   ; lee la ficha del personaje 1 (14 bytes)
 	or b			;429f
-	jr nz,L_42B0		;42a0   ; ...hay que elegir (paso 6)
+	jr nz,L_42B0		;42a0   ; ...entra el otro sin elegir (paso 6); si no, hay que elegir
 L_42A2:
 	call bancos_4_5_6		;42a2   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
 	call 0bb84h		;42a5   ; mensaje_de_eleccion: el recuadro y el texto: solo entra uno, elige, faltan llaves (p06:BE88-BEFA)
@@ -381,10 +381,10 @@ L_42B7:
 	and a			;42bc   ; con puertas abiertas...
 	jr nz,L_42C9		;42bd   ; ...el mensaje sin mas
 	ld a,(0c2b0h)		;42bf   ; lee la ficha del personaje 0 (14 bytes)
-	ld b,a			;42c2   ; si viven los dos...
+	ld b,a			;42c2   ; si ha caido alguno...
 	ld a,(0c2d0h)		;42c3   ; lee la ficha del personaje 1 (14 bytes)
 	or b			;42c6   ; ...hay que elegir
-	jr nz,L_42B0		;42c7   ; (paso 6)
+	jr nz,L_42B0		;42c7   ; ...entra el otro (paso 6)
 L_42C9:
 	ld a,(0c006h)		;42c9   ; lee las teclas nuevas
 	and a			;42cc   ; una tecla acaba la espera
@@ -529,8 +529,8 @@ L_43E7:
 	xor a			;43e7   ; paso 0
 	ld (0c20ah),a		;43e8   ; guarda en la sala de la puerta 5
 	ld (0c208h),a		;43eb   ; sin puerta guardada
-	call ninguno_vivo		;43ee   ; ninguno_vivo: acarreo si las fichas de los dos personajes (0xC2B0 y 0xC2D0) son cero
-	jr c,L_440A		;43f1   ; si no vive ninguno, GAME OVER
+	call los_dos_caidos		;43ee   ; los_dos_caidos: acarreo si los dos personajes han caido (el byte 0 de 0xC2B0 y de 0xC2D0 distinto de cero)
+	jr c,L_440A		;43f1   ; si han caido los dos, GAME OVER
 	call apaga_y_borra_todo		;43f3   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 	call 060edh		;43f6   ; entra_en_la_antesala: pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
 	call bancos_4_5_6		;43f9   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
@@ -543,13 +543,13 @@ L_440A:
 	ld a,08eh		;440a   ; la musica 0x8E (GAME OVER)...
 	call sonido		;440c   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	jp L_435E		;440f   ; ...y al estado 7
-ninguno_vivo:		; acarreo si las fichas de los dos personajes (0xC2B0 y 0xC2D0) son cero
+los_dos_caidos:		; acarreo si los dos personajes han caido (el byte 0 de 0xC2B0 y de 0xC2D0 distinto de cero)
 	ld a,(0c2b0h)		;4412   ; lee la ficha del personaje 0 (14 bytes)
 	ld b,a			;4415
 	ld a,(0c2d0h)		;4416   ; lee la ficha del personaje 1 (14 bytes)
-	and b			;4419   ; los dos a cero: Z...
+	and b			;4419   ; Z si alguno no ha caido...
 	ret z			;441a   ; ...sin acarreo
-	scf			;441b   ; alguno vive: acarreo
+	scf			;441b   ; los dos caidos: acarreo
 	ret			;441c
 L_441D:
 	exx			;441d   ; estado 7 (GAME OVER), sin tocar B (el paso)
@@ -3474,7 +3474,7 @@ direccion_de_patron:		; DE = 0xF800 + A * 8
 	add hl,de			;563c
 	ex de,hl			;563d
 	ret			;563e
-copia_e8:		; copia 5 x 0 de (0xE8, 0) a (0xE8, 0) de la pagina 1 a la 1 (HMMM)
+copia_e8:		; copia 256 x 5 lineas de (0, 0xE8) de la pagina 0 a la 1 (HMMM; B = 0 es 256)
 	ld hl,000e8h		;563f
 	ld d,h			;5642
 	ld e,l			;5643

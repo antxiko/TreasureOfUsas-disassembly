@@ -292,7 +292,7 @@ IX_PERSONAJE_POR_DEFECTO = {
     1: ((0x620C, 0x6B8C),),
 }
 CAMPOS_PERSONAJE = {
-    0x00: "si el personaje esta (0: no)",
+    0x00: "si el personaje ha caido (0: no; p01:66B6, p00:4412)",
     0x01: "el nivel de velocidad del personaje (indice de p01:6485)",
     0x02: "el nivel de salto del personaje (indice de p15:BE16)",
     0x05: "la vida del personaje (a cero muere, p01:61FA)",
@@ -338,7 +338,7 @@ RUTINAS.update({
     (0, 0x54AF): ("banco_9_en_a000", "pone el banco 9 en 0xA000"),
     (0, 0x54B4): ("banco_6_en_a000", "pone el banco 6 en 0xA000"),
     # --- banco 0: marcador y personajes ---
-    (0, 0x4412): ("ninguno_vivo", "acarreo si las fichas de los dos personajes (0xC2B0 y 0xC2D0) son cero"),
+    (0, 0x4412): ("los_dos_caidos", "acarreo si los dos personajes han caido (el byte 0 de 0xC2B0 y de 0xC2D0 distinto de cero)"),
     (0, 0x4563): ("estados_de_la_ruina", "el estado de los dos personajes al entrar en la ruina (p00:4575)"),
     (0, 0x45F7): ("bonus_de_cartucho", "0xC259 = 0x100 si 0xC205 tiene el bit 0 (cartucho 07 49 en otra ranura, p06:B78D)"),
     (0, 0x4682): ("pinta_marcador", "el texto de p00:5062, los marcos y las cifras del marcador"),
@@ -438,7 +438,7 @@ RUTINAS.update({
     (1, 0x648F): ("velocidad_y", "0xC247 = la velocidad Y de p01:64A0[(ix+1)]"),
     (1, 0x64AD): ("suma_velocidad_x", "0xC245 = 0xC245 + 0xC249: la X de 16 bits"),
     (1, 0x64B9): ("suma_velocidad_y", "0xC243 = 0xC243 + 0xC247: la Y de 16 bits"),
-    (1, 0x64F1): ("mira_disparo", "con la tecla 0x21 y el personaje 0, el disparo (0xC205 bit 3)"),
+    (1, 0x64F1): ("doble_salto", "en el aire, con salto nuevo (0x21): Wit con el estado 0 o con el cartucho 07 52 (0xC205 bit 3) salta otra vez, una sola (0xC265); acarreo"),
     (1, 0x6519): ("borra_c251", "0xC251 = 0"),
     (1, 0x651E): ("salto", "el salto: teclas, 0xC254 y la velocidad Y"),
     (1, 0x6576): ("salto_de_tabla", "con 15: la tabla de salto p15:BE16[(ix+2)]"),
@@ -1151,7 +1151,7 @@ RUTINAS.update({
     (0, 0x5456): ("texto_de_ruina_y_456", "con 1-2-3: p01:7FF2 y vuelve con 4-5-6"),
     (0, 0x545E): ("vuelve_un_personaje_456", "con 4-5-6: p06:BC36 y vuelve con 1-2-3"),
     (0, 0x55B9): ("suma_monedas", "las monedas (0xC259, BCD) + E (y D al byte alto)"),
-    (0, 0x563F): ("copia_e8", "copia 5 x 0 de (0xE8, 0) a (0xE8, 0) de la pagina 1 a la 1 (HMMM)"),
+    (0, 0x563F): ("copia_e8", "copia 256 x 5 lineas de (0, 0xE8) de la pagina 0 a la 1 (HMMM; B = 0 es 256)"),
     (0, 0x5A11): ("pantalla_con_15", "con 15: p15:BEBF (las 32 x 24 fichas de la pantalla) y vuelve con 6 en 0xA000"),
     (0, 0x5A87): ("paleta_5a8d", "la paleta p00:5A8D"),
     (0, 0x5B60): ("fotograma_a_fa80", "un fotograma de cada personaje a la VRAM desde 0xFA80 (p00:5B6E)"),
@@ -1217,4 +1217,7 @@ RAM.update({
     0xD500: ("las dos posiciones de la sala del final de fase", "p02:8F7C"),
     0xE360: ("lo tecleado (la clave)", "p06:A2FC"),
     0xE378: ("cuantas letras se han tecleado", "p06:A333"),
+    0xC265: ("el doble salto ya usado", "p01:6512, p01:63B6"),
+    0xC266: ("la cuenta de Cles andando sin suelo (0x20 cuadros)", "p01:62FC"),
+    0xC267: ("la direccion de Cles andando sin suelo", "p01:6304"),
 })

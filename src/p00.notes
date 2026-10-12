@@ -302,17 +302,13 @@ C 0x4281 a entrar
 C 0x428F 2 (no): vuelve al paso anterior
 C 0x4294 en las pantallas 0-1 de la antesala...
 C 0x4296 (la 2 es la del templo)
-C 0x429B si viven los dos...
-C 0x42A0 ...hay que elegir (paso 6)
 C 0x42AB 0x78 cuadros de espera
 C 0x42B0 el paso 6: elegir personaje
 C 0x42B5 y los personajes a cero
 C 0x42B7 paso 5
 C 0x42BC con puertas abiertas...
 C 0x42BD ...el mensaje sin mas
-C 0x42C2 si viven los dos...
 C 0x42C6 ...hay que elegir
-C 0x42C7 (paso 6)
 C 0x42CC una tecla acaba la espera
 C 0x42D2 o la cuenta
 C 0x42D7 sin puertas abiertas...
@@ -356,13 +352,10 @@ C 0x43E1 guarda la puerta del companero capturado
 C 0x43E4 a la antesala (estado 4, paso 3)
 C 0x43E7 paso 0
 C 0x43EB sin puerta guardada
-C 0x43F1 si no vive ninguno, GAME OVER
 C 0x4402 la musica 0x89 (la antesala)
 C 0x440A la musica 0x8E (GAME OVER)...
 C 0x440F ...y al estado 7
-C 0x4419 los dos a cero: Z...
 C 0x441A ...sin acarreo
-C 0x441B alguno vive: acarreo
 C 0x441D estado 7 (GAME OVER), sin tocar B (el paso)
 C 0x4422 paso 1
 C 0x4427 con el cartucho 07 51 en otra ranura...
@@ -637,6 +630,13 @@ C 0x4D30 el punto: el color C si el bit esta a uno...
 C 0x4D35 ...0 si no
 C 0x4D38 el segundo punto del byte, igual
 C 0x4D45 la siguiente fila
+C 0x429B si ha caido alguno...
+C 0x42A0 ...entra el otro sin elegir (paso 6); si no, hay que elegir
+C 0x42C2 si ha caido alguno...
+C 0x42C7 ...entra el otro (paso 6)
+C 0x43F1 si han caido los dos, GAME OVER
+C 0x4419 Z si alguno no ha caido...
+C 0x441B los dos caidos: acarreo
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x403D interrupcion gancho H.TIMI: la musica con 13-14-15 (p13:6000) y, si no esta ya dentro, el cuadro del juego
@@ -649,7 +649,7 @@ L 0x4195 estado_0 vuelve al estado 0 (0xC000 = 0) con 0x20 cuadros de espera
 L 0x4196 pon_estado 0xC000 = A y 0x20 cuadros de espera en 0xC004
 L 0x41A9 espera_y_sigue 0xC004 = A y pasa al siguiente paso (0xC001 + 1)
 L 0x41AC siguiente_paso 0xC001 + 1: el siguiente paso del estado
-L 0x4412 ninguno_vivo acarreo si las fichas de los dos personajes (0xC2B0 y 0xC2D0) son cero
+L 0x4412 los_dos_caidos acarreo si los dos personajes han caido (el byte 0 de 0xC2B0 y de 0xC2D0 distinto de cero)
 L 0x4563 estados_de_la_ruina el estado de los dos personajes al entrar en la ruina (p00:4575)
 L 0x45F7 bonus_de_cartucho 0xC259 = 0x100 si 0xC205 tiene el bit 0 (cartucho 07 49 en otra ranura, p06:B78D)
 L 0x461D vuelta_de_estado lo que corre tras los estados 0-2 (p00:40ED la deja en la pila): lee los mandos y empieza la partida
@@ -813,7 +813,7 @@ L 0x55F0 juego_de_sprites con 7-8-9: el juego A de p08:9338 y el que lo acompana
 L 0x5609 carga_registro el registro A - 1 de p08:9338 (p00:5612)
 L 0x5612 registro_de_sprite [patron volteado][origen][patron normal] de HL: volteado y normal
 L 0x5633 direccion_de_patron DE = 0xF800 + A * 8
-L 0x563F copia_e8 copia 5 x 0 de (0xE8, 0) a (0xE8, 0) de la pagina 1 a la 1 (HMMM)
+L 0x563F copia_e8 copia 256 x 5 lineas de (0, 0xE8) de la pagina 0 a la 1 (HMMM; B = 0 es 256)
 L 0x564C atributos_rotados los colores de los sprites (p00:5676) y los atributos de 0xDE00 a la VRAM 0x7600 empezando cada cuadro por otro sprite (0xC00C + 0x68): el parpadeo cuando hay muchos
 L 0x5676 colores_de_sprites 16 x 32 bytes de colores de sprite desde 0x6E00 a la VRAM 0x7400
 L 0x5690 atributos_a_vram 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
@@ -1065,7 +1065,7 @@ C 0x43CE bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x43D3 lee la pantalla de la antesala (0-2)
 C 0x43D9 lee la X en la antesala
 C 0x43E8 guarda en la sala de la puerta 5
-C 0x43EE ninguno_vivo: acarreo si las fichas de los dos personajes (0xC2B0 y 0xC2D0) son cero
+C 0x43EE los_dos_caidos: acarreo si los dos personajes han caido (el byte 0 de 0xC2B0 y de 0xC2D0 distinto de cero)
 C 0x43F3 apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 C 0x43F6 entra_en_la_antesala: pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
 C 0x43F9 bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)

@@ -252,6 +252,49 @@ C 0x73DD con otra BIOS, el texto de p04:745D y 16 puntos mas a la izquierda
 C 0x65E4 cada bloque de fichas (p00:4D6C)
 C 0x65EE la copia a la pagina 0
 C 0x65F1 0xC8E5 = 4 y el siguiente paso con 0x30 cuadros
+C 0x6088 en la ruina 5 (el final)...
+C 0x608F ...o en la escena 4, no se puede saltar
+C 0x6099 la tecla 0x10 (espacio)...
+C 0x609D ...para el sonido y salta la escena (acarreo)
+C 0x60BC el paso (0xC21F); HL a la cuenta (0xC221)
+C 0x60BF paso 1: el texto 5 (la partida empieza)
+C 0x60C9 paso 2: las letras, y al acabar...
+C 0x60D3 ...los sprites de p04:6000 a 0xDE00...
+C 0x60DE ...y el color 0x0D en sus 0x50 lineas
+C 0x60E7 paso 3: los sprites avanzan un punto por cuadro...
+C 0x60F4 ...hasta la X 0x68
+C 0x60FC paso 4: la espera...
+C 0x6105 ...la escena siguiente, pintada, con sus sprites
+C 0x610C 0x30 cuadros
+C 0x6111 paso 5: la espera, y el texto 2
+C 0x611E con la BIOS japonesa, en (0x48, 0x2A) con su recuadro
+C 0x612C en ingles, en (0x7C, 0x30)
+C 0x6134 paso 6: las letras con la cuenta 0x80
+C 0x6141 hasta que acabe el texto
+C 0x6147 paso 7: la espera...
+C 0x6153 ...el dibujo y el texto 6
+C 0x615B paso 8: las letras con la cuenta a cero
+C 0x6164 paso 9: la espera, la lista p05:9665 y la pantalla de p04:73B4
+C 0x6173 paso 10: el parpadeo de la ruina (p05:966E) hasta 0xC899...
+C 0x617E ...la escena siguiente con sus sprites y el texto 3
+C 0x618D en (0x68, 0x2A) en japones
+C 0x61A0 paso 11: las letras
+C 0x61A5 paso 12: la espera y el texto 4
+C 0x61B5 en (0x48, 0x38) en japones, con el dibujo de la escena
+C 0x61CB paso 13: las letras
+C 0x61D0 paso 14: la espera, el dibujo y el texto 7
+C 0x61E4 paso 15: las letras
+C 0x61E9 paso 16: la espera, la escena de la ruina, los sprites de p04:600B y el texto 8
+C 0x6200 los 2 primeros sprites con el patron 0x47
+C 0x620F paso 17: el sprite 2 avanza hasta la X 0xB0, con las letras
+C 0x6221 paso 18: la espera...
+C 0x6227 ...y acarreo: la escena acabada
+C 0x6229 0x3C cuadros de espera...
+C 0x622E ...y el paso siguiente
+C 0x6232 sin acarreo: sigue
+C 0x6234 en (0x46, 0x26), de 0x4C x 0x1C
+C 0x623D en (0x66, 0x26), de 0x54 x 0x1C
+C 0x6246 en (0x46, 0x36), de 0x44 x 0x0C
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x6085 guion_de_la_escena las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)

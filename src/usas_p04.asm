@@ -35,16 +35,16 @@ DATA_resto_6000:
 
 guion_de_la_escena:		; las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)
 	ld a,(0c21dh)		;6085   ; lee la ruina (0-4)
-	cp 005h		;6088
+	cp 005h		;6088   ; en la ruina 5 (el final)...
 	jr z,L_60A4		;608a
 	ld a,(0c220h)		;608c   ; lee la escena (0-11)
-	cp 004h		;608f
+	cp 004h		;608f   ; ...o en la escena 4, no se puede saltar
 	jr z,L_60A4		;6091
 	call 04feeh		;6093   ; lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 	ld a,(0c007h)		;6096   ; lee las teclas que hay
-	and 010h		;6099
+	and 010h		;6099   ; la tecla 0x10 (espacio)...
 	jr z,L_60A4		;609b
-	ld a,000h		;609d
+	ld a,000h		;609d   ; ...para el sonido y salta la escena (acarreo)
 	call 05451h		;609f   ; sonido_y_456: el sonido A y los bancos 4-5-6
 	scf			;60a2
 	ret			;60a3
@@ -72,110 +72,110 @@ DATA_saltos_60AD:
 
 L_60B9:
 	ld hl,0c21fh		;60b9   ; apunta a el paso de la escena
-	ld b,(hl)			;60bc
+	ld b,(hl)			;60bc   ; el paso (0xC21F); HL a la cuenta (0xC221)
 	inc l			;60bd
 	inc l			;60be
-	djnz L_60C9		;60bf
+	djnz L_60C9		;60bf   ; paso 1: el texto 5 (la partida empieza)
 	ld a,005h		;60c1
 	call texto_a_maquina		;60c3   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;60c6
 L_60C9:
-	djnz L_60E7		;60c9
+	djnz L_60E7		;60c9   ; paso 2: las letras, y al acabar...
 	call letra_a_maquina		;60cb   ; letra_a_maquina: cada 0xC8A5 cuadros, el siguiente caracter del texto
 	ld a,(0c8a6h)		;60ce   ; lee el texto a maquina ha acabado
 	or a			;60d1
 	ret z			;60d2
-	ld hl,06000h		;60d3
+	ld hl,06000h		;60d3   ; ...los sprites de p04:6000 a 0xDE00...
 	ld bc,0000ch		;60d6
 	ld de,0de00h		;60d9   ; apunta a los atributos de los sprites en RAM
 	ldir		;60dc
-	ld bc,0500dh		;60de
+	ld bc,0500dh		;60de   ; ...y el color 0x0D en sus 0x50 lineas
 	call llena_dc00		;60e1   ; llena_dc00: B bytes de 0xDC00 con C
 	jp L_6698		;60e4
 L_60E7:
-	djnz L_60FC		;60e7
+	djnz L_60FC		;60e7   ; paso 3: los sprites avanzan un punto por cuadro...
 	ld hl,0de01h		;60e9   ; apunta a la X del sprite 0 en RAM
 	ld b,001h		;60ec
 	call avanza_sprites		;60ee   ; avanza_sprites: cada B cuadros, + 1 a 3 sprites de HL (de 4 en 4)
 	ld a,(0de01h)		;60f1   ; lee la X del sprite 0 en RAM
-	cp 068h		;60f4
+	cp 068h		;60f4   ; ...hasta la X 0x68
 	jp c,L_6232		;60f6
 	jp L_66EF		;60f9
 L_60FC:
-	djnz L_6111		;60fc
+	djnz L_6111		;60fc   ; paso 4: la espera...
 	dec (hl)			;60fe
 	jp nz,L_6232		;60ff
 	ld hl,0c220h		;6102   ; apunta a la escena (0-11)
-	inc (hl)			;6105
+	inc (hl)			;6105   ; ...la escena siguiente, pintada, con sus sprites
 	call pinta_escena		;6106   ; pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC220
 	call sprites_6020		;6109   ; sprites_6020: 16 bytes de p04:6020 a 0xDE14 y dos colores de sprite
-	ld a,030h		;610c
+	ld a,030h		;610c   ; 0x30 cuadros
 	jp L_622B		;610e
 L_6111:
-	djnz L_6134		;6111
+	djnz L_6134		;6111   ; paso 5: la espera, y el texto 2
 	dec (hl)			;6113
 	jp nz,L_6232		;6114
 	ld a,(0002bh)		;6117
 	and 00fh		;611a
 	jr nz,L_612C		;611c
-	ld a,002h		;611e
+	ld a,002h		;611e   ; con la BIOS japonesa, en (0x48, 0x2A) con su recuadro
 	ld de,0482ah		;6120
 	call empieza_texto_a_maquina		;6123   ; empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 	call borra_recuadro_4626		;6126   ; borra_recuadro_4626: borra 0x4C x 0x1C en (0x46, 0x26) y p06:A494
 	jp L_6698		;6129
 L_612C:
-	ld a,002h		;612c
+	ld a,002h		;612c   ; en ingles, en (0x7C, 0x30)
 L_612E:
 	call texto_a_maquina		;612e   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6131
 L_6134:
-	djnz L_6147		;6134
+	djnz L_6147		;6134   ; paso 6: las letras con la cuenta 0x80
 L_6136:
 	ld hl,0c221h		;6136   ; apunta a la cuenta de la escena
 	ld (hl),080h		;6139
 L_613B:
 	call letra_a_maquina		;613b   ; letra_a_maquina: cada 0xC8A5 cuadros, el siguiente caracter del texto
 	ld a,(0c8a6h)		;613e   ; lee el texto a maquina ha acabado
-	or a			;6141
+	or a			;6141   ; hasta que acabe el texto
 	jp nz,L_6698		;6142
 	or a			;6145
 	ret			;6146
 L_6147:
-	djnz L_615B		;6147
+	djnz L_615B		;6147   ; paso 7: la espera...
 	dec (hl)			;6149
 	jp nz,L_6232		;614a
 	call dibujo_de_escena		;614d   ; dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
 	call borra_de_70		;6150   ; borra_de_70: borra 0xFF x 0x48 desde (0, 0x70)
-	ld a,006h		;6153
+	ld a,006h		;6153   ; ...el dibujo y el texto 6
 	call texto_a_maquina		;6155   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6158
 L_615B:
-	djnz L_6164		;615b
+	djnz L_6164		;615b   ; paso 8: las letras con la cuenta a cero
 L_615D:
 	ld hl,0c221h		;615d   ; apunta a la cuenta de la escena
 	ld (hl),000h		;6160
 	jr L_613B		;6162
 L_6164:
-	djnz L_6173		;6164
+	djnz L_6173		;6164   ; paso 9: la espera, la lista p05:9665 y la pantalla de p04:73B4
 	dec (hl)			;6166
 	jp nz,L_6232		;6167
 	call 09665h		;616a   ; lista_9241: la lista de fichas p05:9241 (colores p05:9231)
 	call pantalla_73b4		;616d   ; pantalla_73b4: paleta, mapa p05:93C6, el dibujo y el texto p04:73BD
 	jp L_6698		;6170
 L_6173:
-	djnz L_61A0		;6173
+	djnz L_61A0		;6173   ; paso 10: el parpadeo de la ruina (p05:966E) hasta 0xC899...
 	call 0966eh		;6175   ; parpadeo_de_ruina: 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
 	ld hl,0c899h		;6178   ; apunta a el parpadeo de la ruina acabado
 	ld a,(hl)			;617b
 	or a			;617c
 	ret z			;617d
-	ld (hl),000h		;617e
+	ld (hl),000h		;617e   ; ...la escena siguiente con sus sprites y el texto 3
 	call pinta_escena		;6180   ; pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC220
 	call sprites_6020		;6183   ; sprites_6020: 16 bytes de p04:6020 a 0xDE14 y dos colores de sprite
 	ld a,(0002bh)		;6186
 	and 00fh		;6189
 	jr nz,L_619B		;618b
-	ld a,003h		;618d
+	ld a,003h		;618d   ; en (0x68, 0x2A) en japones
 	ld de,0682ah		;618f
 	call empieza_texto_a_maquina		;6192   ; empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 	call borra_recuadro_6626		;6195   ; borra_recuadro_6626: borra 0x54 x 0x1C en (0x66, 0x26) y p06:A494
@@ -184,17 +184,17 @@ L_619B:
 	ld a,003h		;619b
 	jp L_612E		;619d
 L_61A0:
-	djnz L_61A5		;61a0
+	djnz L_61A5		;61a0   ; paso 11: las letras
 	jp L_6136		;61a2
 L_61A5:
-	djnz L_61CB		;61a5
+	djnz L_61CB		;61a5   ; paso 12: la espera y el texto 4
 	dec (hl)			;61a7
 	jp nz,L_6232		;61a8
 	call borra_de_70		;61ab   ; borra_de_70: borra 0xFF x 0x48 desde (0, 0x70)
 	ld a,(0002bh)		;61ae
 	and 00fh		;61b1
 	jr nz,L_61C6		;61b3
-	ld a,004h		;61b5
+	ld a,004h		;61b5   ; en (0x48, 0x38) en japones, con el dibujo de la escena
 	ld de,04838h		;61b7
 	call empieza_texto_a_maquina		;61ba   ; empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 	call dibujo_de_escena		;61bd   ; dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
@@ -204,10 +204,10 @@ L_61C6:
 	ld a,004h		;61c6
 	jp L_612E		;61c8
 L_61CB:
-	djnz L_61D0		;61cb
+	djnz L_61D0		;61cb   ; paso 13: las letras
 	jp L_6136		;61cd
 L_61D0:
-	djnz L_61E4		;61d0
+	djnz L_61E4		;61d0   ; paso 14: la espera, el dibujo y el texto 7
 	dec (hl)			;61d2
 	jp nz,L_6232		;61d3
 	call dibujo_de_escena		;61d6   ; dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
@@ -216,10 +216,10 @@ L_61D0:
 	call texto_a_maquina		;61de   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;61e1
 L_61E4:
-	djnz L_61E9		;61e4
+	djnz L_61E9		;61e4   ; paso 15: las letras
 	jp L_615D		;61e6
 L_61E9:
-	djnz L_620F		;61e9
+	djnz L_620F		;61e9   ; paso 16: la espera, la escena de la ruina, los sprites de p04:600B y el texto 8
 	dec (hl)			;61eb
 	jp nz,L_6232		;61ec
 	call escena_de_la_ruina		;61ef   ; escena_de_la_ruina: la escena de la ruina (p04:71EA) y p04:71D5
@@ -228,14 +228,14 @@ L_61E9:
 	ld bc,0000ch		;61f8
 	ldir		;61fb
 	ld hl,0de00h		;61fd   ; apunta a los atributos de los sprites en RAM
-	ld b,002h		;6200
+	ld b,002h		;6200   ; los 2 primeros sprites con el patron 0x47
 	ld a,047h		;6202
 	call pon_en_sprites		;6204   ; pon_en_sprites: A en B sprites de HL (de 4 en 4)
 	ld a,008h		;6207
 	call texto_a_maquina		;6209   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;620c
 L_620F:
-	djnz L_6221		;620f
+	djnz L_6221		;620f   ; paso 17: el sprite 2 avanza hasta la X 0xB0, con las letras
 	ld a,(0de09h)		;6211   ; lee la X del sprite 2 en RAM
 	cp 0b0h		;6214
 	jr nc,L_621B		;6216
@@ -244,32 +244,32 @@ L_621B:
 	ld hl,0c221h		;621b   ; apunta a la cuenta de la escena
 	jp L_615D		;621e
 L_6221:
-	djnz L_6229		;6221
+	djnz L_6229		;6221   ; paso 18: la espera...
 	dec (hl)			;6223
 	jp nz,L_6232		;6224
-	scf			;6227
+	scf			;6227   ; ...y acarreo: la escena acabada
 	ret			;6228
 L_6229:
-	ld a,03ch		;6229
+	ld a,03ch		;6229   ; 0x3C cuadros de espera...
 L_622B:
 	ld hl,0c221h		;622b   ; apunta a la cuenta de la escena
-	ld (hl),a			;622e
+	ld (hl),a			;622e   ; ...y el paso siguiente
 	dec l			;622f
 	dec l			;6230
 	inc (hl)			;6231
 L_6232:
-	or a			;6232
+	or a			;6232   ; sin acarreo: sigue
 	ret			;6233
 borra_recuadro_4626:		; borra 0x4C x 0x1C en (0x46, 0x26) y p06:A494
-	ld hl,04626h		;6234
+	ld hl,04626h		;6234   ; en (0x46, 0x26), de 0x4C x 0x1C
 	ld bc,04c1ch		;6237
 	jp borra_y_marco		;623a   ; borra_y_marco: borra el rectangulo y p06:A494
 borra_recuadro_6626:		; borra 0x54 x 0x1C en (0x66, 0x26) y p06:A494
-	ld hl,06626h		;623d
+	ld hl,06626h		;623d   ; en (0x66, 0x26), de 0x54 x 0x1C
 	ld bc,0541ch		;6240
 	jp borra_y_marco		;6243   ; borra_y_marco: borra el rectangulo y p06:A494
 borra_recuadro_4636:		; borra 0x44 x 0x0C en (0x46, 0x36) y p06:A494
-	ld hl,04636h		;6246
+	ld hl,04636h		;6246   ; en (0x46, 0x36), de 0x44 x 0x0C
 	ld bc,0440ch		;6249
 	jp borra_y_marco		;624c   ; borra_y_marco: borra el rectangulo y p06:A494
 parpadeo_de_2:		; p04:6251 con B = 2

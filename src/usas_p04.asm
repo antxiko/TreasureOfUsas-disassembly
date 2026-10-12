@@ -77,7 +77,7 @@ L_60B9:
 	inc l			;60be
 	djnz L_60C9		;60bf
 	ld a,005h		;60c1
-	call texto_a_maquina		;60c3   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;60c3   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;60c6
 L_60C9:
 	djnz L_60E7		;60c9
@@ -121,12 +121,12 @@ L_6111:
 	ld a,002h		;611e
 	ld de,0482ah		;6120
 	call empieza_texto_a_maquina		;6123   ; empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
-	call borra_recuadro_4626		;6126   ; borra_recuadro_4626: borra 0x4C x 0x1C en (0x26, 0x46) y p06:A494
+	call borra_recuadro_4626		;6126   ; borra_recuadro_4626: borra 0x4C x 0x1C en (0x46, 0x26) y p06:A494
 	jp L_6698		;6129
 L_612C:
 	ld a,002h		;612c
 L_612E:
-	call texto_a_maquina		;612e   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;612e   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6131
 L_6134:
 	djnz L_6147		;6134
@@ -147,7 +147,7 @@ L_6147:
 	call dibujo_de_escena		;614d   ; dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
 	call borra_de_70		;6150   ; borra_de_70: borra 0xFF x 0x48 desde (0, 0x70)
 	ld a,006h		;6153
-	call texto_a_maquina		;6155   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;6155   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6158
 L_615B:
 	djnz L_6164		;615b
@@ -178,7 +178,7 @@ L_6173:
 	ld a,003h		;618d
 	ld de,0682ah		;618f
 	call empieza_texto_a_maquina		;6192   ; empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
-	call borra_recuadro_6626		;6195   ; borra_recuadro_6626: borra 0x54 x 0x1C en (0x26, 0x66) y p06:A494
+	call borra_recuadro_6626		;6195   ; borra_recuadro_6626: borra 0x54 x 0x1C en (0x66, 0x26) y p06:A494
 	jp L_6698		;6198
 L_619B:
 	ld a,003h		;619b
@@ -198,7 +198,7 @@ L_61A5:
 	ld de,04838h		;61b7
 	call empieza_texto_a_maquina		;61ba   ; empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 	call dibujo_de_escena		;61bd   ; dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
-	call borra_recuadro_4636		;61c0   ; borra_recuadro_4636: borra 0x44 x 0x0C en (0x36, 0x46) y p06:A494
+	call borra_recuadro_4636		;61c0   ; borra_recuadro_4636: borra 0x44 x 0x0C en (0x46, 0x36) y p06:A494
 	jp L_6698		;61c3
 L_61C6:
 	ld a,004h		;61c6
@@ -213,7 +213,7 @@ L_61D0:
 	call dibujo_de_escena		;61d6   ; dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
 	call borra_de_70		;61d9   ; borra_de_70: borra 0xFF x 0x48 desde (0, 0x70)
 	ld a,007h		;61dc
-	call texto_a_maquina		;61de   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;61de   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;61e1
 L_61E4:
 	djnz L_61E9		;61e4
@@ -232,7 +232,7 @@ L_61E9:
 	ld a,047h		;6202
 	call pon_en_sprites		;6204   ; pon_en_sprites: A en B sprites de HL (de 4 en 4)
 	ld a,008h		;6207
-	call texto_a_maquina		;6209   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;6209   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;620c
 L_620F:
 	djnz L_6221		;620f
@@ -260,15 +260,15 @@ L_622B:
 L_6232:
 	or a			;6232
 	ret			;6233
-borra_recuadro_4626:		; borra 0x4C x 0x1C en (0x26, 0x46) y p06:A494
+borra_recuadro_4626:		; borra 0x4C x 0x1C en (0x46, 0x26) y p06:A494
 	ld hl,04626h		;6234
 	ld bc,04c1ch		;6237
 	jp borra_y_marco		;623a   ; borra_y_marco: borra el rectangulo y p06:A494
-borra_recuadro_6626:		; borra 0x54 x 0x1C en (0x26, 0x66) y p06:A494
+borra_recuadro_6626:		; borra 0x54 x 0x1C en (0x66, 0x26) y p06:A494
 	ld hl,06626h		;623d
 	ld bc,0541ch		;6240
 	jp borra_y_marco		;6243   ; borra_y_marco: borra el rectangulo y p06:A494
-borra_recuadro_4636:		; borra 0x44 x 0x0C en (0x36, 0x46) y p06:A494
+borra_recuadro_4636:		; borra 0x44 x 0x0C en (0x46, 0x36) y p06:A494
 	ld hl,04636h		;6246
 	ld bc,0440ch		;6249
 	jp borra_y_marco		;624c   ; borra_y_marco: borra el rectangulo y p06:A494
@@ -774,7 +774,7 @@ L_65B2:
 	scf			;65bf
 	ret			;65c0
 L_65C1:
-	ld hl,07074h		;65c1   ; 5 copias de 24 x 32 de (0x74, 0x70) a (0x60, 0xE0), de 0x18 en 0x18
+	ld hl,07074h		;65c1   ; 5 copias de 24 x 32 de (0x70, 0x74) a (0xE0, 0x60), de 0x18 en 0x18
 	push hl			;65c4
 	ld bc,02018h		;65c5
 	push bc			;65c8
@@ -1193,13 +1193,13 @@ L_6892:
 	ld a,(0002bh)		;6898
 	and 00fh		;689b
 	jr nz,L_68A2		;689d
-	call borra_recuadro_2c20		;689f   ; borra_recuadro_2c20: borra 0xA8 x 0x30 en (0x20, 0x2C)
+	call borra_recuadro_2c20		;689f   ; borra_recuadro_2c20: borra 0xA8 x 0x30 en (0x2C, 0x20)
 L_68A2:
 	jp L_6698		;68a2
 L_68A5:
 	ld a,001h		;68a5
 	jr L_6892		;68a7
-borra_recuadro_2c20:		; borra 0xA8 x 0x30 en (0x20, 0x2C)
+borra_recuadro_2c20:		; borra 0xA8 x 0x30 en (0x2C, 0x20)
 	ld hl,02c20h		;68a9
 	ld bc,0a830h		;68ac
 borra_y_marco:		; borra el rectangulo y p06:A494
@@ -1209,7 +1209,7 @@ borra_y_marco:		; borra el rectangulo y p06:A494
 	pop de			;68b4
 	pop hl			;68b5
 	jp 0a494h		;68b6   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-borra_recuadro_2773:		; borra 0xB2 x 0x32 en (0x73, 0x27) (BIOS japonesa)
+borra_recuadro_2773:		; borra 0xB2 x 0x32 en (0x27, 0x73) (BIOS japonesa)
 	ld hl,02773h		;68b9
 	ld bc,0b232h		;68bc
 	jr borra_y_marco		;68bf
@@ -1456,7 +1456,7 @@ L_6A78:
 	ret			;6a9b
 L_6A9C:
 	ld a,009h		;6a9c
-	call texto_a_maquina		;6a9e   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;6a9e   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	ld a,0f1h		;6aa1
 	jp L_622B		;6aa3
 
@@ -1672,7 +1672,7 @@ L_6BDC:
 	ld bc,0400dh		;6bf6
 	call llena_hl		;6bf9   ; llena_hl: B bytes de HL con C
 	ld a,00ah		;6bfc
-	call texto_a_maquina		;6bfe   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;6bfe   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6c01
 L_6C04:
 	djnz L_6C28		;6c04
@@ -1741,7 +1741,7 @@ L_6C65:
 	ld bc,00010h		;6c90
 	ldir		;6c93
 	ld a,00bh		;6c95
-	call texto_a_maquina		;6c97   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;6c97   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6c9a
 L_6C9D:
 	djnz L_6CC6		;6c9d
@@ -1779,7 +1779,7 @@ L_6CCB:
 	ld bc,00003h		;6cda
 	ldir		;6cdd
 	ld a,00ch		;6cdf
-	call texto_a_maquina		;6ce1   ; texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+	call texto_a_maquina		;6ce1   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6ce4
 
 ; ----------------------------------------------------------------------
@@ -2715,11 +2715,11 @@ DATA_texto_p73A5:
 ; ======================================================================
 
 
-texto_a_maquina:		; p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+texto_a_maquina:		; p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	push af			;73c5
 	ld a,(0002bh)		;73c6
 	and 00fh		;73c9
-	call z,borra_recuadro_2773		;73cb   ; borra_recuadro_2773: borra 0xB2 x 0x32 en (0x73, 0x27) (BIOS japonesa)
+	call z,borra_recuadro_2773		;73cb   ; borra_recuadro_2773: borra 0xB2 x 0x32 en (0x27, 0x73) (BIOS japonesa)
 	pop af			;73ce
 	ld de,0307ch		;73cf
 empieza_texto_a_maquina:		; el texto A de p04:743F (japones) o p04:745D en DE

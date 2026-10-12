@@ -334,6 +334,116 @@ C 0xB9A2 D = la X de la puerta; (HL + 1): grande o pequena
 C 0xB9AB el grande: 0x30 x 0x38 en Y 0x8B
 C 0xBD6C el bit 2: cuadro 1
 C 0xBD72 si no, el bit 3: cuadro 0 o 2
+C 0xA000 con F2, deshace (p06:A01E)
+C 0xA00E sin compra en este cuadro, solo los sprites
+C 0xA01E deshacer: de los dos personajes...
+C 0xA027 ...los bytes 16-31 de la ficha (la copia de al entrar) vuelven a los 0-15
+C 0xA033 el personaje siguiente, 0x20 bytes mas alla
+C 0xA052 arriba: la mejora anterior
+C 0xA055 abajo: la siguiente
+C 0xA058 izquierda o derecha: el otro personaje
+C 0xA060 si ha caido alguno...
+C 0xA067 ...el que queda: 1 si ha caido el 0, 0 si no
+C 0xA070 si estan los dos, cambia
+C 0xA077 en la pausa (estado 0x0B) no suena
+C 0xA07D de 0 a 2
+C 0xA086 la anterior, de 2 a 0
+C 0xA090 el sonido: 1, o 0x70 en la pausa
+C 0xA0A4 la Y del cursor: mejora * 0x19 + 0x72
+C 0xA0AE en los dos sprites del cursor
+C 0xA0B8 la X: 0x43 con Wit, 0xC3 con Cles...
+C 0xA0C0 ...y el segundo 16 mas a la derecha
+C 0xA0C5 el patron 0 y el 4
+C 0xA0D3 color 0x0A en sus 32 lineas
+C 0xA0D7 el sprite 2 escondido
+C 0xA0E0 solo en el estado 0x0B (la pausa)
+C 0xA0EA sin compra todavia
+C 0xA0F1 la tecla 0x10 (espacio)
+C 0xA0F7 el precio: los bytes 8 + mejora * 2 de la ficha (BCD)
+C 0xA101 DE = el precio
+C 0xA10A sin monedas bastantes, nada
+C 0xA10E la mejora 1 (SPD): el byte 1, hasta 4
+C 0xA114 la 2 (JMP): el byte 2, hasta 2
+C 0xA11A la 0 (VIT): el byte 5 (la vida), hasta 0x3F
+C 0xA145 las monedas - el precio, en BCD
+C 0xA150 comprado
+C 0xA158 el sonido 2, o 0x71 en la pausa
+C 0xA16F + B
+C 0xA252 [X]
+C 0xA253 en la Y 0xB0
+C 0xA25D detras, el texto
+C 0xA261 0x3C cuadros de espera
+C 0xA266 en marcha
+C 0xA26A el texto p06:A270
+C 0xA28E ya acabado: nada
+C 0xA293 la espera hasta la letra siguiente
+C 0xA297 la letra
+C 0xA29E 0xFF: acabado
+C 0xA2AF 8 cuadros hasta la siguiente
+C 0xA2B5 acabado
+C 0xA2FF 0x20 bytes
+C 0xA305 HMMV de 0x80 x 0x40 en (0x40, 0xA0) con el color 0x66
+C 0xA312 el recuadro: (0x3C, 0xA0) de 0x88 x 0x28, color 0x0D
+C 0xA31D sin tecla tecleada
+C 0xA324 KEYWORD / INPUT KEYWORD
+C 0xA330 sin tecla nueva, nada
+C 0xA336 cuantas hay
+C 0xA33D la tecla
+C 0xA340 0xFF detras
+C 0xA347 lo tecleado en (0x48, 0xB8)
+C 0xA352 con la tecla 0x0D (RETURN): se mira la clave (p06:A35B)
+C 0xA355 si no, una letra mas, hasta 14
+C 0xA35B las 4 claves de p06:A2BB...
+C 0xA36E ...si coincide, esa (p06:A37B)
+C 0xA372 ninguna: la clave no vale (0xE37A = 1)
+C 0xA37C la clave n: la ruina 4 - n + 1 (0xE379)
+C 0xA389 letra a letra...
+C 0xA38D ...hasta la 0xFF: iguales
+C 0xA392 las 9 filas del teclado
+C 0xA39A una tecla pulsada (bit a cero)?
+C 0xA3A2 ninguna: 0xC20E y 0xC20F a cero
+C 0xA3AA el caracter de p06:A3C8[fila * 8 + bit]
+C 0xA3C1 nueva solo si no estaba antes (0xC20E)
+C 0xA413 la puerta: 0x20 x 8 de (X - 0x18, 0x93)...
+C 0xA418 ...a (0x60, 0x78) de la pagina 1
+C 0xA423 los recuadros del mensaje
+C 0xA443 el texto p06:A60A
+C 0xA449 sin captura en marcha (0xC23B)
+C 0xA45C la lista de fichas de INFORMATION
+C 0xA46E los dos recuadros de los numeros: (0x14, 0x60) y (0x84, 0x60) de 0x68 x 0x25
+C 0xA47C las lineas verticales y horizontales
+C 0xA488 los de los retratos en (0x17, 0x2B) y (0xB7, 0x2B), 0x32 x 0x32
+C 0xA497 color 0x0D
+C 0xA4A4 en la X 0x17 (Wit) o 0xB7 (Cles)
+C 0xA4AD cada 16 cuadros, 0x0D o 0x0A
+C 0xA4BD en su sitio de la antesala (0xDE80 = 0)
+C 0xA4C4 el retrato de Wit segun su animo
+C 0xA4CE en (0x18, 0x2C), o (0x28, 0x2C) en INFORMATION
+C 0xA4D8 solo si no ha caido
+C 0xA4DF el de Cles
+C 0xA4E9 en (0xB8, 0x2C), o (0xA8, 0x2C)
+C 0xA4F4 si ha caido, no
+C 0xA4F5 6 filas de 6 fichas
+C 0xA4FF 8 a la derecha
+C 0xA509 la fila siguiente
+C 0xA50F los niveles de Wit en columnas...
+C 0xA518 ...y su barra de vida
+C 0xA51E los de Cles
+C 0xA531 el valor + 1
+C 0xA53A la siguiente columna, C mas abajo
+C 0xA54A 12 entre marca y marca
+C 0xA551 8 entre marca y marca
+C 0xA555 en los bytes 0 y 1 de la ficha...
+C 0xA55E ...y 3 en los demas
+C 0xA560 la marca llena (de (0x60, 0x58))...
+C 0xA564 ...mientras queden; despues, la vacia (de (0, 0))
+C 0xA570 8 x 8
+C 0xA57C la siguiente, B mas a la derecha
+C 0xA58A el byte 0 de la ficha: si ha caido, nada
+C 0xA594 con espacio...
+C 0xA597 ...elegido: 0xC23B = 1
+C 0xA5A3 izquierda o derecha: el otro personaje
+C 0xA5B5 si ha caido alguno, el que queda
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0xA049 mando_de_informacion las teclas de INFORMATION: la mejora (0xC228, 0-2) y el personaje (0xC229)
@@ -347,7 +457,7 @@ L 0xA2FC pantalla_de_clave borra lo tecleado (0xE360) y pinta el recuadro de la 
 L 0xA32A teclea_clave la tecla nueva al final de lo tecleado en 0xE360 (0xE378 cuenta las letras)
 L 0xA385 compara_con_e360 compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
 L 0xA392 lee_teclado las 9 filas de la matriz (SNSMAT); la primera tecla pulsada, por p06:A3C8
-L 0xA410 copia_de_la_puerta copia 0x20 x 8 de (X - 0x18, 0x93) a (0x78, 0x60) segun la X de la antesala (0xCC13)
+L 0xA410 copia_de_la_puerta copia 0x20 x 8 de (X - 0x18, 0x93) a (0x60, 0x78) segun la X de la antesala (0xCC13)
 L 0xA45C lista_a7f8 la lista de fichas p06:A7F8
 L 0xA465 paleta_b351 la paleta p06:B351
 L 0xA46B recuadros_de_informacion los recuadros y lineas de p06:A7B4/A7BB
@@ -391,7 +501,7 @@ L 0xBAF2 sale_de_la_fase sentido 0 en la antesala, los sprites de los personajes
 L 0xBB1E mensaje_de_la_puerta el recuadro y el texto de la puerta segun la BIOS y la pantalla (p06:BE5B, BE69, BEDA)
 L 0xBB49 recuadro_del_mensaje borra y enmarca el recuadro de mensajes
 L 0xBB64 si_o_no 0xC22A = la respuesta con las teclas (1 o 2) o 0
-L 0xBB78 copia_6078 copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+L 0xBB78 copia_6078 copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 L 0xBB84 mensaje_de_eleccion el recuadro y el texto: solo entra uno, elige, faltan llaves (p06:BE88-BEFA)
 L 0xBBD2 mensaje_de_captura el recuadro y el texto: el companero, capturado (p06:BF1B, BF29)
 L 0xBBFB espera_el_mensaje los sprites de la antesala y, con la cuenta 0xC209 a cero, quita el recuadro (acarreo)
@@ -674,7 +784,7 @@ C 0xBBF8 colores_de_la_antesala: los colores de sprite de los dos personajes (p0
 C 0xBBFB sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
 C 0xBBFE atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 C 0xBC02 apunta a la cuenta del mensaje de la antesala
-C 0xBC07 copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+C 0xBC07 copia_6078: copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 C 0xBC0D guarda el sentido en la antesala
 C 0xBC18 guarda la cuenta de la captura en la antesala
 C 0xBC20 colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)

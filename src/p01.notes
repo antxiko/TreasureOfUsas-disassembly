@@ -254,7 +254,7 @@ C 0x6315 la accion 4: muere
 C 0x631A 0x80 cuadros para el dibujo de la muerte
 C 0x6322 en X - 8...
 C 0x632C ...e Y - 0x27 (personaje 0) o Y - 0x21 (personaje 1)...
-C 0x6337 ...se guarda el fondo de 16 x 0x18 en (0x98, 0x20) de la pagina 1 (LMMM)
+C 0x6337 ...se guarda el fondo de 16 x 0x18 en (0x20, 0x98) de la pagina 1 (LMMM)
 C 0x6346 ...sin disparo pedido...
 C 0x6359 en la escalera...
 C 0x635E ...es otra cosa (p01:636A)
@@ -368,7 +368,7 @@ C 0x66C1 si han caido los dos...
 C 0x66C2 ...se acaba la fase (p01:66DF)
 C 0x66C4 si no: 0xC270 = esta fase...
 C 0x66CA ...fuera los actores...
-C 0x66D0 ...y el actor 0x30 en (0x20, 0x80)
+C 0x66D0 ...y el actor 0x30 en (0x80, 0x20)
 C 0x66DF la fase se para
 C 0x66FD la accion 5 (escalera): la direccion de las teclas
 C 0x6705 abajo
@@ -489,7 +489,7 @@ C 0x6A24 solo cada C + 1 cuadros
 C 0x6A2A alternando el dibujo de (0x98, 0) y (0x98, 0x10)
 C 0x6A36 en X - 8...
 C 0x6A3D ...e Y - 0x27 (Wit) o Y - 0x21 (Cles)
-C 0x6A4A primero el fondo guardado en (0x98, 0x20)...
+C 0x6A4A primero el fondo guardado en (0x20, 0x98)...
 C 0x6A50 ...tal cual (LMMM 0x40)
 C 0x6A57 y encima el dibujo con TIMP (0x48)
 C 0x6A5F el paso 1 de la muerte
@@ -891,7 +891,7 @@ L 0x787B reserva_piezas reserva en 0xCC80 las piezas del actor y copia sus dos b
 L 0x78A8 pieza_libre C = la primera pieza libre de 0xCC80 (22), marcada; acarreo si hay
 L 0x78BD coloca_piezas con 15: la posicion de cada pieza (desplazamientos de p01:78E5)
 L 0x78E5 desplazamientos_por_tipo DE = la tabla de desplazamientos del tipo A (p15:B6D2-B6EE)
-L 0x7901 borra_a_barras borra la VRAM a barras: un byte cada 13 desde (0x24, 0x1A), con esperas
+L 0x7901 borra_a_barras borra la VRAM a barras: un byte cada 13 desde (0x1A, 0x24), con esperas
 L 0x7948 objetos los 8 objetos de 0xCB00 de la pantalla 0xC212
 L 0x7974 sprites_del_objeto los dos sprites del objeto, o escondidos si no es de esta pantalla
 L 0x79A0 colores_del_objeto los colores del objeto (p02:8ABF)

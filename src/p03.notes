@@ -158,7 +158,7 @@ C 0xA24D ...segun la mitad de la pantalla del personaje...
 C 0xA252 ...desde la X 0x60 o 0xA0, en la Y 0x64...
 C 0xA259 ...el actor 0x3E
 C 0xA263 el tipo 51: sin choques, 0x40 cuadros...
-C 0xA273 ...y el actor 0x1C en (0x2E, 0x80)
+C 0xA273 ...y el actor 0x1C en (0x80, 0x2E)
 C 0xA27E el tipo 51: la pantalla tiembla (R#18)
 C 0xA288 al azar...
 C 0xA290 ...una X de 0 a 0xF8...
@@ -167,8 +167,8 @@ C 0xA29D ...y el actor 0x3C en la Y 0x30
 C 0xA2E5 ...o 0 en los cuadros impares de la cuenta: el temblor
 C 0xA2F7 el tipo 52: sin choques, 0x10 cuadros
 C 0xA300 cada 0x10 cuadros, dos actores 0x3B...
-C 0xA30A ...uno en (0x44, 0x50) con 0xC313 = 1...
-C 0xA311 ...y otro en (0x44, 0xB0) con 0xC313 = 0
+C 0xA30A ...uno en (0x50, 0x44) con 0xC313 = 1...
+C 0xA311 ...y otro en (0xB0, 0x44) con 0xC313 = 0
 C 0xA321 el tipo 53: 0x10 cuadros y sin choques
 C 0xA332 3, 4, 6 o 7: 3 + el azar & 3, saltando el 5
 C 0xA346 el actor 0x37...
@@ -207,7 +207,7 @@ L 0xA6F9 ciclo_74_77 cada 8 cuadros, el fotograma de 0x74 a 0x77
 L 0xA70D en_objeto_29 borra el actor y lo rehace como objeto de tipo 0x29: 2 piezas, colores 0x0D y 0x4E
 L 0xA751 sube_hasta_hueco sube de 8 en 8 mientras haya casilla (p02:8BB7); por encima de 0x30 se borra
 L 0xA7C6 dibuja_objetos_2a el dibujo de los objetos de tipo 0x2A de 0xC400 (p03:A80A)
-L 0xA7F6 copia_7c78 copia 16 x 8 de (0x78, 0x10) a (0x7C, 0x78)
+L 0xA7F6 copia_7c78 copia 16 x 8 de (0x10, 0x78) a (0x78, 0x7C)
 L 0xA80A dibujo_a81d copia 16 x 16 de la posicion p03:A81D[A - 1] con TIMP
 L 0xA837 hueco_cc60 C = el primer hueco libre de 0xCC60 (4); acarreo si no hay
 L 0xA8FC crea_3f crea el actor 0x3F en su posicion con IX = 0xCC3A
@@ -251,9 +251,9 @@ L 0xB446 cerca_en_x_8 acarreo y velocidad X = L si el personaje esta a menos de 
 L 0xB456 cerca_en_y_8 acarreo y velocidad Y = L si el personaje esta a menos de 8 en Y
 L 0xB466 sonido_8_cada_16 cada 16 cuadros el sonido 8
 L 0xB472 sonido_43_y_fotograma cada 16 cuadros el sonido 0x43; el fotograma B o B + 1 cada 8
-L 0xB4DA dibujo_b4da copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10)
+L 0xB4DA dibujo_b4da copia (ix+0x11) lineas de (0x80, 0x88) junto al actor (LMMM 0x10)
 L 0xB4EB posicion_por_personaje HL = 0x7060 con el personaje 0, 0x3060 con el 1
-L 0xB514 dibujo_b514 copia (ix+0x11) lineas a (0x88, 0x80) (LMMM 0x40)
+L 0xB514 dibujo_b514 copia (ix+0x11) lineas a (0x80, 0x88) (LMMM 0x40)
 L 0xB55F fotograma_9a_9b el fotograma 0x9A / 0x9B cada 32 cuadros
 L 0xB587 dibujo_b587 copia (ix+0x11) lineas de (0x50, 0x98 + B) con TIMP
 L 0xB59A posicion_del_dibujo D, E y B para los dibujos de 0x20 - (ix+0x11) lineas
@@ -528,7 +528,7 @@ C 0xA7CC lee el tipo del actor
 C 0xA7D3 lee la X del actor
 C 0xA7D9 lee la Y del actor
 C 0xA7E4 dibujo_a81d: copia 16 x 16 de la posicion p03:A81D[A - 1] con TIMP
-C 0xA7EA copia_7c78: copia 16 x 8 de (0x78, 0x10) a (0x7C, 0x78)
+C 0xA7EA copia_7c78: copia 16 x 8 de (0x10, 0x78) a (0x78, 0x7C)
 C 0xA7FF copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0xA80F palabra_a: HL = la palabra A de la tabla HL
 C 0xA81A copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
@@ -1020,7 +1020,7 @@ C 0xB4C3 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x
 C 0xB4C9 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 C 0xB4CC el fotograma del actor (p02:8A42) = 0x9A
 C 0xB4D0 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
-C 0xB4D4 dibujo_b4da: copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10)
+C 0xB4D4 dibujo_b4da: copia (ix+0x11) lineas de (0x80, 0x88) junto al actor (LMMM 0x10)
 C 0xB4D7 dibujo_b587: copia (ix+0x11) lineas de (0x50, 0x98 + B) con TIMP
 C 0xB4DA posicion_del_dibujo: D, E y B para los dibujos de 0x20 - (ix+0x11) lineas
 C 0xB4E1 lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
@@ -1040,13 +1040,13 @@ C 0xB53F la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:84
 C 0xB557 lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0xB55F lee la cuenta de cuadros del juego
 C 0xB56A guarda el fotograma del actor (p02:8A42)
-C 0xB56E dibujo_b514: copia (ix+0x11) lineas a (0x88, 0x80) (LMMM 0x40)
+C 0xB56E dibujo_b514: copia (ix+0x11) lineas a (0x80, 0x88) (LMMM 0x40)
 C 0xB571 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xB576 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 C 0xB579 lee en la sala de la puerta 5
 C 0xB57E juegos_de_la_sala_5: los juegos de sprites 0x28, 0x19 y el de la ruina (p02:822C)
 C 0xB581 baja la Y del actor
-C 0xB584 dibujo_b4da: copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10)
+C 0xB584 dibujo_b4da: copia (ix+0x11) lineas de (0x80, 0x88) junto al actor (LMMM 0x10)
 C 0xB587 posicion_del_dibujo: D, E y B para los dibujos de 0x20 - (ix+0x11) lineas
 C 0xB590 lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xB597 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)

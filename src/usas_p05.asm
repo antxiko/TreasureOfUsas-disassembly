@@ -905,7 +905,7 @@ mapa_del_titulo:		; el mapa de 14 x 15 fichas del RLE p05:9988 (en 0xE400), con 
 	ld hl,0e400h		;96f7   ; apunta a los metabloques (16 fichas cada uno)
 	call 05578h		;96fa   ; rle: RLE de DE a HL: 0 acaba, n < 0x80 repite el siguiente, si no copia n & 0x7F
 	ld hl,0e400h		;96fd   ; apunta a los metabloques (16 fichas cada uno)
-	ld de,0481ch		;9700   ; desde (0x1C, 0x48): 15 filas de 14 fichas
+	ld de,0481ch		;9700   ; desde (0x48, 0x1C): 15 filas de 14 fichas
 	ld b,00fh		;9703
 L_9705:
 	push bc			;9705
@@ -1138,7 +1138,7 @@ L_9868:
 	jr nz,L_9883		;986d
 	ld a,001h		;986f   ; ...0xCA01 = 1...
 	ld (0ca01h),a		;9871   ; guarda el prologo, acabado
-	ld hl,010a0h		;9874   ; ...borra 0xE0 x 8 en (0xA0, 0x10)...
+	ld hl,010a0h		;9874   ; ...borra 0xE0 x 8 en (0x10, 0xA0)...
 	ld bc,0e008h		;9877
 	call 05e2fh		;987a   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	ld hl,05068h		;987d   ; ...y PUSH SPACE KEY
@@ -1155,7 +1155,7 @@ L_9883:
 L_988D:
 	ld a,0ffh		;988d   ; la linea en (0xA0, 0x20) menos la cuenta de 0xCA03 (sube)
 	ld (0ca2ah),a		;988f   ; 0xFF detras de la linea
-	ld de,020a0h		;9892   ; en (0xA0, 0x20) menos la cuenta: sube
+	ld de,020a0h		;9892   ; en (0x20, 0xA0) menos la cuenta: sube
 	ld a,(0ca03h)		;9895   ; lee la cuenta de la linea del prologo (8 pasos)
 	ld b,a			;9898
 	ld a,d			;9899

@@ -761,14 +761,14 @@ L 0x51A5 dos_fichas_89f9 las 2 fichas de 2 bits de p08:89F9 en la VRAM DE
 L 0x51AD graficos_de_escena listas de fichas p07:61C1 y p04:799C
 L 0x51C5 fichas_comunes con 13-14-15: la lista p15:BB95 y p15:B4EB
 L 0x51D4 graficos_de_sala5 la lista p08:8A35 y el dibujo de p06:B105 con sus remiendos
-L 0x5229 fichas_de_p_aafa 3 x 2 fichas con los numeros de 0xAAFA en (0x98, 0x60)
+L 0x5229 fichas_de_p_aafa 3 x 2 fichas con los numeros de 0xAAFA en (0x60, 0x98)
 L 0x5248 remiendo los remiendos A del dibujo de 0xE800 (p06:B18A)
 L 0x5270 copia_c094 copia 16 x 16 de (0xC0, 0x94) de la pagina 1 y la ficha doble 0x14
 L 0x5286 lista_de_la_ruina DE y HL de p07:6000 + 4 * ruina y p00:529C
 L 0x5296 lista_y_vuelve p00:529C y vuelve con 1-2-3
 L 0x529C lista_de_fichas lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
 L 0x52D6 decodifica_fichas el decodificador del formato C & 0x0F: 1, 2 o 3 bits, normal o volteado
-L 0x52EF caracteres_93 6 parejas del caracter 0x93 en la pagina 1 desde (0x88, 0x30)
+L 0x52EF caracteres_93 6 parejas del caracter 0x93 en la pagina 1 desde (0x30, 0x88)
 L 0x5346 fase_de_la_ruina A = 0xC211 - (ruina * 5 + 1): la fase dentro de la ruina
 L 0x5354 caracteres_de_p07 con 7-8-9: los 2 x 5 caracteres de p07:6014 y p07:603C
 L 0x5372 graficos_comunes_de_fase con 10-11-12: la lista p12:ADE3 y el texto p12:AF48
@@ -985,7 +985,7 @@ C 0x4275 si_o_no: 0xC22A = la respuesta con las teclas (1 o 2) o 0
 C 0x4278 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x427B lee la respuesta en la antesala (1 o 2)
 C 0x4283 bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-C 0x4286 copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+C 0x4286 copia_6078: copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 C 0x4289 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x428C apunta a el paso del estado
 C 0x4291 lee la pantalla de la antesala (0-2)
@@ -1003,7 +1003,7 @@ C 0x42C9 lee las teclas nuevas
 C 0x42CF apunta a la espera del estado, en cuadros
 C 0x42D4 lee las puertas abiertas de la antesala
 C 0x42DA bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-C 0x42DD copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+C 0x42DD copia_6078: copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 C 0x42E0 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x42E5 guarda el paso del estado
 C 0x42E9 bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
@@ -1015,7 +1015,7 @@ C 0x42FF apunta a la espera del estado, en cuadros
 C 0x4304 borra_personajes: pone a cero 0xC240-0xC258
 C 0x4307 lleva_segun_ficha_0: 0xC240 = el byte 0 de la ficha del personaje 0
 C 0x430A bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-C 0x430D copia_de_la_puerta: copia 0x20 x 8 de (X - 0x18, 0x93) a (0x78, 0x60) segun la X de la antesala (0xCC13)
+C 0x430D copia_de_la_puerta: copia 0x20 x 8 de (X - 0x18, 0x93) a (0x60, 0x78) segun la X de la antesala (0xCC13)
 C 0x4310 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x4313 siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 C 0x4318 bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
@@ -1413,7 +1413,7 @@ C 0x51FB guarda las fichas van a la pagina 1
 C 0x51FE apunta a bufer de fichas decodificadas
 C 0x520A ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 C 0x521C copia_c094: copia 16 x 16 de (0xC0, 0x94) de la pagina 1 y la ficha doble 0x14
-C 0x521F fichas_de_p_aafa: 3 x 2 fichas con los numeros de 0xAAFA en (0x98, 0x60)
+C 0x521F fichas_de_p_aafa: 3 x 2 fichas con los numeros de 0xAAFA en (0x60, 0x98)
 C 0x5223 guarda las fichas van a la pagina 1
 C 0x5226 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x5233 ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
@@ -1823,7 +1823,7 @@ C 0x5E45 paleta_de_fase: p06:B335 y la paleta de la ruina (p06:B2DB), o la de la
 C 0x5E48 graficos_comunes_de_fase: con 10-11-12: la lista p12:ADE3 y el texto p12:AF48
 C 0x5E4B lista_af81: con 10-11-12: la lista p12:AF81
 C 0x5E4E lista_af78: con 4-5-6: la lista p06:AF78
-C 0x5E51 caracteres_93: 6 parejas del caracter 0x93 en la pagina 1 desde (0x88, 0x30)
+C 0x5E51 caracteres_93: 6 parejas del caracter 0x93 en la pagina 1 desde (0x30, 0x88)
 C 0x5E54 copia_seis_8858: 6 copias de 16 x 8 de (0x88, 0x58) de la pagina 1
 C 0x5E57 graficos_del_personaje: la lista de p09:BB32[0xC240] y su paleta
 C 0x5E5C guarda la pantalla de la fase (desde 1)

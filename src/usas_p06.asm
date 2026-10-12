@@ -15,32 +15,32 @@
 
 
 L_A000:
-	jr c,L_A01E		;a000
+	jr c,L_A01E		;a000   ; con F2, deshace (p06:A01E)
 	call mando_de_informacion		;a002   ; mando_de_informacion: las teclas de INFORMATION: la mejora (0xC228, 0-2) y el personaje (0xC229)
 	call cursor_de_informacion		;a005   ; cursor_de_informacion: los sprites del cursor segun 0xC228
 	call compra		;a008   ; compra: INFORMATION, con la tecla 0x10: si las monedas (0xC259) llegan al precio de la mejora 0xC228, la compra
 	ld a,(0de80h)		;a00b   ; lee variable de trabajo del banco 0
-	and a			;a00e
+	and a			;a00e   ; sin compra en este cuadro, solo los sprites
 	jp z,05690h		;a00f   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	call 09f88h		;a012   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 	call 04797h		;a015   ; cifras_dobles_48bc: p00:4785 con BC = 0x48BC
 	call 09fbch		;a018   ; numeros_de_informacion: los numeros de las fichas de los dos personajes en INFORMATION
 	jp 05690h		;a01b   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 L_A01E:
-	ld b,002h		;a01e
+	ld b,002h		;a01e   ; deshacer: de los dos personajes...
 	ld hl,0c2b0h		;a020   ; apunta a la ficha del personaje 0 (14 bytes)
 L_A023:
 	push hl			;a023
 	push bc			;a024
 	ld d,h			;a025
 	ld e,l			;a026
-	ld a,010h		;a027
+	ld a,010h		;a027   ; ...los bytes 16-31 de la ficha (la copia de al entrar) vuelven a los 0-15
 	call 04083h		;a029   ; hl_mas_a: HL = HL + A
 	ld bc,00010h		;a02c
 	ldir		;a02f
 	pop bc			;a031
 	pop hl			;a032
-	ld a,020h		;a033
+	ld a,020h		;a033   ; el personaje siguiente, 0x20 bytes mas alla
 	call 04083h		;a035   ; hl_mas_a: HL = HL + A
 	djnz L_A023		;a038
 	ld hl,(0c22bh)		;a03a   ; lee las monedas al entrar en INFORMATION y el byte siguiente (16 bits)
@@ -52,21 +52,21 @@ mando_de_informacion:		; las teclas de INFORMATION: la mejora (0xC228, 0-2) y el
 	ld hl,0c228h		;a049   ; apunta a la mejora elegida en INFORMATION (0-2)
 	ld de,0c229h		;a04c   ; apunta a el personaje elegido en INFORMATION
 	ld a,(0c006h)		;a04f   ; lee las teclas nuevas
-	rra			;a052
+	rra			;a052   ; arriba: la mejora anterior
 	jr c,L_A086		;a053
-	rra			;a055
+	rra			;a055   ; abajo: la siguiente
 	jr c,L_A07C		;a056
-	rra			;a058
+	rra			;a058   ; izquierda o derecha: el otro personaje
 	jr c,L_A05D		;a059
 	rra			;a05b
 	ret nc			;a05c
 L_A05D:
 	ld a,(0c2b0h)		;a05d   ; lee la ficha del personaje 0 (14 bytes)
-	ld b,a			;a060
+	ld b,a			;a060   ; si ha caido alguno...
 	ld a,(0c2d0h)		;a061   ; lee la ficha del personaje 1 (14 bytes)
 	or b			;a064
 	jr z,L_A070		;a065
-	ld a,b			;a067
+	ld a,b			;a067   ; ...el que queda: 1 si ha caido el 0, 0 si no
 	and a			;a068
 	ld a,001h		;a069
 	jr nz,L_A06E		;a06b
@@ -75,29 +75,29 @@ L_A06E:
 	ld (de),a			;a06e
 	ret			;a06f
 L_A070:
-	ld a,(de)			;a070
+	ld a,(de)			;a070   ; si estan los dos, cambia
 	xor 001h		;a071
 	ld (de),a			;a073
 	ld a,(0c000h)		;a074   ; lee el estado del juego
-	cp 00bh		;a077
+	cp 00bh		;a077   ; en la pausa (estado 0x0B) no suena
 	jr nz,L_A08D		;a079
 	ret			;a07b
 L_A07C:
 	inc (hl)			;a07c   ; la opcion siguiente de 0 a 2
-	ld a,(hl)			;a07d
+	ld a,(hl)			;a07d   ; de 0 a 2
 	cp 003h		;a07e
 	jr c,L_A08D		;a080
 	ld (hl),000h		;a082
 	jr L_A08D		;a084
 L_A086:
-	dec (hl)			;a086
+	dec (hl)			;a086   ; la anterior, de 2 a 0
 	ld a,(hl)			;a087
 	rla			;a088
 	jr nc,L_A08D		;a089
 	ld (hl),002h		;a08b
 L_A08D:
 	ld a,(0c000h)		;a08d   ; lee el estado del juego
-	cp 00bh		;a090
+	cp 00bh		;a090   ; el sonido: 1, o 0x70 en la pausa
 	ld a,001h		;a092
 	jr nz,L_A098		;a094
 	ld a,070h		;a096
@@ -107,7 +107,7 @@ cursor_de_informacion:		; los sprites del cursor segun 0xC228
 	ld a,(0c228h)		;a09b   ; lee la mejora elegida en INFORMATION (0-2)
 	ld hl,0de00h		;a09e   ; apunta a los atributos de los sprites en RAM
 	ld de,0de04h		;a0a1   ; apunta a la Y del sprite 1 en RAM
-	ld c,a			;a0a4
+	ld c,a			;a0a4   ; la Y del cursor: mejora * 0x19 + 0x72
 	add a,a			;a0a5
 	add a,a			;a0a6
 	add a,a			;a0a7
@@ -116,67 +116,67 @@ cursor_de_informacion:		; los sprites del cursor segun 0xC228
 	add a,b			;a0aa
 	add a,c			;a0ab
 	add a,072h		;a0ac
-	ld (hl),a			;a0ae
+	ld (hl),a			;a0ae   ; en los dos sprites del cursor
 	ld (de),a			;a0af
 	inc l			;a0b0
 	inc e			;a0b1
 	call estado_11		;a0b2   ; estado_11: en el estado 0x0B, 0xC229 = el personaje que se lleva
 	ld a,(0c229h)		;a0b5   ; lee el personaje elegido en INFORMATION
-	and a			;a0b8
+	and a			;a0b8   ; la X: 0x43 con Wit, 0xC3 con Cles...
 	ld a,043h		;a0b9
 	jr z,L_A0BF		;a0bb
 	ld a,0c3h		;a0bd
 L_A0BF:
 	ld (hl),a			;a0bf
-	add a,010h		;a0c0
+	add a,010h		;a0c0   ; ...y el segundo 16 mas a la derecha
 	ld (de),a			;a0c2
 	inc l			;a0c3
 	inc e			;a0c4
-	ld (hl),000h		;a0c5
+	ld (hl),000h		;a0c5   ; el patron 0 y el 4
 	ex de,hl			;a0c7
 	ld (hl),004h		;a0c8
 	ld hl,0dc00h		;a0ca   ; apunta a los colores de los sprites en RAM (16 por sprite)
 	ld de,0dc01h		;a0cd
 	ld bc,0001fh		;a0d0
-	ld (hl),00ah		;a0d3
+	ld (hl),00ah		;a0d3   ; color 0x0A en sus 32 lineas
 	ldir		;a0d5
-	ld a,0d8h		;a0d7
+	ld a,0d8h		;a0d7   ; el sprite 2 escondido
 	ld (0de08h),a		;a0d9   ; guarda la Y del sprite 2 en RAM
 	ret			;a0dc
 estado_11:		; en el estado 0x0B, 0xC229 = el personaje que se lleva
 	ld a,(0c000h)		;a0dd   ; lee el estado del juego
-	cp 00bh		;a0e0
+	cp 00bh		;a0e0   ; solo en el estado 0x0B (la pausa)
 	ret nz			;a0e2
 	ld a,(0c240h)		;a0e3   ; lee el personaje que se lleva (0 o 1)
 	ld (0c229h),a		;a0e6   ; guarda el personaje elegido en INFORMATION
 	ret			;a0e9
 compra:		; INFORMATION, con la tecla 0x10: si las monedas (0xC259) llegan al precio de la mejora 0xC228, la compra
-	xor a			;a0ea
+	xor a			;a0ea   ; sin compra todavia
 	ld (0de80h),a		;a0eb   ; guarda variable de trabajo del banco 0
 	ld a,(0c006h)		;a0ee   ; lee las teclas nuevas
-	and 010h		;a0f1
+	and 010h		;a0f1   ; la tecla 0x10 (espacio)
 	ret z			;a0f3
 	ld a,(0c228h)		;a0f4   ; lee la mejora elegida en INFORMATION (0-2)
-	add a,a			;a0f7
+	add a,a			;a0f7   ; el precio: los bytes 8 + mejora * 2 de la ficha (BCD)
 	add a,008h		;a0f8
 	ld b,a			;a0fa
 	call byte_de_ficha		;a0fb   ; byte_de_ficha: HL = la ficha del personaje 0xC229 + B
 	ld (0de81h),hl		;a0fe
-	ld e,(hl)			;a101
+	ld e,(hl)			;a101   ; DE = el precio
 	inc l			;a102
 	ld d,(hl)			;a103
 	ld hl,(0c259h)		;a104   ; lee las monedas (16 bits) y el byte siguiente (16 bits)
 	call 00020h		;a107   ; BIOS DCOMPR - Compares HL with DE
-	ret c			;a10a
+	ret c			;a10a   ; sin monedas bastantes, nada
 	ld a,(0c228h)		;a10b   ; lee la mejora elegida en INFORMATION (0-2)
-	ld bc,00104h		;a10e
+	ld bc,00104h		;a10e   ; la mejora 1 (SPD): el byte 1, hasta 4
 	dec a			;a111
 	jr z,L_A11F		;a112
-	inc b			;a114
+	inc b			;a114   ; la 2 (JMP): el byte 2, hasta 2
 	ld c,002h		;a115
 	dec a			;a117
 	jr z,L_A11F		;a118
-	inc b			;a11a
+	inc b			;a11a   ; la 0 (VIT): el byte 5 (la vida), hasta 0x3F
 	inc b			;a11b
 	inc b			;a11c
 	ld c,03fh		;a11d
@@ -211,7 +211,7 @@ L_A132:
 	pop de			;a141
 L_A142:
 	ld hl,(0c259h)		;a142   ; lee las monedas (16 bits) y el byte siguiente (16 bits)
-	ld a,l			;a145
+	ld a,l			;a145   ; las monedas - el precio, en BCD
 	sub e			;a146
 	daa			;a147
 	ld l,a			;a148
@@ -220,10 +220,10 @@ L_A142:
 	daa			;a14b
 	ld h,a			;a14c
 	ld (0c259h),hl		;a14d   ; guarda las monedas (16 bits) y el byte siguiente (16 bits)
-	ld a,001h		;a150
+	ld a,001h		;a150   ; comprado
 	ld (0de80h),a		;a152   ; guarda variable de trabajo del banco 0
 	ld a,(0c000h)		;a155   ; lee el estado del juego
-	cp 00bh		;a158
+	cp 00bh		;a158   ; el sonido 2, o 0x71 en la pausa
 	ld a,002h		;a15a
 	jr nz,L_A160		;a15c
 	ld a,071h		;a15e
@@ -236,7 +236,7 @@ byte_de_ficha:		; HL = la ficha del personaje 0xC229 + B
 	jr z,L_A16F		;a16a
 	ld hl,0c2d0h		;a16c   ; apunta a la ficha del personaje 1 (14 bytes)
 L_A16F:
-	ld a,b			;a16f
+	ld a,b			;a16f   ; + B
 	jp 04083h		;a170   ; hl_mas_a: HL = HL + A
 
 ; ----------------------------------------------------------------------
@@ -298,17 +298,17 @@ empieza_rotulo_de_ruina:		; el texto a maquina de p06:A2B9[ruina]: [X] y caracte
 	ld hl,0a2b9h		;a249
 	ld a,(0c21dh)		;a24c   ; lee la ruina (0-4)
 	call 0543ah		;a24f   ; palabra_a: HL = la palabra A de la tabla HL
-	ld d,(hl)			;a252
-	ld e,0b0h		;a253
+	ld d,(hl)			;a252   ; [X]
+	ld e,0b0h		;a253   ; en la Y 0xB0
 	ld (0c8a7h),de		;a255   ; guarda el principio de la linea del texto a maquina y el byte siguiente (16 bits)
 	ld (0c8a3h),de		;a259   ; guarda la posicion del texto a maquina y el byte siguiente (16 bits)
-	inc hl			;a25d
+	inc hl			;a25d   ; detras, el texto
 	ld (0c8a1h),hl		;a25e   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
-	ld a,03ch		;a261
+	ld a,03ch		;a261   ; 0x3C cuadros de espera
 	ld (0c8a5h),a		;a263   ; guarda la espera hasta la siguiente letra
-	xor a			;a266
+	xor a			;a266   ; en marcha
 	ld (0c8a6h),a		;a267   ; guarda el texto a maquina ha acabado
-	ld hl,0a270h		;a26a
+	ld hl,0a270h		;a26a   ; el texto p06:A270
 	jp 04d4ah		;a26d   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 
 ; ----------------------------------------------------------------------
@@ -333,27 +333,27 @@ DATA_texto_pA324:
 letra_del_rotulo:		; si no ha acabado, cada 0xC8A5 cuadros la siguiente letra del texto a maquina
 	ld a,(0c8a6h)		;a28a   ; lee el texto a maquina ha acabado
 	and a			;a28d
-	ret nz			;a28e
+	ret nz			;a28e   ; ya acabado: nada
 	ld hl,0c8a5h		;a28f   ; apunta a la espera hasta la siguiente letra
 	dec (hl)			;a292
-	ret nz			;a293
+	ret nz			;a293   ; la espera hasta la letra siguiente
 	ld hl,(0c8a1h)		;a294   ; lee el puntero del texto a maquina y el byte siguiente (16 bits)
-	ld a,(hl)			;a297
+	ld a,(hl)			;a297   ; la letra
 	inc hl			;a298
 	ld (0c8a1h),hl		;a299   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
 	ld b,a			;a29c
 	inc a			;a29d
-	jr z,L_A2B5		;a29e
+	jr z,L_A2B5		;a29e   ; 0xFF: acabado
 	ld a,b			;a2a0
 	ld de,(0c8a3h)		;a2a1   ; lee la posicion del texto a maquina y el byte siguiente (16 bits)
 	call 04d86h		;a2a5   ; caracter_de_la_fuente: el caracter A de la fuente de la pagina 1 a (D, E) (HMMM)
 	call 04e3fh		;a2a8   ; avanza_ocho: D + 8, y E + 8 si D da la vuelta
 	ld (0c8a3h),de		;a2ab   ; guarda la posicion del texto a maquina y el byte siguiente (16 bits)
-	ld a,008h		;a2af
+	ld a,008h		;a2af   ; 8 cuadros hasta la siguiente
 	ld (0c8a5h),a		;a2b1   ; guarda la espera hasta la siguiente letra
 	ret			;a2b4
 L_A2B5:
-	ld a,001h		;a2b5
+	ld a,001h		;a2b5   ; acabado
 	ld (0c8a6h),a		;a2b7   ; guarda el texto a maquina ha acabado
 	ret			;a2ba
 
@@ -402,54 +402,54 @@ DATA_nombre_ruina_4:
 
 pantalla_de_clave:		; borra lo tecleado (0xE360) y pinta el recuadro de la clave
 	ld hl,0e360h		;a2fc   ; apunta a lo tecleado (la clave)
-	ld bc,0001fh		;a2ff
+	ld bc,0001fh		;a2ff   ; 0x20 bytes
 	call 05f08h		;a302   ; borra: pone a cero BC + 1 bytes desde HL
-	ld hl,040a0h		;a305
+	ld hl,040a0h		;a305   ; HMMV de 0x80 x 0x40 en (0x40, 0xA0) con el color 0x66
 	ld bc,08040h		;a308
 	ld a,066h		;a30b
 	ld d,000h		;a30d
 	call 04ba2h		;a30f   ; rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
-	ld hl,03ca0h		;a312
+	ld hl,03ca0h		;a312   ; el recuadro: (0x3C, 0xA0) de 0x88 x 0x28, color 0x0D
 	ld de,08828h		;a315
 	ld c,00dh		;a318
 	call 04b74h		;a31a   ; rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
-	xor a			;a31d
+	xor a			;a31d   ; sin tecla tecleada
 	ld (0c20eh),a		;a31e
 	ld (0c20fh),a		;a321   ; guarda la tecla tecleada
-	ld hl,0a27ah		;a324
+	ld hl,0a27ah		;a324   ; KEYWORD / INPUT KEYWORD
 	jp 04d4ah		;a327   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 teclea_clave:		; la tecla nueva al final de lo tecleado en 0xE360 (0xE378 cuenta las letras)
 	call lee_teclado		;a32a   ; lo tecleado (p06:A392): si no hay tecla nueva, nada
 	ld a,(0c20fh)		;a32d   ; lee la tecla tecleada
-	and a			;a330
+	and a			;a330   ; sin tecla nueva, nada
 	ret z			;a331
 	ld b,a			;a332
 	ld de,0e378h		;a333   ; la tecla al final de lo escrito en 0xE360 (0xE378 cuenta las letras) y 0xFF detras
-	ld a,(de)			;a336
+	ld a,(de)			;a336   ; cuantas hay
 	ld hl,0e360h		;a337   ; apunta a lo tecleado (la clave)
 	call 04083h		;a33a   ; hl_mas_a: HL = HL + A
-	ld a,b			;a33d
+	ld a,b			;a33d   ; la tecla
 	ld (hl),a			;a33e
 	inc l			;a33f
-	ld (hl),0ffh		;a340
+	ld (hl),0ffh		;a340   ; 0xFF detras
 	push de			;a342
 	push bc			;a343
 	ld hl,0e360h		;a344   ; lo escrito en (0xB8, 0x48)
-	ld de,048b8h		;a347
+	ld de,048b8h		;a347   ; lo tecleado en (0x48, 0xB8)
 	ld c,0ffh		;a34a
 	call 04d54h		;a34c   ; texto_en_de: el texto de HL en la posicion (D, E) que ya hay, con C (p00:4D4A sin leer [X][Y])
 	pop bc			;a34f
 	pop de			;a350
 	inc b			;a351   ; con la tecla 0xFF (p06:A35B), se compara; si no, una letra mas hasta 0x0E
-	jr z,L_A35B		;a352
+	jr z,L_A35B		;a352   ; con la tecla 0x0D (RETURN): se mira la clave (p06:A35B)
 	ex de,hl			;a354
-	ld a,(hl)			;a355
+	ld a,(hl)			;a355   ; si no, una letra mas, hasta 14
 	cp 00eh		;a356
 	ret nc			;a358
 	inc (hl)			;a359
 	ret			;a35a
 L_A35B:
-	ld b,004h		;a35b
+	ld b,004h		;a35b   ; las 4 claves de p06:A2BB...
 L_A35D:
 	ld hl,0a2bbh		;a35d
 	ld a,b			;a360
@@ -460,15 +460,15 @@ L_A35D:
 	push bc			;a369
 	call compara_con_e360		;a36a   ; compara_con_e360: compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
 	pop bc			;a36d
-	jr z,L_A37B		;a36e
+	jr z,L_A37B		;a36e   ; ...si coincide, esa (p06:A37B)
 	djnz L_A35D		;a370
-	ld a,001h		;a372
+	ld a,001h		;a372   ; ninguna: la clave no vale (0xE37A = 1)
 	ld (0e37ah),a		;a374
 	ld (0e379h),a		;a377
 	ret			;a37a
 L_A37B:
 	ld a,b			;a37b   ; 4 - B + 1: la ruina cuyo nombre coincide, a 0xE379
-	sub 004h		;a37c
+	sub 004h		;a37c   ; la clave n: la ruina 4 - n + 1 (0xE379)
 	neg		;a37e
 	inc a			;a380
 	ld (0e379h),a		;a381
@@ -477,34 +477,34 @@ compara_con_e360:		; compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
 	ld de,0e360h		;a385   ; apunta a lo tecleado (la clave)
 L_A388:
 	ld a,(de)			;a388   ; compara byte a byte hasta el 0xFF
-	cp (hl)			;a389
+	cp (hl)			;a389   ; letra a letra...
 	ret nz			;a38a
 	ld a,(hl)			;a38b
 	inc a			;a38c
-	ret z			;a38d
+	ret z			;a38d   ; ...hasta la 0xFF: iguales
 	inc hl			;a38e
 	inc de			;a38f
 	jr L_A388		;a390
 lee_teclado:		; las 9 filas de la matriz (SNSMAT); la primera tecla pulsada, por p06:A3C8
-	ld b,009h		;a392
+	ld b,009h		;a392   ; las 9 filas del teclado
 	ld e,000h		;a394
 L_A396:
 	ld a,e			;a396   ; cada fila de la matriz (SNSMAT): la primera con alguna tecla
 	call 00141h		;a397   ; BIOS SNSMAT - Returns the value of the specified line from the keyboard matrix
-	cpl			;a39a
+	cpl			;a39a   ; una tecla pulsada (bit a cero)?
 	and a			;a39b
 	jr nz,L_A3A9		;a39c
 	inc e			;a39e
 	djnz L_A396		;a39f
 	xor a			;a3a1   ; ninguna: 0xC20E y 0xC20F a cero
-	ld hl,0c20eh		;a3a2
+	ld hl,0c20eh		;a3a2   ; ninguna: 0xC20E y 0xC20F a cero
 	ld (hl),a			;a3a5
 	inc hl			;a3a6
 	ld (hl),a			;a3a7
 	ret			;a3a8
 L_A3A9:
 	ld b,a			;a3a9
-	ld hl,0a3c8h		;a3aa
+	ld hl,0a3c8h		;a3aa   ; el caracter de p06:A3C8[fila * 8 + bit]
 	ld a,e			;a3ad
 	add a,a			;a3ae
 	add a,a			;a3af
@@ -521,7 +521,7 @@ L_A3BB:
 	and a			;a3bc
 	ret z			;a3bd
 	ld hl,0c20eh		;a3be   ; C = las teclas de antes; (0xC20E) = las de ahora
-	ld c,(hl)			;a3c1
+	ld c,(hl)			;a3c1   ; nueva solo si no estaba antes (0xC20E)
 	ld (hl),a			;a3c2
 	xor c			;a3c3   ; las nuevas a 0xC20F
 	and (hl)			;a3c4
@@ -549,16 +549,16 @@ DATA_teclado:
 ; ======================================================================
 
 
-copia_de_la_puerta:		; copia 0x20 x 8 de (X - 0x18, 0x93) a (0x78, 0x60) segun la X de la antesala (0xCC13)
+copia_de_la_puerta:		; copia 0x20 x 8 de (X - 0x18, 0x93) a (0x60, 0x78) segun la X de la antesala (0xCC13)
 	ld a,(0cc13h)		;a410   ; lee la X en la antesala
-	sub 018h		;a413
+	sub 018h		;a413   ; la puerta: 0x20 x 8 de (X - 0x18, 0x93)...
 	ld h,a			;a415
 	ld l,093h		;a416
-	ld de,06078h		;a418
+	ld de,06078h		;a418   ; ...a (0x60, 0x78) de la pagina 1
 	ld bc,02008h		;a41b
 	ld a,004h		;a41e
 	call 04bdeh		;a420   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
-	ld hl,0101ch		;a423
+	ld hl,0101ch		;a423   ; los recuadros del mensaje
 	ld bc,0e06eh		;a426
 	call 05e2fh		;a429   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	call lista_a7f8		;a42c   ; lista_a7f8: la lista de fichas p06:A7F8
@@ -570,9 +570,9 @@ copia_de_la_puerta:		; copia 0x20 x 8 de (X - 0x18, 0x93) a (0x78, 0x60) segun l
 	ld de,0e270h		;a43a
 	call rectangulo_guardando		;a43d   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	call recuadros_de_informacion		;a440   ; recuadros_de_informacion: los recuadros y lineas de p06:A7B4/A7BB
-	ld hl,0a60ah		;a443
+	ld hl,0a60ah		;a443   ; el texto p06:A60A
 	call 04d4ah		;a446   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
-	xor a			;a449
+	xor a			;a449   ; sin captura en marcha (0xC23B)
 	ld (0c23bh),a		;a44a
 	ld (0c8a0h),a		;a44d   ; guarda el texto a maquina en marcha
 	call paleta_b351		;a450   ; paleta_b351: la paleta p06:B351
@@ -580,7 +580,7 @@ copia_de_la_puerta:		; copia 0x20 x 8 de (X - 0x18, 0x93) a (0x78, 0x60) segun l
 	call numeros_de_las_fichas		;a456   ; numeros_de_las_fichas: los numeros de las fichas de los dos personajes
 	jp L_A5CD		;a459
 lista_a7f8:		; la lista de fichas p06:A7F8
-	ld hl,0a7f8h		;a45c
+	ld hl,0a7f8h		;a45c   ; la lista de fichas de INFORMATION
 	ld de,0a7e4h		;a45f
 	jp 0529ch		;a462   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
 paleta_b351:		; la paleta p06:B351
@@ -588,17 +588,17 @@ paleta_b351:		; la paleta p06:B351
 	jp 04a9dh		;a468   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
 recuadros_de_informacion:		; los recuadros y lineas de p06:A7B4/A7BB
 	call recuadros_2		;a46b   ; recuadros_2: dos recuadros de 0x32 x 0x32
-	ld hl,01460h		;a46e
+	ld hl,01460h		;a46e   ; los dos recuadros de los numeros: (0x14, 0x60) y (0x84, 0x60) de 0x68 x 0x25
 	ld de,06825h		;a471
 	call rectangulo_guardando		;a474   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	ld h,084h		;a477
 	call rectangulo_guardando		;a479   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-	ld hl,0a7b4h		;a47c
+	ld hl,0a7b4h		;a47c   ; las lineas verticales y horizontales
 	call 055ceh		;a47f   ; lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
 	ld hl,0a7bbh		;a482
 	jp 055d1h		;a485   ; lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
 recuadros_2:		; dos recuadros de 0x32 x 0x32
-	ld hl,0172bh		;a488
+	ld hl,0172bh		;a488   ; los de los retratos en (0x17, 0x2B) y (0xB7, 0x2B), 0x32 x 0x32
 	ld de,03232h		;a48b
 	call rectangulo_guardando		;a48e   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	ld hl,0b72bh		;a491
@@ -606,7 +606,7 @@ rectangulo_guardando:		; p00:4B74 con el color 0x0D sin tocar registros
 	push hl			;a494
 	push de			;a495
 	push bc			;a496
-	ld c,00dh		;a497
+	ld c,00dh		;a497   ; color 0x0D
 	call 04b74h		;a499   ; rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
 	pop bc			;a49c
 	pop de			;a49d
@@ -615,12 +615,12 @@ rectangulo_guardando:		; p00:4B74 con el color 0x0D sin tocar registros
 recuadro_parpadea:		; el recuadro del personaje que se lleva, 0x0D o 0x0A cada 16 cuadros
 	ld a,(0c240h)		;a4a0   ; lee el personaje que se lleva (0 o 1)
 	and a			;a4a3
-	ld h,017h		;a4a4
+	ld h,017h		;a4a4   ; en la X 0x17 (Wit) o 0xB7 (Cles)
 	jr z,L_A4AA		;a4a6
 	ld h,0b7h		;a4a8
 L_A4AA:
 	ld a,(0c003h)		;a4aa   ; lee la cuenta de cuadros
-	and 010h		;a4ad
+	and 010h		;a4ad   ; cada 16 cuadros, 0x0D o 0x0A
 	ld c,00dh		;a4af
 	jr z,L_A4B5		;a4b1
 	ld c,00ah		;a4b3
@@ -629,35 +629,35 @@ L_A4B5:
 	ld de,03232h		;a4b7
 	jp 04b74h		;a4ba   ; rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
 retratos:		; los retratos de los dos personajes segun su estado (p06:A644/A64C)
-	xor a			;a4bd
+	xor a			;a4bd   ; en su sitio de la antesala (0xDE80 = 0)
 retratos_en:		; los retratos de los dos personajes con 0xDE80 = A (p06:A4BD con A)
 	ld (0de80h),a		;a4be   ; guarda variable de trabajo del banco 0
 	ld a,(0c2b6h)		;a4c1   ; lee el estado del personaje 0
-	ld hl,0a644h		;a4c4
+	ld hl,0a644h		;a4c4   ; el retrato de Wit segun su animo
 	call 0543ah		;a4c7   ; palabra_a: HL = la palabra A de la tabla HL
 	ld a,(0de80h)		;a4ca   ; lee variable de trabajo del banco 0
 	and a			;a4cd
-	ld de,0182ch		;a4ce
+	ld de,0182ch		;a4ce   ; en (0x18, 0x2C), o (0x28, 0x2C) en INFORMATION
 	jr z,L_A4D5		;a4d1
 	ld d,028h		;a4d3
 L_A4D5:
 	ld a,(0c2b0h)		;a4d5   ; lee la ficha del personaje 0 (14 bytes)
-	and a			;a4d8
+	and a			;a4d8   ; solo si no ha caido
 	call z,retrato		;a4d9   ; retrato: 6 x 6 fichas de HL en (D, E)
 	ld a,(0c2d6h)		;a4dc   ; lee el estado del personaje 1
-	ld hl,0a64ch		;a4df
+	ld hl,0a64ch		;a4df   ; el de Cles
 	call 0543ah		;a4e2   ; palabra_a: HL = la palabra A de la tabla HL
 	ld a,(0de80h)		;a4e5   ; lee variable de trabajo del banco 0
 	and a			;a4e8
-	ld de,0b82ch		;a4e9
+	ld de,0b82ch		;a4e9   ; en (0xB8, 0x2C), o (0xA8, 0x2C)
 	jr z,L_A4F0		;a4ec
 	ld d,0a8h		;a4ee
 L_A4F0:
 	ld a,(0c2d0h)		;a4f0   ; lee la ficha del personaje 1 (14 bytes)
 	and a			;a4f3
-	ret nz			;a4f4
+	ret nz			;a4f4   ; si ha caido, no
 retrato:		; 6 x 6 fichas de HL en (D, E)
-	ld b,006h		;a4f5
+	ld b,006h		;a4f5   ; 6 filas de 6 fichas
 L_A4F7:
 	push bc			;a4f7
 	push de			;a4f8
@@ -665,7 +665,7 @@ L_A4F7:
 L_A4FB:
 	ld a,(hl)			;a4fb   ; una fila de 6 fichas del retrato
 	call 04db4h		;a4fc   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
-	ld a,d			;a4ff
+	ld a,d			;a4ff   ; 8 a la derecha
 	add a,008h		;a500
 	ld d,a			;a502
 	inc hl			;a503
@@ -673,17 +673,17 @@ L_A4FB:
 	pop de			;a506
 	pop bc			;a507
 	ld a,e			;a508   ; la siguiente fila
-	add a,008h		;a509
+	add a,008h		;a509   ; la fila siguiente
 	ld e,a			;a50b
 	djnz L_A4F7		;a50c
 	ret			;a50e
 numeros_de_las_fichas:		; los numeros de las fichas de los dos personajes
-	ld hl,0c2b1h		;a50f
+	ld hl,0c2b1h		;a50f   ; los niveles de Wit en columnas...
 	ld de,03c6eh		;a512
 	call doce_numeros		;a515   ; doce_numeros: los valores de (HL) en columnas de 12
-	ld de,03863h		;a518
+	ld de,03863h		;a518   ; ...y su barra de vida
 	call 04758h		;a51b   ; barra_de_cuartos: la barra de A / 4 trozos llenos de (HL - 1) / 4 (trozos de 4 x 8 de la pagina 1)
-	ld hl,0c2d1h		;a51e
+	ld hl,0c2d1h		;a51e   ; los de Cles
 	ld de,0ac6eh		;a521
 	call doce_numeros		;a524   ; doce_numeros: los valores de (HL) en columnas de 12
 	ld de,0a863h		;a527
@@ -692,14 +692,14 @@ doce_numeros:		; los valores de (HL) en columnas de 12
 	ld c,00ch		;a52d   ; 12 de separacion entre numeros
 	push bc			;a52f
 	ld a,(hl)			;a530   ; el primer valor + 1
-	inc a			;a531
+	inc a			;a531   ; el valor + 1
 	push hl			;a532
 	push de			;a533
 	call numero		;a534   ; numero: un numero (p06:A554)
 	pop de			;a537
 	pop hl			;a538
 	pop bc			;a539
-	ld a,e			;a53a
+	ld a,e			;a53a   ; la siguiente columna, C mas abajo
 	add a,c			;a53b
 	ld e,a			;a53c
 	inc l			;a53d   ; el segundo valor + 1
@@ -714,27 +714,27 @@ doce_numeros:		; los valores de (HL) en columnas de 12
 	ld a,(hl)			;a548
 	ret			;a549
 numero:		; un numero (p06:A554)
-	exx			;a54a
+	exx			;a54a   ; 12 entre marca y marca
 	ld b,00ch		;a54b
 	exx			;a54d
 	jr L_A554		;a54e
 marcas_de_numero:		; el numero A en marcas: 5 en los bytes 0 y 1 de la ficha, 3 en los demas
 	exx			;a550
-	ld b,008h		;a551
+	ld b,008h		;a551   ; 8 entre marca y marca
 	exx			;a553
 L_A554:
 	ld c,a			;a554   ; los bytes 0 y 1 de la ficha llevan 5 marcas; los demas 3
-	ld a,l			;a555
+	ld a,l			;a555   ; en los bytes 0 y 1 de la ficha...
 	and 00fh		;a556
 	cp 002h		;a558
 	ld b,005h		;a55a
 	jr c,L_A560		;a55c
-	ld b,003h		;a55e
+	ld b,003h		;a55e   ; ...y 3 en los demas
 L_A560:
-	ld hl,06058h		;a560
+	ld hl,06058h		;a560   ; la marca llena (de (0x60, 0x58))...
 L_A563:
 	push hl			;a563   ; la marca llena (0x0000) o vacia
-	ld a,c			;a564
+	ld a,c			;a564   ; ...mientras queden; despues, la vacia (de (0, 0))
 	and a			;a565
 	jr nz,L_A56D		;a566
 	ld hl,00000h		;a568
@@ -744,7 +744,7 @@ L_A56D:
 L_A56E:
 	push de			;a56e   ; 8 x 8 de la pagina 1 y la siguiente marca
 	push bc			;a56f
-	ld bc,00808h		;a570
+	ld bc,00808h		;a570   ; 8 x 8
 	call 04841h		;a573   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 	pop bc			;a576
 	pop de			;a577
@@ -752,7 +752,7 @@ L_A56E:
 	exx			;a579
 	ld a,b			;a57a
 	exx			;a57b
-	add a,d			;a57c
+	add a,d			;a57c   ; la siguiente, B mas a la derecha
 	ld d,a			;a57d
 	djnz L_A563		;a57e
 	ret			;a580
@@ -760,20 +760,20 @@ elige_personaje:		; la eleccion de personaje: cambia con las teclas, el recuadro
 	call 05456h		;a581   ; texto_de_ruina_y_456: con 1-2-3: p01:7FF2 y vuelve con 4-5-6
 	call cambia_de_personaje		;a584   ; cambia_de_personaje: con las teclas, 0xC240 cambia si el otro vive
 	call recuadro_parpadea		;a587   ; recuadro_parpadea: el recuadro del personaje que se lleva, 0x0D o 0x0A cada 16 cuadros
-	ld b,000h		;a58a
+	ld b,000h		;a58a   ; el byte 0 de la ficha: si ha caido, nada
 	call 047edh		;a58c   ; byte_del_personaje: A = el byte B de la ficha del personaje que se lleva (0xC2B0 + 0xC240 * 32)
 	and a			;a58f
 	ret nz			;a590
 	ld a,(0c006h)		;a591   ; lee las teclas nuevas
-	and 010h		;a594
+	and 010h		;a594   ; con espacio...
 	ret z			;a596
-	ld a,001h		;a597
+	ld a,001h		;a597   ; ...elegido: 0xC23B = 1
 	ld (0c23bh),a		;a599
 	ret			;a59c
 cambia_de_personaje:		; con las teclas, 0xC240 cambia si el otro vive
 	ld hl,0c240h		;a59d   ; apunta a el personaje que se lleva (0 o 1)
 	ld a,(0c006h)		;a5a0   ; lee las teclas nuevas
-	rra			;a5a3
+	rra			;a5a3   ; izquierda o derecha: el otro personaje
 	rra			;a5a4
 	rra			;a5a5
 	jr c,L_A5AA		;a5a6
@@ -786,7 +786,7 @@ L_A5AA:
 	ld a,(0c2b0h)		;a5ae   ; lee la ficha del personaje 0 (14 bytes)
 	ld b,a			;a5b1
 	ld a,(0c2d0h)		;a5b2   ; lee la ficha del personaje 1 (14 bytes)
-	or b			;a5b5
+	or b			;a5b5   ; si ha caido alguno, el que queda
 	jr z,L_A5C2		;a5b6
 	ld a,b			;a5b8
 	and a			;a5b9
@@ -2860,7 +2860,7 @@ si_o_no:		; 0xC22A = la respuesta con las teclas (1 o 2) o 0
 L_BB76:
 	ld (hl),b			;bb76
 	ret			;bb77
-copia_6078:		; copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+copia_6078:		; copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 	ld de,03642h		;bb78
 	ld hl,06078h		;bb7b
 	ld bc,0941ch		;bb7e
@@ -2926,7 +2926,7 @@ espera_el_mensaje:		; los sprites de la antesala y, con la cuenta 0xC209 a cero,
 	ld hl,0c209h		;bc02   ; apunta a la cuenta del mensaje de la antesala
 	dec (hl)			;bc05
 	ret nz			;bc06
-	call copia_6078		;bc07   ; copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+	call copia_6078		;bc07   ; copia_6078: copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 	scf			;bc0a
 	ret			;bc0b
 prepara_la_captura:		; sentido y cuentas de la antesala a cero, 0xCC18 = 0x78; con 0xC31C distinto de 3, los colores de la antesala

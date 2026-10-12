@@ -48,6 +48,23 @@ class Listado(unittest.TestCase):
                     sin.append("p%02d:%04X -> p%s:%04X" % (b, a, "??" if bb is None else "%02d" % bb, d))
         self.assertEqual(sin, [])
 
+    def test_las_coordenadas_de_los_comentarios_van_x_y(self):
+        """En `ld hl/de,0xXXYY` el byte alto (H, D) es la X y el bajo la Y
+        (p00:4BF3, p00:4C00, p02:86A7): un comentario que da (YY, XX) esta al reves."""
+        import glob
+        import re
+        malos = []
+        for f in sorted(glob.glob(os.path.join(RAIZ, "src", "usas_p*.asm"))):
+            for ln in open(f, encoding="utf-8"):
+                m = re.match(r"^\tld (?:hl|de|bc),0([0-9a-f]{2})([0-9a-f]{2})h\s*;([0-9a-f]{4})\s*;(.*)$", ln.rstrip("\n"))
+                if not m:
+                    continue
+                hi, lo = int(m.group(1), 16), int(m.group(2), 16)
+                for x, y in re.findall(r"\((0x[0-9A-Fa-f]+), (0x[0-9A-Fa-f]+)\)", m.group(4)):
+                    if (int(x, 16), int(y, 16)) == (lo, hi) and lo != hi:
+                        malos.append(os.path.basename(f) + ":" + m.group(3))
+        self.assertEqual(malos, [])
+
     def test_el_makefile_y_paginas_py_dicen_lo_mismo(self):
         sys.path.insert(0, TOOLS)
         from paginas import ORG

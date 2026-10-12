@@ -29,7 +29,7 @@ L_8011:
 	ld (0c8a9h),a		;8012   ; guarda el personaje del texto
 empieza_texto_de_ruina:		; con 12: el texto a maquina de la ruina (p12:B603)
 	call recuadro_del_texto		;8015   ; recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
-	call posicion_del_texto		;8018   ; posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x30, 0x58)
+	call posicion_del_texto		;8018   ; posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x58, 0x30)
 	call 054aah		;801b   ; banco_12_en_a000: pone el banco 12 en 0xA000
 	ld hl,0b603h		;801e   ; el texto de la ruina: p12:B603[ruina]
 	ld a,(0c21dh)		;8021   ; lee la ruina (0-4)
@@ -95,13 +95,13 @@ L_8090:
 	ld a,(hl)			;8098   ; ...el otro personaje...
 	xor 001h		;8099
 	ld (hl),a			;809b
-	call posicion_del_texto		;809c   ; posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x30, 0x58)
+	call posicion_del_texto		;809c   ; posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x58, 0x30)
 	ld a,001h		;809f   ; ...y su recuadro, por borrar
 	ld (0c8aah),a		;80a1   ; guarda el recuadro del texto, por borrar
 L_80A4:
 	jp 05464h		;80a4   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-posicion_del_texto:		; 0xC8A7 y 0xC8A3 = (0x30, 0x58)
-	ld de,05830h		;80a7   ; en (0x30, 0x58)
+posicion_del_texto:		; 0xC8A7 y 0xC8A3 = (0x58, 0x30)
+	ld de,05830h		;80a7   ; en (0x58, 0x30)
 	ld (0c8a7h),de		;80aa   ; guarda el principio de la linea del texto a maquina y el byte siguiente (16 bits)
 	ld (0c8a3h),de		;80ae   ; guarda la posicion del texto a maquina y el byte siguiente (16 bits)
 	ret			;80b2
@@ -113,7 +113,7 @@ L_80B3:
 	ld (0c8abh),a		;80bb   ; guarda el texto a maquina ya ha salido
 	jr L_80A4		;80be
 recuadro_del_texto:		; borra el recuadro, su marco y sus lineas segun 0xC8A9
-	ld hl,04a28h		;80c0   ; borra 0x6D x 0x30 en (0x28, 0x4A)
+	ld hl,04a28h		;80c0   ; borra 0x6D x 0x30 en (0x4A, 0x28)
 	ld bc,06d30h		;80c3
 	call 05e2fh		;80c6   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	call 054b4h		;80c9   ; banco_6_en_a000: pone el banco 6 en 0xA000
@@ -1929,36 +1929,36 @@ copia_84_y_c310:		; copia 0x10 x 0x20 de (0x84, 0) a (0xA4, 0) y sigue segun 0xC
 	cp 003h		;8c80   ; del paso 3 en adelante...
 	ret c			;8c82
 	push af			;8c83
-	ld hl,07094h		;8c84   ; ...borra 0x20 x 0x10 en (0x94, 0x70)
+	ld hl,07094h		;8c84   ; ...borra 0x20 x 0x10 en (0x70, 0x94)
 	ld bc,02010h		;8c87
 	call 05e2fh		;8c8a   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	pop af			;8c8d
 	push af			;8c8e
 	sub 005h		;8c8f   ; en los pasos 5 y 6, el dibujo grande de p02:8CCA
 	cp 002h		;8c91
-	call c,copia_9060		;8c93   ; copia_9060: copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
+	call c,copia_9060		;8c93   ; copia_9060: copia 0x70 x 0x70 de (0x90, 0x60) a (0x48, 0x34)
 	pop af			;8c96
 	cp 006h		;8c97   ; del 6 en adelante, p02:8CAD
-	call nc,copia_8078		;8c99   ; copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
+	call nc,copia_8078		;8c99   ; copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x80, 0x78)
 	ld a,(0c21ch)		;8c9c   ; lee no queda ningun 0x19 (la sala 5, acabada)
 	and a			;8c9f
 	ret z			;8ca0   ; con la sala acabada...
-	ld hl,0f0a4h		;8ca1   ; ...borra 0x10 x 0x20 en (0xA4, 0xF0) y los actores
+	ld hl,0f0a4h		;8ca1   ; ...borra 0x10 x 0x20 en (0xF0, 0xA4) y los actores
 	ld bc,01020h		;8ca4
 	call 05e2fh		;8ca7   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	jp borra_d45e_y_actores		;8caa   ; borra_d45e_y_actores: pone a cero 4 registros de 0xD45E y borra los actores
-copia_8078:		; p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
-	call copia_6098		;8cad   ; copia_6098: copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
-	ld hl,08078h		;8cb0   ; 16 x 16 de (0x78, 0x80) de la pagina 1...
+copia_8078:		; p02:8D8A y dos copias de 16 x 16 de (0x80, 0x78)
+	call copia_6098		;8cad   ; copia_6098: copia 24 x 16 de (0x60, 0x98) a (0x78, 0x4C)
+	ld hl,08078h		;8cb0   ; 16 x 16 de (0x80, 0x78) de la pagina 1...
 	ld de,0c094h		;8cb3   ; a (0xC0, 0x94) de la pagina 1 (DE es la posicion, no RAM)
 	ld bc,01010h		;8cb6
 	ld a,005h		;8cb9
 	call 04bdeh		;8cbb   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
-	ld hl,08078h		;8cbe   ; ...y otra vez a (0x68, 0x78) de la 0
+	ld hl,08078h		;8cbe   ; ...y otra vez a (0x78, 0x68) de la 0
 	ld de,07868h		;8cc1
 	ld bc,01010h		;8cc4
 	jp 04841h		;8cc7   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
-copia_9060:		; copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
+copia_9060:		; copia 0x70 x 0x70 de (0x90, 0x60) a (0x48, 0x34)
 	ld de,04834h		;8cca
 	ld bc,07070h		;8ccd
 	ld hl,09060h		;8cd0
@@ -1974,7 +1974,7 @@ prepara_la_sala_5:		; 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo s
 	ret z			;8ce6
 	call 05a87h		;8ce7   ; en la sala 5: la paleta de p00:5A8D...
 	call crea_tipo_23		;8cea   ; crea_tipo_23: si vive algun personaje y 0xC270 es la fase: crea el actor 0x23 en (0x34, 0x80)
-	ld hl,000a4h		;8ced   ; ...y borra 0x10 x 0x20 en (0xA4, 0)
+	ld hl,000a4h		;8ced   ; ...y borra 0x10 x 0x20 en (0, 0xA4)
 	ld bc,01020h		;8cf0
 	jp 05e2fh		;8cf3   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 cuadro_de_la_sala_5:		; en la sala 5, despacha 0xC310 (tabla p02:8D01)
@@ -2078,7 +2078,7 @@ L_8D7F:
 	ld a,040h		;8d83
 	ld (0c314h),a		;8d85   ; guarda la cuenta de la sala del final de fase o de la sala 5
 	jr suma_c310		;8d88
-copia_6098:		; copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
+copia_6098:		; copia 24 x 16 de (0x60, 0x98) a (0x78, 0x4C)
 	ld hl,06098h		;8d8a
 	ld de,0784ch		;8d8d
 	ld bc,01018h		;8d90
@@ -2089,8 +2089,8 @@ L_8D98:
 	ld hl,0c314h		;8d9b   ; apunta a la cuenta de la sala del final de fase o de la sala 5
 	dec (hl)			;8d9e
 	ret nz			;8d9f
-	call copia_8078		;8da0   ; copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
-	call crea_tipo_19_por_ruina		;8da3   ; crea_tipo_19_por_ruina: crea ruina + 1 actores de tipo 0x19 en (0x78, 0x80), contados en 0xC313
+	call copia_8078		;8da0   ; copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x80, 0x78)
+	call crea_tipo_19_por_ruina		;8da3   ; crea_tipo_19_por_ruina: crea ruina + 1 actores de tipo 0x19 en (0x80, 0x78), contados en 0xC313
 	call suma_c310		;8da6   ; suma_c310: 0xC310 + 1
 	ld a,(0c21dh)		;8da9   ; lee la ruina (0-4)
 	ld hl,08dd6h		;8dac
@@ -2098,7 +2098,7 @@ L_8D98:
 	ld c,(hl)			;8db2
 	ld de,01010h		;8db3
 	jp crea_actor_0		;8db6   ; crea_actor_0: p02:8615 con B = 0
-crea_tipo_19_por_ruina:		; crea ruina + 1 actores de tipo 0x19 en (0x78, 0x80), contados en 0xC313
+crea_tipo_19_por_ruina:		; crea ruina + 1 actores de tipo 0x19 en (0x80, 0x78), contados en 0xC313
 	xor a			;8db9
 	ld (0c313h),a		;8dba   ; guarda cuenta de trabajo de los actores
 	ld a,(0c21dh)		;8dbd   ; lee la ruina (0-4)
@@ -2195,7 +2195,7 @@ L_8E34:
 	djnz L_8E34		;8e42
 	ret			;8e44
 L_8E45:
-	call 07901h		;8e45   ; borra_a_barras: borra la VRAM a barras: un byte cada 13 desde (0x24, 0x1A), con esperas
+	call 07901h		;8e45   ; borra_a_barras: borra la VRAM a barras: un byte cada 13 desde (0x1A, 0x24), con esperas
 	ld a,024h		;8e48
 	call 056e3h		;8e4a   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	ld hl,0f0a4h		;8e4d
@@ -2289,7 +2289,7 @@ paso_c888:		; cada 4 cuadros, el siguiente paso del dibujo de 0xC888 (p02:8F06)
 	cp 004h		;8edd
 	ret c			;8edf
 	ld (hl),000h		;8ee0
-	ld hl,09060h		;8ee2   ; ...de (0x60, 0x90) de la pagina 1...
+	ld hl,09060h		;8ee2   ; ...de (0x90, 0x60) de la pagina 1...
 	ld a,(0c889h)		;8ee5   ; ...a la X de 0xC889...
 	ld d,a			;8ee8
 	ld a,(0c88ch)		;8ee9   ; ...y la Y 0xC888 - las lineas ya puestas, de 0xC88B de ancho

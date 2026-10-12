@@ -347,7 +347,7 @@ L_A263:
 	ld (ix+01eh),a		;a26b
 	ld (0c313h),a		;a26e   ; guarda cuenta de trabajo de los actores
 	push ix		;a271
-	ld de,0802eh		;a273   ; ...y el actor 0x1C en (0x2E, 0x80)
+	ld de,0802eh		;a273   ; ...y el actor 0x1C en (0x80, 0x2E)
 	ld c,01ch		;a276
 	call 08613h		;a278   ; crea_actor_0: p02:8615 con B = 0
 	pop ix		;a27b
@@ -424,10 +424,10 @@ L_A300:
 	ret nz			;a303
 	ld (ix+011h),010h		;a304   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x10
 	ld a,001h		;a308
-	ld de,05044h		;a30a   ; ...uno en (0x44, 0x50) con 0xC313 = 1...
+	ld de,05044h		;a30a   ; ...uno en (0x50, 0x44) con 0xC313 = 1...
 	call crea_tipo_3b		;a30d   ; crea_tipo_3b: 0xC313 = A y crea el actor 0x3B
 	xor a			;a310
-	ld de,0b044h		;a311   ; ...y otro en (0x44, 0xB0) con 0xC313 = 0
+	ld de,0b044h		;a311   ; ...y otro en (0xB0, 0x44) con 0xC313 = 0
 crea_tipo_3b:		; 0xC313 = A y crea el actor 0x3B
 	ld (0c313h),a		;a314   ; guarda cuenta de trabajo de los actores
 	ld c,03bh		;a317
@@ -1070,14 +1070,14 @@ L_A7CC:
 	call dibujo_a81d		;a7e4   ; dibujo_a81d: copia 16 x 16 de la posicion p03:A81D[A - 1] con TIMP
 	pop af			;a7e7
 	cp 006h		;a7e8
-	call z,copia_7c78		;a7ea   ; copia_7c78: copia 16 x 8 de (0x78, 0x10) a (0x7C, 0x78)
+	call z,copia_7c78		;a7ea   ; copia_7c78: copia 16 x 8 de (0x10, 0x78) a (0x78, 0x7C)
 	pop bc			;a7ed
 L_A7EE:
 	ld de,00080h		;a7ee
 	add ix,de		;a7f1
 	djnz L_A7CC		;a7f3
 	ret			;a7f5
-copia_7c78:		; copia 16 x 8 de (0x78, 0x10) a (0x7C, 0x78)
+copia_7c78:		; copia 16 x 8 de (0x10, 0x78) a (0x78, 0x7C)
 	ld de,0787ch		;a7f6
 	ld hl,01078h		;a7f9
 	ld bc,01008h		;a7fc
@@ -2814,9 +2814,9 @@ L_B4C3:
 	call 055f0h		;b4c9   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 	ld (ix+010h),09ah		;b4cc   ; el fotograma del actor (p02:8A42) = 0x9A
 	ld (ix+011h),020h		;b4d0   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
-	call dibujo_b4da		;b4d4   ; dibujo_b4da: copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10)
+	call dibujo_b4da		;b4d4   ; dibujo_b4da: copia (ix+0x11) lineas de (0x80, 0x88) junto al actor (LMMM 0x10)
 	jp dibujo_b587		;b4d7   ; dibujo_b587: copia (ix+0x11) lineas de (0x50, 0x98 + B) con TIMP
-dibujo_b4da:		; copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10)
+dibujo_b4da:		; copia (ix+0x11) lineas de (0x80, 0x88) junto al actor (LMMM 0x10)
 	call posicion_del_dibujo		;b4da   ; posicion_del_dibujo: D, E y B para los dibujos de 0x20 - (ix+0x11) lineas
 	ex de,hl			;b4dd
 	ld de,08088h		;b4de
@@ -2851,7 +2851,7 @@ L_B4FB:
 	ld h,a			;b510
 	djnz L_B4FB		;b511
 	ret			;b513
-dibujo_b514:		; copia (ix+0x11) lineas a (0x88, 0x80) (LMMM 0x40)
+dibujo_b514:		; copia (ix+0x11) lineas a (0x80, 0x88) (LMMM 0x40)
 	call posicion_del_dibujo		;b514   ; posicion_del_dibujo: D, E y B para los dibujos de 0x20 - (ix+0x11) lineas
 	ld hl,08088h		;b517
 	ld c,(ix+011h)		;b51a   ; lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
@@ -2896,7 +2896,7 @@ L_B56A:
 	ld (ix+010h),a		;b56a   ; guarda el fotograma del actor (p02:8A42)
 	ret			;b56d
 L_B56E:
-	call dibujo_b514		;b56e   ; dibujo_b514: copia (ix+0x11) lineas a (0x88, 0x80) (LMMM 0x40)
+	call dibujo_b514		;b56e   ; dibujo_b514: copia (ix+0x11) lineas a (0x80, 0x88) (LMMM 0x40)
 	dec (ix+011h)		;b571   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	jr nz,L_B581		;b574
 	call 083d6h		;b576   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
@@ -2906,7 +2906,7 @@ L_B56E:
 	jp 08215h		;b57e   ; juegos_de_la_sala_5: los juegos de sprites 0x28, 0x19 y el de la ruina (p02:822C)
 L_B581:
 	dec (ix+003h)		;b581   ; baja la Y del actor
-	call dibujo_b4da		;b584   ; dibujo_b4da: copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10)
+	call dibujo_b4da		;b584   ; dibujo_b4da: copia (ix+0x11) lineas de (0x80, 0x88) junto al actor (LMMM 0x10)
 dibujo_b587:		; copia (ix+0x11) lineas de (0x50, 0x98 + B) con TIMP
 	call posicion_del_dibujo		;b587   ; posicion_del_dibujo: D, E y B para los dibujos de 0x20 - (ix+0x11) lineas
 	ld h,050h		;b58a

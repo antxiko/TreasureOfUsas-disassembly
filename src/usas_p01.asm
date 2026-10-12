@@ -458,7 +458,7 @@ L_6332:
 	ld a,(0c244h)		;6332   ; lee la Y del personaje
 	sub b			;6335
 	ld l,a			;6336
-	ld de,02098h		;6337   ; ...se guarda el fondo de 16 x 0x18 en (0x98, 0x20) de la pagina 1 (LMMM)
+	ld de,02098h		;6337   ; ...se guarda el fondo de 16 x 0x18 en (0x20, 0x98) de la pagina 1 (LMMM)
 	ld bc,01018h		;633a
 	ld a,010h		;633d
 	jp 04c73h		;633f   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
@@ -962,7 +962,7 @@ L_66AE:
 	ld (0c270h),a		;66c7
 	call 08e2eh		;66ca   ; ...fuera los actores...
 	call recorre_cd00		;66cd   ; recorre_cd00: p01:76DA con los 9 actores de 0xCD00
-	ld de,08020h		;66d0   ; ...y el actor 0x30 en (0x20, 0x80)
+	ld de,08020h		;66d0   ; ...y el actor 0x30 en (0x80, 0x20)
 	ld c,030h		;66d3
 	push ix		;66d5
 	call 08613h		;66d7   ; crea_actor_0: p02:8615 con B = 0
@@ -1501,7 +1501,7 @@ L_6A43:
 	ld e,a			;6a47
 	push hl			;6a48
 	push de			;6a49
-	ld hl,02098h		;6a4a   ; primero el fondo guardado en (0x98, 0x20)...
+	ld hl,02098h		;6a4a   ; primero el fondo guardado en (0x20, 0x98)...
 	ld bc,01018h		;6a4d
 	ld a,040h		;6a50   ; ...tal cual (LMMM 0x40)
 	call 04c73h		;6a52   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
@@ -3808,7 +3808,7 @@ desplazamientos_por_tipo:		; DE = la tabla de desplazamientos del tipo A (p15:B6
 	ret z			;78fc
 	ld de,0b6eah		;78fd   ; los demas
 	ret			;7900
-borra_a_barras:		; borra la VRAM a barras: un byte cada 13 desde (0x24, 0x1A), con esperas
+borra_a_barras:		; borra la VRAM a barras: un byte cada 13 desde (0x1A, 0x24), con esperas
 	ld hl,01a24h		;7901   ; borra la VRAM a barras: un byte cada 13, con esperas entre pasada y pasada
 	ld bc,03870h		;7904
 	ld a,l			;7907

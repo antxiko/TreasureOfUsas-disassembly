@@ -351,7 +351,7 @@ L_4270:
 	dec a			;4280   ; 1: si
 	jr z,L_4291		;4281   ; a entrar
 	call bancos_4_5_6		;4283   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb78h		;4286   ; copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+	call 0bb78h		;4286   ; copia_6078: copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 	call bancos_1_2_3		;4289   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld hl,0c001h		;428c   ; apunta a el paso del estado
 	dec (hl)			;428f   ; 2 (no): vuelve al paso anterior
@@ -397,7 +397,7 @@ L_42D4:
 	and a			;42d7   ; sin puertas abiertas...
 	jr z,L_42E9		;42d8   ; ...el mensaje de la eleccion
 	call bancos_4_5_6		;42da   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb78h		;42dd   ; copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+	call 0bb78h		;42dd   ; copia_6078: copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
 	call bancos_1_2_3		;42e0   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,003h		;42e3   ; al paso 3 (la antesala)
 	ld (0c001h),a		;42e5   ; guarda el paso del estado
@@ -420,7 +420,7 @@ L_4304:
 	call borra_personajes		;4304   ; borra_personajes: pone a cero 0xC240-0xC258
 	call 0611dh		;4307   ; lleva_segun_ficha_0: 0xC240 = el byte 0 de la ficha del personaje 0
 	call bancos_4_5_6		;430a   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0a410h		;430d   ; copia_de_la_puerta: copia 0x20 x 8 de (X - 0x18, 0x93) a (0x78, 0x60) segun la X de la antesala (0xCC13)
+	call 0a410h		;430d   ; copia_de_la_puerta: copia 0x20 x 8 de (X - 0x18, 0x93) a (0x60, 0x78) segun la X de la antesala (0xCC13)
 	call bancos_1_2_3		;4310   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jp siguiente_paso		;4313   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 L_4316:
@@ -2831,12 +2831,12 @@ L_5209:
 	dec c			;5219
 	jr nz,L_5206		;521a
 	call copia_c094		;521c   ; copia_c094: copia 16 x 16 de (0xC0, 0x94) de la pagina 1 y la ficha doble 0x14
-	call fichas_de_p_aafa		;521f   ; fichas_de_p_aafa: 3 x 2 fichas con los numeros de 0xAAFA en (0x98, 0x60)
+	call fichas_de_p_aafa		;521f   ; fichas_de_p_aafa: 3 x 2 fichas con los numeros de 0xAAFA en (0x60, 0x98)
 L_5222:
 	xor a			;5222
 	ld (0c20bh),a		;5223   ; guarda las fichas van a la pagina 1
 	jp bancos_1_2_3		;5226   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-fichas_de_p_aafa:		; 3 x 2 fichas con los numeros de 0xAAFA en (0x98, 0x60)
+fichas_de_p_aafa:		; 3 x 2 fichas con los numeros de 0xAAFA en (0x60, 0x98)
 	ld hl,0aafah		;5229
 	ld de,06098h		;522c
 	ld b,003h		;522f
@@ -2977,7 +2977,7 @@ decodifica_fichas:		; el decodificador del formato C & 0x0F: 1, 2 o 3 bits, norm
 	dec a			;52e8
 	jp z,fichas_3_bits		;52e9   ; fichas_3_bits: B fichas de 3 bits (24 bytes) de HL con los colores de 0xDF00 a la VRAM DE
 	jp fichas_3_bits_volteadas		;52ec   ; fichas_3_bits_volteadas: como p00:4F03, volteadas
-caracteres_93:		; 6 parejas del caracter 0x93 en la pagina 1 desde (0x88, 0x30)
+caracteres_93:		; 6 parejas del caracter 0x93 en la pagina 1 desde (0x30, 0x88)
 	ld a,001h		;52ef
 	ld (0c20bh),a		;52f1   ; guarda las fichas van a la pagina 1
 	ld de,03088h		;52f4
@@ -4591,7 +4591,7 @@ entra_en_fase:		; graficos, paleta, sprites, mapa y metabloques de la fase; pant
 	call graficos_comunes_de_fase		;5e48   ; graficos_comunes_de_fase: con 10-11-12: la lista p12:ADE3 y el texto p12:AF48
 	call lista_af81		;5e4b   ; lista_af81: con 10-11-12: la lista p12:AF81
 	call lista_af78		;5e4e   ; lista_af78: con 4-5-6: la lista p06:AF78
-	call caracteres_93		;5e51   ; caracteres_93: 6 parejas del caracter 0x93 en la pagina 1 desde (0x88, 0x30)
+	call caracteres_93		;5e51   ; caracteres_93: 6 parejas del caracter 0x93 en la pagina 1 desde (0x30, 0x88)
 	call copia_seis_8858		;5e54   ; copia_seis_8858: 6 copias de 16 x 8 de (0x88, 0x58) de la pagina 1
 	call graficos_del_personaje		;5e57   ; graficos_del_personaje: la lista de p09:BB32[0xC240] y su paleta
 	ld a,001h		;5e5a

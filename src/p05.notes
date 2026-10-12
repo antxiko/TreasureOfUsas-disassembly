@@ -195,7 +195,7 @@ C 0x96B5 las listas de fichas del titulo
 C 0x96C7 y el RLE de p05:96CD a la VRAM
 C 0x96ED la primera terna del fundido a cero
 C 0x96F4 el RLE del mapa del titulo a 0xE400
-C 0x9700 desde (0x1C, 0x48): 15 filas de 14 fichas
+C 0x9700 desde (0x48, 0x1C): 15 filas de 14 fichas
 C 0x9709 una ficha
 C 0x970E 8 a la derecha
 C 0x9716 la fila siguiente, 8 mas abajo
@@ -234,10 +234,10 @@ C 0x985D ...pasadas las 0x19 primeras, se salta en el texto...
 C 0x9867 ...y si no, en el destino
 C 0x986B 0xFF: el prologo acabado...
 C 0x986F ...0xCA01 = 1...
-C 0x9874 ...borra 0xE0 x 8 en (0xA0, 0x10)...
+C 0x9874 ...borra 0xE0 x 8 en (0x10, 0xA0)...
 C 0x987D ...y PUSH SPACE KEY
 C 0x988F 0xFF detras de la linea
-C 0x9892 en (0xA0, 0x20) menos la cuenta: sube
+C 0x9892 en (0x20, 0xA0) menos la cuenta: sube
 C 0x98A7 8 pasos por linea
 C 0x98AF la linea siguiente
 C 0x9EE2 la mejora 0

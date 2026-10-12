@@ -163,6 +163,12 @@ test:
 IMG = docs/imagenes
 imagenes: $(ROM)
 	@mkdir -p $(IMG)
+	$(PYIMG) tools/titulo.py rotulo $(IMG)/rotulo.png
+	$(PYIMG) tools/titulo.py titulo $(IMG)/titulo.png
+	@for f in 1 2 3 4 6 7 8 9 11 12 13 14 16 17 18 19 21 22 23 24; do 	  $(PYIMG) tools/fases.py fase $$f $(IMG)/fase_`printf %02d $$f`.png || exit 1; done
+	@for r in 0 1 2 3 4; do $(PYIMG) tools/fases.py antesala $$r $(IMG)/antesala_$$r.png || exit 1; 	  $(PYIMG) tools/fases.py sala5 $$r $(IMG)/sala5_$$r.png || exit 1; done
+	$(PYIMG) tools/personajes.py hoja $(IMG)/personajes.png
+	$(PYIMG) tools/escenas.py todas $(IMG)
 
 # Los cotejos que dibujan necesitan PIL (en esta maquina, el python de
 # Programs, no el python3 de la Store).

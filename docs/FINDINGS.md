@@ -55,3 +55,15 @@ On reaching ruins 1-4, a map makes the ruin blink and types out its
 password: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS or MOHENJO DARO
 (`p06:A2BB`). On the title screen, CTRL or button B asks for it (KEYWORD,
 `p00:4643`), and with it you start at that ruin (`p00:45CB`).
+
+## The music changes with the mood
+
+Each ruin's tune plays higher or lower, and with another instrument, depending
+on the mood of whoever goes in (`p15:BE7A`, `p13:625D`): happy, two semitones
+higher; calm, as written; sad and angry, one or two lower. You can hear it in
+[The music](THE-MUSIC.md).
+
+## F5 changes a voice in Dunhuang
+
+Bringing the music back with F5 reads another table (`p15:BE75`), and in ruin
+1 a different second voice plays (0x85).

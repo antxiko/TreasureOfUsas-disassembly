@@ -182,6 +182,11 @@ imagenes: $(ROM)
 	$(PYIMG) tools/retratos.py hoja $(IMG)/retratos.png
 	$(PYIMG) tools/retratos.py habla $(IMG)/retratos_hablan.gif
 
+# La musica: el motor del banco 13 ejecutado (tools/musica.py) y pasado a MP3
+# con un AY-3-8910. Necesita numpy y lameenc.
+musica: $(ROM)
+	$(PYIMG) tools/musica.py todas docs/audio
+
 # Los cotejos que dibujan necesitan PIL (en esta maquina, el python de
 # Programs, no el python3 de la Store).
 PYIMG ?= python
@@ -199,5 +204,5 @@ clean:
 	rm -f $(WORK)/p*.trace.json $(WORK)/p*.blocks $(WORK)/p*.out.bin \
 	      $(WORK)/usas_reensamblada.rom $(WORK)/pasmo.err
 
-.PHONY: all comprueba reconoce paginas semillas trace listado verify \
+.PHONY: musica all comprueba reconoce paginas semillas trace listado verify \
         sanity densidad test imagenes web clean

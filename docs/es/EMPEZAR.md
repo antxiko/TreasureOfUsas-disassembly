@@ -19,6 +19,7 @@ reensamblan y comprueban que sale la ROM **byte a byte**.
     make densidad      # cuántas instrucciones llevan comentario, banco a banco
     make sanity        # el presupuesto: ni un byte sin asignar
     make imagenes      # todas las imágenes, dibujadas desde la ROM
+    make musica        # la música, ejecutando el motor (numpy y lameenc)
 
 `make verify` reensambla los dieciséis bancos y los compara con la ROM.
 
@@ -33,3 +34,6 @@ reensamblan y comprueban que sale la ROM **byte a byte**.
   `tools/titulo.py`, `tools/personajes.py`, `tools/retratos.py`,
   `tools/actores.py`, `tools/objetos.py`, `tools/escenas.py` y
   `tools/estatua.py`: las imágenes, dibujadas desde la ROM.
+- `tools/musica.py`: la música, con el motor del banco 13 ejecutado en
+  `tools/z80run.py`; `tools/omsx_psg.tcl` y `tools/coteja_psg.py`, su cotejo
+  con openMSX.

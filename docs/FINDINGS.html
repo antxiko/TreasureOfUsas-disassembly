@@ -82,7 +82,7 @@ footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
 .galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
 audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 </style>
-<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html" style=color:var(--tinta)>Findings</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/HALLAZGOS.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-MUSIC.html">The music</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html" style=color:var(--tinta)>Findings</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/HALLAZGOS.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
 <h1 id="findings">Findings</h1>
 <p>Everything on this page is read in the code; none of it has been seen in the emulator yet.</p>
 <h2 id="mood-changes-the-game">Mood changes the game</h2>
@@ -102,4 +102,8 @@ audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 <p>A Japanese MSX gets the texts in Japanese; any other, in English (<code>0x002B</code>, <code>p05:9849</code>). The font holds hiragana and 28 kanji (<code>p14:9289</code>).</p>
 <h2 id="the-passwords-are-the-names-of-the-ruins">The passwords are the names of the ruins</h2>
 <p>On reaching ruins 1-4, a map makes the ruin blink and types out its password: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS or MOHENJO DARO (<code>p06:A2BB</code>). On the title screen, CTRL or button B asks for it (KEYWORD, <code>p00:4643</code>), and with it you start at that ruin (<code>p00:45CB</code>).</p>
+<h2 id="the-music-changes-with-the-mood">The music changes with the mood</h2>
+<p>Each ruin&#x27;s tune plays higher or lower, and with another instrument, depending on the mood of whoever goes in (<code>p15:BE7A</code>, <code>p13:625D</code>): happy, two semitones higher; calm, as written; sad and angry, one or two lower. You can hear it in <a href="THE-MUSIC.html">The music</a>.</p>
+<h2 id="f5-changes-a-voice-in-dunhuang">F5 changes a voice in Dunhuang</h2>
+<p>Bringing the music back with F5 reads another table (<code>p15:BE75</code>), and in ruin 1 a different second voice plays (0x85).</p>
 <footer><p><em>The Treasure of Usas</em> was published by Konami for the MSX2 in 1987; its catalogue number is RC-753 and it is 128 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

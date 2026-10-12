@@ -25,7 +25,8 @@ Item class 6 (`p01:758C`) has no known loader.
 
 ## The sound
 
-Bank 13 is commented at 27.7 %.
+Bank 13 is commented at 27.7 %. What it writes to the PSG is checked against
+openMSX; the timbre of the AY used to make the MP3s is not.
 
 ## Data with no reader
 

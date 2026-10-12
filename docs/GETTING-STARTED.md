@@ -19,6 +19,7 @@ and check that the ROM comes out **byte for byte**.
     make densidad      # how many instructions carry a comment, bank by bank
     make sanity        # the budget: not one byte unassigned
     make imagenes      # every picture, drawn from the ROM
+    make musica        # the music, running the engine (numpy and lameenc)
 
 `make verify` reassembles the sixteen banks and compares them with the ROM.
 
@@ -33,3 +34,6 @@ and check that the ROM comes out **byte for byte**.
   `tools/titulo.py`, `tools/personajes.py`, `tools/retratos.py`,
   `tools/actores.py`, `tools/objetos.py`, `tools/escenas.py` and
   `tools/estatua.py`: the pictures, drawn from the ROM.
+- `tools/musica.py`: the music, with the bank 13 engine run on
+  `tools/z80run.py`; `tools/omsx_psg.tcl` and `tools/coteja_psg.py`, its
+  check against openMSX.

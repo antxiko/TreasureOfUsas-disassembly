@@ -82,7 +82,7 @@ footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
 .galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
 audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 </style>
-<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html">El juego</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html" style=color:var(--tinta)>Hallazgos</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../FINDINGS.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
+<div class="w"><nav class="top"><a href="index.html">Portada</a><a href="EMPEZAR.html">Empezar</a><a href="EL-JUEGO.html">El juego</a><a href="LA-MUSICA.html">La música</a><a href="EL-CARTUCHO.html">El cartucho</a><a href="EL-CODIGO.html">El código</a><a href="HALLAZGOS.html" style=color:var(--tinta)>Hallazgos</a><a href="PREGUNTAS-ABIERTAS.html">Preguntas abiertas</a><a href="../FINDINGS.html" style="margin-left:auto;color:var(--oro)">English</a></nav>
 <h1 id="hallazgos">Hallazgos</h1>
 <p>Todo lo de esta página está leído en el código; nada se ha visto todavía en el emulador.</p>
 <h2 id="el-animo-cambia-el-juego">El ánimo cambia el juego</h2>
@@ -102,4 +102,8 @@ audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 <p>Un MSX japonés da los textos en japonés; cualquier otro, en inglés (<code>0x002B</code>, <code>p05:9849</code>). La fuente lleva hiragana y 28 kanji (<code>p14:9289</code>).</p>
 <h2 id="las-claves-son-los-nombres-de-las-ruinas">Las claves son los nombres de las ruinas</h2>
 <p>Al llegar a las ruinas 1-4, un mapa hace parpadear la ruina y escribe a máquina su clave: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS o MOHENJO DARO (<code>p06:A2BB</code>). En el título, CTRL o el botón B piden la clave (KEYWORD, <code>p00:4643</code>), y con ella se empieza en esa ruina (<code>p00:45CB</code>).</p>
+<h2 id="la-musica-cambia-con-el-animo">La música cambia con el ánimo</h2>
+<p>La de cada ruina suena más alta o más baja, y con otro instrumento, según el ánimo del que entra (<code>p15:BE7A</code>, <code>p13:625D</code>): feliz, dos semitonos más alta; tranquilo, como está escrita; triste y enfadado, uno o dos más baja. Se oye en <a href="LA-MUSICA.html">La música</a>.</p>
+<h2 id="f5-cambia-una-voz-en-dunhuang">F5 cambia una voz en Dunhuang</h2>
+<p>Al volver a poner la música con F5 se lee otra tabla (<code>p15:BE75</code>), y en la ruina 1 suena otra segunda voz (0x85).</p>
 <footer><p><em>The Treasure of Usas</em> lo public&oacute; Konami para MSX2 en 1987; su n&uacute;mero de cat&aacute;logo es RC-753 y son 128 KB. Todos los derechos sobre el juego siguen siendo de sus titulares. Este trabajo es de preservaci&oacute;n, estudio y documentaci&oacute;n, y la imagen del cartucho no se distribuye.</p></footer></div>

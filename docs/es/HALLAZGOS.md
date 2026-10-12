@@ -54,3 +54,15 @@ Al llegar a las ruinas 1-4, un mapa hace parpadear la ruina y escribe a
 máquina su clave: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS o MOHENJO DARO
 (`p06:A2BB`). En el título, CTRL o el botón B piden la clave (KEYWORD,
 `p00:4643`), y con ella se empieza en esa ruina (`p00:45CB`).
+
+## La música cambia con el ánimo
+
+La de cada ruina suena más alta o más baja, y con otro instrumento, según el
+ánimo del que entra (`p15:BE7A`, `p13:625D`): feliz, dos semitonos más alta;
+tranquilo, como está escrita; triste y enfadado, uno o dos más baja. Se oye en
+[La música](LA-MUSICA.md).
+
+## F5 cambia una voz en Dunhuang
+
+Al volver a poner la música con F5 se lee otra tabla (`p15:BE75`), y en la
+ruina 1 suena otra segunda voz (0x85).

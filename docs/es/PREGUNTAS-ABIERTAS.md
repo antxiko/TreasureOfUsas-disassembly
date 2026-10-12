@@ -25,7 +25,8 @@ La clase 6 de objeto (`p01:758C`) no tiene cargador conocido.
 
 ## El sonido
 
-El banco 13 está comentado al 27,7 %.
+El banco 13 está comentado al 27,7 %. Lo que escribe en el PSG está cotejado
+con openMSX; el timbre del AY con que se pasa a MP3, no.
 
 ## Datos sin lector
 

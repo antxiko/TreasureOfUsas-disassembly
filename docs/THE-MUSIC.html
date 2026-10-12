@@ -1,0 +1,169 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The music — The Treasure of Usas (Konami, 1987)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html">The game</a><a href="THE-MUSIC.html" style=color:var(--tinta)>The music</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/LA-MUSICA.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="the-music">The music</h1>
+<p>Everything you hear here comes from running the cartridge&#x27;s own sound engine (bank 13, <code>p13:6000</code>) on an emulated Z80, frame by frame at 60 per second, just as the interrupt calls it (<code>p00:4048</code>). What the engine writes to the PSG is turned into sound with an AY-3-8910 (<code>tools/musica.py</code>). Each MP3 is the whole piece up to where it starts again, plus 8 seconds of the repeat fading out.</p>
+<h2 id="checked-against-openmsx">Checked against openMSX</h2>
+<p>The PSG writes have been compared frame by frame with those of openMSX (Japanese C-BIOS MSX2). In every frame the PSG ends up the same:</p>
+<ul><li>the whole antechamber tune (1,454 frames);</li><li>the ruin 4 tune at pitch 0x80, the whole piece (6,614 frames);</li><li>the start of the game tune (178 frames).</li></ul>
+<p>To hear the ruin 4 tune without playing up to it, the probe swapped the antechamber request for that tune (<code>tools/omsx_psg.tcl</code>). The timbre is not checked: it is a textbook AY-3-8910, not a recording of the emulator.</p>
+<h2 id="each-ruin-s-tune-changes-with-the-mood">Each ruin&#x27;s tune changes with the mood</h2>
+<p>On entering a stage, <code>musica_de_fase</code> (<code>p00:54C8</code>) asks for the ruin&#x27;s tune (<code>p15:BE70</code>). It also stores a pitch in 0xC122, <code>p15:BE7A[ruin × 4 + state]</code>, which depends on the mood of whoever goes in. With it the engine shifts the note table (<code>p13:625D</code>) and, from instrument 2 on, the instrument (<code>p13:62E2</code>):</p>
+<table><tr><th>Pitch</th><th>The notes</th><th>The instrument</th></tr><tr><td>0x20</td><td>two semitones higher</td><td>two further on</td></tr><tr><td>0x00</td><td>as written</td><td>its own</td></tr><tr><td>0x40</td><td>one semitone lower</td><td>one before</td></tr><tr><td>0x80</td><td>two semitones lower</td><td>two before</td></tr></table>
+<p>Happy is always 0x20 and calm always 0x00. Sad and angry share 0x80 and 0x40: in Pegu and Alchi, sad is 0x80 and angry 0x40; in Dunhuang, Hunza and Agra, the other way round.</p>
+<h3 id="pegu-0x80">Pegu (0x80)</h3>
+<p><b>Happy</b>, pitch 0x20</p>
+<audio controls preload="none" src="audio/ruina0_estado0.mp3"></audio>
+<p><b>Calm</b>, pitch 0x00</p>
+<audio controls preload="none" src="audio/ruina0_estado1.mp3"></audio>
+<p><b>Sad</b>, pitch 0x80</p>
+<audio controls preload="none" src="audio/ruina0_estado2.mp3"></audio>
+<p><b>Angry</b>, pitch 0x40</p>
+<audio controls preload="none" src="audio/ruina0_estado3.mp3"></audio>
+<h3 id="dunhuang-0x81">Dunhuang (0x81)</h3>
+<p><b>Happy</b>, pitch 0x20</p>
+<audio controls preload="none" src="audio/ruina1_estado0.mp3"></audio>
+<p><b>Calm</b>, pitch 0x00</p>
+<audio controls preload="none" src="audio/ruina1_estado1.mp3"></audio>
+<p><b>Sad</b>, pitch 0x40</p>
+<audio controls preload="none" src="audio/ruina1_estado2.mp3"></audio>
+<p><b>Angry</b>, pitch 0x80</p>
+<audio controls preload="none" src="audio/ruina1_estado3.mp3"></audio>
+<h3 id="alchi-0x82">Alchi (0x82)</h3>
+<p><b>Happy</b>, pitch 0x20</p>
+<audio controls preload="none" src="audio/ruina2_estado0.mp3"></audio>
+<p><b>Calm</b>, pitch 0x00</p>
+<audio controls preload="none" src="audio/ruina2_estado1.mp3"></audio>
+<p><b>Sad</b>, pitch 0x80</p>
+<audio controls preload="none" src="audio/ruina2_estado2.mp3"></audio>
+<p><b>Angry</b>, pitch 0x40</p>
+<audio controls preload="none" src="audio/ruina2_estado3.mp3"></audio>
+<h3 id="hunza-0x83">Hunza (0x83)</h3>
+<p><b>Happy</b>, pitch 0x20</p>
+<audio controls preload="none" src="audio/ruina3_estado0.mp3"></audio>
+<p><b>Calm</b>, pitch 0x00</p>
+<audio controls preload="none" src="audio/ruina3_estado1.mp3"></audio>
+<p><b>Sad</b>, pitch 0x40</p>
+<audio controls preload="none" src="audio/ruina3_estado2.mp3"></audio>
+<p><b>Angry</b>, pitch 0x80</p>
+<audio controls preload="none" src="audio/ruina3_estado3.mp3"></audio>
+<h3 id="agra-0x84">Agra (0x84)</h3>
+<p><b>Happy</b>, pitch 0x20</p>
+<audio controls preload="none" src="audio/ruina4_estado0.mp3"></audio>
+<p><b>Calm</b>, pitch 0x00</p>
+<audio controls preload="none" src="audio/ruina4_estado1.mp3"></audio>
+<p><b>Sad</b>, pitch 0x40</p>
+<audio controls preload="none" src="audio/ruina4_estado2.mp3"></audio>
+<p><b>Angry</b>, pitch 0x80</p>
+<audio controls preload="none" src="audio/ruina4_estado3.mp3"></audio>
+<h2 id="f5-changes-a-voice-in-dunhuang">F5 changes a voice in Dunhuang</h2>
+<p>During a stage, F5 silences the music (<code>p00:5FEF</code>) and brings it back (<code>p00:5FE6</code>). When it comes back it is taken from another table, <code>p15:BE75</code>, which only differs in Dunhuang: you get 0x85, the same score with a different second voice (<code>p13:7690</code> instead of <code>p13:7507</code>).</p>
+<p><b>Happy</b>, pitch 0x20</p>
+<audio controls preload="none" src="audio/ruina1_otra_estado0.mp3"></audio>
+<p><b>Calm</b>, pitch 0x00</p>
+<audio controls preload="none" src="audio/ruina1_otra_estado1.mp3"></audio>
+<p><b>Sad</b>, pitch 0x40</p>
+<audio controls preload="none" src="audio/ruina1_otra_estado2.mp3"></audio>
+<p><b>Angry</b>, pitch 0x80</p>
+<audio controls preload="none" src="audio/ruina1_otra_estado3.mp3"></audio>
+<h2 id="the-rest">The rest</h2>
+<p>The antechamber: 0x89 (<code>p00:424C</code>).</p>
+<audio controls preload="none" src="audio/musica_89.mp3"></audio>
+<p>At the start of a game: 0x8A (<code>p00:41DB</code>).</p>
+<audio controls preload="none" src="audio/musica_8A.mp3"></audio>
+<p>The statue room: 0x86 (<code>p00:5512</code>).</p>
+<audio controls preload="none" src="audio/musica_86.mp3"></audio>
+<p>The bosses: 0x87 in the statue room (<code>p02:8D75</code>). 0x88 plays in each stage&#x27;s boss room (<code>p02:90A1</code>) and is the same piece: the same three pointers in <code>p13:672C</code>.</p>
+<audio controls preload="none" src="audio/musica_87.mp3"></audio>
+<p>On finishing a ruin: 0x8B (<code>p00:454E</code>).</p>
+<audio controls preload="none" src="audio/musica_8B.mp3"></audio>
+<p>On finishing the last one, Agra: 0x8C (<code>p00:4552</code>).</p>
+<audio controls preload="none" src="audio/musica_8C.mp3"></audio>
+<p>Death: 0x8D (<code>p01:6309</code>).</p>
+<audio controls preload="none" src="audio/musica_8D.mp3"></audio>
+<p>GAME OVER: 0x8E (<code>p00:440A</code>).</p>
+<audio controls preload="none" src="audio/musica_8E.mp3"></audio>
+<p>0x8F is silent: its three voices begin with the end-of-track code (0xFF).</p>
+<footer><p><em>The Treasure of Usas</em> was published by Konami for the MSX2 in 1987; its catalogue number is RC-753 and it is 128 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

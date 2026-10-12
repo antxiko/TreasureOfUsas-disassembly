@@ -82,7 +82,7 @@ footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
 .galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
 audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 </style>
-<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html" style=color:var(--tinta)>Start</a><a href="THE-GAME.html">The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/EMPEZAR.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html" style=color:var(--tinta)>Start</a><a href="THE-GAME.html">The game</a><a href="THE-MUSIC.html">The music</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/EMPEZAR.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
 <h1 id="getting-started">Getting started</h1>
 <p>This repository does not include the game. It includes the tools that, from your own image of the cartridge, rebuild the commented listing, reassemble it and check that the ROM comes out <b>byte for byte</b>.</p>
 <h2 id="what-you-need">What you need</h2>
@@ -92,8 +92,9 @@ audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
 make               # trace, build the listing, reassemble and run the tests
 make densidad      # how many instructions carry a comment, bank by bank
 make sanity        # the budget: not one byte unassigned
-make imagenes      # every picture, drawn from the ROM</code></pre>
+make imagenes      # every picture, drawn from the ROM
+make musica        # the music, running the engine (numpy and lameenc)</code></pre>
 <p><code>make verify</code> reassembles the sixteen banks and compares them with the ROM.</p>
 <h2 id="where-things-are">Where things are</h2>
-<ul><li><code>src/usas_pNN.asm</code>: the listing of each bank (p00 to p15).</li><li><code>src/pNN.notes</code>: the names, comments and data blocks of each bank. The listing is generated from here.</li><li><code>tools/anota.py</code> and <code>tools/anotaciones.py</code>: the names of the routines and of RAM, and the automatic comments for the records IX points to.</li><li><code>tools/fases.py</code>, <code>tools/habitantes.py</code>, <code>tools/exterior.py</code>, <code>tools/titulo.py</code>, <code>tools/personajes.py</code>, <code>tools/retratos.py</code>, <code>tools/actores.py</code>, <code>tools/objetos.py</code>, <code>tools/escenas.py</code> and <code>tools/estatua.py</code>: the pictures, drawn from the ROM.</li></ul>
+<ul><li><code>src/usas_pNN.asm</code>: the listing of each bank (p00 to p15).</li><li><code>src/pNN.notes</code>: the names, comments and data blocks of each bank. The listing is generated from here.</li><li><code>tools/anota.py</code> and <code>tools/anotaciones.py</code>: the names of the routines and of RAM, and the automatic comments for the records IX points to.</li><li><code>tools/fases.py</code>, <code>tools/habitantes.py</code>, <code>tools/exterior.py</code>, <code>tools/titulo.py</code>, <code>tools/personajes.py</code>, <code>tools/retratos.py</code>, <code>tools/actores.py</code>, <code>tools/objetos.py</code>, <code>tools/escenas.py</code> and <code>tools/estatua.py</code>: the pictures, drawn from the ROM.</li><li><code>tools/musica.py</code>: the music, with the bank 13 engine run on <code>tools/z80run.py</code>; <code>tools/omsx_psg.tcl</code> and <code>tools/coteja_psg.py</code>, its check against openMSX.</li></ul>
 <footer><p><em>The Treasure of Usas</em> was published by Konami for the MSX2 in 1987; its catalogue number is RC-753 and it is 128 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

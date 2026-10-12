@@ -86,6 +86,14 @@ PORTADA = {
 
 HALLAZGOS = {
     "es": [
+        ("La m&uacute;sica cambia con el &aacute;nimo",
+         "<p>La de cada ruina suena m&aacute;s alta o m&aacute;s baja, y con otro "
+         "instrumento, seg&uacute;n el &aacute;nimo del que entra "
+         "(<code>p15:BE7A</code>, <code>p13:625D</code>): feliz, dos semitonos "
+         "m&aacute;s alta; tranquilo, como est&aacute; escrita; triste y "
+         "enfadado, uno o dos m&aacute;s baja. Se oye en "
+         "<a href=\"LA-MUSICA.html\">La m&uacute;sica</a>, sacada del motor y "
+         "cotejada con openMSX.</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
         ("El &aacute;nimo cambia el juego",
          "<p>Cada protagonista tiene cuatro estados: feliz, tranquilo, triste y "
          "enfadado (<code>p06:A644</code>). Wit feliz da un segundo salto en el "
@@ -131,6 +139,13 @@ HALLAZGOS = {
          "(<code>p00:45CB</code>).</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
     ],
     "en": [
+        ("The music changes with the mood",
+         "<p>Each ruin's tune plays higher or lower, and with another "
+         "instrument, depending on the mood of whoever goes in "
+         "(<code>p15:BE7A</code>, <code>p13:625D</code>): happy, two semitones "
+         "higher; calm, as written; sad and angry, one or two lower. Hear it in "
+         "<a href=\"THE-MUSIC.html\">The music</a>, taken from the engine and "
+         "checked against openMSX.</p><p>Read in the code.</p>"),
         ("Mood changes the game",
          "<p>Each hero has four states: happy, calm, sad and angry "
          "(<code>p06:A644</code>). A happy Wit jumps a second time in the air, "

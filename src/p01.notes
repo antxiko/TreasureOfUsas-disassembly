@@ -594,6 +594,168 @@ C 0x6E24 ...con Y = 0xE0: escondidos
 C 0x6E2A y la ficha a cero
 C 0x6E37 el tipo - 1: tabla p01:6E3B
 C 0x6CD5 el disparo 1 casi recto (velocidad Y 0x0001); el 2 sube en diagonal (0xF802)
+C 0x6E4D el fotograma 1 del disparo
+C 0x6E55 cada 4 cuadros, el fotograma 1
+C 0x6E5D la Y del rayo, la del personaje (ajustada)
+C 0x6E64 su fase (tabla p01:6E6A)
+C 0x6E74 fase 0: 4 cuadros quieto
+C 0x6E83 fase 1: crece hasta el registro 4 u 8...
+C 0x6E89 ...y a la fase siguiente
+C 0x6E8C con (ix+0x0E), la fase 2 dura eso
+C 0x6E96 la fase siguiente
+C 0x6E9D fase 2: quieto (ix+0x11) cuadros
+C 0x6EAC fase 3: se recoge hasta el registro 1 o 5
+C 0x6EB7 + 16 a la derecha...
+C 0x6EBF ...- 16 a la izquierda
+C 0x6EC9 el tipo 4: su fase (tabla p01:6ECF)
+C 0x6ED9 la ficha 4 por debajo del disparo
+C 0x6EDF hay suelo: sigue
+C 0x6EE0 sin suelo: 0x1000 hacia su lado...
+C 0x6EE6 ...y la fase 0 sin velocidad Y
+C 0x6EFA la casilla de delante (8 a su lado, 8 arriba)
+C 0x6F15 sin suelo debajo, sigue
+C 0x6F16 con suelo: la fase 1, cae a 0x400
+C 0x6F2C cada 4 cuadros, el fotograma 1
+C 0x6F37 en la escalera...
+C 0x6F3E ...sin direccion, el golpe se borra
+C 0x6F4E el registro de sprite segun la accion (p01:6D29)
+C 0x6F54 cada 4 cuadros, el fotograma 1
+C 0x6F68 cada 8 cuadros...
+C 0x6F6B ...el sonido 0x0E (la bola de Cles)
+C 0x6F71 los sprites 4-7...
+C 0x6F76 ...escondidos (Y = 0xE0)
+C 0x6F82 la bola de Cles (tipo 9) no tiene sprites de disparo
+C 0x6F89 los 4 disparos
+C 0x6FA2 libre: nada
+C 0x6FAD [n]: cuantos sprites
+C 0x6FB5 4 bytes por sprite
+C 0x6FBB n * 4 bytes del registro a los atributos
+C 0x6FC6 a cada sprite, la Y y la X del disparo (de 16 bits, los altos)
+C 0x6FD6 el siguiente sprite
+C 0x6FDB dy positivo: suma...
+C 0x6FE0 ...y con acarreo, 0xFF (fuera)
+C 0x6FE9 dy negativo: resta...
+C 0x6FF3 ...y por debajo de cero, 0 (p01:6FF5)
+C 0x6FFB con Wit, los colores tal cual
+C 0x7005 fuera de la sala 5 y de la del final de fase, tal cual
+C 0x7007 si no, en los 4 sprites de disparo el color 0x49 pasa a 0x4B
+C 0x701D los colores de los sprites 4-7 en sus 16 lineas (0xDC40)
+C 0x7029 el siguiente, 4 bytes mas alla
+C 0x703F si queda alguno, nada
+C 0x7045 no queda ninguno: sin disparos en marcha...
+C 0x7057 A = la ficha - 1...
+C 0x7058 ...acarreo si es menor que el umbral
+C 0x705D en el aire (accion 1)...
+C 0x7061 ...subiendo (0xC251), sin suelo
+C 0x7067 sobre una plataforma (0xCCB0): suelo
+C 0x7073 la X...
+C 0x7074 ...y la Y nueva: por debajo de 0xD0...
+C 0x7078 ...las fichas a +-5 puntos de la X
+C 0x7085 X + la velocidad X
+C 0x708E Y + la velocidad Y
+C 0x7098 0x12 por encima de la Y nueva
+C 0x709B las fichas a +-4 de la X
+C 0x70A8 4 por encima
+C 0x70B4 13 por debajo
+C 0x70C6 fuera: acarreo
+C 0x70CB (X + 3) & 15...
+C 0x70CF ...< 6: centrado
+C 0x70E5 la X nueva + D
+C 0x70F4 la Y nueva + E
+C 0x7103 a menos de 8 del borde izquierdo...
+C 0x710A ...sin vecina a la izquierda: pared
+C 0x7110 a menos de 8 del derecho...
+C 0x7117 ...sin vecina a la derecha: pared
+C 0x711B las fichas a +-8, en la Y y a +-5 de la Y: si alguna es pared, acarreo
+C 0x7133 la ficha en D + C...
+C 0x713B ...y en D - C
+C 0x714A acarreo si esta por debajo de 0xC223
+C 0x7153 por encima de 0xC224, sin acarreo
+C 0x7165 entre las dos: sin acarreo
+C 0x7168 la ficha en E + C...
+C 0x7170 ...y en E - C
+C 0x7196 por encima de la fila 0x18: con 0xC268, nada...
+C 0x719C ...si no, la ficha 1 (pared)
+C 0x719F fuera de la pantalla: la ficha 0
+C 0x70A3 con el acarreo de p01:70C8 vuelve sin mirar (y sin acarreo)
+C 0x70AF con el acarreo de p01:70C8 vuelve sin mirar (y sin acarreo)
+C 0x70B6 de 0xD4 para abajo, fuera
+C 0x71A1 los 4 disparos...
+C 0x71A7 ...contra los 8 actores
+C 0x71B0 sin actor, el siguiente
+C 0x71B6 si no le alcanzan los disparos (bit 1), el siguiente
+C 0x71BD sin disparo, el disparo siguiente
+C 0x71C3 el disparo con el fotograma 0 todavia no toca
+C 0x71CA la caja del disparo, guardada
+C 0x71D1 y recuperada en DE'
+C 0x71DC el actor siguiente
+C 0x71E3 el disparo siguiente
+C 0x71EC el rayo (tipo 1) y los golpes de Cles (>= 6) no se borran: (iy+0x10) = 0
+C 0x71F5 el tipo del disparo
+C 0x71FA el rayo...
+C 0x71FE ...y los de Cles siguen
+C 0x7204 los demas se borran
+C 0x720E el tipo 0x0E, p01:723D
+C 0x7212 el 8, p01:724F
+C 0x7216 el 0x0F, p01:7269
+C 0x721D el dano del tipo de disparo (p01:7234)
+C 0x7228 se resta de la vida...
+C 0x722B ...sin bajar de cero
+C 0x722F el sonido 0x17
+C 0x7240 con paso, como los demas
+C 0x7243 en el paso 0: ya no choca...
+C 0x724A ...y el sonido 0x18
+C 0x7252 del paso 2 en adelante, como los demas
+C 0x7256 en el paso 1, quita vida
+C 0x725E aun vivo, nada
+C 0x7260 sin vida: paso 2 con vida 1
+C 0x7269 el sonido 0x1C...
+C 0x726E ...paso 3, fotograma 0x7F, sin velocidad X, cae a 0x400 y sin choques
+C 0x7289 muriendo...
+C 0x728C ...o en la accion 6, nada
+C 0x728F los 8 actores
+C 0x7298 sin actor, el siguiente
+C 0x729E si no toca al personaje (bit 0), el siguiente
+C 0x72A9 el tipo 0x37 tiene su caja (p01:73BE)
+C 0x72AE la caja del personaje, guardada
+C 0x72B5 y recuperada
+C 0x72C0 el actor siguiente
+C 0x72CB los objetos (0x29 y 0x2A): se cogen (p01:7539)
+C 0x72D5 el 0x0E
+C 0x72DD los tipos 7 y 13 no hacen dano
+C 0x72E1 el golpe fuerte de Cles enfadado tampoco
+C 0x72E6 invencible: nada
+C 0x72E7 el byte 5 (la vida) de la ficha del que se lleva
+C 0x72FA 4 de dano...
+C 0x72FF ...2 con el cartucho 07 50 en otra ranura (0xC205 bit 1)
+C 0x7306 se resta, sin bajar de cero
+C 0x730C y da un salto hacia atras
+C 0x7312 con 0x0D o mas de vida...
+C 0x7318 ...el sonido 0x1D; con menos, 0x23
+C 0x7320 0x20 cuadros...
+C 0x7325 ...invencible
+C 0x7336 otro tipo: sin acarreo, hace dano
+C 0x733B el personaje sin suelo (accion 3)...
+C 0x733F ...o en el aire (accion 1)...
+C 0x7343 si no, sin acarreo (con Z)
+C 0x7345 ...bajando (0xC251 a cero): les cae encima
+C 0x734D el tipo 7...
+C 0x7351 ...o el 13
+C 0x7355 nada: sin acarreo
+C 0x735A el 7 en los pasos 2-3...
+C 0x7362 ...queda en el paso 4 con el fotograma 0x62
+C 0x736F el 13 en los pasos 1, 2 o 4...
+C 0x737B ...queda en el paso 6 con el fotograma 0x63
+C 0x7383 quieto...
+C 0x7389 ...el sonido 9...
+C 0x738E ...0x20 cuadros y sin choques
+C 0x7396 acarreo: no hace dano
+C 0x739C sin golpe de Cles en marcha, nada
+C 0x73A2 con Cles enfadado (estado 3)...
+C 0x73A7 ...los tipos por debajo de 0x37 no hacen dano
+C 0x73AF solo en el paso 0
+C 0x73BE el tipo 0x37: cada una de sus piezas es una caja
+C 0x73C4 desde la Y de la primera pieza (ix+0x22)
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x6017 teclas_de_la_demo la demo: 0xC00A cuenta los cuadros de la tecla; al acabar, la siguiente de p01:603C (0xFF acaba)
@@ -1385,22 +1547,18 @@ C 0x71C7 caja_del_disparo: con 15: la caja del disparo IY (p01:744D)
 C 0x71CE caja_del_actor: con 6: la caja del actor IX de p06:B6D3[tipo - 1]
 C 0x71D5 cajas_se_tocan: acarreo si las dos cajas (D, E, H, L y las de HL') se tocan
 C 0x71D8 disparo_acierta: borra el disparo y quita al actor lo de p01:7234[tipo - 1]
-C 0x71F5 guarda variable de trabajo del banco 0
 C 0x7206 borra_disparo: esconde sus 8 sprites (0xDE00) y lo pone a cero
 C 0x721A lee variable de trabajo del banco 0
 C 0x7221 hl_mas_a: HL = HL + A
 C 0x7231 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x723D lee el paso del actor
-C 0x7243 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0x7247 sube el paso del actor
 C 0x724C sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x724F lee el paso del actor
 C 0x7258 quita_vida_al_actor: (ix+0x12) - p01:7234[0xDE80 - 1]; a cero, sonido 0x17
 C 0x725B lee la vida del actor (p01:721A)
-C 0x7260 el paso del actor = 0x02
 C 0x7264 la vida del actor (p01:721A) = 0x01
 C 0x726B sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
-C 0x726E el paso del actor = 0x03
 C 0x7272 el fotograma del actor (p02:8A42) = 0x7F
 C 0x7276 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
 C 0x727B velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
@@ -1420,10 +1578,8 @@ C 0x72D7 toca_tipo_14: sonido 0x18, (ix+0x13) = 0 y el paso siguiente
 C 0x72DA tipo_7_o_13: Z y sin acarreo si el tipo es 7 o 13
 C 0x72DE personaje_1_fuerte: acarreo si 0xC26F, el estado del personaje 1 es 3 y el tipo es menor de 0x37
 C 0x72E2 lee invencible
-C 0x72E7 apunta a la ficha del personaje 0 (14 bytes)
 C 0x72EA lee el personaje que se lleva (0 o 1)
 C 0x72FC lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
-C 0x730C empieza_salto: 0xC264 = 1 y el salto segun la accion
 C 0x730F byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
 C 0x731A sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x731D barra_de_vida: la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
@@ -1432,15 +1588,11 @@ C 0x732B lee el tipo del actor
 C 0x7338 lee la accion del personaje (4 muere, 5 escalera)
 C 0x734A lee el tipo del actor
 C 0x7357 lee el paso del actor
-C 0x7362 el paso del actor = 0x04
 C 0x7366 el fotograma del actor (p02:8A42) = 0x62
 C 0x736C lee el paso del actor
-C 0x737B el paso del actor = 0x06
 C 0x737F el fotograma del actor (p02:8A42) = 0x63
-C 0x7383 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
 C 0x7386 velocidad_y_l: (ix+7, 8) = L (H = 0)
 C 0x738B sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
-C 0x738E la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 C 0x7392 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0x7398 lee el golpe de Cles en marcha
 C 0x739D lee el estado del personaje 1
@@ -1449,7 +1601,6 @@ C 0x73AC lee el paso del actor
 C 0x73B3 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x73B6 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0x73BA sube el paso del actor
-C 0x73BE lee las piezas del actor (p02:8648)
 C 0x73C6 hl_mas_a: HL = HL + A
 C 0x73CF caja_de_hl: la caja de la posicion (DE) para p01:74CB
 C 0x73FA cajas_se_tocan: acarreo si las dos cajas (D, E, H, L y las de HL') se tocan

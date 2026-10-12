@@ -982,6 +982,7 @@ C 0x737F el fotograma del actor (p02:8A42) = 0x63
 C 0x7383 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
 C 0x7386 velocidad_y_l: (ix+7, 8) = L (H = 0)
 C 0x738B sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x738E la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 C 0x7392 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0x739D lee el estado del personaje 1
 C 0x73A4 lee el tipo del actor
@@ -1101,6 +1102,7 @@ C 0x778A guarda la Y del actor
 C 0x778F guarda la X del actor
 C 0x7795 piezas_salvo_8_9_10: las piezas del enemigo salvo los tipos 8, 9 y 10
 C 0x779D despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x77C0 guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0x77C4 lee_ix17: (ix+0x17) = el siguiente byte de la lista
 C 0x77CD lee_ix17: (ix+0x17) = el siguiente byte de la lista
 C 0x77D5 lee_ix15: (ix+0x15) = el siguiente byte de la lista

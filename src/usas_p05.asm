@@ -1388,12 +1388,12 @@ L_9ED6:
 	call 04a2ch		;9ed6   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 	call 04a1fh		;9ed9   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	ld a,(0c2b0h)		;9edc   ; lee la ficha del personaje 0 (14 bytes)
-	ld (0c229h),a		;9edf   ; guarda el personaje del final
+	ld (0c229h),a		;9edf   ; guarda el personaje elegido en INFORMATION
 	xor a			;9ee2
-	ld (0c228h),a		;9ee3   ; guarda la opcion del final
-	call pantalla_del_final_5		;9ee6   ; pantalla_del_final_5: patrones, texto p06:A173, recuadros y lineas del final
+	ld (0c228h),a		;9ee3   ; guarda la mejora elegida en INFORMATION (0-2)
+	call pinta_informacion		;9ee6
 	jp 04a12h		;9ee9   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
-pantalla_del_final_5:		; patrones, texto p06:A173, recuadros y lineas del final
+pinta_informacion:		; patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 END, F2 CANCEL), recuadros y lineas
 	ld de,0a226h		;9eec
 	call 04926h		;9eef   ; rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
 	ld hl,0a173h		;9ef2
@@ -1431,7 +1431,7 @@ pantalla_del_final_5:		; patrones, texto p06:A173, recuadros y lineas del final
 	call 0a494h		;9f42   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	call cifras_c2b9		;9f45   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 	call 04797h		;9f48
-	call marcadores_del_final		;9f4b   ; marcadores_del_final: los numeros de las fichas de los dos personajes
+	call numeros_de_informacion		;9f4b
 	call lineas_a200		;9f4e   ; lineas_a200: las lineas horizontales de p06:A200
 	call lineas_a21f		;9f51   ; lineas_a21f: las lineas verticales de p06:A21F
 	ld a,001h		;9f54
@@ -1499,7 +1499,7 @@ L_9FA9:
 	ld e,a			;9fb8
 	djnz L_9FA9		;9fb9
 	ret			;9fbb
-marcadores_del_final:		; los numeros de las fichas de los dos personajes
+numeros_de_informacion:		; los numeros de las fichas de los dos personajes en INFORMATION
 	ld hl,0c2b5h		;9fbc
 	ld a,(hl)			;9fbf
 	ld de,03467h		;9fc0

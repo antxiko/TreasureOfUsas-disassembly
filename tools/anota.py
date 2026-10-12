@@ -45,6 +45,7 @@ from anotaciones import (BANCOS, CAMBIOS_DE_BANCO, FICHAS,  # noqa: E402
 INI = "# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---"
 FIN = "# --- fin de las anotaciones de anota.py ---"
 
+NOMBRES_0 = {nom: a for (b, a), (nom, _) in RUTINAS.items() if b == 0}
 REGISTROS_MAPPER = {0x6000: "0x6000", 0x8000: "0x8000", 0xA000: "0xA000"}
 RAM_DESDE = 0xC000
 
@@ -134,9 +135,10 @@ def ventanas_de(filas, b):
     fuera, ahora = {}, trio(b)
     for k, (a, t) in enumerate(filas):
         fuera[k] = dict(ahora)
-        m = re.match(r"(?:call|jp)\s+(?:(?:nz|z|nc|c|po|pe|p|m),)?(?:L_([0-9A-F]{4})|0([0-9a-f]{4})h)$", t)
+        m = re.match(r"(?:call|jp)\s+(?:(?:nz|z|nc|c|po|pe|p|m),)?(?:L_([0-9A-F]{4})|0([0-9a-f]{4})h|([a-z_][a-z0-9_]*))$", t)
         if m:
-            d = int(m.group(1) or m.group(2), 16)
+            # una vez bautizadas, las rutinas del banco 0 salen por su nombre
+            d = int(m.group(1) or m.group(2), 16) if not m.group(3) else NOMBRES_0.get(m.group(3))
             ahora.update(CAMBIOS_DE_BANCO.get(d, {}))
         if t == "ret" or (t.startswith("jp ") and "," not in t):
             ahora = trio(b)

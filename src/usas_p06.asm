@@ -16,15 +16,15 @@
 
 L_A000:
 	jr c,L_A01E		;a000
-	call mando_del_final		;a002   ; mando_del_final: las teclas del final: cambia de personaje (0xC228/0xC229)
-	call cursor_del_final		;a005   ; cursor_del_final: los sprites del cursor segun 0xC228
-	call compra		;a008   ; compra: con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
+	call mando_de_informacion		;a002
+	call cursor_de_informacion		;a005
+	call compra		;a008   ; compra: INFORMATION, con la tecla 0x10: si las monedas (0xC259) llegan al precio de la mejora 0xC228, la compra
 	ld a,(0de80h)		;a00b   ; lee variable de trabajo del banco 0
 	and a			;a00e
 	jp z,05690h		;a00f   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	call 09f88h		;a012   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 	call 04797h		;a015
-	call 09fbch		;a018   ; marcadores_del_final: los numeros de las fichas de los dos personajes
+	call 09fbch		;a018   ; numeros_de_informacion: los numeros de las fichas de los dos personajes en INFORMATION
 	jp 05690h		;a01b   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 L_A01E:
 	ld b,002h		;a01e
@@ -47,10 +47,10 @@ L_A023:
 	ld (0c259h),hl		;a03d   ; guarda las monedas (16 bits) y el byte siguiente (16 bits)
 	call 09f88h		;a040   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 	call 04797h		;a043
-	jp 09fbch		;a046   ; marcadores_del_final: los numeros de las fichas de los dos personajes
-mando_del_final:		; las teclas del final: cambia de personaje (0xC228/0xC229)
-	ld hl,0c228h		;a049   ; apunta a la opcion del final
-	ld de,0c229h		;a04c   ; apunta a el personaje del final
+	jp 09fbch		;a046   ; numeros_de_informacion: los numeros de las fichas de los dos personajes en INFORMATION
+mando_de_informacion:		; las teclas de INFORMATION: la mejora (0xC228, 0-2) y el personaje (0xC229)
+	ld hl,0c228h		;a049   ; apunta a la mejora elegida en INFORMATION (0-2)
+	ld de,0c229h		;a04c   ; apunta a el personaje elegido en INFORMATION
 	ld a,(0c006h)		;a04f   ; lee las teclas nuevas
 	rra			;a052
 	jr c,L_A086		;a053
@@ -103,8 +103,8 @@ L_A08D:
 	ld a,070h		;a096
 L_A098:
 	jp 05451h		;a098
-cursor_del_final:		; los sprites del cursor segun 0xC228
-	ld a,(0c228h)		;a09b   ; lee la opcion del final
+cursor_de_informacion:		; los sprites del cursor segun 0xC228
+	ld a,(0c228h)		;a09b   ; lee la mejora elegida en INFORMATION (0-2)
 	ld hl,0de00h		;a09e   ; apunta a los atributos de los sprites en RAM
 	ld de,0de04h		;a0a1   ; apunta a la Y del sprite 1 en RAM
 	ld c,a			;a0a4
@@ -121,7 +121,7 @@ cursor_del_final:		; los sprites del cursor segun 0xC228
 	inc l			;a0b0
 	inc e			;a0b1
 	call estado_11		;a0b2   ; estado_11: en el estado 0x0B, 0xC229 = el personaje que se lleva
-	ld a,(0c229h)		;a0b5   ; lee el personaje del final
+	ld a,(0c229h)		;a0b5   ; lee el personaje elegido en INFORMATION
 	and a			;a0b8
 	ld a,043h		;a0b9
 	jr z,L_A0BF		;a0bb
@@ -148,15 +148,15 @@ estado_11:		; en el estado 0x0B, 0xC229 = el personaje que se lleva
 	cp 00bh		;a0e0
 	ret nz			;a0e2
 	ld a,(0c240h)		;a0e3   ; lee el personaje que se lleva (0 o 1)
-	ld (0c229h),a		;a0e6   ; guarda el personaje del final
+	ld (0c229h),a		;a0e6   ; guarda el personaje elegido en INFORMATION
 	ret			;a0e9
-compra:		; con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
+compra:		; INFORMATION, con la tecla 0x10: si las monedas (0xC259) llegan al precio de la mejora 0xC228, la compra
 	xor a			;a0ea
 	ld (0de80h),a		;a0eb   ; guarda variable de trabajo del banco 0
 	ld a,(0c006h)		;a0ee   ; lee las teclas nuevas
 	and 010h		;a0f1
 	ret z			;a0f3
-	ld a,(0c228h)		;a0f4   ; lee la opcion del final
+	ld a,(0c228h)		;a0f4   ; lee la mejora elegida en INFORMATION (0-2)
 	add a,a			;a0f7
 	add a,008h		;a0f8
 	ld b,a			;a0fa
@@ -168,7 +168,7 @@ compra:		; con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
 	ld hl,(0c259h)		;a104   ; lee las monedas (16 bits) y el byte siguiente (16 bits)
 	call 00020h		;a107   ; BIOS DCOMPR - Compares HL with DE
 	ret c			;a10a
-	ld a,(0c228h)		;a10b   ; lee la opcion del final
+	ld a,(0c228h)		;a10b   ; lee la mejora elegida en INFORMATION (0-2)
 	ld bc,00104h		;a10e
 	dec a			;a111
 	jr z,L_A11F		;a112
@@ -230,7 +230,7 @@ L_A142:
 L_A160:
 	jp 05451h		;a160
 byte_de_ficha:		; HL = la ficha del personaje 0xC229 + B
-	ld a,(0c229h)		;a163   ; lee el personaje del final
+	ld a,(0c229h)		;a163   ; lee el personaje elegido en INFORMATION
 	and a			;a166
 	ld hl,0c2b0h		;a167   ; apunta a la ficha del personaje 0 (14 bytes)
 	jr z,L_A16F		;a16a
@@ -569,7 +569,7 @@ L_A410:
 	inc l			;a439
 	ld de,0e270h		;a43a
 	call rectangulo_guardando		;a43d   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-	call recuadros_del_final		;a440   ; recuadros_del_final: los recuadros y lineas de p06:A7B4/A7BB
+	call recuadros_de_informacion		;a440
 	ld hl,0a60ah		;a443
 	call 04d4ah		;a446   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	xor a			;a449
@@ -586,7 +586,7 @@ lista_a7f8:		; la lista de fichas p06:A7F8
 paleta_b351:		; la paleta p06:B351
 	ld hl,0b351h		;a465
 	jp 04a9dh		;a468   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
-recuadros_del_final:		; los recuadros y lineas de p06:A7B4/A7BB
+recuadros_de_informacion:		; los recuadros y lineas de p06:A7B4/A7BB
 	call recuadros_2		;a46b   ; recuadros_2: dos recuadros de 0x32 x 0x32
 	ld hl,01460h		;a46e
 	ld de,06825h		;a471

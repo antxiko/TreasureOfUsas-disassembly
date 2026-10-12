@@ -298,7 +298,7 @@ L_41E4:
 	or a			;420a
 	jp z,siguiente_paso		;420b   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 	call bancos_4_5_6		;420e   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 07390h		;4211
+	call 07390h		;4211   ; pantalla_73b4: paleta, mapa p05:93C6, el dibujo y el texto p04:73BD
 	call 0a249h		;4214
 	call bancos_1_2_3		;4217   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jr siguiente_paso		;421a
@@ -351,7 +351,7 @@ L_4270:
 	dec a			;4280
 	jr z,L_4291		;4281
 	call bancos_4_5_6		;4283   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb78h		;4286
+	call 0bb78h		;4286   ; copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
 	call bancos_1_2_3		;4289   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld hl,0c001h		;428c   ; apunta a el paso del estado
 	dec (hl)			;428f
@@ -397,7 +397,7 @@ L_42D4:
 	and a			;42d7
 	jr z,L_42E9		;42d8
 	call bancos_4_5_6		;42da   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb78h		;42dd
+	call 0bb78h		;42dd   ; copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
 	call bancos_1_2_3		;42e0   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,003h		;42e3
 	ld (0c001h),a		;42e5   ; guarda el paso del estado
@@ -472,7 +472,7 @@ L_436C:
 	call lista_af81		;4372   ; lista_af81: con 10-11-12: la lista p12:AF81
 	call paleta_base		;4375   ; paleta_base: con 4-5-6: la paleta p06:B335
 	call bancos_4_5_6		;4378   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 071d2h		;437b
+	call 071d2h		;437b   ; escena_de_la_ruina: la escena de la ruina (p04:71EA) y p04:71D5
 	call bancos_1_2_3		;437e   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	xor a			;4381
 	ld (0c21fh),a		;4382
@@ -502,7 +502,7 @@ L_4388:
 	jp z,L_435E		;43b9
 	ret			;43bc
 L_43BD:
-	call pantalla_del_final		;43bd   ; pantalla_del_final: con 4-5-6: el final (p06:A465, p05:9EEC)
+	call pantalla_de_informacion		;43bd
 	ld a,00bh		;43c0
 	jp pon_estado		;43c2   ; pon_estado: 0xC000 = A y 0x20 cuadros de espera en 0xC004
 L_43C5:
@@ -2747,7 +2747,7 @@ graficos_de_antesala:		; la lista de fichas de la antesala (p07:60B0[ruina]) y l
 	ld de,0a7a4h		;516d
 	call lista_de_fichas		;5170   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
 	call bancos_4_5_6		;5173   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0b9d8h		;5176
+	call 0b9d8h		;5176   ; compone_puertas: compone en la pagina 1 los marcos y hojas de las puertas
 	jp bancos_1_2_3		;5179   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 graficos_de_ruina:		; con 7-8-9: la lista de fichas de la ruina (p07:6000), o las de la sala 5 (p00:51D4)
 	call bancos_7_8_9		;517c   ; bancos_7_8_9: pone los bancos 7-8-9 (p00:5490)
@@ -4402,17 +4402,17 @@ L_5CBF:
 	pop bc			;5cd8
 	djnz L_5CBC		;5cd9
 	ret			;5cdb
-pantalla_del_final:		; con 4-5-6: el final (p06:A465, p05:9EEC)
+pantalla_de_informacion:		; con 4-5-6: la pantalla INFORMATION de la pausa, donde se compran mejoras con monedas (p06:A465, p05:9EEC)
 	call actores_tipo_10		;5cdc   ; actores_tipo_10: copia el dibujo de los actores de tipo 10 de 0xCD00
 	call apaga_y_borra_todo		;5cdf   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 	call bancos_4_5_6		;5ce2   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
 	call 0a465h		;5ce5   ; paleta_b351: la paleta p06:B351
-	call 09eech		;5ce8   ; pantalla_del_final_5: patrones, texto p06:A173, recuadros y lineas del final
+	call 09eech		;5ce8   ; pinta_informacion: patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 END, F2 CANCEL), recuadros y lineas
 	call bancos_1_2_3		;5ceb   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c240h)		;5cee   ; lee el personaje que se lleva (0 o 1)
-	ld (0c229h),a		;5cf1   ; guarda el personaje del final
+	ld (0c229h),a		;5cf1   ; guarda el personaje elegido en INFORMATION
 	xor a			;5cf4
-	ld (0c228h),a		;5cf5   ; guarda la opcion del final
+	ld (0c228h),a		;5cf5   ; guarda la mejora elegida en INFORMATION (0-2)
 	jp pantalla_encendida		;5cf8   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 vuelve_a_la_fase:		; graficos, paleta, mapa y pantalla de la fase y sus actores
 	call apaga_y_borra_todo		;5cfb   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada

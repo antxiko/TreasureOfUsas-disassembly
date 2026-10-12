@@ -2905,7 +2905,7 @@ L_7383:
 	call 08b7eh		;7386   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
 	ld a,009h		;7389
 	call 056e3h		;738b   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
-	ld (ix+011h),020h		;738e
+	ld (ix+011h),020h		;738e   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 	ld (ix+013h),000h		;7392   ; las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 	scf			;7396
 	ret			;7397
@@ -3598,7 +3598,7 @@ L_77BD:
 L_77BE:
 	inc de			;77be
 	ld a,(de)			;77bf
-	ld (ix+011h),a		;77c0
+	ld (ix+011h),a		;77c0   ; guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret			;77c3
 L_77C4:
 	call lee_ix17		;77c4   ; lee_ix17: (ix+0x17) = el siguiente byte de la lista

@@ -336,16 +336,16 @@ C 0xBD6C el bit 2: cuadro 1
 C 0xBD72 si no, el bit 3: cuadro 0 o 2
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
-L 0xA049 mando_del_final las teclas del final: cambia de personaje (0xC228/0xC229)
-L 0xA09B cursor_del_final los sprites del cursor segun 0xC228
+L 0xA049 mando_de_informacion las teclas de INFORMATION: la mejora (0xC228, 0-2) y el personaje (0xC229)
+L 0xA09B cursor_de_informacion los sprites del cursor segun 0xC228
 L 0xA0DD estado_11 en el estado 0x0B, 0xC229 = el personaje que se lleva
-L 0xA0EA compra con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
+L 0xA0EA compra INFORMATION, con la tecla 0x10: si las monedas (0xC259) llegan al precio de la mejora 0xC228, la compra
 L 0xA163 byte_de_ficha HL = la ficha del personaje 0xC229 + B
 L 0xA385 compara_con_e360 compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
 L 0xA392 lee_teclado las 9 filas de la matriz (SNSMAT); la primera tecla pulsada, por p06:A3C8
 L 0xA45C lista_a7f8 la lista de fichas p06:A7F8
 L 0xA465 paleta_b351 la paleta p06:B351
-L 0xA46B recuadros_del_final los recuadros y lineas de p06:A7B4/A7BB
+L 0xA46B recuadros_de_informacion los recuadros y lineas de p06:A7B4/A7BB
 L 0xA488 recuadros_2 dos recuadros de 0x32 x 0x32
 L 0xA494 rectangulo_guardando p00:4B74 con el color 0x0D sin tocar registros
 L 0xA4A0 recuadro_parpadea el recuadro del personaje que se lleva, 0x0D o 0x0A cada 16 cuadros
@@ -379,48 +379,46 @@ L 0xBCD8 sprites_de20 los sprites de 0xDE20 junto a 0xCC13
 L 0xBD05 pon_atributo (HL) = E, D, C
 L 0xBD0B colores_dc80 4 x 16 colores 0x0D/0x0A en 0xDC80
 L 0xBD1F llena_16_a 16 bytes de HL con A
-C 0xA002 mando_del_final: las teclas del final: cambia de personaje (0xC228/0xC229)
-C 0xA005 cursor_del_final: los sprites del cursor segun 0xC228
-C 0xA008 compra: con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
+C 0xA008 compra: INFORMATION, con la tecla 0x10: si las monedas (0xC259) llegan al precio de la mejora 0xC228, la compra
 C 0xA00B lee variable de trabajo del banco 0
 C 0xA00F atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 C 0xA012 cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
-C 0xA018 marcadores_del_final: los numeros de las fichas de los dos personajes
+C 0xA018 numeros_de_informacion: los numeros de las fichas de los dos personajes en INFORMATION
 C 0xA01B atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 C 0xA020 apunta a la ficha del personaje 0 (14 bytes)
 C 0xA029 hl_mas_a: HL = HL + A
 C 0xA035 hl_mas_a: HL = HL + A
 C 0xA03D guarda las monedas (16 bits) y el byte siguiente (16 bits)
 C 0xA040 cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
-C 0xA046 marcadores_del_final: los numeros de las fichas de los dos personajes
-C 0xA049 apunta a la opcion del final
-C 0xA04C apunta a el personaje del final
+C 0xA046 numeros_de_informacion: los numeros de las fichas de los dos personajes en INFORMATION
+C 0xA049 apunta a la mejora elegida en INFORMATION (0-2)
+C 0xA04C apunta a el personaje elegido en INFORMATION
 C 0xA04F lee las teclas nuevas
 C 0xA05D lee la ficha del personaje 0 (14 bytes)
 C 0xA061 lee la ficha del personaje 1 (14 bytes)
 C 0xA074 lee el estado del juego
 C 0xA08D lee el estado del juego
-C 0xA09B lee la opcion del final
+C 0xA09B lee la mejora elegida en INFORMATION (0-2)
 C 0xA09E apunta a los atributos de los sprites en RAM
 C 0xA0A1 apunta a la Y del sprite 1 en RAM
 C 0xA0B2 estado_11: en el estado 0x0B, 0xC229 = el personaje que se lleva
-C 0xA0B5 lee el personaje del final
+C 0xA0B5 lee el personaje elegido en INFORMATION
 C 0xA0CA apunta a los colores de los sprites en RAM (16 por sprite)
 C 0xA0D9 guarda la Y del sprite 2 en RAM
 C 0xA0DD lee el estado del juego
 C 0xA0E3 lee el personaje que se lleva (0 o 1)
-C 0xA0E6 guarda el personaje del final
+C 0xA0E6 guarda el personaje elegido en INFORMATION
 C 0xA0EB guarda variable de trabajo del banco 0
 C 0xA0EE lee las teclas nuevas
-C 0xA0F4 lee la opcion del final
+C 0xA0F4 lee la mejora elegida en INFORMATION (0-2)
 C 0xA0FB byte_de_ficha: HL = la ficha del personaje 0xC229 + B
 C 0xA104 lee las monedas (16 bits) y el byte siguiente (16 bits)
-C 0xA10B lee la opcion del final
+C 0xA10B lee la mejora elegida en INFORMATION (0-2)
 C 0xA142 lee las monedas (16 bits) y el byte siguiente (16 bits)
 C 0xA14D guarda las monedas (16 bits) y el byte siguiente (16 bits)
 C 0xA152 guarda variable de trabajo del banco 0
 C 0xA155 lee el estado del juego
-C 0xA163 lee el personaje del final
+C 0xA163 lee el personaje elegido en INFORMATION
 C 0xA167 apunta a la ficha del personaje 0 (14 bytes)
 C 0xA16C apunta a la ficha del personaje 1 (14 bytes)
 C 0xA170 hl_mas_a: HL = HL + A
@@ -456,7 +454,6 @@ C 0xA429 borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0xA42C lista_a7f8: la lista de fichas p06:A7F8
 C 0xA435 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 C 0xA43D rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-C 0xA440 recuadros_del_final: los recuadros y lineas de p06:A7B4/A7BB
 C 0xA446 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 C 0xA44D guarda el texto a maquina en marcha
 C 0xA450 paleta_b351: la paleta p06:B351

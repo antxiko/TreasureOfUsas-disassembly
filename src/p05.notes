@@ -168,12 +168,12 @@ C 0x9FB4 el siguiente par de cifras y la siguiente columna (E + C)
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x9453 caracteres_del_titulo los tres RLE de caracteres del titulo (p05:94C3, 950B, 9550) a la VRAM
 L 0x94A3 rotulo las fichas del rotulo de HL: 0xFE [dx] baja una fila, 0xFF acaba
-L 0x9EEC pantalla_del_final_5 patrones, texto p06:A173, recuadros y lineas del final
+L 0x9EEC pinta_informacion patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 END, F2 CANCEL), recuadros y lineas
 L 0x9F7C lineas_a21f las lineas verticales de p06:A21F
 L 0x9F82 lineas_a200 las lineas horizontales de p06:A200
 L 0x9F88 cifras_c2b9 las cifras de 0xC2B9 de los dos personajes
 L 0x9FA7 tres_cifras 3 pares de cifras de HL (p00:479C)
-L 0x9FBC marcadores_del_final los numeros de las fichas de los dos personajes
+L 0x9FBC numeros_de_informacion los numeros de las fichas de los dos personajes en INFORMATION
 L 0x9FEF numero_guardando p06:A550 con (HL) + 1 sin tocar registros
 C 0x941C pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 C 0x942F rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
@@ -226,9 +226,8 @@ C 0x9880 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 C 0x9ED6 apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 C 0x9ED9 pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 C 0x9EDC lee la ficha del personaje 0 (14 bytes)
-C 0x9EDF guarda el personaje del final
-C 0x9EE3 guarda la opcion del final
-C 0x9EE6 pantalla_del_final_5: patrones, texto p06:A173, recuadros y lineas del final
+C 0x9EDF guarda el personaje elegido en INFORMATION
+C 0x9EE3 guarda la mejora elegida en INFORMATION (0-2)
 C 0x9EE9 pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 C 0x9EEF rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
 C 0x9EF5 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
@@ -244,7 +243,6 @@ C 0x9F30 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 C 0x9F39 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 C 0x9F42 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 C 0x9F45 cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
-C 0x9F4B marcadores_del_final: los numeros de las fichas de los dos personajes
 C 0x9F4E lineas_a200: las lineas horizontales de p06:A200
 C 0x9F51 lineas_a21f: las lineas verticales de p06:A21F
 C 0x9F5B apunta a la ficha del personaje 0 (14 bytes)

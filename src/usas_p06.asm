@@ -2051,65 +2051,65 @@ DATA_por_tipo_ix20_64:
 
 mira_los_bordes:		; salvo muriendo, si la X o la Y del personaje pasa un borde: 0xC215 = el lado
 	ld a,(0c24bh)		;b66a   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 004h		;b66d
+	cp 004h		;b66d   ; muriendo, nada
 	ret z			;b66f
 	ld hl,0c215h		;b670   ; apunta a el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ld de,0c246h		;b673   ; apunta a la X del personaje
-	ld a,(de)			;b676
-	cp 0f2h		;b677
+	ld a,(de)			;b676   ; la X del personaje:
+	cp 0f2h		;b677   ; de 0xF2 en adelante, el borde derecho (p06:B691)
 	jr nc,L_B691		;b679
-	cp 00eh		;b67b
+	cp 00eh		;b67b   ; por encima de 0x0E, mira la Y (p06:B6AB)
 	jr nc,L_B6AB		;b67d
-	ld a,(0ccb1h)		;b67f
+	ld a,(0ccb1h)		;b67f   ; el borde izquierdo: con el lado cerrado (0xCCB1)...
 	and a			;b682
 	jr z,L_B68B		;b683
 	ld a,(0c21ah)		;b685   ; lee la vecina de la izquierda
-	inc a			;b688
+	inc a			;b688   ; ...0xFF: cerrado, no sale
 	jr z,L_B6A3		;b689
 L_B68B:
-	ld (hl),003h		;b68b
+	ld (hl),003h		;b68b   ; sale por la izquierda (3) y entra por la derecha (X = 0xF0)
 	ld a,0f0h		;b68d
 	ld (de),a			;b68f
 	ret			;b690
 L_B691:
-	ld a,(0ccb2h)		;b691
+	ld a,(0ccb2h)		;b691   ; el borde derecho: con el lado cerrado (0xCCB2)...
 	and a			;b694
 	jr z,L_B69D		;b695
 	ld a,(0c21bh)		;b697   ; lee la vecina de la derecha
 	inc a			;b69a
 	jr z,L_B6A3		;b69b
 L_B69D:
-	ld (hl),004h		;b69d
+	ld (hl),004h		;b69d   ; sale por la derecha (4) y entra por la izquierda (X = 0x10)
 	ld a,010h		;b69f
 	ld (de),a			;b6a1
 	ret			;b6a2
 L_B6A3:
 	call 047ebh		;b6a3   ; byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
-	ld (hl),000h		;b6a6
+	ld (hl),000h		;b6a6   ; no sale
 	jp 04752h		;b6a8   ; barra_de_vida: la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
 L_B6AB:
 	ld de,0c244h		;b6ab   ; apunta a la Y del personaje
-	ld a,(de)			;b6ae
+	ld a,(de)			;b6ae   ; la Y: por encima de 0x20, el borde de arriba
 	cp 020h		;b6af
 	jr c,L_B6C1		;b6b1
-	cp 0d4h		;b6b3
+	cp 0d4h		;b6b3   ; por debajo de 0xD4, el de abajo
 	ret c			;b6b5
 	ld a,(0c219h)		;b6b6   ; lee la vecina de abajo
-	inc a			;b6b9
+	inc a			;b6b9   ; sin vecina abajo (0xFF), no
 	ret z			;b6ba
-	ld (hl),002h		;b6bb
+	ld (hl),002h		;b6bb   ; sale por abajo (2) y entra por arriba (Y = 0x24)
 	ld a,024h		;b6bd
 	ld (de),a			;b6bf
 	ret			;b6c0
 L_B6C1:
-	ld a,(0c268h)		;b6c1
+	ld a,(0c268h)		;b6c1   ; arriba: con 0xC268, o en la escalera (accion 5)...
 	or a			;b6c4
 	jr nz,L_B6CD		;b6c5
 	ld a,(0c24bh)		;b6c7   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 005h		;b6ca
 	ret nz			;b6cc
 L_B6CD:
-	ld (hl),001h		;b6cd
+	ld (hl),001h		;b6cd   ; ...sale por arriba (1) y entra por abajo (Y = 0xD0)
 	ld a,0d0h		;b6cf
 	ld (de),a			;b6d1
 	ret			;b6d2
@@ -2189,14 +2189,14 @@ DATA_medidas_por_tipo:
 
 
 busca_otros_cartuchos:		; recorre las ranuras (EXPTBL 0xFCC1) y marca en 0xC205 los cartuchos 07 49-07 52 (p06:B78D)
-	xor a			;b751
+	xor a			;b751   ; sin cartuchos encontrados
 	ld (0c205h),a		;b752   ; guarda los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
-	ld bc,00400h		;b755
+	ld bc,00400h		;b755   ; los 4 slots primarios
 	ld hl,0fcc1h		;b758
 L_B75B:
 	push bc			;b75b
 	push hl			;b75c
-	ld a,(hl)			;b75d
+	ld a,(hl)			;b75d   ; EXPTBL: si el slot esta expandido...
 	bit 7,a		;b75e
 	jr nz,L_B771		;b760
 	call busca_cartucho		;b762   ; busca_cartucho: 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
@@ -2204,9 +2204,9 @@ L_B765:
 	pop hl			;b765
 	pop bc			;b766
 	ld a,(0c205h)		;b767   ; lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
-	and a			;b76a
+	and a			;b76a   ; con los 4 bits puestos, se acaba
 	ret nz			;b76b
-	inc hl			;b76c
+	inc hl			;b76c   ; el slot siguiente
 	inc c			;b76d
 	djnz L_B75B		;b76e
 	ret			;b770
@@ -2214,7 +2214,7 @@ L_B771:
 	call busca_en_subranuras		;b771   ; busca_en_subranuras: las 4 subranuras de la ranura C (p06:B78D)
 	jr L_B765		;b774
 busca_en_subranuras:		; las 4 subranuras de la ranura C (p06:B78D)
-	and 080h		;b776
+	and 080h		;b776   ; expandido: los 4 secundarios
 	or c			;b778
 	ld c,a			;b779
 	ld b,004h		;b77a
@@ -2225,22 +2225,22 @@ L_B77C:
 	ld a,(0c205h)		;b781   ; lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	and a			;b784
 	ret nz			;b785
-	ld a,c			;b786
+	ld a,c			;b786   ; el secundario siguiente (+ 4)
 	add a,004h		;b787
 	ld c,a			;b789
 	djnz L_B77C		;b78a
 	ret			;b78c
 busca_cartucho:		; 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
-	ld de,0b7edh		;b78d
+	ld de,0b7edh		;b78d   ; en el slot C: 07 49 en 0x4012 (p06:B7ED)?...
 	ld hl,04012h		;b790
 	ld b,002h		;b793
 	call compara_en_ranura		;b795   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
 	jr nc,L_B7A0		;b798
 	ld hl,0c205h		;b79a   ; apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
-	set 0,(hl)		;b79d
+	set 0,(hl)		;b79d   ; ...bit 0
 	ret			;b79f
 L_B7A0:
-	ld de,0b7efh		;b7a0
+	ld de,0b7efh		;b7a0   ; 07 50: bit 1
 	ld hl,04012h		;b7a3
 	ld b,002h		;b7a6
 	call compara_en_ranura		;b7a8   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
@@ -2249,7 +2249,7 @@ L_B7A0:
 	set 1,(hl)		;b7b0
 	ret			;b7b2
 L_B7B3:
-	ld de,0b7f1h		;b7b3
+	ld de,0b7f1h		;b7b3   ; 07 51: bit 2
 	ld hl,04012h		;b7b6
 	ld b,002h		;b7b9
 	call compara_en_ranura		;b7bb   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
@@ -2258,7 +2258,7 @@ L_B7B3:
 	set 2,(hl)		;b7c3
 	ret			;b7c5
 L_B7C6:
-	ld de,0b7f3h		;b7c6
+	ld de,0b7f3h		;b7c6   ; 07 52: bit 3
 	ld hl,04012h		;b7c9
 	ld b,002h		;b7cc
 	call compara_en_ranura		;b7ce   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
@@ -2268,19 +2268,19 @@ L_B7C6:
 	ret			;b7d7
 compara_en_ranura:		; acarreo si los B bytes de la ranura C (RDSLT) son los de DE
 	push bc			;b7d8   ; el byte HL de la ranura C (RDSLT)
-	push de			;b7d9
+	push de			;b7d9   ; RDSLT: el byte de HL en el slot C...
 	ld a,c			;b7da
 	call 0000ch		;b7db   ; BIOS RDSLT - Reads the value of an address in another slot
 	pop de			;b7de
 	pop bc			;b7df
-	ex de,hl			;b7e0
+	ex de,hl			;b7e0   ; ...contra el de DE
 	cp (hl)			;b7e1   ; contra (DE): si no coincide, sin acarreo
 	ex de,hl			;b7e2
-	jr nz,L_B7EB		;b7e3
+	jr nz,L_B7EB		;b7e3   ; distinto: sin acarreo
 	inc hl			;b7e5
 	inc de			;b7e6
 	djnz compara_en_ranura		;b7e7
-	scf			;b7e9
+	scf			;b7e9   ; los B bytes iguales: acarreo
 	ret			;b7ea
 L_B7EB:
 	and a			;b7eb
@@ -2304,7 +2304,7 @@ DATA_otros_cartuchos:
 
 puertas_abiertas:		; cuenta en 0xE322 las puertas abiertas de la pantalla de la antesala (0xE328 + 0xCC10 * 16)
 	ld de,0e322h		;b7f5   ; apunta a las puertas abiertas de la antesala
-	xor a			;b7f8
+	xor a			;b7f8   ; ninguna abierta
 	ld (de),a			;b7f9
 	ld a,(0cc10h)		;b7fa   ; lee la pantalla de la antesala (0-2)
 	add a,a			;b7fd
@@ -2313,14 +2313,14 @@ puertas_abiertas:		; cuenta en 0xE322 las puertas abiertas de la pantalla de la 
 	add a,a			;b800
 	ld hl,0e328h		;b801   ; apunta a las puertas de la antesala (8 bytes cada una)
 	call 04083h		;b804   ; hl_mas_a: HL = HL + A
-	ld a,(hl)			;b807
+	ld a,(hl)			;b807   ; la puerta en la pantalla
 	and a			;b808
 	push hl			;b809
 	call z,cuenta_e328		;b80a   ; cuenta_e328: cuantas puertas de 0xE328 hay abiertas
 	pop hl			;b80d
 	ret c			;b80e
 	ld a,(0cc10h)		;b80f   ; lee la pantalla de la antesala (0-2)
-	cp 002h		;b812
+	cp 002h		;b812   ; en la pantalla 2 (el templo), nada mas
 	ret z			;b814
 	ld a,008h		;b815
 	call 04083h		;b817   ; hl_mas_a: HL = HL + A
@@ -2378,14 +2378,14 @@ L_B857:
 	scf			;b863
 	ret			;b864
 al_entrar_en_la_antesala:		; 0xCC12 = 0xC3 y la X de la antesala (0xCC13) = 0x30
-	ld a,0c3h		;b865
+	ld a,0c3h		;b865   ; 0xCC12 = 0xC3
 	ld (0cc12h),a		;b867
-	ld a,030h		;b86a
+	ld a,030h		;b86a   ; la X de la antesala, 0x30
 	ld (0cc13h),a		;b86c   ; guarda la X en la antesala
 	ret			;b86f
 puertas_de_la_antesala:		; las 5 puertas de 0xE328 a 0xFF y luego las de la ruina (p06:BE3D)
 	ld hl,0e328h		;b870   ; apunta a las puertas de la antesala (8 bytes cada una)
-	ld b,005h		;b873
+	ld b,005h		;b873   ; las 5 puertas cerradas (0xFF), 8 bytes cada una
 L_B875:
 	ld (hl),0ffh		;b875
 	ld a,l			;b877
@@ -2393,9 +2393,9 @@ L_B875:
 	ld l,a			;b87a
 	djnz L_B875		;b87b
 	ld de,0e328h		;b87d   ; apunta a las puertas de la antesala (8 bytes cada una)
-	ld hl,0be3dh		;b880
+	ld hl,0be3dh		;b880   ; las puertas de la ruina de p06:BE3D
 	ld a,(0c21dh)		;b883   ; lee la ruina (0-4)
-	add a,a			;b886
+	add a,a			;b886   ; 6 bytes por ruina
 	ld b,a			;b887
 	add a,a			;b888
 	add a,b			;b889
@@ -2403,17 +2403,17 @@ L_B875:
 L_B88D:
 	ld a,(hl)			;b88d   ; [puerta]: 0xFF acaba
 	ld c,a			;b88e
-	inc a			;b88f
+	inc a			;b88f   ; 0xFF: se acabo
 	ret z			;b890
 	xor a			;b891   ; al registro: 0 (cerrada), el bit 0 (grande) y la X
 	ld (de),a			;b892
 	inc e			;b893
 	ld a,c			;b894
-	and 001h		;b895
+	and 001h		;b895   ; el bit 0: el lado de la puerta
 	ld (de),a			;b897
 	inc e			;b898
 	ld a,c			;b899
-	and 0feh		;b89a
+	and 0feh		;b89a   ; el resto: su X
 	ld (de),a			;b89c
 	inc hl			;b89d
 	ld a,006h		;b89e   ; 8 bytes por registro (6 + los 2 de antes)
@@ -2483,24 +2483,24 @@ DATA_tablas_pB8A5:
 cambia_pantalla_antesala:		; con la X de la antesala en un borde, la pantalla siguiente o la anterior (0xCC10)
 	ld hl,0cc10h		;b8fb   ; apunta a la pantalla de la antesala (0-2)
 	ld de,0cc13h		;b8fe   ; apunta a la X en la antesala
-	ld a,(de)			;b901
-	cp 008h		;b902
+	ld a,(de)			;b901   ; la X de la antesala...
+	cp 008h		;b902   ; ...por debajo de 8: la pantalla anterior
 	jr c,L_B90F		;b904
-	cp 0f8h		;b906
+	cp 0f8h		;b906   ; ...de 0xF8 en adelante: la siguiente
 	ret c			;b908
-	inc (hl)			;b909
+	inc (hl)			;b909   ; la siguiente, entrando por la izquierda (X = 0x0A)
 	ld a,00ah		;b90a
 	ld (de),a			;b90c
 	jr pinta_pantalla_antesala		;b90d
 L_B90F:
-	dec (hl)			;b90f
+	dec (hl)			;b90f   ; la anterior, entrando por la derecha (X = 0xF6)
 	ld a,0f6h		;b910
 	ld (de),a			;b912
 pinta_pantalla_antesala:		; pantalla apagada, sprites escondidos y la pantalla 0xCC10 de la antesala
 	call 04a1fh		;b913   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	call 04a44h		;b916   ; esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
 	ld a,(0cc10h)		;b919   ; lee la pantalla de la antesala (0-2)
-	add a,a			;b91c
+	add a,a			;b91c   ; la pantalla * 4 * 4 * 6 (0x60 bytes por pantalla)...
 	add a,a			;b91d
 	ld h,000h		;b91e
 	ld l,a			;b920
@@ -2511,7 +2511,7 @@ pinta_pantalla_antesala:		; pantalla apagada, sprites escondidos y la pantalla 0
 	add hl,hl			;b925
 	add hl,de			;b926
 	ld de,0ec00h		;b927   ; apunta a el mapa de la fase (48 bytes por pantalla)
-	add hl,de			;b92a
+	add hl,de			;b92a   ; ...+ el mapa de la antesala (0xEC00)
 	call 05a11h		;b92b   ; pantalla_con_15: con 15: p15:BEBF (las 32 x 24 fichas de la pantalla) y vuelve con 6 en 0xA000
 	call 05a1ah		;b92e   ; pinta_d200: las 32 x 24 fichas de 0xD200 desde la linea 20 (p00:4DB4)
 	call compone_puertas		;b931   ; compone_puertas: compone en la pagina 1 los marcos y hojas de las puertas
@@ -2521,9 +2521,9 @@ pinta_pantalla_antesala:		; pantalla apagada, sprites escondidos y la pantalla 0
 	jp 04a12h		;b93d   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 puerta_grande:		; en la pantalla 2 de la antesala, la puerta grande (p06:B998)
 	ld a,(0cc10h)		;b940   ; lee la pantalla de la antesala (0-2)
-	cp 002h		;b943
+	cp 002h		;b943   ; en la pantalla 2 (el templo)...
 	ret nz			;b945
-	ld de,0e0a3h		;b946
+	ld de,0e0a3h		;b946   ; ...dos copias de 0x20 x 0x20: (0xA0, 0x20) de la pagina 1 a (0xE0, 0xA3)...
 	push de			;b949
 	ex de,hl			;b94a
 	ld de,020a0h		;b94b
@@ -2531,7 +2531,7 @@ puerta_grande:		; en la pantalla 2 de la antesala, la puerta grande (p06:B998)
 	ld a,004h		;b951
 	call 04bdeh		;b953   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 	pop de			;b956
-	ld hl,000a0h		;b957
+	ld hl,000a0h		;b957   ; ...y (0xA0, 0) con TIMP
 	ld bc,02020h		;b95a
 	jr copia_timp		;b95d
 puertas_de_la_pantalla:		; las dos puertas de la pantalla 0xCC10 (p06:B97B)
@@ -2820,40 +2820,40 @@ L_BB15:
 	djnz L_BB03		;bb1b
 	ret			;bb1d
 mensaje_de_la_puerta:		; el recuadro y el texto de la puerta segun la BIOS y la pantalla (p06:BE5B, BE69, BEDA)
-	ld hl,03642h		;bb1e
+	ld hl,03642h		;bb1e   ; el fondo del recuadro: 0x94 x 0x1C de (0x36, 0x42) a (0x60, 0x78) de la pagina 1
 	ld de,06078h		;bb21
 	ld bc,0941ch		;bb24
 	ld a,004h		;bb27
 	call 04bdeh		;bb29   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 	call recuadro_del_mensaje		;bb2c   ; recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
-	ld a,(0002bh)		;bb2f
+	ld a,(0002bh)		;bb2f   ; el texto del idioma de la BIOS
 	and 00fh		;bb32
 	ld hl,0be69h		;bb34
 	jr nz,L_BB46		;bb37
 	ld a,(0cc10h)		;bb39   ; lee la pantalla de la antesala (0-2)
-	cp 002h		;bb3c
+	cp 002h		;bb3c   ; en las pantallas 0-1, la puerta...
 	ld hl,0be5bh		;bb3e
 	jr c,L_BB46		;bb41
-	ld hl,0bedah		;bb43
+	ld hl,0bedah		;bb43   ; ...en la 2, el templo
 L_BB46:
 	jp 04d4ah		;bb46   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 recuadro_del_mensaje:		; borra y enmarca el recuadro de mensajes
-	ld hl,03844h		;bb49
+	ld hl,03844h		;bb49   ; el recuadro: (0x38, 0x44) de 0x90 x 0x18...
 	ld bc,09018h		;bb4c
 	call 05e2fh		;bb4f   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
-	ld hl,03642h		;bb52
+	ld hl,03642h		;bb52   ; ...el marco...
 	ld de,0941ch		;bb55
 	call 0473bh		;bb58   ; rectangulo_color_d: p00:4B74 con el color 0x0D
-	ld hl,03743h		;bb5b
+	ld hl,03743h		;bb5b   ; ...y el marco de dentro
 	ld de,0921ah		;bb5e
 	jp 0473bh		;bb61   ; rectangulo_color_d: p00:4B74 con el color 0x0D
 si_o_no:		; 0xC22A = la respuesta con las teclas (1 o 2) o 0
 	ld hl,0c22ah		;bb64   ; apunta a la respuesta en la antesala (1 o 2)
-	ld (hl),000h		;bb67
+	ld (hl),000h		;bb67   ; sin respuesta
 	ld a,(0c006h)		;bb69   ; lee las teclas nuevas
-	and 01ch		;bb6c
+	and 01ch		;bb6c   ; con espacio, izquierda o derecha...
 	ret z			;bb6e
-	and 00ch		;bb6f
+	and 00ch		;bb6f   ; ...1 con espacio, 2 con izquierda o derecha
 	ld b,001h		;bb71
 	jr z,L_BB76		;bb73
 	inc b			;bb75
@@ -2861,27 +2861,27 @@ L_BB76:
 	ld (hl),b			;bb76
 	ret			;bb77
 copia_6078:		; copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
-	ld de,03642h		;bb78
+	ld de,03642h		;bb78   ; devuelve el fondo: de (0x60, 0x78) de la pagina 1 a (0x36, 0x42)
 	ld hl,06078h		;bb7b
 	ld bc,0941ch		;bb7e
 	jp 04841h		;bb81   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 mensaje_de_eleccion:		; el recuadro y el texto: solo entra uno, elige, faltan llaves (p06:BE88-BEFA)
 	call recuadro_del_mensaje		;bb84   ; recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
 	ld a,(0cc10h)		;bb87   ; lee la pantalla de la antesala (0-2)
-	cp 002h		;bb8a
+	cp 002h		;bb8a   ; en el templo (pantalla 2), faltan llaves?
 	jr nc,L_BBB1		;bb8c
 L_BB8E:
 	ld a,(0002bh)		;bb8e
 	and 00fh		;bb91
 	ld a,(0c001h)		;bb93   ; lee el paso del estado
 	jr nz,L_BBA4		;bb96
-	cp 004h		;bb98
+	cp 004h		;bb98   ; en el paso 4, solo uno puede entrar...
 	ld hl,0be88h		;bb9a
 	jr z,L_BBAE		;bb9d
-	ld hl,0beb7h		;bb9f
+	ld hl,0beb7h		;bb9f   ; ...si no, elige uno
 	jr L_BBAE		;bba2
 L_BBA4:
-	cp 004h		;bba4
+	cp 004h		;bba4   ; lo mismo en ingles
 	ld hl,0be97h		;bba6
 	jr z,L_BBAE		;bba9
 	ld hl,0bec6h		;bbab
@@ -2889,18 +2889,18 @@ L_BBAE:
 	jp 04d4ah		;bbae   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 L_BBB1:
 	ld a,(0e322h)		;bbb1   ; lee las puertas abiertas de la antesala
-	and a			;bbb4
+	and a			;bbb4   ; con todas las puertas abiertas, como las demas
 	jr z,L_BB8E		;bbb5
 	ld a,(0002bh)		;bbb7
 	and 00fh		;bbba
 	jr nz,L_BBCD		;bbbc
-	ld hl,0beeah		;bbbe
+	ld hl,0beeah		;bbbe   ; faltan llaves...
 	call 04d4ah		;bbc1   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	ld a,(0e322h)		;bbc4   ; lee las puertas abiertas de la antesala
-	ld de,0704ch		;bbc7
+	ld de,0704ch		;bbc7   ; ...y cuantas, en (0x70, 0x4C)
 	jp 047b4h		;bbca   ; cifra: la cifra A & 15 (0x21 + A) en (D, E), o espacio si es cero y C
 L_BBCD:
-	ld hl,0befah		;bbcd
+	ld hl,0befah		;bbcd   ; en ingles, sin el numero
 	jr L_BBAE		;bbd0
 mensaje_de_captura:		; el recuadro y el texto: el companero, capturado (p06:BF1B, BF29)
 	ld hl,03642h		;bbd2
@@ -2916,7 +2916,7 @@ mensaje_de_captura:		; el recuadro y el texto: el companero, capturado (p06:BF1B
 	ld hl,0bf1bh		;bbed
 L_BBF0:
 	call 04d4ah		;bbf0   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
-	ld a,05ah		;bbf3
+	ld a,05ah		;bbf3   ; 0x5A cuadros de mensaje
 	ld (0c209h),a		;bbf5   ; guarda la cuenta del mensaje de la antesala
 	jp colores_de_la_antesala		;bbf8   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 espera_el_mensaje:		; los sprites de la antesala y, con la cuenta 0xC209 a cero, quita el recuadro (acarreo)
@@ -2924,23 +2924,23 @@ espera_el_mensaje:		; los sprites de la antesala y, con la cuenta 0xC209 a cero,
 	call 05690h		;bbfe   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	or a			;bc01
 	ld hl,0c209h		;bc02   ; apunta a la cuenta del mensaje de la antesala
-	dec (hl)			;bc05
+	dec (hl)			;bc05   ; la cuenta del mensaje...
 	ret nz			;bc06
 	call copia_6078		;bc07   ; copia_6078: copia 0x94 x 0x1C de (0x60, 0x78) a (0x36, 0x42)
-	scf			;bc0a
+	scf			;bc0a   ; acabada: acarreo
 	ret			;bc0b
 prepara_la_captura:		; sentido y cuentas de la antesala a cero, 0xCC18 = 0x78; con 0xC31C distinto de 3, los colores de la antesala
 	xor a			;bc0c
 	ld (0cc16h),a		;bc0d   ; guarda el sentido en la antesala
-	ld (0cc17h),a		;bc10
+	ld (0cc17h),a		;bc10   ; sin captura en marcha
 	ld (0cc19h),a		;bc13
-	ld a,078h		;bc16
+	ld a,078h		;bc16   ; 0x78 cuadros
 	ld (0cc18h),a		;bc18   ; guarda la cuenta de la captura en la antesala
-	ld a,(0c31ch)		;bc1b
+	ld a,(0c31ch)		;bc1b   ; en el paso 3 de la captura...
 	cp 003h		;bc1e
 	jp nz,colores_de_la_antesala		;bc20   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 	ld a,(0c2d0h)		;bc23   ; lee la ficha del personaje 1 (14 bytes)
-	inc a			;bc26
+	inc a			;bc26   ; ...0xCC19 = 1
 	ld (0cc19h),a		;bc27
 	call vuelve_un_personaje		;bc2a   ; vuelve_un_personaje: la ficha inicial (p06:BF6C) del personaje que no vive
 	call colores_de_la_antesala		;bc2d   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
@@ -2949,14 +2949,14 @@ rle_bf88:		; el RLE de p06:BF88 a la VRAM (p00:4926)
 	jp 04926h		;bc33   ; rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
 vuelve_un_personaje:		; la ficha inicial (p06:BF6C) del personaje que no vive
 	ld a,(0c2b0h)		;bc36   ; lee la ficha del personaje 0 (14 bytes)
-	and a			;bc39
+	and a			;bc39   ; el que ha caido vuelve con su ficha del principio
 	ld hl,0bf6ch		;bc3a
 	ld de,0c2b0h		;bc3d   ; apunta a la ficha del personaje 0 (14 bytes)
 	jr nz,L_BC48		;bc40
 	ld hl,0bf7ah		;bc42
 	ld de,0c2d0h		;bc45   ; apunta a la ficha del personaje 1 (14 bytes)
 L_BC48:
-	ld bc,0000eh		;bc48
+	ld bc,0000eh		;bc48   ; 14 bytes
 	ldir		;bc4b
 	ret			;bc4d
 cuadro_de_la_captura:		; si 0xC31C: los sprites y la cuenta 0xCC18
@@ -3097,19 +3097,19 @@ anda_en_la_antesala:		; con las teclas, la X (0xCC13) y el sentido (0xCC16) en l
 	ld hl,0cc13h		;bd29   ; apunta a la X en la antesala
 	ld de,0cc16h		;bd2c   ; apunta a el sentido en la antesala
 	ld a,(0c007h)		;bd2f   ; lee las teclas que hay
-	rra			;bd32
+	rra			;bd32   ; la izquierda...
 	rra			;bd33
 	rra			;bd34
 	jr c,L_BD56		;bd35
-	rra			;bd37
+	rra			;bd37   ; ...o la derecha
 	jr c,L_BD43		;bd38
-	xor a			;bd3a
+	xor a			;bd3a   ; sin teclas: quieto (el cuadro 1)
 	ld (0cc15h),a		;bd3b
 	inc a			;bd3e
 	ld (0cc14h),a		;bd3f   ; guarda el cuadro del personaje en la antesala
 	ret			;bd42
 L_BD43:
-	ld a,(hl)			;bd43
+	ld a,(hl)			;bd43   ; a la derecha: hasta 0xD8...
 	cp 0d8h		;bd44
 	jr c,L_BD4E		;bd46
 	ld a,(0cc10h)		;bd48   ; lee la pantalla de la antesala (0-2)
@@ -3117,20 +3117,20 @@ L_BD43:
 	ret nc			;bd4d
 L_BD4E:
 	ld a,(hl)			;bd4e   ; X + 4 y sentido 0
-	add a,004h		;bd4f
+	add a,004h		;bd4f   ; ...4 por cuadro, sentido 0
 	ld (hl),a			;bd51
 	xor a			;bd52
 	ld (de),a			;bd53
 	jr cuadro_de_andar_antesala		;bd54
 L_BD56:
-	ld a,(hl)			;bd56
+	ld a,(hl)			;bd56   ; a la izquierda: desde 0x20...
 	cp 020h		;bd57
 	jr nc,L_BD60		;bd59
 	ld a,(0cc10h)		;bd5b   ; lee la pantalla de la antesala (0-2)
 	and a			;bd5e
 	ret z			;bd5f
 L_BD60:
-	ld a,(hl)			;bd60
+	ld a,(hl)			;bd60   ; ...4 por cuadro, sentido 1
 	sub 004h		;bd61
 	ld (hl),a			;bd63
 	ld a,001h		;bd64

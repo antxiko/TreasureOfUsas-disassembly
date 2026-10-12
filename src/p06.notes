@@ -444,6 +444,94 @@ C 0xA594 con espacio...
 C 0xA597 ...elegido: 0xC23B = 1
 C 0xA5A3 izquierda o derecha: el otro personaje
 C 0xA5B5 si ha caido alguno, el que queda
+C 0xB66D muriendo, nada
+C 0xB676 la X del personaje:
+C 0xB677 de 0xF2 en adelante, el borde derecho (p06:B691)
+C 0xB67B por encima de 0x0E, mira la Y (p06:B6AB)
+C 0xB67F el borde izquierdo: con el lado cerrado (0xCCB1)...
+C 0xB688 ...0xFF: cerrado, no sale
+C 0xB68B sale por la izquierda (3) y entra por la derecha (X = 0xF0)
+C 0xB691 el borde derecho: con el lado cerrado (0xCCB2)...
+C 0xB69D sale por la derecha (4) y entra por la izquierda (X = 0x10)
+C 0xB6A6 no sale
+C 0xB6AE la Y: por encima de 0x20, el borde de arriba
+C 0xB6B3 por debajo de 0xD4, el de abajo
+C 0xB6B9 sin vecina abajo (0xFF), no
+C 0xB6BB sale por abajo (2) y entra por arriba (Y = 0x24)
+C 0xB6C1 arriba: con 0xC268, o en la escalera (accion 5)...
+C 0xB6CD ...sale por arriba (1) y entra por abajo (Y = 0xD0)
+C 0xB751 sin cartuchos encontrados
+C 0xB755 los 4 slots primarios
+C 0xB75D EXPTBL: si el slot esta expandido...
+C 0xB76A con los 4 bits puestos, se acaba
+C 0xB76C el slot siguiente
+C 0xB776 expandido: los 4 secundarios
+C 0xB786 el secundario siguiente (+ 4)
+C 0xB78D en el slot C: 07 49 en 0x4012 (p06:B7ED)?...
+C 0xB79D ...bit 0
+C 0xB7A0 07 50: bit 1
+C 0xB7B3 07 51: bit 2
+C 0xB7C6 07 52: bit 3
+C 0xB7D9 RDSLT: el byte de HL en el slot C...
+C 0xB7E0 ...contra el de DE
+C 0xB7E3 distinto: sin acarreo
+C 0xB7E9 los B bytes iguales: acarreo
+C 0xB7F8 ninguna abierta
+C 0xB807 la puerta en la pantalla
+C 0xB812 en la pantalla 2 (el templo), nada mas
+C 0xB865 0xCC12 = 0xC3
+C 0xB86A la X de la antesala, 0x30
+C 0xB873 las 5 puertas cerradas (0xFF), 8 bytes cada una
+C 0xB880 las puertas de la ruina de p06:BE3D
+C 0xB886 6 bytes por ruina
+C 0xB88F 0xFF: se acabo
+C 0xB895 el bit 0: el lado de la puerta
+C 0xB89A el resto: su X
+C 0xB901 la X de la antesala...
+C 0xB902 ...por debajo de 8: la pantalla anterior
+C 0xB906 ...de 0xF8 en adelante: la siguiente
+C 0xB909 la siguiente, entrando por la izquierda (X = 0x0A)
+C 0xB90F la anterior, entrando por la derecha (X = 0xF6)
+C 0xB91C la pantalla * 4 * 4 * 6 (0x60 bytes por pantalla)...
+C 0xB92A ...+ el mapa de la antesala (0xEC00)
+C 0xB943 en la pantalla 2 (el templo)...
+C 0xB946 ...dos copias de 0x20 x 0x20: (0xA0, 0x20) de la pagina 1 a (0xE0, 0xA3)...
+C 0xB957 ...y (0xA0, 0) con TIMP
+C 0xBB2F el texto del idioma de la BIOS
+C 0xBB3C en las pantallas 0-1, la puerta...
+C 0xBB43 ...en la 2, el templo
+C 0xBB52 ...el marco...
+C 0xBB5B ...y el marco de dentro
+C 0xBB67 sin respuesta
+C 0xBB6C con espacio, izquierda o derecha...
+C 0xBB6F ...1 con espacio, 2 con izquierda o derecha
+C 0xBB8A en el templo (pantalla 2), faltan llaves?
+C 0xBB98 en el paso 4, solo uno puede entrar...
+C 0xBB9F ...si no, elige uno
+C 0xBBA4 lo mismo en ingles
+C 0xBBB4 con todas las puertas abiertas, como las demas
+C 0xBBBE faltan llaves...
+C 0xBBC7 ...y cuantas, en (0x70, 0x4C)
+C 0xBBCD en ingles, sin el numero
+C 0xBBF3 0x5A cuadros de mensaje
+C 0xBC05 la cuenta del mensaje...
+C 0xBC0A acabada: acarreo
+C 0xBC10 sin captura en marcha
+C 0xBC16 0x78 cuadros
+C 0xBC1B en el paso 3 de la captura...
+C 0xBC26 ...0xCC19 = 1
+C 0xBC39 el que ha caido vuelve con su ficha del principio
+C 0xBC48 14 bytes
+C 0xBD32 la izquierda...
+C 0xBD37 ...o la derecha
+C 0xBD3A sin teclas: quieto (el cuadro 1)
+C 0xBD43 a la derecha: hasta 0xD8...
+C 0xBD4F ...4 por cuadro, sentido 0
+C 0xBD56 a la izquierda: desde 0x20...
+C 0xBD60 ...4 por cuadro, sentido 1
+C 0xBB1E el fondo del recuadro: 0x94 x 0x1C de (0x36, 0x42) a (0x60, 0x78) de la pagina 1
+C 0xBB49 el recuadro: (0x38, 0x44) de 0x90 x 0x18...
+C 0xBB78 devuelve el fondo: de (0x60, 0x78) de la pagina 1 a (0x36, 0x42)
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0xA049 mando_de_informacion las teclas de INFORMATION: la mejora (0xC228, 0-2) y el personaje (0xC229)

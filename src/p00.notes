@@ -637,6 +637,7 @@ C 0x42C7 ...entra el otro (paso 6)
 C 0x43F1 si han caido los dos, GAME OVER
 C 0x4419 Z si alguno no ha caido...
 C 0x441B los dos caidos: acarreo
+C 0x5270 desde (0xC0, 0x94) de la pagina 1 (HL es la posicion, no RAM)
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x403D interrupcion gancho H.TIMI: la musica con 13-14-15 (p13:6000) y, si no esta ya dentro, el cuadro del juego
@@ -1419,7 +1420,6 @@ C 0x5233 ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 
 C 0x523C ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 C 0x524B palabra_a: HL = la palabra A de la tabla HL
 C 0x5267 de_mas_a: DE = DE + A
-C 0x5270 apunta a la ficha del canal de efectos
 C 0x527B copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 C 0x5280 apunta a la ficha del canal de efectos
 C 0x5283 ficha_doble: las fichas A y A + 2 una debajo de otra, con TIMP

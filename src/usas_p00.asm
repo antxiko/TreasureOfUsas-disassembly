@@ -2892,7 +2892,7 @@ L_5260:
 	jr nz,L_5259		;526c
 	jr L_524E		;526e
 copia_c094:		; copia 16 x 16 de (0xC0, 0x94) de la pagina 1 y la ficha doble 0x14
-	ld hl,0c094h		;5270   ; apunta a la ficha del canal de efectos
+	ld hl,0c094h		;5270   ; desde (0xC0, 0x94) de la pagina 1 (HL es la posicion, no RAM)
 	ld de,08078h		;5273
 	ld bc,01010h		;5276
 	ld a,005h		;5279

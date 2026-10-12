@@ -1854,11 +1854,11 @@ L_8BE7:
 	jr z,L_8BF5		;8beb
 	bit 7,(ix+00ah)		;8bed   ; mira el bit 7 de la velocidad X del actor (alta)
 	ret nz			;8bf1
-	jp invierte_velocidad_x		;8bf2
+	jp invierte_velocidad_x		;8bf2   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 L_8BF5:
 	bit 7,(ix+00ah)		;8bf5   ; mira el bit 7 de la velocidad X del actor (alta)
 	ret z			;8bf9
-	jp invierte_velocidad_x		;8bfa
+	jp invierte_velocidad_x		;8bfa   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 L_8BFD:
 	ld a,(ix+00ah)		;8bfd   ; lee la velocidad X del actor (alta)
 	and a			;8c00
@@ -1878,7 +1878,7 @@ estado_del_que_se_lleva:		; A = el estado del personaje que se lleva
 	ld a,(0c240h)		;8c16   ; lee el personaje que se lleva (0 o 1)
 	or a			;8c19
 	ld a,(0c2b6h)		;8c1a   ; lee el estado del personaje 0
-	ret z			;8c1d
+	ret z			;8c1d   ; Z: el del personaje 0
 	ld a,(0c2d6h)		;8c1e   ; lee el estado del personaje 1
 	ret			;8c21
 crea_actor_aqui:		; crea el actor C en la posicion del actor IX
@@ -1889,30 +1889,30 @@ crea_actor_aqui:		; crea el actor C en la posicion del actor IX
 	pop ix		;8c2d
 	ret			;8c2f
 L_8C30:
-	ld c,024h		;8c30
+	ld c,024h		;8c30   ; el actor 0x24 aqui
 	jp crea_actor_aqui		;8c32   ; crea_actor_aqui: crea el actor C en la posicion del actor IX
 L_8C35:
-	ld (ix+013h),001h		;8c35   ; las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x01
+	ld (ix+013h),001h		;8c35   ; el tipo 36 (paso 0): choca con el personaje, fotograma 0x64...
 	ld (ix+010h),064h		;8c39   ; el fotograma del actor (p02:8A42) = 0x64
-	ld a,040h		;8c3d
+	ld a,040h		;8c3d   ; ...y va hacia el personaje a 0x40
 	jr L_8C47		;8c3f
 L_8C41:
-	ld (ix+010h),088h		;8c41   ; el fotograma del actor (p02:8A42) = 0x88
+	ld (ix+010h),088h		;8c41   ; el tipo 39: fotograma 0x88 y hacia el personaje a 0x50
 	ld a,050h		;8c45
 L_8C47:
 	ld (ix+00bh),000h		;8c47   ; si el actor acelera (p02:8393) = 0x00
 	call apunta_al_personaje		;8c4b   ; apunta_al_personaje: con 15: la direccion del actor hacia el personaje (p02:84F1)
-	call pon_velocidad_y		;8c4e   ; pon_velocidad_y: (ix+7, 8) = HL
-	ex de,hl			;8c51
+	call pon_velocidad_y		;8c4e   ; la velocidad Y...
+	ex de,hl			;8c51   ; ...y la X
 	jp pon_velocidad_x		;8c52   ; pon_velocidad_x: (ix+9, 0x0A) = HL
 L_8C55:
 	ret			;8c55
 L_8C56:
-	ld (0c3afh),a		;8c56
+	ld (0c3afh),a		;8c56   ; la velocidad X alta en 0xC3AF y el actor 0x25 aqui
 	ld c,025h		;8c59
 	jp crea_actor_aqui		;8c5b   ; crea_actor_aqui: crea el actor C en la posicion del actor IX
 L_8C5E:
-	ld a,(0c3afh)		;8c5e
+	ld a,(0c3afh)		;8c5e   ; con la velocidad X de 0xC3AF, sin Y, fotograma 0x88
 	ld (ix+00ah),a		;8c61   ; guarda la velocidad X del actor (alta)
 	xor a			;8c64
 	ld (ix+008h),a		;8c65   ; guarda la velocidad Y del actor (alta)
@@ -1926,35 +1926,35 @@ copia_84_y_c310:		; copia 0x10 x 0x20 de (0x84, 0) a (0xA4, 0) y sigue segun 0xC
 	xor a			;8c79
 	call 04bdeh		;8c7a   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 	ld a,(0c310h)		;8c7d   ; lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
-	cp 003h		;8c80
+	cp 003h		;8c80   ; del paso 3 en adelante...
 	ret c			;8c82
 	push af			;8c83
-	ld hl,07094h		;8c84
+	ld hl,07094h		;8c84   ; ...borra 0x20 x 0x10 en (0x94, 0x70)
 	ld bc,02010h		;8c87
 	call 05e2fh		;8c8a   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	pop af			;8c8d
 	push af			;8c8e
-	sub 005h		;8c8f
+	sub 005h		;8c8f   ; en los pasos 5 y 6, el dibujo grande de p02:8CCA
 	cp 002h		;8c91
 	call c,copia_9060		;8c93   ; copia_9060: copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
 	pop af			;8c96
-	cp 006h		;8c97
+	cp 006h		;8c97   ; del 6 en adelante, p02:8CAD
 	call nc,copia_8078		;8c99   ; copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
 	ld a,(0c21ch)		;8c9c   ; lee no queda ningun 0x19 (la sala 5, acabada)
 	and a			;8c9f
-	ret z			;8ca0
-	ld hl,0f0a4h		;8ca1
+	ret z			;8ca0   ; con la sala acabada...
+	ld hl,0f0a4h		;8ca1   ; ...borra 0x10 x 0x20 en (0xA4, 0xF0) y los actores
 	ld bc,01020h		;8ca4
 	call 05e2fh		;8ca7   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	jp borra_d45e_y_actores		;8caa   ; borra_d45e_y_actores: pone a cero 4 registros de 0xD45E y borra los actores
 copia_8078:		; p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
 	call copia_6098		;8cad   ; copia_6098: copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
-	ld hl,08078h		;8cb0
-	ld de,0c094h		;8cb3   ; apunta a la ficha del canal de efectos
+	ld hl,08078h		;8cb0   ; 16 x 16 de (0x78, 0x80) de la pagina 1...
+	ld de,0c094h		;8cb3   ; a (0xC0, 0x94) de la pagina 1 (DE es la posicion, no RAM)
 	ld bc,01010h		;8cb6
 	ld a,005h		;8cb9
 	call 04bdeh		;8cbb   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
-	ld hl,08078h		;8cbe
+	ld hl,08078h		;8cbe   ; ...y otra vez a (0x68, 0x78) de la 0
 	ld de,07868h		;8cc1
 	ld bc,01010h		;8cc4
 	jp 04841h		;8cc7   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
@@ -1972,9 +1972,9 @@ prepara_la_sala_5:		; 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo s
 	ld a,(0c20ah)		;8ce2   ; lee en la sala de la puerta 5
 	or a			;8ce5
 	ret z			;8ce6
-	call 05a87h		;8ce7   ; paleta_5a8d: la paleta p00:5A8D
+	call 05a87h		;8ce7   ; en la sala 5: la paleta de p00:5A8D...
 	call crea_tipo_23		;8cea   ; crea_tipo_23: si vive algun personaje y 0xC270 es la fase: crea el actor 0x23 en (0x34, 0x80)
-	ld hl,000a4h		;8ced
+	ld hl,000a4h		;8ced   ; ...y borra 0x10 x 0x20 en (0xA4, 0)
 	ld bc,01020h		;8cf0
 	jp 05e2fh		;8cf3   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 cuadro_de_la_sala_5:		; en la sala 5, despacha 0xC310 (tabla p02:8D01)
@@ -2023,7 +2023,7 @@ L_8D17:
 	ret nz			;8d2f
 	jr suma_c310		;8d30
 L_8D32:
-	ld a,024h		;8d32
+	ld a,024h		;8d32   ; el sonido 0x24 y el paso siguiente
 	call 056e3h		;8d34   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 suma_c310:		; 0xC310 + 1
 	ld hl,0c310h		;8d37   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
@@ -2775,7 +2775,7 @@ L_9200:
 	ret z			;9205
 	inc (ix+017h)		;9206
 	ld (ix+010h),00bh		;9209   ; el fotograma del actor (p02:8A42) = 0x0B
-	jp invierte_velocidad_x		;920d
+	jp invierte_velocidad_x		;920d   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 estado_1_o_2:		; D = 0 si el estado del personaje es 1 o 2, si no 1
 	call estado_del_que_se_lleva		;9210   ; estado_del_que_se_lleva: A = el estado del personaje que se lleva
 	ld d,000h		;9213
@@ -2885,7 +2885,7 @@ L_92A5:
 	ld bc,00004h		;92b4
 	jp L_8AF5		;92b7
 L_92BA:
-	call invierte_velocidad_x		;92ba
+	call invierte_velocidad_x		;92ba   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	jp L_8BFD		;92bd
 
 ; ----------------------------------------------------------------------
@@ -2912,7 +2912,7 @@ L_92C4:
 	call velocidad_x_h		;92d4   ; velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 	bit 0,(ix+017h)		;92d7
 	ret z			;92db
-	jp invierte_velocidad_x		;92dc
+	jp invierte_velocidad_x		;92dc   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 parpadeo_del_actor:		; el cuadro de parpadeo segun (ix+0x17) y la cuenta
 	ld b,008h		;92df
 	ld a,(ix+017h)		;92e1
@@ -3268,17 +3268,17 @@ L_9554:
 	call pon_velocidad_x		;956a   ; pon_velocidad_x: (ix+9, 0x0A) = HL
 	call compara_x		;956d   ; compara_x: compara la X del personaje con la del actor
 	jr nc,L_9575		;9570
-	call invierte_velocidad_x		;9572
+	call invierte_velocidad_x		;9572   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 L_9575:
 	call estado_del_que_se_lleva		;9575   ; estado_del_que_se_lleva: A = el estado del personaje que se lleva
 	pop bc			;9578
 	cp 003h		;9579
-	jp z,invierte_velocidad_x		;957b
+	jp z,invierte_velocidad_x		;957b   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	cp 001h		;957e
 	ret nz			;9580
 	ld a,b			;9581
 	and 020h		;9582
-	jp z,invierte_velocidad_x		;9584
+	jp z,invierte_velocidad_x		;9584   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ret			;9587
 L_9588:
 	ld e,0e4h		;9588
@@ -3297,7 +3297,7 @@ L_9588:
 L_95A5:
 	inc (ix+001h)		;95a5   ; sube el paso del actor
 	ld (ix+011h),010h		;95a8   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x10
-	jp invierte_velocidad_x		;95ac
+	jp invierte_velocidad_x		;95ac   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 L_95AF:
 	dec (ix+011h)		;95af   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;95b2
@@ -3463,11 +3463,11 @@ L_96C1:
 	and 001h		;96d7
 	jr nz,L_96E3		;96d9
 	call compara_x		;96db   ; compara_x: compara la X del personaje con la del actor
-	call c,invierte_velocidad_x		;96de
+	call c,invierte_velocidad_x		;96de   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	jr L_96E9		;96e1
 L_96E3:
 	call compara_x		;96e3   ; compara_x: compara la X del personaje con la del actor
-	call nc,invierte_velocidad_x		;96e6
+	call nc,invierte_velocidad_x		;96e6   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 L_96E9:
 	ld de,03e40h		;96e9
 	call fotograma_por_sentido		;96ec   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
@@ -3547,7 +3547,7 @@ L_9772:
 	call compara_x		;978a   ; compara_x: compara la X del personaje con la del actor
 	jp nc,L_8BFD		;978d
 	ld (ix+010h),01ah		;9790   ; el fotograma del actor (p02:8A42) = 0x1A
-	call invierte_velocidad_x		;9794
+	call invierte_velocidad_x		;9794   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	jp L_8BFD		;9797
 L_979A:
 	djnz L_97B2		;979a
@@ -3584,7 +3584,7 @@ rebota_en_borde:		; cerca de un borde, sonido 0x0A y cambia el sentido (ix+0x17)
 	add a,010h		;97e0
 	cp 020h		;97e2
 	ret nc			;97e4
-	call invierte_velocidad_x		;97e5
+	call invierte_velocidad_x		;97e5   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld a,(ix+017h)		;97e8
 	xor 001h		;97eb
 	ld (ix+017h),a		;97ed
@@ -3655,9 +3655,9 @@ L_9850:
 	jp pon_velocidad_x		;985a   ; pon_velocidad_x: (ix+9, 0x0A) = HL
 L_985D:
 	call choque_lateral		;985d   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
-	call nz,invierte_velocidad_x		;9860
+	call nz,invierte_velocidad_x		;9860   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	call choque_4		;9863   ; choque_4: p02:9D09 con E = 4
-	jp z,invierte_velocidad_x		;9866
+	jp z,invierte_velocidad_x		;9866   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld a,(ix+01fh)		;9869
 	cp 008h		;986c
 	jr z,L_9877		;986e
@@ -3668,7 +3668,7 @@ L_9877:
 	dec (ix+011h)		;9877   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;987a
 	ld (ix+011h),040h		;987b   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x40
-	jp invierte_velocidad_x		;987f
+	jp invierte_velocidad_x		;987f   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 cuenta_tipo_15:		; A = cuantos actores de tipo 0x15 hay
 	ld hl,0c400h		;9882   ; apunta a los 8 actores (0x80 bytes cada uno)
 	ld de,00080h		;9885
@@ -4027,7 +4027,7 @@ L_9B04:
 	ld (ix+001h),002h		;9b15   ; el paso del actor = 0x02
 	jp L_9AC1		;9b19
 sonido_y_sigue:		; el sonido 0x0A y p02:9AFE
-	call invierte_velocidad_x		;9b1c
+	call invierte_velocidad_x		;9b1c   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	jr L_9AFE		;9b1f
 L_9B21:
 	djnz L_9B34		;9b21
@@ -4046,7 +4046,7 @@ L_9B34:
 	add a,a			;9b3f
 L_9B40:
 	ld (ix+011h),a		;9b40   ; guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
-	jp invierte_velocidad_y		;9b43
+	jp invierte_velocidad_y		;9b43   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 L_9B46:
 	ld (ix+010h),000h		;9b46   ; el fotograma del actor (p02:8A42) = 0x00
 	ld h,004h		;9b4a
@@ -4141,7 +4141,7 @@ L_9BD6:
 	ret z			;9be9
 	call busca_suelo_abajo		;9bea   ; busca_suelo_abajo: casillas hacia abajo desde el actor (p01:704C)
 	jp nc,L_9C8D		;9bed
-	call invierte_velocidad_x		;9bf0
+	call invierte_velocidad_x		;9bf0   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld de,00002h		;9bf3
 	jr fotograma_por_sentido		;9bf6
 L_9BF8:
@@ -4152,14 +4152,14 @@ L_9BF8:
 	ret z			;9c02
 	call busca_suelo_arriba		;9c03   ; busca_suelo_arriba: casillas hacia arriba desde el actor (p01:704C)
 	jr nc,L_9C74		;9c06
-	call invierte_velocidad_x		;9c08
+	call invierte_velocidad_x		;9c08   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld de,00002h		;9c0b
 	jp fotograma_por_sentido		;9c0e   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 L_9C11:
 	ld a,(ix+01eh)		;9c11
 	or a			;9c14
 	ret z			;9c15
-	call invierte_velocidad_x		;9c16
+	call invierte_velocidad_x		;9c16   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	jp L_9B8A		;9c19
 busca_suelo_arriba:		; casillas hacia arriba desde el actor (p01:704C)
 	ld d,(ix+005h)		;9c1c   ; lee la X del actor
@@ -4431,7 +4431,7 @@ L_9DF4:
 	ld de,01412h		;9df7
 	jp fotograma_por_sentido		;9dfa   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 L_9DFD:
-	call invierte_velocidad_x		;9dfd
+	call invierte_velocidad_x		;9dfd   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld de,01412h		;9e00
 	jp fotograma_por_sentido		;9e03   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 hacia_el_personaje_2:		; velocidad X +-2 hacia el personaje y su fotograma
@@ -4454,7 +4454,7 @@ salta_si_puede:		; si no choca, el salto del actor
 	call mira_alrededor		;9e28   ; mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
 	ld a,(ix+016h)		;9e2b
 	and 008h		;9e2e
-	jp nz,invierte_velocidad_x		;9e30
+	jp nz,invierte_velocidad_x		;9e30   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	inc (ix+001h)		;9e33   ; sube el paso del actor
 	ld (ix+011h),002h		;9e36   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x02
 	ld (ix+006h),000h		;9e3a   ; si el actor se mueve (p02:8367) = 0x00
@@ -4583,7 +4583,7 @@ L_9F37:
 	ret nz			;9f4b
 L_9F4C:
 	ld (ix+011h),020h		;9f4c   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
-	jp invierte_velocidad_x		;9f50
+	jp invierte_velocidad_x		;9f50   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 mira_al_personaje_89:		; cada 8 cuadros, (ix+0x10) = 0x89-0x8C segun el lado del personaje
 	ld a,(0c00dh)		;9f53   ; lee la cuenta de cuadros del juego
 	and 007h		;9f56

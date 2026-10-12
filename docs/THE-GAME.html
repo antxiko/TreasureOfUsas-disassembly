@@ -1,0 +1,112 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>The game — The Treasure of Usas (Konami, 1987)</title>
+<style>
+:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;
+  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;
+  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}
+:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;
+  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}
+:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;
+  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}
+*{box-sizing:border-box}
+body{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;
+  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}
+.w{max-width:1120px;margin:0 auto}
+.n{max-width:68ch}
+h1,h2,h3,h4{font-weight:400;text-wrap:balance}
+a{color:var(--cyan)}
+img{image-rendering:pixelated;max-width:100%;height:auto;display:block}
+header.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;
+  padding:4rem 0 2rem;text-align:center}
+header.top img{width:min(100%,642px)}
+.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}
+.claim b{color:var(--tinta);font-weight:400}
+.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);
+  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}
+.ficha b{color:var(--rojo);font-weight:400}
+nav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;
+  font-size:12px;letter-spacing:.08em;text-transform:uppercase}
+nav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}
+nav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}
+nav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);
+  margin-bottom:1rem}
+section{margin-top:4.5rem;scroll-margin-top:1rem}
+section>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;
+  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}
+.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);
+  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}
+.cifra{background:var(--panel);padding:1.1rem}
+.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;
+  font-variant-numeric:tabular-nums;line-height:1.2}
+.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}
+.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}
+.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}
+.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}
+.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}
+.hall p{margin:0 0 1rem}
+pre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;
+  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}
+.par{display:grid;gap:1.25rem;grid-template-columns:1fr}
+@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}
+.par figure{margin:0}
+table{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;
+  overflow-x:auto}
+th,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}
+th{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}
+td.num{font-variant-numeric:tabular-nums;color:var(--oro)}
+.nivel{margin-top:2rem}
+.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}
+.nivel em{color:var(--cyan);font-style:normal}
+.sep{color:var(--suave);margin:0 .6rem}
+.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}
+.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}
+.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;
+  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}
+.dir{font-variant-numeric:tabular-nums;color:var(--verde)}
+footer{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);
+  color:var(--suave);font-size:12px}
+
+/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un
+   100% mal leido hace mas dano que no ponerlo. */
+.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;
+  padding:1rem 1.2rem;max-width:900px;border-radius:4px}
+.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}
+.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+  gap:1.5rem;margin:1.5rem 0}
+.galeria figure{margin:0}
+.galeria img{width:100%;height:auto;image-rendering:pixelated;
+  border:1px solid var(--linea);border-radius:3px}
+.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}
+audio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}
+</style>
+<div class="w"><nav class="top"><a href="index.html">Home</a><a href="GETTING-STARTED.html">Start</a><a href="THE-GAME.html" style=color:var(--tinta)>The game</a><a href="THE-CARTRIDGE.html">The cartridge</a><a href="THE-CODE.html">The code</a><a href="FINDINGS.html">Findings</a><a href="OPEN-QUESTIONS.html">Open questions</a><a href="es/EL-JUEGO.html" style="margin-left:auto;color:var(--oro)">Castellano</a></nav>
+<h1 id="the-game">The game</h1>
+<p><em>The Treasure of Usas</em> (Konami, 1987, RC-753) is a platform game for the MSX2 with two heroes, Wit and Cles. Everything on this page comes from the cartridge&#x27;s own tables.</p>
+<h2 id="the-story">The story</h2>
+<p>The prologue on the title screen (<code>p05:9849</code>) tells that the treasure of Usas was split into four over the centuries, and that the two set off along the Silk Road to find it. According to the opening scene, the first ruin is Pegu, in Rangoon (Burma), discovered by Professor Atley (<code>p04:752B</code>).</p>
+<h2 id="the-ruins-and-the-stages">The ruins and the stages</h2>
+<p>There are five ruins (<code>0xC21D</code>), each with four stages and a statue room: 20 stages in all. On the status bar they are called Pegu, Dunhuang, Alchi, Hunza and Agra (<code>p15:BE3D</code>). Each screen is 8 × 6 metablocks of 4 × 4 tiles (<code>p15:BEBF</code>); each stage&#x27;s map is an RLE stream from <code>p10:5FFE</code>, and each ruin&#x27;s metablocks another from <code>p10:6032</code>. Screens are laid out by their neighbours (<code>p09:B921</code>).</p>
+<p><img src="imagenes/fase_01_habitada.png" alt="A stage with what each screen holds"></p>
+<p>Each screen carries what the game places on entry: the enemies created at once and the nests the rest come out of (<code>p09:B12B</code>), the traps (<code>p15:A4F9</code>), the items (<code>p12:B8BB</code>) and, in its room, the boss (<code>p09:BED3</code>). Each sprite is drawn with the first frame of its animation.</p>
+<p>The twenty stages, at full size: <a href="imagenes/fase_01_habitada.png">1</a>, <a href="imagenes/fase_02_habitada.png">2</a>, <a href="imagenes/fase_03_habitada.png">3</a>, <a href="imagenes/fase_04_habitada.png">4</a>, <a href="imagenes/fase_06_habitada.png">6</a>, <a href="imagenes/fase_07_habitada.png">7</a>, <a href="imagenes/fase_08_habitada.png">8</a>, <a href="imagenes/fase_09_habitada.png">9</a>, <a href="imagenes/fase_11_habitada.png">11</a>, <a href="imagenes/fase_12_habitada.png">12</a>, <a href="imagenes/fase_13_habitada.png">13</a>, <a href="imagenes/fase_14_habitada.png">14</a>, <a href="imagenes/fase_16_habitada.png">16</a>, <a href="imagenes/fase_17_habitada.png">17</a>, <a href="imagenes/fase_18_habitada.png">18</a>, <a href="imagenes/fase_19_habitada.png">19</a>, <a href="imagenes/fase_21_habitada.png">21</a>, <a href="imagenes/fase_22_habitada.png">22</a>, <a href="imagenes/fase_23_habitada.png">23</a>, <a href="imagenes/fase_24_habitada.png">24</a>. And with the tiles only: <a href="imagenes/fase_01.png">1</a>, <a href="imagenes/fase_06.png">6</a>, <a href="imagenes/fase_11.png">11</a>, <a href="imagenes/fase_16.png">16</a>, <a href="imagenes/fase_21.png">21</a> (the rest are named <code>fase_NN.png</code>).</p>
+<h2 id="the-antechamber">The antechamber</h2>
+<p>Before each stage there is a door that lets only one through: &quot;ONLY ONE PERSON MAY ENTER?&quot; (<code>p06:BB2F</code>). You choose who goes in, and the other says goodbye with a line that depends on their mood (<code>p12:B85E</code>). Without the four keys, the final door does not open (&quot;YOU HAVE TO GATHER FOUR KEYS&quot;). And if one has fallen: &quot;I CAPTURED YOUR FRIEND&quot;.</p>
+<p><img src="imagenes/antesala_0.png" alt="An antechamber"></p>
+<h2 id="the-passwords">The passwords</h2>
+<p>On reaching ruins 1-4, a map makes the ruin blink and types out its password: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS or MOHENJO DARO (<code>p06:A2BB</code>). On the title screen, CTRL or button B asks for the password (KEYWORD, <code>p00:4643</code>), and with it you start at that ruin (<code>p00:45CB</code>).</p>
+<p><img src="imagenes/exterior.gif" alt="The outside map"></p>
+<h2 id="wit-cles-and-their-mood">Wit, Cles and their mood</h2>
+<p>Each has four states (happy, calm, sad and angry), and each state changes their jump, their shot or blow and the way they push: it is in <a href="FINDINGS.html">Findings</a>. The faces on the INFORMATION screen change with the state and move their mouths every 8 frames while they talk (<code>p06:A774</code>).</p>
+<p><img src="imagenes/retratos_hablan.gif" alt="The faces"></p>
+<h2 id="coins-and-information">Coins and INFORMATION</h2>
+<p>Coins are kept in BCD (<code>p00:55B9</code>) and come from the items of classes 1 to 4 and 12-13. In the pause they are spent on SPD and JMP (<code>p06:A0EA</code>).</p>
+<h2 id="enemies-traps-and-bosses">Enemies, traps and bosses</h2>
+<ul><li>The <b>enemies</b> are 63 actor types (<code>p02:82E9</code>), placed screen by screen by <code>p09:B12B</code>.</li><li>The <b>traps</b> (drops, rocks, statues, columns) are another list, of 13 types (<code>p15:A4F9</code>).</li><li>The <b>bosses</b>: each stage ends with one, the same four in all five ruins (types 30 to 33, <code>p09:BED3</code>), with 16 more life in each ruin (<code>p03:AD28</code>). In the statue room there are five tablets (type 25), one per ruin (<code>p02:8DB9</code>).</li></ul>
+<p><img src="imagenes/jefes_de_fase.gif" alt="The stage bosses"></p>
+<h2 id="the-ending">The ending</h2>
+<p>The four stones join, Wit and Cles enter the temple of Usas and put the stone in the statue (<code>p04:73D2</code>). In Japanese the ending goes on: Professor Atley finds out that the statue was the detonator of an atomic bomb built by an ancient civilisation, and that the stones had been scattered around the world so that nobody could use it. It ends with «¡¿そんなあほな!?» (it can&#x27;t be!). The English table for the last two scenes points to those same Japanese texts (<code>p04:745D</code>).</p>
+<p><img src="imagenes/escena_08.png" alt="An ending scene"></p>
+<footer><p><em>The Treasure of Usas</em> was published by Konami for the MSX2 in 1987; its catalogue number is RC-753 and it is 128 KB. All rights in the game remain with their holders. This is preservation, study and documentation work, and the cartridge image is not distributed.</p></footer></div>

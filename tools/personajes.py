@@ -227,7 +227,7 @@ def con_signo(b):
     return b - 256 if b >= 0x80 else b
 
 
-def pinta_sprite(img, buf, p, x0, y0, color, mezcla):
+def pinta_sprite(img, buf, p, x0, y0, color, mezcla, pal=None):
     """El sprite 16 x 16 de patron p (0x00-0x1C: p * 8 dentro de las dos
     lineas 0xF0 y 0xF1) en (x0, y0). mezcla: OR con lo que haya (bit CC)."""
     for y in range(16):
@@ -239,20 +239,20 @@ def pinta_sprite(img, buf, p, x0, y0, color, mezcla):
                     previo = mezcla.get(q, 0) if color & 0x40 else 0
                     c = (color & 0x0F) | previo
                     mezcla[q] = c
-                    img.putpixel(q, PALETA_CLES[c])
+                    img.putpixel(q, (pal or PALETA_CLES)[c])
 
 
-def cuerpo(img, buf, cx, cy, mezcla):
+def cuerpo(img, buf, cx, cy, mezcla, pal=None):
     """p01:68D9: dos parejas de sprites en (Y - 0x20, X - 8) y (Y - 0x10, X - 8)
     con los patrones 0/4 y 8/0x0C, la segunda con el bit CC (0x49)."""
     for dy, p in ((-0x20, 0), (-0x10, 8)):
-        pinta_sprite(img, buf, p, cx - 8, cy + dy, COLOR_0, mezcla)
-        pinta_sprite(img, buf, p + 4, cx - 8, cy + dy, 0x40 | COLOR_1, mezcla)
+        pinta_sprite(img, buf, p, cx - 8, cy + dy, COLOR_0, mezcla, pal)
+        pinta_sprite(img, buf, p + 4, cx - 8, cy + dy, 0x40 | COLOR_1, mezcla, pal)
 
 
-def golpe(img, buf, reg, cx, cy, mezcla):
+def golpe(img, buf, reg, cx, cy, mezcla, pal=None):
     for dy, dx, p, color in registro(reg):
-        pinta_sprite(img, buf, p, cx + con_signo(dx), cy + con_signo(dy), color, mezcla)
+        pinta_sprite(img, buf, p, cx + con_signo(dx), cy + con_signo(dy), color, mezcla, pal)
 
 
 PALETA_CLES = {}
@@ -291,6 +291,101 @@ def ataques(ruta, escala=3):
                  duration=round(2 * 1000 / 60), loop=0)
 
 
+# LOS DISPAROS DE WIT. El tipo es 4 - estado (p01:6B13). Sus patrones los
+# carga p00:5AA8 de p15:A31B[3 - estado]: [patron volteado][origen][patron tal
+# cual]; el RLE (p00:49CE) va volteado, sprite a sprite (p00:496C), al primero
+# y tal cual al segundo (p00:5612). El disparo nace en la X de Wit + 8 (tipo 1)
+# o + 2 (p01:6C45) y su Y - 4, o la Y tal cual el tipo 1 (p01:6C12 con 0xC26C);
+# mientras, Wit pone el cuadro 8 (en el aire) 8 cuadros (p01:6BF8). Cada cuadro:
+#   tipo 1 (p01:6E52) el rayo, por fases (p01:6E6A): 4 cuadros quieto con el
+#          registro 5; luego cada cuadro registro + 1 y X + 16 hasta el 8; y
+#          registro - 1 y X + 16 hasta el 5 (p01:6EA3); y se borra
+#   tipos 2 y 3 (p01:6E51) recto a 8 puntos por cuadro (0x800, p01:6D84),
+#          registro 0
+#   tipo 4 (p01:6EC9) igual de rapido, registro 0x13, y pegado al suelo (aqui,
+#          suelo llano)
+# Todo mirando a la derecha. Un cuadro del GIF es un cuadro del juego, a 50 por
+# segundo (el GIF no baja de 20 ms).
+SPRITES_WIT = 0xA31B
+
+
+def patrones_de_disparo(estado):
+    """Los 32 patrones de 0x10-0x1F (lineas 0xF0-0xF1) tras p00:5AA8."""
+    from rom import rle
+    a = SPRITES_WIT + 4 * (3 - estado)
+    vol, nor = leer(T131415, a), leer(T131415, a + 3)
+    datos, _ = rle(T131415, palabra(T131415, a + 1))
+    buf = bytearray(0x100)
+    volteado = bytearray()
+    for k in range(len(datos) // 32):
+        s = datos[k * 32:(k + 1) * 32]
+        inv = bytes(int("{:08b}".format(b)[::-1], 2) for b in s)
+        volteado += inv[16:] + inv[:16]
+    buf[vol * 8:vol * 8 + len(volteado)] = volteado
+    if nor:
+        buf[nor * 8:nor * 8 + len(datos)] = datos
+    return bytes(buf)
+
+
+def simula_disparo(tipo, x, y, cuadros):
+    """[(cuadro, registro, X, Y) o None] cuadro a cuadro."""
+    fuera = []
+    if tipo == 1:
+        x += 8
+        reg, fase, espera = 5, 0, 4
+        for _ in range(cuadros):
+            if fase == 0:
+                espera -= 1
+                if espera == 0:
+                    fase = 1
+            elif fase == 1:
+                x += 16
+                reg += 1
+                if (reg - 1) & 3 == 3:
+                    fase = 3
+            elif fase == 3:
+                reg -= 1
+                x += 16
+                if (reg - 1) & 3 == 0:
+                    fase = 4
+            elif fase == 4:
+                reg = None
+            fuera.append(None if reg is None else (reg, x, y))
+        return fuera
+    x += 2
+    reg = 0x13 if tipo == 4 else 0
+    for _ in range(cuadros):
+        x += 8
+        fuera.append((reg, x, y - 4) if x < 300 else None)
+    return fuera
+
+
+def dispara(ruta, escala=3, cuadros=36):
+    from PIL import Image
+    from rom import T123
+    import fases
+    v = fases.vram_de_ruina(0)
+    v.paleta(T123, PALETA_PERSONAJE[0])
+    pal = {c: v.rgb(c) for c in range(16)}
+    fotos = {e: [compone(f) for f in fotogramas(0, e)] for e in range(4)}
+    tiros = {e: simula_disparo(4 - e, 24, 0, cuadros) for e in range(4)}
+    alto = 40
+    imgs = []
+    for t in range(cuadros):
+        img = Image.new("RGB", (240, 4 * alto), (24, 24, 24))
+        for e in range(4):
+            cy = e * alto + alto - 4
+            buf = fotos[e][4 if t < 8 else 0] + patrones_de_disparo(e)[0x80:]
+            tiro = tiros[e][t]
+            mezcla = {}
+            if tiro:
+                reg, x, y = tiro
+                golpe(img, buf, reg, x, cy + y, mezcla, pal)
+            cuerpo(img, buf, 24, cy, mezcla, pal)
+        imgs.append(img.resize((img.width * escala, img.height * escala), Image.NEAREST))
+    imgs[0].save(ruta, save_all=True, append_images=imgs[1:], duration=20, loop=0)
+
+
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "hoja":
         hoja(sys.argv[2])
@@ -298,5 +393,7 @@ if __name__ == "__main__":
         anima(sys.argv[2])
     elif len(sys.argv) >= 3 and sys.argv[1] == "ataques":
         ataques(sys.argv[2])
+    elif len(sys.argv) >= 3 and sys.argv[1] == "dispara":
+        dispara(sys.argv[2])
     else:
-        sys.exit("uso: personajes.py hoja <png> | anima <gif> | ataques <gif>")
+        sys.exit("uso: personajes.py hoja <png> | anima <gif> | ataques <gif> | dispara <gif>")

@@ -170,6 +170,7 @@ imagenes: $(ROM)
 	$(PYIMG) tools/personajes.py hoja $(IMG)/personajes.png
 	$(PYIMG) tools/personajes.py anima $(IMG)/personajes_animados.gif
 	$(PYIMG) tools/personajes.py ataques $(IMG)/cles_golpes.gif
+	$(PYIMG) tools/personajes.py dispara $(IMG)/wit_dispara.gif
 	$(PYIMG) tools/escenas.py todas $(IMG)
 	$(PYIMG) tools/retratos.py hoja $(IMG)/retratos.png
 	$(PYIMG) tools/retratos.py habla $(IMG)/retratos_hablan.gif

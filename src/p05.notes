@@ -1,0 +1,140 @@
+# Notas del banco 05
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x8000 0x8002 fichas_escenas_2_6_f27_cola  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 27 de la lista fichas_escenas_2_6 (sigue del banco 4); lo leen p04:7315 (2 bytes)
+F 0x8000 16
+D 0x8002 0x800A fichas_escenas_2_6_f28  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 28 de la lista fichas_escenas_2_6; lo leen p04:7315 (8 bytes)
+F 0x8002 8
+D 0x800A 0x80B2 fichas_escenas_2_6_f29  7 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 29 de la lista fichas_escenas_2_6; lo leen p04:7315 (168 bytes)
+F 0x800A 24
+D 0x80B2 0x80B4 fichas_escena_4_colores  tabla de colores de la lista fichas_escena_4 (L_529C indexa con c >> 4); lo leen p04:7332 (2 bytes)
+F 0x80B2 2
+D 0x80B4 0x80BC fichas_escena_4_col0  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 3 bloques: (fichas_escena_4_col0 80B4-80B8) (fichas_escena_4_col0 80B4-80BC); lo leen p04:7332 (8 bytes)
+F 0x80B4 2
+D 0x80BC 0x80CF fichas_escena_4  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p04:7332 (19 bytes)
+F 0x80BC 6
+D 0x80CF 0x811F fichas_escena_4_f0  10 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 0 de la lista fichas_escena_4; lo leen p04:7332 (80 bytes)
+F 0x80CF 8
+D 0x811F 0x843D fichas_escena_4_f1  47 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_escena_4; se solapan 26 bloques: (fichas_escena_4_f2 830F-836F) (fichas_escena_8_colores 836F-8373) (fichas_escena_8_col0 8373-8377) (fichas_escena_8_col1 8377-837B) (fichas_escena_8 837B-8388) (fichas_escena_9_colores 8388-838C) (fichas_escena_9_col0 838C-8390) (fichas_escena_9_col1 8390-8394) (fichas_escena_9_col1 8390-8394) (fichas_escena_9_col1 8390-8394) (fichas_escena_9 8394-83AD) (fichas_escena_10_colores 83AD-83AF) (fichas_escena_10_col0 83AF-83B1) (fichas_escena_10_col0 83AF-83B3) (fichas_escena_10_col0 83AF-83B3) (fichas_escena_10 83B3-83C6) (fichas_escena_11_colores 83C6-83CC) (fichas_escena_11_col0 83CC-83CE) (fichas_escena_11_col0 83CC-83D0) (fichas_escena_11_col1 83D0-83D4) (fichas_escena_11_col1 83D0-83D4) (fichas_escena_11_col2 83D4-83D8) (fichas_escena_11_col2 83D4-83D8) (fichas_escena_11 83D8-83FD) (fichas_escena_8_f0 83FD-843D); lo leen p04:7332, p04:731E (798 bytes)
+F 0x811F 16
+D 0x843D 0x849D fichas_escena_8_f1  6 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_escena_8; lo leen p04:731E (96 bytes)
+F 0x843D 16
+D 0x849D 0x84BD fichas_escena_9_f0  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_escena_9; se solapan 2 bloques: (fichas_escena_9_f1 849D-84BD); lo leen p04:731E (32 bytes)
+F 0x849D 16
+D 0x84BD 0x85BD fichas_escena_9_f3  9 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_escena_9; se solapan 2 bloques: (fichas_escena_9_f2 84BD-85BD); lo leen p04:731E (256 bytes)
+F 0x84BD 16
+D 0x85BD 0x879D fichas_escena_10_f0  30 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_escena_10; se solapan 2 bloques: (fichas_escena_10_f1 85BD-879D); lo leen p04:731E (480 bytes)
+F 0x85BD 16
+D 0x879D 0x87A5 fichas_escena_10_f2  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 2 de la lista fichas_escena_10; lo leen p04:731E (8 bytes)
+F 0x879D 8
+D 0x87A5 0x87C5 fichas_escena_11_f0  4 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 0 de la lista fichas_escena_11; lo leen p04:731E (32 bytes)
+F 0x87A5 8
+D 0x87C5 0x87D5 fichas_escena_11_f1  1 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_escena_11; lo leen p04:731E (16 bytes)
+F 0x87C5 16
+D 0x87D5 0x8825 fichas_escena_11_f2  5 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_escena_11; se solapan 2 bloques: (fichas_escena_11_f4 87D5-8825); lo leen p04:731E (80 bytes)
+F 0x87D5 16
+D 0x8825 0x8855 fichas_escena_11_f3  3 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_escena_11; se solapan 2 bloques: (fichas_escena_11_f5 8825-8855); lo leen p04:731E (48 bytes)
+F 0x8825 16
+D 0x8855 0x88CE patrones_8855  RLE de patrones de sprite (p00:492C); lo leen p04:734B (121 bytes)
+F 0x8855 16
+D 0x88CE 0x8AE8 patrones_88CE  RLE de patrones de sprite (p00:492C); lo leen p04:7354 (538 bytes)
+F 0x88CE 16
+D 0x8AE8 0x8DE4 patrones_8AE8  RLE de patrones de sprite (p00:492C); lo leen p04:737E (764 bytes)
+F 0x8AE8 16
+D 0x8DE4 0x8E54 escena_0_mapa  RLE (L_5578): el mapa de fichas de la escena 0; lo leen p04:72A7 (112 bytes)
+F 0x8DE4 16
+D 0x8E54 0x8ED5 escena_1_mapa  RLE (L_5578): el mapa de fichas de la escena 1; lo leen p04:72A7 (129 bytes)
+F 0x8E54 16
+D 0x8ED5 0x8F3A escena_2_mapa  RLE (L_5578): el mapa de fichas de la escena 2; lo leen p04:72A7 (101 bytes)
+F 0x8ED5 16
+D 0x8F3A 0x8FA9 escena_3_mapa  RLE (L_5578): el mapa de fichas de la escena 3; lo leen p04:72A7 (111 bytes)
+F 0x8F3A 16
+D 0x8FA9 0x8FCD escena_4_mapa  36 bytes que p04:72D3 copia tal cual a 0xD200 (la escena 4); lo leen p04:72D3 (36 bytes)
+F 0x8FA9 12
+D 0x8FCD 0x9023 escena_5_mapa  RLE (L_5578): el mapa de fichas de la escena 5; lo leen p04:72A7 (86 bytes)
+F 0x8FCD 16
+D 0x9023 0x908E escena_6_mapa  RLE (L_5578): el mapa de fichas de la escena 6; lo leen p04:72A7 (107 bytes)
+F 0x9023 16
+D 0x908E 0x90F8 escena_8_mapa  RLE (L_5578): el mapa de fichas de la escena 8; lo leen p04:72A7 (106 bytes)
+F 0x908E 16
+D 0x90F8 0x911C escena_8_dibujo  RLE (L_5578): 5 x 7 fichas que p04:72DF pinta en (0x98, 0x20); lo leen p04:72DF (36 bytes)
+F 0x90F8 16
+D 0x911C 0x9173 escena_9_mapa  RLE (L_5578): el mapa de fichas de la escena 9; lo leen p04:72A7 (87 bytes)
+F 0x911C 16
+D 0x9173 0x91D0 escena_10_mapa  RLE (L_5578): el mapa de fichas de la escena 10; lo leen p04:72A7 (93 bytes)
+F 0x9173 16
+D 0x91D0 0x9231 escena_11_mapa  RLE (L_5578): el mapa de fichas de la escena 11; lo leen p04:72A7 (97 bytes)
+F 0x91D0 16
+D 0x9231 0x9237 fichas_p9665_colores  tabla de colores de la lista fichas_p9665 (L_529C indexa con c >> 4); lo leen p05:9665 (6 bytes)
+F 0x9231 2
+D 0x9237 0x9239 fichas_p9665_col0  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p05:9665 (2 bytes)
+F 0x9237 2
+D 0x9239 0x923D fichas_p9665_col1  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_p9665_col1 9239-923D); lo leen p05:9665 (4 bytes)
+F 0x9239 2
+D 0x923D 0x9241 fichas_p9665_col2  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 3 bloques: (fichas_p9665_col2 923D-9241) (fichas_p9665_col2 923D-9241); lo leen p05:9665 (4 bytes)
+F 0x923D 2
+D 0x9241 0x9266 fichas_p9665  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p05:9665 (37 bytes)
+F 0x9241 6
+D 0x9266 0x926E fichas_p9665_f0  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 0 de la lista fichas_p9665; lo leen p05:9665 (8 bytes)
+F 0x9266 8
+D 0x926E 0x9276 fichas_p9665_f1  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 1 de la lista fichas_p9665; lo leen p05:9665 (8 bytes)
+F 0x926E 8
+D 0x9276 0x9286 fichas_p9665_f2  2 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 2 de la lista fichas_p9665; lo leen p05:9665 (16 bytes)
+F 0x9276 8
+D 0x9286 0x93A6 fichas_p9665_f3  18 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_p9665; se solapan 2 bloques: (fichas_p9665_f4 9376-93A6); lo leen p05:9665 (288 bytes)
+F 0x9286 16
+D 0x93A6 0x93C6 fichas_p9665_f5  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_p9665; lo leen p05:9665 (32 bytes)
+F 0x93A6 16
+D 0x93C6 0x941C pantalla_p73B4  RLE (L_5578): fichas a 0xD200 (p04:73B4); lo leen p04:73B4 (86 bytes)
+F 0x93C6 16
+D 0x94C3 0x950B caracteres_94C3  RLE (L_5578): 13 caracteres de 1 bit que p05:9453 pinta con L_4CBF; lo leen p05:9453 (72 bytes)
+F 0x94C3 16
+D 0x950B 0x9550 caracteres_950B  RLE (L_5578): 13 caracteres de 1 bit que p05:9453 pinta con L_4CBF; lo leen p05:9453 (69 bytes)
+F 0x950B 16
+D 0x9550 0x9614 caracteres_9550  RLE (L_5578): 26 caracteres de 1 bit que p05:9453 pinta con L_4CBF; lo leen p05:9453 (196 bytes)
+F 0x9550 16
+D 0x9614 0x9624 paleta_titulo  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p05:9435 (16 bytes)
+F 0x9614 3
+D 0x9624 0x9665 rotulo_titulo  fichas del rotulo (p05:94A3): 0xFE [dx] baja una fila, 0xFF acaba; lo leen p05:943E (65 bytes)
+F 0x9624 16
+D 0x96AB 0x96B5 coordenadas_por_ruina  5 palabras: (X, Y) de pantalla por ruina (p05:968C: p05:96AB[0xC21D]); lo leen p05:968C (10 bytes)
+F 0x96AB 2
+D 0x96CD 0x96EA patrones_p96CA  [direccion de VRAM] y RLE de patrones de sprite (p00:4926); lo leen p05:96CA (29 bytes)
+F 0x96CD 16
+D 0x9736 0x9748 texto_p9728  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p05:9728 (18 bytes)
+F 0x9736 16
+D 0x9782 0x9792 tabla_p975F  8 x 2 bytes que p05:9768 copia a 0xDE00 segun ((0xCA05) >> 2) & 7; lo leen p05:975F (16 bytes)
+F 0x9782 2
+D 0x98B1 0x994D prologo_no_japones  el texto del prologo, caracteres hasta 0xFF; p05:9853 lo elige si la BIOS no es japonesa (0x002B); lo leen p05:9853 (156 bytes)
+F 0x98B1 16
+D 0x994D 0x9988 prologo_japones  el texto del prologo en japones, caracteres hasta 0xFF (p05:984E, BIOS japonesa); lo leen p05:984E (59 bytes)
+F 0x994D 16
+D 0x9988 0x9A29 fichas_p96F4  RLE (L_5578): a 0xE400 (p05:96F4); lo leen p05:96F4 (161 bytes)
+F 0x9988 16
+D 0x9A29 0x9A33 fichas_p96BE_colores  tabla de colores de la lista fichas_p96BE (L_529C indexa con c >> 4); lo leen p05:96BE (10 bytes)
+F 0x9A29 2
+D 0x9A33 0x9A37 fichas_p96BE_col0  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_p96BE_col0 9A33-9A37); lo leen p05:96BE (4 bytes)
+F 0x9A33 4
+D 0x9A37 0x9A3F fichas_p96BE_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_p96BE_col1 9A37-9A3F); lo leen p05:96BE (8 bytes)
+F 0x9A37 4
+D 0x9A3F 0x9A43 fichas_p96BE_col2  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p05:96BE (4 bytes)
+F 0x9A3F 4
+D 0x9A43 0x9A47 fichas_p96BE_col3  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p05:96BE (4 bytes)
+F 0x9A43 4
+D 0x9A47 0x9A4B fichas_p96BE_col4  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p05:96BE (4 bytes)
+F 0x9A47 4
+D 0x9A4B 0x9A76 fichas_p96BE  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p05:96BE (43 bytes)
+F 0x9A4B 6
+D 0x9A76 0x9AA6 fichas_p96BE_f0  3 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_p96BE; se solapan 2 bloques: (fichas_p96BE_f1 9A76-9AA6); lo leen p05:96BE (48 bytes)
+F 0x9A76 16
+D 0x9AA6 0x9CA6 fichas_p96BE_f2  32 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_p96BE; lo leen p05:96BE (512 bytes)
+F 0x9AA6 16
+D 0x9CA6 0x9CE6 fichas_p96BE_f3  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_p96BE; lo leen p05:96BE (64 bytes)
+F 0x9CA6 16
+D 0x9CE6 0x9D06 fichas_p96BE_f4  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 4 de la lista fichas_p96BE; lo leen p05:96BE (32 bytes)
+F 0x9CE6 16
+D 0x9D06 0x9D26 fichas_p96BE_f5  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_p96BE; lo leen p05:96BE (32 bytes)
+F 0x9D06 16
+D 0x9D26 0x9ED6 fichas_p96BE_f6  18 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 6 de la lista fichas_p96BE; lo leen p05:96BE (432 bytes)
+F 0x9D26 24
+# --- fin de los bloques de bloques.py ---

@@ -1,0 +1,8 @@
+# Tamanos de tabla del despachador puestos a mano: 'pNN 0xCALL n  # por que'.
+#
+# El trazador corta una tabla en la primera palabra que no es una direccion
+# del cartucho. Las dos tablas por tipo de actor de p02 llevan 0x0000 en los
+# tipos sin manejador, asi que se cortaban en el tipo 16; llegan hasta el
+# primer byte de codigo de detras (p02:8367 y p02:8769): 63 tipos cada una.
+p02 0x82E6 63  # (ix+0) - 1: 63 palabras hasta p02:8367, ceros incluidos
+p02 0x86E8 63  # (ix+0) - 1: 63 palabras hasta p02:8769, ceros incluidos

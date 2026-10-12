@@ -1,0 +1,522 @@
+# Notas del banco 15
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xA008 pieza_9FDF_cola  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630 (sigue del banco 14); lo leen p00:5BC6 (8 bytes)
+F 0xA000 16
+D 0xA008 0xA019 pieza_A008  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (17 bytes)
+F 0xA008 16
+D 0xA019 0xA05A pieza_A019  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA019 16
+D 0xA05A 0xA097 pieza_A05A  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (61 bytes)
+F 0xA05A 16
+D 0xA097 0xA0D8 pieza_A097  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA097 16
+D 0xA0D8 0xA115 pieza_A0D8  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (61 bytes)
+F 0xA0D8 16
+D 0xA115 0xA156 pieza_A115  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA115 16
+D 0xA156 0xA15F fotograma_A156  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0xA156 4
+D 0xA15F 0xA168 fotograma_A15F  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0xA15F 4
+D 0xA168 0xA171 fotograma_A168  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0xA168 4
+D 0xA171 0xA176 fotograma_A171  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (5 bytes)
+F 0xA171 4
+D 0xA176 0xA17B fotograma_A176  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (5 bytes)
+F 0xA176 4
+D 0xA17B 0xA1BC pieza_A17B  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA17B 16
+D 0xA1BC 0xA1C5 pieza_A1BC  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (9 bytes)
+F 0xA1BC 16
+D 0xA1C5 0xA1EE pieza_A1C5  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (41 bytes)
+F 0xA1C5 16
+D 0xA1EE 0xA217 pieza_A1EE  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (41 bytes)
+F 0xA1EE 16
+D 0xA217 0xA258 pieza_A217  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA217 16
+D 0xA258 0xA299 pieza_A258  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA258 16
+D 0xA299 0xA2DA pieza_A299  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA299 16
+D 0xA2DA 0xA31B pieza_A2DA  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0xA2DA 16
+D 0xA31B 0xA32B sprites_a31b  4 x [patron volteado][origen lo][hi][patron normal] (p00:5612); lo leen p00:5AA8 (16 bytes)
+F 0xA31B 4
+D 0xA32B 0xA362 sprites_a31b_0  patrones de sprite en RLE (p00:49CE), el registro 0 de sprites_a31b; lo leen p00:5AA8 (55 bytes)
+F 0xA32B 16
+D 0xA362 0xA379 sprites_a31b_1  patrones de sprite en RLE (p00:49CE), el registro 1 de sprites_a31b; lo leen p00:5AA8 (23 bytes)
+F 0xA362 16
+D 0xA379 0xA38A sprites_a31b_2  patrones de sprite en RLE (p00:49CE), el registro 2 de sprites_a31b; lo leen p00:5AA8 (17 bytes)
+F 0xA379 16
+D 0xA38A 0xA3C1 sprites_a31b_3  patrones de sprite en RLE (p00:49CE), el registro 3 de sprites_a31b; lo leen p00:5AA8 (55 bytes)
+F 0xA38A 16
+D 0xA3C1 0xA3D1 sprites_a3c1  4 x [patron volteado][origen lo][hi][patron normal] (p00:5612); lo leen p00:5ABD (16 bytes)
+F 0xA3C1 4
+D 0xA3D1 0xA3FD sprites_a3c1_3  patrones de sprite en RLE (p00:49CE), el registro 3 de sprites_a3c1; lo leen p00:5ABD (44 bytes)
+F 0xA3D1 16
+D 0xA3FD 0xA410 sprites_a3c1_2  patrones de sprite en RLE (p00:49CE), el registro 2 de sprites_a3c1; lo leen p00:5ABD (19 bytes)
+F 0xA3FD 16
+D 0xA410 0xA426 sprites_a3c1_0  patrones de sprite en RLE (p00:49CE), el registro 0 de sprites_a3c1; se solapan 2 bloques: (sprites_a3c1_1 A410-A426); lo leen p00:5ABD (22 bytes)
+F 0xA410 16
+D 0xA426 0xA436 sprites_a426  4 x [patron volteado][origen lo][hi][patron normal] (p00:5612); lo leen p00:5AB8 (16 bytes)
+F 0xA426 4
+D 0xA436 0xA468 sprites_a426_1  patrones de sprite en RLE (p00:49CE), el registro 1 de sprites_a426; lo leen p00:5AB8 (50 bytes)
+F 0xA436 16
+D 0xA468 0xA49A sprites_a426_3  patrones de sprite en RLE (p00:49CE), el registro 3 de sprites_a426; lo leen p00:5AB8 (50 bytes)
+F 0xA468 16
+D 0xA49A 0xA4CA sprites_a426_2  patrones de sprite en RLE (p00:49CE), el registro 2 de sprites_a426; lo leen p00:5AB8 (48 bytes)
+F 0xA49A 16
+D 0xA4CA 0xA4FB sprites_a426_0  patrones de sprite en RLE (p00:49CE), el registro 0 de sprites_a426; lo leen p00:5AB8 (49 bytes)
+F 0xA4CA 16
+D 0xA4FB 0xA52D enemigos_por_fase  25 palabras: la tabla de pantallas de cada fase 1-25 (p15:A4F9[0xC211]; 0 en las 5, 10, 15, 20 y 25; la entrada 0 no se lee y sus dos bytes son la cola de p15:A4CA); lo leen p01:774B (50 bytes)
+F 0xA4FB 2
+D 0xA52D 0xA53D enemigos_fase_01  8 palabras: la lista de enemigos de cada pantalla de la fase 1; lo leen p01:774B (16 bytes)
+F 0xA52D 2
+D 0xA53D 0xA553 enemigos_fase_02  11 palabras: la lista de enemigos de cada pantalla de la fase 2; lo leen p01:774B (22 bytes)
+F 0xA53D 2
+D 0xA553 0xA565 enemigos_fase_03  9 palabras: la lista de enemigos de cada pantalla de la fase 3; lo leen p01:774B (18 bytes)
+F 0xA553 2
+D 0xA565 0xA575 enemigos_fase_04  8 palabras: la lista de enemigos de cada pantalla de la fase 4; lo leen p01:774B (16 bytes)
+F 0xA565 2
+D 0xA575 0xA587 enemigos_fase_06  9 palabras: la lista de enemigos de cada pantalla de la fase 6; lo leen p01:774B (18 bytes)
+F 0xA575 2
+D 0xA587 0xA59F enemigos_fase_07  12 palabras: la lista de enemigos de cada pantalla de la fase 7; lo leen p01:774B (24 bytes)
+F 0xA587 2
+D 0xA59F 0xA5B5 enemigos_fase_08  11 palabras: la lista de enemigos de cada pantalla de la fase 8; lo leen p01:774B (22 bytes)
+F 0xA59F 2
+D 0xA5B5 0xA5C5 enemigos_fase_09  8 palabras: la lista de enemigos de cada pantalla de la fase 9; lo leen p01:774B (16 bytes)
+F 0xA5B5 2
+D 0xA5C5 0xA5D5 enemigos_fase_11  8 palabras: la lista de enemigos de cada pantalla de la fase 11; lo leen p01:774B (16 bytes)
+F 0xA5C5 2
+D 0xA5D5 0xA5E7 enemigos_fase_12  9 palabras: la lista de enemigos de cada pantalla de la fase 12; lo leen p01:774B (18 bytes)
+F 0xA5D5 2
+D 0xA5E7 0xA5FD enemigos_fase_13  11 palabras: la lista de enemigos de cada pantalla de la fase 13; lo leen p01:774B (22 bytes)
+F 0xA5E7 2
+D 0xA5FD 0xA617 enemigos_fase_14  13 palabras: la lista de enemigos de cada pantalla de la fase 14; lo leen p01:774B (26 bytes)
+F 0xA5FD 2
+D 0xA617 0xA631 enemigos_fase_16  13 palabras: la lista de enemigos de cada pantalla de la fase 16; lo leen p01:774B (26 bytes)
+F 0xA617 2
+D 0xA631 0xA643 enemigos_fase_17  9 palabras: la lista de enemigos de cada pantalla de la fase 17; lo leen p01:774B (18 bytes)
+F 0xA631 2
+D 0xA643 0xA659 enemigos_fase_18  11 palabras: la lista de enemigos de cada pantalla de la fase 18; lo leen p01:774B (22 bytes)
+F 0xA643 2
+D 0xA659 0xA66F enemigos_fase_19  11 palabras: la lista de enemigos de cada pantalla de la fase 19; lo leen p01:774B (22 bytes)
+F 0xA659 2
+D 0xA66F 0xA685 enemigos_fase_21  11 palabras: la lista de enemigos de cada pantalla de la fase 21; lo leen p01:774B (22 bytes)
+F 0xA66F 2
+D 0xA685 0xA6A1 enemigos_fase_22  14 palabras: la lista de enemigos de cada pantalla de la fase 22; lo leen p01:774B (28 bytes)
+F 0xA685 2
+D 0xA6A1 0xA6BB enemigos_fase_23  13 palabras: la lista de enemigos de cada pantalla de la fase 23; lo leen p01:774B (26 bytes)
+F 0xA6A1 2
+D 0xA6BB 0xA6D3 enemigos_fase_24  12 palabras: la lista de enemigos de cada pantalla de la fase 24; lo leen p01:774B (24 bytes)
+F 0xA6BB 2
+D 0xA6D3 0xA6D9 enemigos_A6D3  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA6D3 16
+D 0xA6D9 0xA6DF enemigos_A6D9  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA6D9 16
+D 0xA6DF 0xA6E5 enemigos_A6DF  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA6DF 16
+D 0xA6E5 0xA6F0 enemigos_A6E5  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xA6E5 16
+D 0xA6F0 0xA6FC enemigos_A6F0  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xA6F0 16
+D 0xA6FC 0xA707 enemigos_A6FC  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xA6FC 16
+D 0xA707 0xA712 enemigos_A707  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xA707 16
+D 0xA712 0xA71D enemigos_A712  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xA712 16
+D 0xA71D 0xA723 enemigos_A71D  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA71D 16
+D 0xA723 0xA729 enemigos_A723  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA723 16
+D 0xA729 0xA72F enemigos_A729  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA729 16
+D 0xA72F 0xA73E enemigos_A72F  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (15 bytes)
+F 0xA72F 16
+D 0xA73E 0xA74E enemigos_A73E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xA73E 16
+D 0xA74E 0xA754 enemigos_A74E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA74E 16
+D 0xA754 0xA75A enemigos_A754  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA754 16
+D 0xA75A 0xA76A enemigos_A75A  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xA75A 16
+D 0xA76A 0xA770 enemigos_A76A  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA76A 16
+D 0xA770 0xA777 enemigos_A770  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xA770 16
+D 0xA777 0xA783 enemigos_A777  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xA777 16
+D 0xA783 0xA78C enemigos_A783  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (9 bytes)
+F 0xA783 16
+D 0xA78C 0xA79C enemigos_A78C  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xA78C 16
+D 0xA79C 0xA7AB enemigos_A79C  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (15 bytes)
+F 0xA79C 16
+D 0xA7AB 0xA7C4 enemigos_A7AB  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (25 bytes)
+F 0xA7AB 16
+D 0xA7C4 0xA7CA enemigos_A7C4  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA7C4 16
+D 0xA7CA 0xA7DB enemigos_A7CA  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (17 bytes)
+F 0xA7CA 16
+D 0xA7DB 0xA7F0 enemigos_A7DB  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (21 bytes)
+F 0xA7DB 16
+D 0xA7F0 0xA7FC enemigos_A7F0  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xA7F0 16
+D 0xA7FC 0xA810 enemigos_A7FC  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (20 bytes)
+F 0xA7FC 16
+D 0xA810 0xA81B enemigos_A810  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xA810 16
+D 0xA81B 0xA821 enemigos_A81B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA81B 16
+D 0xA821 0xA831 enemigos_A821  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xA821 16
+D 0xA831 0xA837 enemigos_A831  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA831 16
+D 0xA837 0xA844 enemigos_A837  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xA837 16
+D 0xA844 0xA850 enemigos_A844  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xA844 16
+D 0xA850 0xA86A enemigos_A850  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (26 bytes)
+F 0xA850 16
+D 0xA86A 0xA87A enemigos_A86A  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xA86A 16
+D 0xA87A 0xA884 enemigos_A87A  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (10 bytes)
+F 0xA87A 16
+D 0xA884 0xA894 enemigos_A884  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xA884 16
+D 0xA894 0xA89E enemigos_A894  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (10 bytes)
+F 0xA894 16
+D 0xA89E 0xA8AB enemigos_A89E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xA89E 16
+D 0xA8AB 0xA8B8 enemigos_A8AB  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xA8AB 16
+D 0xA8B8 0xA8C5 enemigos_A8B8  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xA8B8 16
+D 0xA8C5 0xA8D9 enemigos_A8C5  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (20 bytes)
+F 0xA8C5 16
+D 0xA8D9 0xA8E0 enemigos_A8D9  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xA8D9 16
+D 0xA8E0 0xA8EB enemigos_A8E0  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xA8E0 16
+D 0xA8EB 0xA8EF enemigos_A8EB  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xA8EB 16
+D 0xA8EF 0xA8F8 enemigos_A8EF  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (9 bytes)
+F 0xA8EF 16
+D 0xA8F8 0xA8FF enemigos_A8F8  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xA8F8 16
+D 0xA8FF 0xA90B enemigos_A8FF  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xA8FF 16
+D 0xA90B 0xA91C enemigos_A90B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (17 bytes)
+F 0xA90B 16
+D 0xA91C 0xA928 enemigos_A91C  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xA91C 16
+D 0xA928 0xA938 enemigos_A928  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xA928 16
+D 0xA938 0xA942 enemigos_A938  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (10 bytes)
+F 0xA938 16
+D 0xA942 0xA953 enemigos_A942  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (17 bytes)
+F 0xA942 16
+D 0xA953 0xA96C enemigos_A953  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (25 bytes)
+F 0xA953 16
+D 0xA96C 0xA987 enemigos_A96C  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (27 bytes)
+F 0xA96C 16
+D 0xA987 0xA99C enemigos_A987  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (21 bytes)
+F 0xA987 16
+D 0xA99C 0xA9AD enemigos_A99C  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (17 bytes)
+F 0xA99C 16
+D 0xA9AD 0xA9C0 enemigos_A9AD  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (19 bytes)
+F 0xA9AD 16
+D 0xA9C0 0xA9D3 enemigos_A9C0  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (19 bytes)
+F 0xA9C0 16
+D 0xA9D3 0xA9E2 enemigos_A9D3  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (15 bytes)
+F 0xA9D3 16
+D 0xA9E2 0xA9E8 enemigos_A9E2  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA9E2 16
+D 0xA9E8 0xA9F2 enemigos_A9E8  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (10 bytes)
+F 0xA9E8 16
+D 0xA9F2 0xA9FD enemigos_A9F2  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xA9F2 16
+D 0xA9FD 0xAA03 enemigos_A9FD  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xA9FD 16
+D 0xAA03 0xAA0E enemigos_AA03  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xAA03 16
+D 0xAA0E 0xAA19 enemigos_AA0E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xAA0E 16
+D 0xAA19 0xAA32 enemigos_AA19  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (25 bytes)
+F 0xAA19 16
+D 0xAA32 0xAA3B enemigos_AA32  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (9 bytes)
+F 0xAA32 16
+D 0xAA3B 0xAA58 enemigos_AA3B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (29 bytes)
+F 0xAA3B 16
+D 0xAA58 0xAA63 enemigos_AA58  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xAA58 16
+D 0xAA63 0xAA6A enemigos_AA63  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xAA63 16
+D 0xAA6A 0xAA77 enemigos_AA6A  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xAA6A 16
+D 0xAA77 0xAA7B enemigos_AA77  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xAA77 16
+D 0xAA7B 0xAA8E enemigos_AA7B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (19 bytes)
+F 0xAA7B 16
+D 0xAA8E 0xAA92 enemigos_AA8E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xAA8E 16
+D 0xAA92 0xAA96 enemigos_AA92  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xAA92 16
+D 0xAA96 0xAA9B enemigos_AA96  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (5 bytes)
+F 0xAA96 16
+D 0xAA9B 0xAABC enemigos_AA9B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (33 bytes)
+F 0xAA9B 16
+D 0xAABC 0xAAD6 enemigos_AABC  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (26 bytes)
+F 0xAABC 16
+D 0xAAD6 0xAAEE enemigos_AAD6  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (24 bytes)
+F 0xAAD6 16
+D 0xAAEE 0xAB00 enemigos_AAEE  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (18 bytes)
+F 0xAAEE 16
+D 0xAB00 0xAB07 enemigos_AB00  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xAB00 16
+D 0xAB07 0xAB0B enemigos_AB07  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xAB07 16
+D 0xAB0B 0xAB11 enemigos_AB0B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xAB0B 16
+D 0xAB11 0xAB15 enemigos_AB11  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xAB11 16
+D 0xAB15 0xAB20 enemigos_AB15  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xAB15 16
+D 0xAB20 0xAB46 enemigos_AB20  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (38 bytes)
+F 0xAB20 16
+D 0xAB46 0xAB58 enemigos_AB46  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (18 bytes)
+F 0xAB46 16
+D 0xAB58 0xAB5E enemigos_AB58  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xAB58 16
+D 0xAB5E 0xAB64 enemigos_AB5E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xAB5E 16
+D 0xAB64 0xAB6B enemigos_AB64  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xAB64 16
+D 0xAB6B 0xAB76 enemigos_AB6B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (11 bytes)
+F 0xAB6B 16
+D 0xAB76 0xAB86 enemigos_AB76  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xAB76 16
+D 0xAB86 0xAB9B enemigos_AB86  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (21 bytes)
+F 0xAB86 16
+D 0xAB9B 0xABA5 enemigos_AB9B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (10 bytes)
+F 0xAB9B 16
+D 0xABA5 0xABB8 enemigos_ABA5  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (19 bytes)
+F 0xABA5 16
+D 0xABB8 0xABC5 enemigos_ABB8  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xABB8 16
+D 0xABC5 0xABD3 enemigos_ABC5  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (14 bytes)
+F 0xABC5 16
+D 0xABD3 0xABD9 enemigos_ABD3  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xABD3 16
+D 0xABD9 0xABE5 enemigos_ABD9  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xABD9 16
+D 0xABE5 0xABFF enemigos_ABE5  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (26 bytes)
+F 0xABE5 16
+D 0xABFF 0xAC08 enemigos_ABFF  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (9 bytes)
+F 0xABFF 16
+D 0xAC08 0xAC0E enemigos_AC08  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xAC08 16
+D 0xAC0E 0xAC1B enemigos_AC0E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xAC0E 16
+D 0xAC1B 0xAC22 enemigos_AC1B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xAC1B 16
+D 0xAC22 0xAC2E enemigos_AC22  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xAC22 16
+D 0xAC2E 0xAC3E enemigos_AC2E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xAC2E 16
+D 0xAC3E 0xAC42 enemigos_AC3E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xAC3E 16
+D 0xAC42 0xAC49 enemigos_AC42  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xAC42 16
+D 0xAC49 0xAC5F enemigos_AC49  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (22 bytes)
+F 0xAC49 16
+D 0xAC5F 0xAC68 enemigos_AC5F  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (9 bytes)
+F 0xAC5F 16
+D 0xAC68 0xAC76 enemigos_AC68  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (14 bytes)
+F 0xAC68 16
+D 0xAC76 0xAC8B enemigos_AC76  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (21 bytes)
+F 0xAC76 16
+D 0xAC8B 0xACA0 enemigos_AC8B  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (21 bytes)
+F 0xAC8B 16
+D 0xACA0 0xACA6 enemigos_ACA0  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xACA0 16
+D 0xACA6 0xACAA enemigos_ACA6  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xACA6 16
+D 0xACAA 0xACB7 enemigos_ACAA  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (13 bytes)
+F 0xACAA 16
+D 0xACB7 0xACBB enemigos_ACB7  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xACB7 16
+D 0xACBB 0xACBF enemigos_ACBB  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (4 bytes)
+F 0xACBB 16
+D 0xACBF 0xACCF enemigos_ACBF  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xACBF 16
+D 0xACCF 0xACD6 enemigos_ACCF  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xACCF 16
+D 0xACD6 0xACE2 enemigos_ACD6  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xACD6 16
+D 0xACE2 0xACF3 enemigos_ACE2  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (17 bytes)
+F 0xACE2 16
+D 0xACF3 0xACFA enemigos_ACF3  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xACF3 16
+D 0xACFA 0xAD10 enemigos_ACFA  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (22 bytes)
+F 0xACFA 16
+D 0xAD10 0xAD1C enemigos_AD10  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (12 bytes)
+F 0xAD10 16
+D 0xAD1C 0xAD22 enemigos_AD1C  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xAD1C 16
+D 0xAD22 0xAD28 enemigos_AD22  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (6 bytes)
+F 0xAD22 16
+D 0xAD28 0xAD32 enemigos_AD28  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (10 bytes)
+F 0xAD28 16
+D 0xAD32 0xAD50 enemigos_AD32  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (30 bytes)
+F 0xAD32 16
+D 0xAD50 0xAD68 enemigos_AD50  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (24 bytes)
+F 0xAD50 16
+D 0xAD68 0xAD80 enemigos_AD68  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (24 bytes)
+F 0xAD68 16
+D 0xAD80 0xAD90 enemigos_AD80  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (16 bytes)
+F 0xAD80 16
+D 0xAD90 0xAD9E enemigos_AD90  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (14 bytes)
+F 0xAD90 16
+D 0xAD9E 0xADA5 enemigos_AD9E  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (7 bytes)
+F 0xAD9E 16
+D 0xADA5 0xADAF enemigos_ADA5  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (10 bytes)
+F 0xADA5 16
+D 0xADAF 0xADBE enemigos_ADAF  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (15 bytes)
+F 0xADAF 16
+D 0xADBE 0xADDB enemigos_ADBE  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (29 bytes)
+F 0xADBE 16
+D 0xADDB 0xADDC enemigos_ADDB  [n] y n x [tipo][Y][X] y lo que lea cada tipo (p01:77A0); lo leen p01:774B (1 bytes)
+F 0xADDB 16
+D 0xADDC 0xADF6 sprites_de_enemigo  13 palabras: los patrones de sprite de cada tipo de enemigo 1-13 (p15:ADDA[tipo]; 0 en los 8, 9 y 10, que p00:538C se salta); lo leen p00:5396 (26 bytes)
+F 0xADDC 2
+D 0xADF6 0xB1DE sprites_tipo_2  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 2; lo leen p00:5396 (1000 bytes)
+F 0xADF6 16
+D 0xB1DE 0xB255 sprites_tipo_4  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 4; lo leen p00:5396 (119 bytes)
+F 0xB1DE 16
+D 0xB255 0xB299 sprites_tipo_6  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 6; lo leen p00:5396 (68 bytes)
+F 0xB255 16
+D 0xB299 0xB2DD sprites_tipo_12  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 12; lo leen p00:5396 (68 bytes)
+F 0xB299 16
+D 0xB2DD 0xB321 sprites_tipo_5  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 5; se solapan 2 bloques: (sprites_tipo_11 B2DD-B321); lo leen p00:5396 (68 bytes)
+F 0xB2DD 16
+D 0xB321 0xB364 sprites_tipo_7  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 7; lo leen p00:5396 (67 bytes)
+F 0xB321 16
+D 0xB364 0xB3A8 sprites_tipo_3  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 3; lo leen p00:5396 (68 bytes)
+F 0xB364 16
+D 0xB3A8 0xB411 sprites_tipo_1  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 1; lo leen p00:5396 (105 bytes)
+F 0xB3A8 16
+D 0xB411 0xB491 patrones_b411  128 bytes (4 sprites de 16x16) que p00:5421 copia a la VRAM 0xFE00 si C no es cero; lo leen p00:5421 (128 bytes)
+F 0xB411 16
+D 0xB491 0xB511 patrones_b491  128 bytes (4 sprites de 16x16) que p00:5421 copia a la VRAM 0xFE00 si C es cero; lo leen p00:5421 (128 bytes)
+F 0xB491 16
+D 0xB511 0xB546 patrones_b511  RLE (p00:492C) de patrones de sprite a la VRAM 0xFFC0; lo leen p00:53A0 (53 bytes)
+F 0xB511 16
+D 0xB546 0xB580 sprites_tipo_13  [direccion de VRAM] y RLE (p00:4926) con los patrones del enemigo de tipo 13; lo leen p00:5396 (58 bytes)
+F 0xB546 16
+D 0xB580 0xB59A piezas_por_tipo  13 palabras: la ventana de p15:B59A de cada tipo de enemigo 1-13 (p15:B57E[tipo], p01:7709); lo leen p01:770F (26 bytes)
+F 0xB580 2
+D 0xB59A 0xB5CA piezas  24 palabras: punteros a listas de piezas; cada tipo lee el de (ix+0x10) desde su ventana (p01:7712); lo leen p01:770F (48 bytes)
+F 0xB59A 2
+D 0xB5CA 0xB5CF piezas_B5CA  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB5CA 16
+D 0xB5CF 0xB5D4 piezas_B5CF  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB5CF 16
+D 0xB5D4 0xB5D9 piezas_B5D4  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB5D4 16
+D 0xB5D9 0xB5DE piezas_B5D9  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB5D9 16
+D 0xB5DE 0xB5EF piezas_B5DE  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB5DE 16
+D 0xB5EF 0xB600 piezas_B5EF  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB5EF 16
+D 0xB600 0xB611 piezas_B600  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB600 16
+D 0xB611 0xB622 piezas_B611  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB611 16
+D 0xB622 0xB627 piezas_B622  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB622 16
+D 0xB627 0xB62C piezas_B627  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB627 16
+D 0xB62C 0xB631 piezas_B62C  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB62C 16
+D 0xB631 0xB636 resto_B631  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (5 bytes)
+F 0xB631 16
+D 0xB636 0xB63F piezas_B636  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (9 bytes)
+F 0xB636 16
+D 0xB63F 0xB644 piezas_B63F  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB63F 16
+D 0xB644 0xB649 piezas_B644  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (5 bytes)
+F 0xB644 16
+D 0xB649 0xB65A piezas_B649  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB649 16
+D 0xB65A 0xB66B piezas_B65A  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB65A 16
+D 0xB66B 0xB67C piezas_B66B  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB66B 16
+D 0xB67C 0xB68D piezas_B67C  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB67C 16
+D 0xB68D 0xB69E piezas_B68D  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB68D 16
+D 0xB69E 0xB6AF piezas_B69E  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB69E 16
+D 0xB6AF 0xB6C0 piezas_B6AF  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB6AF 16
+D 0xB6C0 0xB6D1 piezas_B6C0  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (17 bytes)
+F 0xB6C0 16
+D 0xB6D1 0xB6D2 piezas_B6D1  [n] y n x 2 bytes a la ficha del enemigo (p01:771E, p01:789F); lo leen p01:770F (1 bytes)
+F 0xB6D1 16
+D 0xB6D2 0xB6E2 desplazamientos_B6D2  pares [dy][dx] que p01:78CF suma a la posicion del enemigo de tipo 2 (p01:78E5); lo leen p01:78E5 (16 bytes)
+F 0xB6D2 2
+D 0xB6E2 0xB6E6 desplazamientos_B6E2  pares [dy][dx] que p01:78CF suma a la posicion del enemigo de tipo 8 (p01:78E5); lo leen p01:78E5 (4 bytes)
+F 0xB6E2 2
+D 0xB6E6 0xB6EA desplazamientos_B6E6  pares [dy][dx] que p01:78CF suma a la posicion del enemigo de tipo 4 (p01:78E5); lo leen p01:78E5 (4 bytes)
+F 0xB6E6 2
+D 0xB6EA 0xB6EE desplazamientos_B6EA  pares [dy][dx] que p01:78CF suma a la posicion del enemigo de tipo los demas (p01:78E5); lo leen p01:78E5 (4 bytes)
+F 0xB6EA 2
+D 0xB6EE 0xB6FE desplazamientos_B6EE  pares [dy][dx] que p01:78CF suma a la posicion del enemigo de tipo 7 (p01:78E5); lo leen p01:78E5 (16 bytes)
+F 0xB6EE 2
+D 0xB6FE 0xB708 plantillas  5 palabras: las plantillas de desplazamientos 0x80-0x84 de los fotogramas (p02:8A7E); lo leen p02:8A42 (10 bytes)
+F 0xB6FE 2
+D 0xB708 0xB744 plantillas_dydx  pares [dy][dx] de las plantillas 0x80-0x84 (p02:8A85); lo leen p02:8A42 (60 bytes)
+F 0xB708 2
+D 0xB744 0xB87C fotogramas  156 palabras: el fotograma (ix+0x10) de cada pieza de sprite (p02:8A49); lo leen p02:8A42 (312 bytes)
+F 0xB744 2
+D 0xB87C 0xBB71 fotogramas_datos  los 156 fotogramas: n x [dy][dx][patron], o [0x80-0x84] y n patrones con la plantilla de p15:B6FE; n es (ix+0x20), lo que dejo la lista de piezas (p02:8A55); lo leen p02:8A42 (757 bytes)
+F 0xB87C 16
+D 0xBB71 0xBB7D fichas_comunes_colores  tabla de colores de la lista fichas_comunes (L_529C indexa con c >> 4); lo leen p00:51C5 (12 bytes)
+F 0xBB71 2
+D 0xBB7D 0xBB81 fichas_comunes_col0  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_comunes_col0 BB7D-BB81); lo leen p00:51C5 (4 bytes)
+F 0xBB7D 4
+D 0xBB81 0xBB85 fichas_comunes_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_comunes_col1 BB81-BB85); lo leen p00:51C5 (4 bytes)
+F 0xBB81 4
+D 0xBB85 0xBB89 fichas_comunes_col2  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:51C5 (4 bytes)
+F 0xBB85 4
+D 0xBB89 0xBB8D fichas_comunes_col3  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:51C5 (4 bytes)
+F 0xBB89 4
+D 0xBB8D 0xBB91 fichas_comunes_col4  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:51C5 (4 bytes)
+F 0xBB8D 4
+D 0xBB91 0xBB95 fichas_comunes_col5  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:51C5 (4 bytes)
+F 0xBB91 4
+D 0xBB95 0xBBC6 fichas_comunes  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:51C5 (49 bytes)
+F 0xBB95 6
+D 0xBBC6 0xBBE6 fichas_comunes_f0  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_comunes; se solapan 2 bloques: (fichas_comunes_f2 BBC6-BBE6); lo leen p00:51C5 (32 bytes)
+F 0xBBC6 16
+D 0xBBE6 0xBC16 fichas_comunes_f1  3 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_comunes; se solapan 2 bloques: (fichas_comunes_f3 BBE6-BC16); lo leen p00:51C5 (48 bytes)
+F 0xBBE6 16
+D 0xBC16 0xBC56 fichas_comunes_f4  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 4 de la lista fichas_comunes; lo leen p00:51C5 (64 bytes)
+F 0xBC16 16
+D 0xBC56 0xBC96 fichas_comunes_f5  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_comunes; lo leen p00:51C5 (64 bytes)
+F 0xBC56 16
+D 0xBC96 0xBD16 fichas_comunes_f6  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 6 de la lista fichas_comunes; lo leen p00:51C5 (128 bytes)
+F 0xBC96 16
+D 0xBD16 0xBD96 fichas_comunes_f7  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 7 de la lista fichas_comunes; lo leen p00:51C5 (128 bytes)
+F 0xBD16 16
+D 0xBD96 0xBEBF resto_BD96  tablas cortas que apuntan p02:8559 (0xBD96), p02:8502 (0xBDD6), p01:6590 (0xBE16), p00:4746 (0xBE3D), p00:5500 (0xBE70), p00:5505 (0xBE75), p00:54EC (0xBE7A), p02:8F21 (0xBE8E); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:8559, p02:8502, p01:6590, p00:4746, p00:5500, p00:5505, p00:54EC, p02:8F21 (297 bytes)
+F 0xBD96 16
+D 0xBF16 0xC000 relleno_ff  234 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (234 bytes)
+F 0xBF16 16
+# --- fin de los bloques de bloques.py ---

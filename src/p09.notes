@@ -1,0 +1,244 @@
+# Notas del banco 09
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xA030 juegos_de_sprites_9_cola  patrones de sprite en RLE (p00:49CE), el registro 9 de juegos_de_sprites (sigue del banco 8); lo leen p00:5609 (48 bytes)
+F 0xA000 16
+D 0xA030 0xA133 juegos_de_sprites_0  patrones de sprite en RLE (p00:49CE), el registro 0 de juegos_de_sprites; lo leen p00:5609 (259 bytes)
+F 0xA030 16
+D 0xA133 0xA234 juegos_de_sprites_10  patrones de sprite en RLE (p00:49CE), el registro 10 de juegos_de_sprites; lo leen p00:5609 (257 bytes)
+F 0xA133 16
+D 0xA234 0xA26B juegos_de_sprites_42  patrones de sprite en RLE (p00:49CE), el registro 42 de juegos_de_sprites; lo leen p00:5609 (55 bytes)
+F 0xA234 16
+D 0xA26B 0xA36B juegos_de_sprites_11  patrones de sprite en RLE (p00:49CE), el registro 11 de juegos_de_sprites; lo leen p00:5609 (256 bytes)
+F 0xA26B 16
+D 0xA36B 0xA3FD juegos_de_sprites_39  patrones de sprite en RLE (p00:49CE), el registro 39 de juegos_de_sprites; lo leen p00:5609 (146 bytes)
+F 0xA36B 16
+D 0xA3FD 0xA42F juegos_de_sprites_40  patrones de sprite en RLE (p00:49CE), el registro 40 de juegos_de_sprites; lo leen p00:5609 (50 bytes)
+F 0xA3FD 16
+D 0xA42F 0xA52E juegos_de_sprites_29  patrones de sprite en RLE (p00:49CE), el registro 29 de juegos_de_sprites; lo leen p00:5609 (255 bytes)
+F 0xA42F 16
+D 0xA52E 0xA624 juegos_de_sprites_30  patrones de sprite en RLE (p00:49CE), el registro 30 de juegos_de_sprites; lo leen p00:5609 (246 bytes)
+F 0xA52E 16
+D 0xA624 0xA85E juegos_de_sprites_31  patrones de sprite en RLE (p00:49CE), el registro 31 de juegos_de_sprites; lo leen p00:5609 (570 bytes)
+F 0xA624 16
+D 0xA85E 0xA918 juegos_de_sprites_32  patrones de sprite en RLE (p00:49CE), el registro 32 de juegos_de_sprites; lo leen p00:5609 (186 bytes)
+F 0xA85E 16
+D 0xA918 0xA95A juegos_de_sprites_43  patrones de sprite en RLE (p00:49CE), el registro 43 de juegos_de_sprites; lo leen p00:5609 (66 bytes)
+F 0xA918 16
+D 0xA95A 0xA987 juegos_de_sprites_44  patrones de sprite en RLE (p00:49CE), el registro 44 de juegos_de_sprites; lo leen p00:5609 (45 bytes)
+F 0xA95A 16
+D 0xA987 0xA9B8 juegos_de_sprites_45  patrones de sprite en RLE (p00:49CE), el registro 45 de juegos_de_sprites; lo leen p00:5609 (49 bytes)
+F 0xA987 16
+D 0xA9B8 0xA9FA juegos_de_sprites_46  patrones de sprite en RLE (p00:49CE), el registro 46 de juegos_de_sprites; lo leen p00:5609 (66 bytes)
+F 0xA9B8 16
+D 0xA9FA 0xAC18 juegos_de_sprites_47  patrones de sprite en RLE (p00:49CE), el registro 47 de juegos_de_sprites; lo leen p00:5609 (542 bytes)
+F 0xA9FA 16
+D 0xAC18 0xAD54 juegos_de_sprites_24  patrones de sprite en RLE (p00:49CE), el registro 24 de juegos_de_sprites; lo leen p00:5609 (316 bytes)
+F 0xAC18 16
+D 0xAD54 0xAD87 juegos_de_sprites_38  patrones de sprite en RLE (p00:49CE), el registro 38 de juegos_de_sprites; lo leen p00:5609 (51 bytes)
+F 0xAD54 16
+D 0xAD87 0xADFD juegos_de_sprites_34  patrones de sprite en RLE (p00:49CE), el registro 34 de juegos_de_sprites; lo leen p00:5609 (118 bytes)
+F 0xAD87 16
+D 0xADFD 0xAEA4 juegos_de_sprites_48  patrones de sprite en RLE (p00:49CE), el registro 48 de juegos_de_sprites; lo leen p00:5609 (167 bytes)
+F 0xADFD 16
+D 0xAEA4 0xAF05 juegos_de_sprites_49  patrones de sprite en RLE (p00:49CE), el registro 49 de juegos_de_sprites; lo leen p00:5609 (97 bytes)
+F 0xAEA4 16
+D 0xAF05 0xAF6F juegos_de_sprites_53  patrones de sprite en RLE (p00:49CE), el registro 53 de juegos_de_sprites; lo leen p00:5609 (106 bytes)
+F 0xAF05 16
+D 0xAF6F 0xB070 juegos_de_sprites_50  patrones de sprite en RLE (p00:49CE), el registro 50 de juegos_de_sprites; lo leen p00:5609 (257 bytes)
+F 0xAF6F 16
+D 0xB070 0xB0F2 juegos_de_sprites_51  patrones de sprite en RLE (p00:49CE), el registro 51 de juegos_de_sprites; lo leen p00:5609 (130 bytes)
+F 0xB070 16
+D 0xB0F2 0xB12B juegos_de_sprites_52  patrones de sprite en RLE (p00:49CE), el registro 52 de juegos_de_sprites; lo leen p00:5609 (57 bytes)
+F 0xB0F2 16
+D 0xB12B 0xB15D por_fase_b12b  25 palabras: la lista de cada fase 1-25 (p02:9198: p09:B12B[0xC211 - 1]; 0 = ninguna); lo leen p02:9195 (50 bytes)
+F 0xB12B 2
+D 0xB15D 0xB1A1 lista_b12b_B15D  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (68 bytes)
+F 0xB15D 4
+D 0xB1A1 0xB1ED lista_b12b_B1A1  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (76 bytes)
+F 0xB1A1 4
+D 0xB1ED 0xB21D lista_b12b_B1ED  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (48 bytes)
+F 0xB1ED 4
+D 0xB21D 0xB24D lista_b12b_B21D  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (48 bytes)
+F 0xB21D 4
+D 0xB24D 0xB281 lista_b12b_B24D  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (52 bytes)
+F 0xB24D 4
+D 0xB281 0xB2AD lista_b12b_B281  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (44 bytes)
+F 0xB281 4
+D 0xB2AD 0xB305 lista_b12b_B2AD  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (88 bytes)
+F 0xB2AD 4
+D 0xB305 0xB359 lista_b12b_B305  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (84 bytes)
+F 0xB305 4
+D 0xB359 0xB375 lista_b12b_B359  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (28 bytes)
+F 0xB359 4
+D 0xB375 0xB391 lista_b12b_B375  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (28 bytes)
+F 0xB375 4
+D 0xB391 0xB3C5 lista_b12b_B391  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (52 bytes)
+F 0xB391 4
+D 0xB3C5 0xB41D lista_b12b_B3C5  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (88 bytes)
+F 0xB3C5 4
+D 0xB41D 0xB479 lista_b12b_B41D  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (92 bytes)
+F 0xB41D 4
+D 0xB479 0xB4C1 lista_b12b_B479  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (72 bytes)
+F 0xB479 4
+D 0xB4C1 0xB509 lista_b12b_B4C1  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (72 bytes)
+F 0xB4C1 4
+D 0xB509 0xB55D lista_b12b_B509  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (84 bytes)
+F 0xB509 4
+D 0xB55D 0xB591 lista_b12b_B55D  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (52 bytes)
+F 0xB55D 4
+D 0xB591 0xB611 lista_b12b_B591  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (128 bytes)
+F 0xB591 4
+D 0xB611 0xB69D lista_b12b_B611  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (140 bytes)
+F 0xB611 4
+D 0xB69D 0xB70D lista_b12b_B69D  registros de 4 bytes [pantalla][n][..][..] y uno de cierre FF FF FF FF (p02:91BE para en el primer 0xFF; los otros tres no se leen); el segundo byte indexa p09:B70D (p02:91D2); lo leen p02:9195 (112 bytes)
+F 0xB69D 4
+D 0xB70D 0xB74A tabla_p91D2  61 bytes que p02:91D3 lee con el segundo byte de cada registro de p09:B12B (menos 1); lo leen p02:91D2 (61 bytes)
+F 0xB70D 16
+D 0xB74A 0xB781 paleta_por_indice  55 bytes: 0 sin paleta o 1-8, la paleta de p09:B781 (p02:8280); lo leen p02:827F (55 bytes)
+F 0xB74A 16
+D 0xB781 0xB791 paletas_b781  8 palabras: las 8 paletas de p02:828A; lo leen p02:827F (16 bytes)
+F 0xB781 2
+D 0xB791 0xB798 paleta_b781_1  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB791 3
+D 0xB798 0xB79F paleta_b781_2  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB798 3
+D 0xB79F 0xB7A6 paleta_b781_3  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB79F 3
+D 0xB7A6 0xB7AD paleta_b781_4  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB7A6 3
+D 0xB7AD 0xB7B4 paleta_b781_5  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB7AD 3
+D 0xB7B4 0xB7BB paleta_b781_6  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB7B4 3
+D 0xB7BB 0xB7C2 paleta_b781_7  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB7BB 3
+D 0xB7C2 0xB7C9 paleta_b781_8  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p02:827F (7 bytes)
+F 0xB7C2 3
+D 0xB7C9 0xB7F3 registros_b7c9  21 palabras: el registro de cada (ix+0x0A) (p01:6FA4); lo leen p01:6F9F (42 bytes)
+F 0xB7C9 2
+D 0xB7F3 0xB7F8 registro_b7c9_0  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (5 bytes)
+F 0xB7F3 4
+D 0xB7F8 0xB7FD registro_b7c9_1  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (5 bytes)
+F 0xB7F8 4
+D 0xB7FD 0xB806 registro_b7c9_2  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (9 bytes)
+F 0xB7FD 4
+D 0xB806 0xB813 registro_b7c9_3  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (13 bytes)
+F 0xB806 4
+D 0xB813 0xB824 registro_b7c9_4  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (17 bytes)
+F 0xB813 4
+D 0xB824 0xB829 registro_b7c9_5  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (5 bytes)
+F 0xB824 4
+D 0xB829 0xB832 registro_b7c9_6  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (9 bytes)
+F 0xB829 4
+D 0xB832 0xB83F registro_b7c9_7  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (13 bytes)
+F 0xB832 4
+D 0xB83F 0xB850 registro_b7c9_8  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (17 bytes)
+F 0xB83F 4
+D 0xB850 0xB861 registro_b7c9_9  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (17 bytes)
+F 0xB850 4
+D 0xB861 0xB86A registro_b7c9_10  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (9 bytes)
+F 0xB861 4
+D 0xB86A 0xB873 registro_b7c9_11  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (9 bytes)
+F 0xB86A 4
+D 0xB873 0xB884 registro_b7c9_12  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (17 bytes)
+F 0xB873 4
+D 0xB884 0xB88D registro_b7c9_13  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (9 bytes)
+F 0xB884 4
+D 0xB88D 0xB896 registro_b7c9_14  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (9 bytes)
+F 0xB88D 4
+D 0xB896 0xB8A7 registro_b7c9_15  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (17 bytes)
+F 0xB896 4
+D 0xB8A7 0xB8B8 registro_b7c9_16  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (17 bytes)
+F 0xB8A7 4
+D 0xB8B8 0xB8BD registro_b7c9_17  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (5 bytes)
+F 0xB8B8 4
+D 0xB8BD 0xB8C2 registro_b7c9_18  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (5 bytes)
+F 0xB8BD 4
+D 0xB8C2 0xB8C7 registro_b7c9_19  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (5 bytes)
+F 0xB8C2 4
+D 0xB8C7 0xB8CC registro_b7c9_20  [n] y n x 4 bytes que p01:6FC2 copia a 0xDE00 + (ix+0x0C) * 4; lo leen p01:6F9F (5 bytes)
+F 0xB8C7 4
+D 0xB923 0xB955 vecinas_de_fase  25 palabras: las vecinas de cada fase 1-25 (p09:B8ED: p09:B921[0xC211]); lo leen p09:B8E9 (50 bytes)
+F 0xB923 2
+D 0xB955 0xB967 vecinas_fase_05  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; se solapan 2 bloques: (vecinas_fase_01 B957-B967); lo leen p09:B8E9 (18 bytes)
+F 0xB955 2
+D 0xB967 0xB97D vecinas_fase_02  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (22 bytes)
+F 0xB967 2
+D 0xB97D 0xB98F vecinas_fase_03  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (18 bytes)
+F 0xB97D 2
+D 0xB98F 0xB99F vecinas_fase_04  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (16 bytes)
+F 0xB98F 2
+D 0xB99F 0xB9B1 vecinas_fase_06  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (18 bytes)
+F 0xB99F 2
+D 0xB9B1 0xB9C9 vecinas_fase_07  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (24 bytes)
+F 0xB9B1 2
+D 0xB9C9 0xB9DF vecinas_fase_08  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (22 bytes)
+F 0xB9C9 2
+D 0xB9DF 0xB9EF vecinas_fase_09  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (16 bytes)
+F 0xB9DF 2
+D 0xB9EF 0xB9FF vecinas_fase_11  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (16 bytes)
+F 0xB9EF 2
+D 0xB9FF 0xBA11 vecinas_fase_12  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (18 bytes)
+F 0xB9FF 2
+D 0xBA11 0xBA27 vecinas_fase_13  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (22 bytes)
+F 0xBA11 2
+D 0xBA27 0xBA41 vecinas_fase_14  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (26 bytes)
+F 0xBA27 2
+D 0xBA41 0xBA5B vecinas_fase_16  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (26 bytes)
+F 0xBA41 2
+D 0xBA5B 0xBA6D vecinas_fase_17  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (18 bytes)
+F 0xBA5B 2
+D 0xBA6D 0xBA83 vecinas_fase_18  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (22 bytes)
+F 0xBA6D 2
+D 0xBA83 0xBA99 vecinas_fase_19  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (22 bytes)
+F 0xBA83 2
+D 0xBA99 0xBAAF vecinas_fase_21  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (22 bytes)
+F 0xBA99 2
+D 0xBAAF 0xBACB vecinas_fase_22  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (28 bytes)
+F 0xBAAF 2
+D 0xBACB 0xBAE5 vecinas_fase_23  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (26 bytes)
+F 0xBACB 2
+D 0xBAE5 0xBAFD vecinas_fase_24  2 bytes por pantalla: arriba/abajo/izquierda/derecha a nibbles (p09:B8E9, lados de p06:B66A); 0xF no hay salida, 0 sale; lo leen p09:B8E9 (24 bytes)
+F 0xBAE5 2
+D 0xBAFD 0xBB15 fichas_por_personaje  2 x 3 x 4 numeros de ficha (p00:5AD5, segun 0xC240); lo leen p00:5AD5 (24 bytes)
+F 0xBAFD 4
+D 0xBB15 0xBB1D fichas_c240_1_colores  tabla de colores de la lista fichas_c240_1 (L_529C indexa con c >> 4); se solapan 2 bloques: (fichas_c240_0_colores BB15-BB1D); lo leen p00:5A38 (8 bytes)
+F 0xBB15 2
+D 0xBB1D 0xBB21 fichas_c240_0_col0  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_c240_1_col0 BB1D-BB21); lo leen p00:5A38 (4 bytes)
+F 0xBB1D 4
+D 0xBB21 0xBB25 fichas_c240_0_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_c240_1_col1 BB21-BB25); lo leen p00:5A38 (4 bytes)
+F 0xBB21 4
+D 0xBB25 0xBB29 colores_bb25  4 colores a los que apunta la tercera palabra de p09:BB15; las listas de p09:BB32 no la usan; lo leen p00:5A38 (4 bytes)
+F 0xBB25 4
+D 0xBB29 0xBB31 fichas_c240_0_col3  8 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5A38 (8 bytes)
+F 0xBB29 8
+D 0xBB31 0xBB32 byte_bb31  un byte entre los colores de p09:BB29 y la tabla p09:BB32; ninguna instruccion lo lee; lo leen nadie (1 bytes)
+F 0xBB31 1
+D 0xBB32 0xBB36 fichas_por_c240  2 palabras: la lista de p00:5A38 segun 0xC240; lo leen p00:5A38 (4 bytes)
+F 0xBB32 2
+D 0xBB36 0xBB49 fichas_c240_0  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5A38 (19 bytes)
+F 0xBB36 6
+D 0xBB49 0xBB56 fichas_c240_1  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5A38 (13 bytes)
+F 0xBB49 6
+D 0xBB56 0xBB76 fichas_c240_0_f0  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_c240_0; lo leen p00:5A38 (32 bytes)
+F 0xBB56 16
+D 0xBB76 0xBBB6 fichas_c240_0_f1  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_c240_0; lo leen p00:5A38 (64 bytes)
+F 0xBB76 16
+D 0xBBB6 0xBC16 fichas_c240_0_f2  4 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 2 de la lista fichas_c240_0; lo leen p00:5A38 (96 bytes)
+F 0xBBB6 24
+D 0xBC16 0xBCB6 fichas_c240_1_f0  10 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_c240_1; lo leen p00:5A38 (160 bytes)
+F 0xBC16 16
+D 0xBCB6 0xBCD6 fichas_c240_1_f1  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_c240_1; lo leen p00:5A38 (32 bytes)
+F 0xBCB6 16
+D 0xBCD6 0xBCE0 por_ruina_bcd6  5 palabras: la tabla de cada ruina (p01:6044); lo leen p01:603E (10 bytes)
+F 0xBCD6 2
+D 0xBCE0 0xBED3 pares_por_ruina  las 5 tablas de p09:BCD6: p01:604C lee el par 2 x C ([A][C]) de la de la ruina; lo leen p01:603E (499 bytes)
+F 0xBCE0 2
+D 0xBED3 0xBF1D registros_p9056  74 bytes: p02:9056 copia 3 desde p09:BED3 + A a 0xC319; lo leen p02:9050 (74 bytes)
+F 0xBED3 3
+D 0xBF1D 0xBF69 por_fase_bf1d  un byte por fase (p00:5F2C, p01:7DF3: p09:BF1D[0xC211]): Y en el nibble alto y el lado en el bajo; se solapan 2 bloques: (por_fase_bf35 BF35-BF69); lo leen p00:5F26, p01:7CBA (76 bytes)
+F 0xBF1D 16
+D 0xBF69 0xC000 relleno_ff  151 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (151 bytes)
+F 0xBF69 16
+# --- fin de los bloques de bloques.py ---

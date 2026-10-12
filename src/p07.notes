@@ -1,0 +1,230 @@
+# Notas del banco 07
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x6000 0x6014 graficos_de_ruina  5 x [tabla de colores][lista de fichas] de cada ruina (p00:5286); lo leen p00:5286 (20 bytes)
+F 0x6000 4
+D 0x6014 0x6064 caracteres_p5354  2 x 5 caracteres de 1 bit (p00:5357 y p00:5363, L_4CCC con B = 5); lo leen p00:5354 (80 bytes)
+F 0x6014 8
+D 0x6064 0x607C fichas_p51B3_colores  tabla de colores de la lista fichas_p51B3 (L_529C indexa con c >> 4); se solapan 6 bloques: (fichas_antesala_0_colores 6064-606A) (fichas_antesala_2_colores 6064-606A) (fichas_antesala_3_colores 6064-606C) (fichas_antesala_1_colores 6064-6070) (fichas_antesala_4_colores 6064-607C); lo leen p00:51B3, p00:5155 (24 bytes)
+F 0x6064 2
+D 0x607C 0x607E resto_607C  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (2 bytes)
+F 0x607C 16
+D 0x607E 0x6082 fichas_p51B3_col0  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 14 bloques: (fichas_antesala_0_col0 607E-6080) (fichas_antesala_2_col0 607E-6080) (fichas_antesala_3_col0 607E-6080) (fichas_p51B3_col0 607E-6082) (fichas_p51B3_col0 607E-6082) (fichas_antesala_0_col0 607E-6082) (fichas_antesala_0_col0 607E-6082) (fichas_antesala_2_col0 607E-6082) (fichas_antesala_2_col0 607E-6082) (fichas_antesala_2_col0 607E-6082) (fichas_antesala_2_col0 607E-6082) (fichas_antesala_3_col0 607E-6082) (fichas_antesala_3_col0 607E-6082); lo leen p00:51B3, p00:5155 (4 bytes)
+F 0x607E 2
+D 0x6082 0x6086 fichas_p51B3_col1  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 9 bloques: (fichas_antesala_0_col1 6082-6084) (fichas_antesala_2_col1 6082-6084) (fichas_p51B3_col1 6082-6086) (fichas_p51B3_col1 6082-6086) (fichas_antesala_0_col1 6082-6086) (fichas_antesala_0_col1 6082-6086) (fichas_antesala_2_col1 6082-6086) (fichas_antesala_2_col1 6082-6086); lo leen p00:51B3, p00:5155 (4 bytes)
+F 0x6082 2
+D 0x6086 0x6088 fichas_p51B3_col2  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 8 bloques: (fichas_p51B3_col2 6086-6088) (fichas_antesala_0_col2 6086-6088) (fichas_antesala_0_col2 6086-6088) (fichas_antesala_1_col2 6086-6088) (fichas_antesala_2_col2 6086-6088) (fichas_antesala_2_col2 6086-6088) (fichas_antesala_3_col2 6086-6088); lo leen p00:51B3, p00:5155 (2 bytes)
+F 0x6086 2
+D 0x6088 0x608C fichas_antesala_1_col3  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 4 bloques: (fichas_antesala_3_col3 6088-608A) (fichas_antesala_1_col3 6088-608C) (fichas_antesala_3_col3 6088-608C); lo leen p00:5155 (4 bytes)
+F 0x6088 2
+D 0x608C 0x6090 fichas_antesala_1_col4  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 3 bloques: (fichas_antesala_1_col4 608C-6090) (fichas_antesala_1_col4 608C-6090); lo leen p00:5155 (4 bytes)
+F 0x608C 2
+D 0x6090 0x6094 fichas_antesala_1_col5  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 4 bloques: (fichas_antesala_1_col5 6090-6094) (fichas_antesala_1_col5 6090-6094) (fichas_antesala_1_col5 6090-6094); lo leen p00:5155 (4 bytes)
+F 0x6090 4
+D 0x6094 0x6096 fichas_antesala_4_col6  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5155 (2 bytes)
+F 0x6094 2
+D 0x6096 0x6098 resto_6096  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (2 bytes)
+F 0x6096 16
+D 0x6098 0x609C fichas_antesala_4_col7  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 4 bloques: (fichas_antesala_4_col7 6098-609C) (fichas_antesala_4_col7 6098-609C) (fichas_antesala_4_col7 6098-609C); lo leen p00:5155 (4 bytes)
+F 0x6098 2
+D 0x609C 0x60A0 fichas_antesala_4_col8  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5155 (4 bytes)
+F 0x609C 4
+D 0x60A0 0x60A4 fichas_antesala_4_col9  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5155 (4 bytes)
+F 0x60A0 4
+D 0x60A4 0x60A8 fichas_antesala_4_col10  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5155 (4 bytes)
+F 0x60A4 4
+D 0x60A8 0x60AC fichas_antesala_4_col11  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5155 (4 bytes)
+F 0x60A8 4
+D 0x60AC 0x60B0 resto_60AC  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (4 bytes)
+F 0x60AC 16
+D 0x60B0 0x60BA fichas_de_antesala  5 palabras: la lista de cada antesala (p00:515B); lo leen p00:5155 (10 bytes)
+F 0x60B0 2
+D 0x60BA 0x60EB fichas_antesala_0  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5155 (49 bytes)
+F 0x60BA 6
+D 0x60EB 0x6110 fichas_antesala_3  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5155 (37 bytes)
+F 0x60EB 6
+D 0x6110 0x614D fichas_antesala_2  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5155 (61 bytes)
+F 0x6110 6
+D 0x614D 0x618A fichas_antesala_1  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5155 (61 bytes)
+F 0x614D 6
+D 0x618A 0x61C1 fichas_antesala_4  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5155 (55 bytes)
+F 0x618A 6
+D 0x61C1 0x61F2 fichas_p51B3  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:51B3 (49 bytes)
+F 0x61C1 6
+D 0x61F2 0x6232 fichas_p51B3_f0  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_p51B3; se solapan 3 bloques: (fichas_antesala_0_f0 61F2-6232) (fichas_antesala_3_f0 61F2-6232); lo leen p00:51B3, p00:5155 (64 bytes)
+F 0x61F2 16
+D 0x6232 0x62B2 fichas_p51B3_f1  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_p51B3; se solapan 3 bloques: (fichas_antesala_0_f1 6232-62B2) (fichas_antesala_3_f1 6232-62B2); lo leen p00:51B3, p00:5155 (128 bytes)
+F 0x6232 16
+D 0x62B2 0x62C2 fichas_p51B3_f2  2 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 2 de la lista fichas_p51B3; se solapan 2 bloques: (fichas_antesala_0_f2 62B2-62C2); lo leen p00:51B3, p00:5155 (16 bytes)
+F 0x62B2 8
+D 0x62C2 0x6382 fichas_p51B3_f3  12 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_p51B3; se solapan 6 bloques: (fichas_p51B3_f5 62C2-6382) (fichas_antesala_0_f3 62C2-6382) (fichas_antesala_0_f5 62C2-6382) (fichas_antesala_2_f5 62C2-6382) (fichas_antesala_2_f7 62C2-6382); lo leen p00:51B3, p00:5155 (192 bytes)
+F 0x62C2 16
+D 0x6382 0x639A fichas_p51B3_f4  3 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 4 de la lista fichas_p51B3; se solapan 3 bloques: (fichas_antesala_0_f4 6382-639A) (fichas_antesala_2_f6 6382-639A); lo leen p00:51B3, p00:5155 (24 bytes)
+F 0x6382 8
+D 0x639A 0x63BA fichas_antesala_0_f7  3 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 7 de la lista fichas_antesala_0; se solapan 2 bloques: (fichas_antesala_0_f6 639A-63BA); lo leen p00:5155 (32 bytes)
+F 0x639A 8
+D 0x63BA 0x644A fichas_antesala_1_f7  9 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 7 de la lista fichas_antesala_1; se solapan 2 bloques: (fichas_antesala_3_f2 63BA-644A); lo leen p00:5155 (144 bytes)
+F 0x63BA 16
+D 0x644A 0x6452 fichas_antesala_1_f8  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 8 de la lista fichas_antesala_1; se solapan 2 bloques: (fichas_antesala_3_f3 644A-6452); lo leen p00:5155 (8 bytes)
+F 0x644A 8
+D 0x6452 0x649A fichas_antesala_1_f9  9 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 9 de la lista fichas_antesala_1; se solapan 2 bloques: (fichas_antesala_3_f4 6452-649A); lo leen p00:5155 (72 bytes)
+F 0x6452 8
+D 0x649A 0x64AA fichas_antesala_3_f5  2 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 5 de la lista fichas_antesala_3; lo leen p00:5155 (16 bytes)
+F 0x649A 8
+D 0x64AA 0x64EA fichas_antesala_2_f0  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_antesala_2; lo leen p00:5155 (64 bytes)
+F 0x64AA 16
+D 0x64EA 0x651A fichas_antesala_2_f1  3 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_antesala_2; lo leen p00:5155 (48 bytes)
+F 0x64EA 16
+D 0x651A 0x653A fichas_antesala_2_f2  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_antesala_2; se solapan 2 bloques: (fichas_antesala_2_f3 651A-653A); lo leen p00:5155 (32 bytes)
+F 0x651A 16
+D 0x653A 0x654A fichas_antesala_2_f4  2 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 4 de la lista fichas_antesala_2; lo leen p00:5155 (16 bytes)
+F 0x653A 8
+D 0x654A 0x658A fichas_p51B3_f7  7 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 7 de la lista fichas_p51B3; se solapan 4 bloques: (fichas_antesala_2_f9 654A-6582) (fichas_p51B3_f6 654A-658A) (fichas_antesala_2_f8 654A-658A); lo leen p00:51B3, p00:5155 (64 bytes)
+F 0x654A 8
+D 0x658A 0x660A fichas_antesala_1_f0  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_antesala_1; se solapan 2 bloques: (fichas_antesala_1_f1 659A-660A); lo leen p00:5155 (128 bytes)
+F 0x658A 16
+D 0x660A 0x664A fichas_antesala_1_f2  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_antesala_1; lo leen p00:5155 (64 bytes)
+F 0x660A 16
+D 0x664A 0x665A fichas_antesala_1_f3  1 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_antesala_1; se solapan 2 bloques: (fichas_antesala_1_f4 664A-665A); lo leen p00:5155 (16 bytes)
+F 0x664A 16
+D 0x665A 0x667A fichas_antesala_1_f5  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_antesala_1; lo leen p00:5155 (32 bytes)
+F 0x665A 16
+D 0x667A 0x6692 fichas_antesala_1_f6  3 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 6 de la lista fichas_antesala_1; lo leen p00:5155 (24 bytes)
+F 0x667A 8
+D 0x6692 0x669A fichas_antesala_4_f0  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 0 de la lista fichas_antesala_4; lo leen p00:5155 (8 bytes)
+F 0x6692 8
+D 0x669A 0x66E2 fichas_antesala_4_f1  9 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 1 de la lista fichas_antesala_4; lo leen p00:5155 (72 bytes)
+F 0x669A 8
+D 0x66E2 0x6842 fichas_antesala_4_f2  22 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_antesala_4; lo leen p00:5155 (352 bytes)
+F 0x66E2 16
+D 0x6842 0x6882 fichas_antesala_4_f3  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_antesala_4; lo leen p00:5155 (64 bytes)
+F 0x6842 16
+D 0x6882 0x68D2 fichas_antesala_4_f4  5 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 4 de la lista fichas_antesala_4; lo leen p00:5155 (80 bytes)
+F 0x6882 16
+D 0x68D2 0x68E2 fichas_antesala_4_f5  1 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_antesala_4; se solapan 2 bloques: (fichas_antesala_4_f6 68D2-68E2); lo leen p00:5155 (16 bytes)
+F 0x68D2 16
+D 0x68E2 0x6912 fichas_antesala_4_f7  3 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 7 de la lista fichas_antesala_4; lo leen p00:5155 (48 bytes)
+F 0x68E2 16
+D 0x6912 0x6972 fichas_antesala_4_f8  6 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 8 de la lista fichas_antesala_4; lo leen p00:5155 (96 bytes)
+F 0x6912 16
+D 0x6972 0x697C fichas_ruina_0_colores  tabla de colores de la lista fichas_ruina_0 (L_529C indexa con c >> 4); lo leen p00:5286 (10 bytes)
+F 0x6972 2
+D 0x697C 0x6984 fichas_ruina_0_col0  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 10 bloques: (fichas_ruina_0_col0 697C-697E) (fichas_ruina_0_col0 697C-697E) (fichas_ruina_0_col0 697C-6980) (fichas_ruina_0_col0 697C-6980) (fichas_ruina_0_col0 697C-6984) (fichas_ruina_0_col0 697C-6984) (fichas_ruina_0_col0 697C-6984) (fichas_ruina_0_col0 697C-6984) (fichas_ruina_0_col0 697C-6984); lo leen p00:5286 (8 bytes)
+F 0x697C 2
+D 0x6984 0x6988 fichas_ruina_0_col1  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 4 bloques: (fichas_ruina_0_col1 6984-6988) (fichas_ruina_0_col1 6984-6988) (fichas_ruina_0_col1 6984-6988); lo leen p00:5286 (4 bytes)
+F 0x6984 2
+D 0x6988 0x698C fichas_ruina_0_col2  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 5 bloques: (fichas_ruina_0_col2 6988-698A) (fichas_ruina_0_col2 6988-698C) (fichas_ruina_0_col2 6988-698C) (fichas_ruina_0_col2 6988-698C); lo leen p00:5286 (4 bytes)
+F 0x6988 2
+D 0x698C 0x6990 fichas_ruina_0_col3  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 3 bloques: (fichas_ruina_0_col3 698C-6990) (fichas_ruina_0_col3 698C-6990); lo leen p00:5286 (4 bytes)
+F 0x698C 4
+D 0x6990 0x6998 fichas_ruina_0_col4  8 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5286 (8 bytes)
+F 0x6990 8
+D 0x6998 0x6A23 fichas_ruina_0  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5286 (139 bytes)
+F 0x6998 6
+D 0x6A23 0x6A83 fichas_ruina_0_f0  4 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 0 de la lista fichas_ruina_0; lo leen p00:5286 (96 bytes)
+F 0x6A23 24
+D 0x6A83 0x6A8B fichas_ruina_0_f1  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 1 de la lista fichas_ruina_0; lo leen p00:5286 (8 bytes)
+F 0x6A83 8
+D 0x6A8B 0x6AA3 fichas_ruina_0_f2  3 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 2 de la lista fichas_ruina_0; se solapan 2 bloques: (fichas_ruina_0_f3 6A8B-6AA3); lo leen p00:5286 (24 bytes)
+F 0x6A8B 8
+D 0x6AA3 0x6AAB fichas_ruina_0_f4  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 4 de la lista fichas_ruina_0; se solapan 2 bloques: (fichas_ruina_0_f5 6AA3-6AAB); lo leen p00:5286 (8 bytes)
+F 0x6AA3 8
+D 0x6AAB 0x6AB3 fichas_ruina_0_f6  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 6 de la lista fichas_ruina_0; lo leen p00:5286 (8 bytes)
+F 0x6AAB 8
+D 0x6AB3 0x6AF3 fichas_ruina_0_f7  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 7 de la lista fichas_ruina_0; lo leen p00:5286 (64 bytes)
+F 0x6AB3 16
+D 0x6AF3 0x6B53 fichas_ruina_0_f8  6 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 8 de la lista fichas_ruina_0; se solapan 2 bloques: (fichas_ruina_0_f9 6AF3-6B53); lo leen p00:5286 (96 bytes)
+F 0x6AF3 16
+D 0x6B53 0x6BC3 fichas_ruina_0_f10  7 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 10 de la lista fichas_ruina_0; lo leen p00:5286 (112 bytes)
+F 0x6B53 16
+D 0x6BC3 0x6CC3 fichas_ruina_0_f11  16 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 11 de la lista fichas_ruina_0; se solapan 2 bloques: (fichas_ruina_0_f12 6BC3-6CC3); lo leen p00:5286 (256 bytes)
+F 0x6BC3 16
+D 0x6CC3 0x6CE3 fichas_ruina_0_f13  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 13 de la lista fichas_ruina_0; se solapan 2 bloques: (fichas_ruina_0_f14 6CC3-6CE3); lo leen p00:5286 (32 bytes)
+F 0x6CC3 16
+D 0x6CE3 0x6D23 fichas_ruina_0_f15  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 15 de la lista fichas_ruina_0; lo leen p00:5286 (64 bytes)
+F 0x6CE3 16
+D 0x6D23 0x6DA3 fichas_ruina_0_f16  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 16 de la lista fichas_ruina_0; se solapan 2 bloques: (fichas_ruina_0_f17 6D23-6DA3); lo leen p00:5286 (128 bytes)
+F 0x6D23 16
+D 0x6DA3 0x6E4B fichas_ruina_0_f18  7 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 18 de la lista fichas_ruina_0; lo leen p00:5286 (168 bytes)
+F 0x6DA3 24
+D 0x6E4B 0x7043 fichas_ruina_0_f19  21 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 19 de la lista fichas_ruina_0; lo leen p00:5286 (504 bytes)
+F 0x6E4B 24
+D 0x7043 0x71DB fichas_ruina_0_f20  17 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 20 de la lista fichas_ruina_0; se solapan 2 bloques: (fichas_ruina_0_f21 7043-71DB); lo leen p00:5286 (408 bytes)
+F 0x7043 24
+D 0x71DB 0x71E3 fichas_ruina_1_colores  tabla de colores de la lista fichas_ruina_1 (L_529C indexa con c >> 4); lo leen p00:5286 (8 bytes)
+F 0x71DB 2
+D 0x71E3 0x71EB fichas_ruina_1_col0  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 7 bloques: (fichas_ruina_1_col0 71E3-71E7) (fichas_ruina_1_col0 71E3-71E7) (fichas_ruina_1_col0 71E3-71E7) (fichas_ruina_1_col0 71E3-71EB) (fichas_ruina_1_col0 71E3-71EB) (fichas_ruina_1_col0 71E3-71EB); lo leen p00:5286 (8 bytes)
+F 0x71E3 2
+D 0x71EB 0x71EF fichas_ruina_1_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_ruina_1_col1 71EB-71EF); lo leen p00:5286 (4 bytes)
+F 0x71EB 4
+D 0x71EF 0x71F3 fichas_ruina_1_col2  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5286 (4 bytes)
+F 0x71EF 4
+D 0x71F3 0x71F7 fichas_ruina_1_col3  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_ruina_1_col3 71F3-71F7); lo leen p00:5286 (4 bytes)
+F 0x71F3 4
+D 0x71F7 0x7240 fichas_ruina_1  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5286 (73 bytes)
+F 0x71F7 6
+D 0x7240 0x7258 fichas_ruina_1_f0  1 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 0 de la lista fichas_ruina_1; se solapan 2 bloques: (fichas_ruina_1_f1 7240-7258); lo leen p00:5286 (24 bytes)
+F 0x7240 24
+D 0x7258 0x7278 fichas_ruina_1_f2  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_ruina_1; lo leen p00:5286 (32 bytes)
+F 0x7258 16
+D 0x7278 0x72C8 fichas_ruina_1_f3  10 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 3 de la lista fichas_ruina_1; lo leen p00:5286 (80 bytes)
+F 0x7278 8
+D 0x72C8 0x7338 fichas_ruina_1_f4  7 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 4 de la lista fichas_ruina_1; se solapan 2 bloques: (fichas_ruina_1_f5 72E8-7338); lo leen p00:5286 (112 bytes)
+F 0x72C8 16
+D 0x7338 0x7558 fichas_ruina_1_f6  34 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 6 de la lista fichas_ruina_1; se solapan 2 bloques: (fichas_ruina_1_f7 74A8-7558); lo leen p00:5286 (544 bytes)
+F 0x7338 16
+D 0x7558 0x7658 fichas_ruina_1_f8  16 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 8 de la lista fichas_ruina_1; lo leen p00:5286 (256 bytes)
+F 0x7558 16
+D 0x7658 0x76C8 fichas_ruina_1_f9  7 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 9 de la lista fichas_ruina_1; se solapan 2 bloques: (fichas_ruina_1_f10 7658-76C8); lo leen p00:5286 (112 bytes)
+F 0x7658 16
+D 0x76C8 0x7788 fichas_ruina_1_f11  8 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 11 de la lista fichas_ruina_1; lo leen p00:5286 (192 bytes)
+F 0x76C8 24
+D 0x7788 0x7792 fichas_ruina_2_colores  tabla de colores de la lista fichas_ruina_2 (L_529C indexa con c >> 4); lo leen p00:5286 (10 bytes)
+F 0x7788 2
+D 0x7792 0x779A fichas_ruina_2_col0  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 4 bloques: (fichas_ruina_2_col0 7792-7796) (fichas_ruina_2_col0 7792-779A) (fichas_ruina_2_col0 7792-779A); lo leen p00:5286 (8 bytes)
+F 0x7792 4
+D 0x779A 0x779E fichas_ruina_2_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5286 (4 bytes)
+F 0x779A 4
+D 0x779E 0x77A2 fichas_ruina_2_col2  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_ruina_2_col2 779E-77A2); lo leen p00:5286 (4 bytes)
+F 0x779E 4
+D 0x77A2 0x77A6 fichas_ruina_2_col3  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_ruina_2_col3 77A2-77A6); lo leen p00:5286 (4 bytes)
+F 0x77A2 4
+D 0x77A6 0x77AE fichas_ruina_2_col4  8 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5286 (8 bytes)
+F 0x77A6 8
+D 0x77AE 0x77EB fichas_ruina_2  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5286 (61 bytes)
+F 0x77AE 6
+D 0x77EB 0x780B fichas_ruina_2_f0  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_ruina_2; lo leen p00:5286 (32 bytes)
+F 0x77EB 16
+D 0x780B 0x786B fichas_ruina_2_f1  6 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_ruina_2; se solapan 2 bloques: (fichas_ruina_2_f2 780B-786B); lo leen p00:5286 (96 bytes)
+F 0x780B 16
+D 0x786B 0x78DB fichas_ruina_2_f3  7 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_ruina_2; se solapan 2 bloques: (fichas_ruina_2_f4 78AB-78DB); lo leen p00:5286 (112 bytes)
+F 0x786B 16
+D 0x78DB 0x791B fichas_ruina_2_f5  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_ruina_2; se solapan 2 bloques: (fichas_ruina_2_f6 78DB-791B); lo leen p00:5286 (64 bytes)
+F 0x78DB 16
+D 0x791B 0x7A9B fichas_ruina_2_f7  16 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 7 de la lista fichas_ruina_2; se solapan 2 bloques: (fichas_ruina_2_f8 79F3-7A9B); lo leen p00:5286 (384 bytes)
+F 0x791B 24
+D 0x7A9B 0x7AA3 fichas_ruina_3_colores  tabla de colores de la lista fichas_ruina_3 (L_529C indexa con c >> 4); lo leen p00:5286 (8 bytes)
+F 0x7A9B 2
+D 0x7AA3 0x7AA7 fichas_ruina_3_col0  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 5 bloques: (fichas_ruina_3_col0 7AA3-7AA5) (fichas_ruina_3_col0 7AA3-7AA7) (fichas_ruina_3_col0 7AA3-7AA7) (fichas_ruina_3_col0 7AA3-7AA7); lo leen p00:5286 (4 bytes)
+F 0x7AA3 2
+D 0x7AA7 0x7AAB fichas_ruina_3_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5286 (4 bytes)
+F 0x7AA7 4
+D 0x7AAB 0x7AB3 fichas_ruina_3_col2  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 4 bloques: (fichas_ruina_3_col2 7AAB-7AAF) (fichas_ruina_3_col2 7AAB-7AB3) (fichas_ruina_3_col2 7AAB-7AB3); lo leen p00:5286 (8 bytes)
+F 0x7AAB 4
+D 0x7AB3 0x7ABB fichas_ruina_3_col3  8 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5286 (8 bytes)
+F 0x7AB3 8
+D 0x7ABB 0x7AFE fichas_ruina_3  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5286 (67 bytes)
+F 0x7ABB 6
+D 0x7AFE 0x7B3E fichas_ruina_3_f0  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_ruina_3; lo leen p00:5286 (64 bytes)
+F 0x7AFE 16
+D 0x7B3E 0x7BE6 fichas_ruina_3_f1  21 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 1 de la lista fichas_ruina_3; se solapan 2 bloques: (fichas_ruina_3_f2 7BC6-7BE6); lo leen p00:5286 (168 bytes)
+F 0x7B3E 8
+D 0x7BE6 0x7F26 fichas_ruina_3_f3  52 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_ruina_3; se solapan 2 bloques: (fichas_ruina_3_f4 7EE6-7F26); lo leen p00:5286 (832 bytes)
+F 0x7BE6 16
+D 0x7F26 0x7FA6 fichas_ruina_3_f5  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_ruina_3; se solapan 2 bloques: (fichas_ruina_3_f6 7F86-7FA6); lo leen p00:5286 (128 bytes)
+F 0x7F26 16
+D 0x7FA6 0x7FD6 fichas_ruina_3_f7  3 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 7 de la lista fichas_ruina_3; lo leen p00:5286 (48 bytes)
+F 0x7FA6 16
+D 0x7FD6 0x8000 fichas_ruina_3_f8  10 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 8 de la lista fichas_ruina_3 (sigue en el banco 8, en 0x8000); lo leen p00:5286 (42 bytes)
+F 0x7FD6 24
+# --- fin de los bloques de bloques.py ---

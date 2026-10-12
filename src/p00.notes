@@ -1,0 +1,40 @@
+# Notas del banco 00
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x40F4 0x4110 saltos_40F4  tabla de 14 palabras del despachador (call 0x408D en 0x40F1); lo leen L_408D (28 bytes)
+F 0x40F4 2
+D 0x4575 0x457F por_ruina_c2b6  5 x 2 bytes: p00:4563 los copia a 0xC2B6 y 0xC2D6 segun la ruina (0xC21D); lo leen p00:4563 (10 bytes)
+F 0x4575 2
+D 0x4846 0x485A cifras  10 x 2 fichas: las dos mitades de cada cifra (p00:47FE, un nibble BCD por cifra); lo leen p00:47FE (20 bytes)
+F 0x4846 2
+D 0x4891 0x4895 tabla_p485F  4 bytes: p00:485F lee uno segun el byte 6 de la ficha 0xC2B0 (p00:47ED); lo leen p00:485F (4 bytes)
+F 0x4891 4
+D 0x4FE6 0x4FEE registros_vdp  4 x [registro][valor] que p00:4FD0 escribe con WRTVDP: R#1 = 0x62, R#5 = 0xEF, R#6 = 0x1F, R#11 = 1; lo leen p00:4FD0 (8 bytes)
+F 0x4FE6 2
+D 0x5062 0x5068 texto_5062  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p00:4685 (6 bytes)
+F 0x5062 16
+D 0x5068 0x5088 texto_5068  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p05:9880 (32 bytes)
+F 0x5068 16
+D 0x5088 0x5095 texto_5088  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p00:4464 (13 bytes)
+F 0x5088 16
+D 0x5095 0x50A4 texto_5095  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p00:443A (15 bytes)
+F 0x5095 16
+D 0x50A4 0x50B5 texto_50A4  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p00:41BB (17 bytes)
+F 0x50A4 16
+D 0x57BC 0x57E4 canal_vacio  40 bytes a cero (menos 3) que los `ldir` de p00:5757-5950 copian a cada canal de sonido antes de arrancarlo; lo leen p00:5757 (40 bytes)
+F 0x57BC 8
+D 0x5A79 0x5A80 paleta_c240_0  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p00:5A6C (7 bytes)
+F 0x5A79 3
+D 0x5A80 0x5A87 paleta_c240_1  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p00:5A73 (7 bytes)
+F 0x5A80 3
+D 0x5A8D 0x5A97 paleta_p5A87  paleta: ternas [registro][RB][G] hasta 0xFF; lo leen p00:5A87 (10 bytes)
+F 0x5A8D 3
+# --- fin de los bloques de bloques.py ---
+
+# --- A MANO: comentarios, nombres y bloques ---
+D 0x5FFF 0x6000 ld_partido  el primer byte (0x32) de `ld (0xC214),a`: los otros dos (14 C2) son los primeros del banco 1, en 0x6000. Va tras p00:5FF9 (si 0xC226 no es cero, xor a: 0xC214 = 0); ningun trazador de un solo banco puede ver la instruccion entera: por eso va como datos
+D 0x4000 0x4010 cabecera  la cabecera del cartucho: "AB", INIT = 0x4097 (p00:4097), STATEMENT, DEVICE y TEXT a 0 y 6 bytes reservados; la BIOS la lee al encender
+D 0x4010 0x401D segunda_cabecera  "CD", la palabra 0x5307 (bytes 07 53: el numero RC-753) y nueve bytes mas: BC 00 C0, 04 1D C2, 05 02 C0, que tienen la forma [n][direccion] (0xBC bytes en 0xC000, 4 en 0xC21D, 5 en 0xC002). Este cartucho no los lee: p06:B78D lee los dos bytes de 0x4012 de los OTROS cartuchos (RDSLT) y los compara con 07 49, 07 50, 07 51 y 07 52
+D 0x401D 0x403D relleno_cabecera  32 bytes a 0xFF hasta p00:403D, la interrupcion
+D 0x49CD 0x49CE ret_suelto  un `ret` (0xC9) detras del `ret` de p00:49CC: nada salta aqui
+D 0x57E4 0x57E6 ceros_p57E4  dos bytes a cero detras de la plantilla p00:57BC (40 bytes): ninguna instruccion los lee

@@ -1,0 +1,52 @@
+# Notas del banco 02
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x822C 0x8231 resto_822C  tablas cortas que apuntan p02:8222 (0x822C); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:8222 (5 bytes)
+F 0x822C 16
+D 0x827E 0x827F resto_827E  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (1 bytes)
+F 0x827E 16
+D 0x82E9 0x8367 saltos_82E9  tabla de 63 palabras del despachador (call 0x408D en 0x82E6); lo leen L_408D (126 bytes)
+F 0x82E9 2
+D 0x84A7 0x84AC resto_84A7  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (5 bytes)
+F 0x84A7 16
+D 0x85EF 0x85F4 resto_85EF  tablas cortas que apuntan p02:85E6 (0x85EF); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:85E6 (5 bytes)
+F 0x85EF 16
+D 0x86EB 0x8769 saltos_86EB  tabla de 63 palabras del despachador (call 0x408D en 0x86E8); lo leen L_408D (126 bytes)
+F 0x86EB 2
+D 0x8D01 0x8D17 saltos_8D01  tabla de 11 palabras del despachador (call 0x408D en 0x8CFE); lo leen L_408D (22 bytes)
+F 0x8D01 2
+D 0x8DD6 0x8DDC resto_8DD6  tablas cortas que apuntan p02:8DAC (0x8DD6); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:8DAC (6 bytes)
+F 0x8DD6 16
+D 0x8E26 0x8E2E resto_8E26  tablas cortas que apuntan p02:8E18 (0x8E26); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:8E18 (8 bytes)
+F 0x8E26 16
+D 0x8ED2 0x8ED6 resto_8ED2  tablas cortas que apuntan p02:8EB7 (0x8ED2); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:8EB7 (4 bytes)
+F 0x8ED2 16
+D 0x8FBF 0x8FCB saltos_8FBF  tabla de 6 palabras del despachador (call 0x408D en 0x8FBC); lo leen L_408D (12 bytes)
+F 0x8FBF 2
+D 0x8FF5 0x8FFC resto_8FF5  tablas cortas que apuntan p02:8FFC (0x8FF5); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:8FFC (7 bytes)
+F 0x8FF5 16
+D 0x903D 0x9049 resto_903D  tablas cortas que apuntan p02:9021 (0x903D); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:9021 (12 bytes)
+F 0x903D 16
+D 0x923B 0x9243 saltos_923B  tabla de 4 palabras del despachador (call 0x408D en 0x9238); lo leen L_408D (8 bytes)
+F 0x923B 2
+D 0x92C0 0x92C4 resto_92C0  tablas cortas que apuntan p02:92B1 (0x92C0); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:92B1 (4 bytes)
+F 0x92C0 16
+D 0x9363 0x937B resto_9363  tablas cortas que apuntan p02:934C (0x9363), p02:9396 (0x9365); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:934C, p02:9396 (24 bytes)
+F 0x9363 16
+D 0x93C7 0x93D7 resto_93C7  tablas cortas que apuntan p02:93AD (0x93C7); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:93AD (16 bytes)
+F 0x93C7 16
+D 0x9416 0x9424 saltos_9416  tabla de 7 palabras del despachador (call 0x408D en 0x9413); lo leen L_408D (14 bytes)
+F 0x9416 2
+D 0x954C 0x9554 saltos_954C  tabla de 4 palabras del despachador (call 0x408D en 0x9549); lo leen L_408D (8 bytes)
+F 0x954C 2
+D 0x961E 0x9628 saltos_961E  tabla de 5 palabras del despachador (call 0x408D en 0x961B); lo leen L_408D (10 bytes)
+F 0x961E 2
+D 0x980B 0x9811 saltos_980B  tabla de 3 palabras del despachador (call 0x408D en 0x9808); lo leen L_408D (6 bytes)
+F 0x980B 2
+D 0x9A2A 0x9A3A resto_9A2A  tablas cortas que apuntan p02:99DB (0x9A2A); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p02:99DB (16 bytes)
+F 0x9A2A 16
+D 0x9B55 0x9B63 saltos_9B55  tabla de 7 palabras del despachador (call 0x408D en 0x9B52); lo leen L_408D (14 bytes)
+F 0x9B55 2
+D 0x9D88 0x9D92 saltos_9D88  tabla de 5 palabras del despachador (call 0x408D en 0x9D85); lo leen L_408D (10 bytes)
+F 0x9D88 2
+# --- fin de los bloques de bloques.py ---

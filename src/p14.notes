@@ -1,0 +1,208 @@
+# Notas del banco 14
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x8000 0x8D4F pista_73FE_cola  pista de musica (p13:6203), recorrida desde p13:672C (sigue del banco 13); lo leen p13:6203 (3407 bytes)
+F 0x8000 16
+D 0x8D4F 0x8D65 instrumentos  11 palabras: la lista de envolventes de cada instrumento (p13:62D3: p14:8D4F[(ix+8)]), ventanas sobre p14:8D65; lo leen p13:62CC (22 bytes)
+F 0x8D4F 2
+D 0x8D65 0x8DE5 envolventes_por_altura  64 palabras: la envolvente de cada altura (p13:6308: + (nota >> 3)), compartidas por los instrumentos; lo leen p13:62CC (128 bytes)
+F 0x8D65 2
+D 0x8DE5 0x9289 envolvente_8DE5  envolvente o efecto (p13:6506), recorrido desde p13:66C4, 670E y p14:8D65; lo leen p13:6506 (1188 bytes)
+F 0x8DE5 16
+D 0x9289 0x970C fuente  RLE (L_5578): 156 caracteres de 1 bit (8 bytes) que p00:50D4 pinta con L_4CBF en (0, 0x40) de la pagina 0; lo leen p00:50C1 (1155 bytes)
+F 0x9289 16
+D 0x970C 0x9714 caracter_p50DA  un caracter de 1 bit (p00:50E0, L_4CBF, B = 1); lo leen p00:50C1 (8 bytes)
+F 0x970C 8
+D 0x9714 0x9734 ficha_p50E3  una ficha de 8x8 a 4 bits (32 bytes) que L_4CFA copia tal cual a la VRAM 0xAC34; lo leen p00:50C1 (32 bytes)
+F 0x9714 4
+D 0x9734 0x9776 caracteres_p50ED  RLE (L_5578): 16 caracteres de 1 bit (p00:50F9 y p00:5102, 8 y 8); lo leen p00:50C1 (66 bytes)
+F 0x9734 16
+D 0x9776 0x97AE caracteres_p5105  RLE (L_5578): 16 caracteres de 1 bit (p00:5111 y p00:511A, 8 y 8); lo leen p00:50C1 (56 bytes)
+F 0x9776 16
+D 0x97AE 0x97E6 fotogramas_97AE  28 palabras: 4 estados x 7 fotogramas (p00:5B06: (ix+6) * 14) del personaje con 0xC240 = 0; lo leen p00:5B12 (56 bytes)
+F 0x97AE 2
+D 0x97E6 0x97F3 fotograma_97E6  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x97E6 4
+D 0x97F3 0x9800 fotograma_97F3  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x97F3 4
+D 0x9800 0x980D fotograma_9800  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9800 4
+D 0x980D 0x981A fotograma_980D  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x980D 4
+D 0x981A 0x9823 fotograma_981A  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x981A 4
+D 0x9823 0x9830 fotograma_9823  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9823 4
+D 0x9830 0x983D fotograma_9830  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9830 4
+D 0x983D 0x984A fotograma_983D  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x983D 4
+D 0x984A 0x9857 fotograma_984A  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x984A 4
+D 0x9857 0x9864 fotograma_9857  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9857 4
+D 0x9864 0x9871 fotograma_9864  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9864 4
+D 0x9871 0x987A fotograma_9871  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9871 4
+D 0x987A 0x9887 fotograma_987A  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x987A 4
+D 0x9887 0x9894 fotograma_9887  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9887 4
+D 0x9894 0x98A1 fotograma_9894  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9894 4
+D 0x98A1 0x98AE fotograma_98A1  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x98A1 4
+D 0x98AE 0x98BB fotograma_98AE  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x98AE 4
+D 0x98BB 0x98C4 fotograma_98BB  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x98BB 4
+D 0x98C4 0x98D1 fotograma_98C4  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x98C4 4
+D 0x98D1 0x98DE fotograma_98D1  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x98D1 4
+D 0x98DE 0x98EB fotograma_98DE  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x98DE 4
+D 0x98EB 0x98F8 fotograma_98EB  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x98EB 4
+D 0x98F8 0x9905 fotograma_98F8  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x98F8 4
+D 0x9905 0x990E fotograma_9905  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9905 4
+D 0x990E 0x991B fotograma_990E  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x990E 4
+D 0x991B 0x9954 pieza_991B  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x991B 16
+D 0x9954 0x998D pieza_9954  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x9954 16
+D 0x998D 0x99C6 pieza_998D  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x998D 16
+D 0x99C6 0x99FF pieza_99C6  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x99C6 16
+D 0x99FF 0x9A08 pieza_99FF  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (9 bytes)
+F 0x99FF 16
+D 0x9A08 0x9A49 pieza_9A08  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0x9A08 16
+D 0x9A49 0x9A56 pieza_9A49  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (13 bytes)
+F 0x9A49 16
+D 0x9A56 0x9A97 pieza_9A56  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0x9A56 16
+D 0x9A97 0x9AA0 pieza_9A97  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (9 bytes)
+F 0x9A97 16
+D 0x9AA0 0x9AE1 pieza_9AA0  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0x9AA0 16
+D 0x9AE1 0x9B1A pieza_9AE1  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x9AE1 16
+D 0x9B1A 0x9B5B pieza_9B1A  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0x9B1A 16
+D 0x9B5B 0x9B74 pieza_9B5B  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (25 bytes)
+F 0x9B5B 16
+D 0x9B74 0x9B9D pieza_9B74  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (41 bytes)
+F 0x9B74 16
+D 0x9B9D 0x9BCE pieza_9B9D  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (49 bytes)
+F 0x9B9D 16
+D 0x9BCE 0x9C06 fotogramas_9BCE  28 palabras: 4 estados x 7 fotogramas (p00:5B06: (ix+6) * 14) del personaje con 0xC240 = 1; lo leen p00:5B12 (56 bytes)
+F 0x9BCE 2
+D 0x9C06 0x9C0F fotograma_9C06  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C06 4
+D 0x9C0F 0x9C18 fotograma_9C0F  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C0F 4
+D 0x9C18 0x9C21 fotograma_9C18  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C18 4
+D 0x9C21 0x9C2A fotograma_9C21  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C21 4
+D 0x9C2A 0x9C33 fotograma_9C2A  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C2A 4
+D 0x9C33 0x9C40 fotograma_9C33  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9C33 4
+D 0x9C40 0x9C4D fotograma_9C40  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9C40 4
+D 0x9C4D 0x9C56 fotograma_9C4D  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C4D 4
+D 0x9C56 0x9C5F fotograma_9C56  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C56 4
+D 0x9C5F 0x9C68 fotograma_9C5F  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C5F 4
+D 0x9C68 0x9C71 fotograma_9C68  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C68 4
+D 0x9C71 0x9C7A fotograma_9C71  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C71 4
+D 0x9C7A 0x9C87 fotograma_9C7A  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9C7A 4
+D 0x9C87 0x9C90 fotograma_9C87  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C87 4
+D 0x9C90 0x9C99 fotograma_9C90  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C90 4
+D 0x9C99 0x9CA2 fotograma_9C99  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9C99 4
+D 0x9CA2 0x9CAB fotograma_9CA2  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9CA2 4
+D 0x9CAB 0x9CB4 fotograma_9CAB  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9CAB 4
+D 0x9CB4 0x9CC1 fotograma_9CB4  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9CB4 4
+D 0x9CC1 0x9CCA fotograma_9CC1  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9CC1 4
+D 0x9CCA 0x9CD3 fotograma_9CCA  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9CCA 4
+D 0x9CD3 0x9CDC fotograma_9CD3  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9CD3 4
+D 0x9CDC 0x9CE5 fotograma_9CDC  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9CDC 4
+D 0x9CE5 0x9CEE fotograma_9CE5  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9CE5 4
+D 0x9CEE 0x9CFB fotograma_9CEE  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9CEE 4
+D 0x9CFB 0x9D34 pieza_9CFB  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x9CFB 16
+D 0x9D34 0x9D6D pieza_9D34  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x9D34 16
+D 0x9D6D 0x9DA6 pieza_9D6D  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x9D6D 16
+D 0x9DA6 0x9DDF pieza_9DA6  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (57 bytes)
+F 0x9DA6 16
+D 0x9DDF 0x9E1C pieza_9DDF  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (61 bytes)
+F 0x9DDF 16
+D 0x9E1C 0x9E5D pieza_9E1C  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0x9E1C 16
+D 0x9E5D 0x9E9A pieza_9E5D  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (61 bytes)
+F 0x9E5D 16
+D 0x9E9A 0x9ECB pieza_9E9A  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (49 bytes)
+F 0x9E9A 16
+D 0x9ECB 0x9ED4 pieza_9ECB  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (9 bytes)
+F 0x9ECB 16
+D 0x9ED4 0x9F15 pieza_9ED4  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (65 bytes)
+F 0x9ED4 16
+D 0x9F15 0x9F4A pieza_9F15  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (53 bytes)
+F 0x9F15 16
+D 0x9F4A 0x9F52 fotogramas_9f4a  4 palabras: una lista por estado (p00:5BB3: p14:9F4A[(ix+6)]); lo leen p00:5BAC (8 bytes)
+F 0x9F4A 2
+D 0x9F52 0x9F57 lista_9f4a_0  [n] y n fotogramas (p00:5BB9); lo leen p00:5BAC (5 bytes)
+F 0x9F52 2
+D 0x9F57 0x9F64 lista_9f4a_1  [n] y n fotogramas (p00:5BB9); lo leen p00:5BAC (13 bytes)
+F 0x9F57 2
+D 0x9F64 0x9F71 lista_9f4a_2  [n] y n fotogramas (p00:5BB9); lo leen p00:5BAC (13 bytes)
+F 0x9F64 2
+D 0x9F71 0x9F7A lista_9f4a_3  [n] y n fotogramas (p00:5BB9); lo leen p00:5BAC (9 bytes)
+F 0x9F71 2
+D 0x9F7A 0x9F83 fotograma_9F7A  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9F7A 4
+D 0x9F83 0x9F8C fotograma_9F83  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (9 bytes)
+F 0x9F83 4
+D 0x9F8C 0x9F99 fotograma_9F8C  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9F8C 4
+D 0x9F99 0x9FA6 fotograma_9F99  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (13 bytes)
+F 0x9F99 4
+D 0x9FA6 0x9FAB fotograma_9FA6  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (5 bytes)
+F 0x9FA6 4
+D 0x9FAB 0x9FB0 fotograma_9FAB  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (5 bytes)
+F 0x9FAB 4
+D 0x9FB0 0x9FB5 fotograma_9FB0  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (5 bytes)
+F 0x9FB0 4
+D 0x9FB5 0x9FBA fotograma_9FB5  registros [cuenta | 0x80][posicion][pieza lo][hi] hasta 0xFF (p00:5BD3); lo leen p00:5BC6 (5 bytes)
+F 0x9FB5 4
+D 0x9FBA 0x9FDF pieza_9FBA  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630; lo leen p00:5BC6 (37 bytes)
+F 0x9FBA 16
+D 0x9FDF 0xA000 pieza_9FDF  [n] y dos bloques de 2 x n bytes (columna izquierda y derecha: p00:5C45 lee (HL) y (HL + n)) que p00:5BFB y p00:5C0E componen en 0xD600/0xD630 (sigue en el banco 15, en 0xA000); lo leen p00:5BC6 (33 bytes)
+F 0x9FDF 16
+# --- fin de los bloques de bloques.py ---

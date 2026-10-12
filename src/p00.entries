@@ -1,0 +1,97 @@
+# Puntos de entrada del banco 0 (se ejecuta en 0x4000).
+#
+# Cada uno lleva la instruccion que lo justifica. Los que ponen "pNN:XXXX"
+# vienen de OTRO banco: el trazador de una sola pagina no puede seguirlos,
+# porque en esa direccion -segun lo que haya en el registro del mapper- puede
+# estar cualquiera de seis bancos. Los que ponen "tabla" salen de una tabla
+# del despachador 0x408D, que va pegada detras de su `call` y esta declarada
+# como datos en el .nocode: el trazador tampoco puede seguirla.
+#
+# Los saltos y llamadas DENTRO del propio banco no se ponen aqui: los
+# encuentra tools/z80trace.py solo, siguiendo el flujo.
+#
+# Este fichero lo regenera `make semillas` (tools/bancos.py escribe).
+0x403D   # gancho de interrupcion H.TIMI: INIT escribe 0xC3 en 0xFD9F y esta direccion en 0xFDA0 (p00:40CC-p00:40D4)
+0x4083   # p02:8B10 call
+0x4097   # cabecera AB: INIT
+0x4110   # p00:40F1 entrada 0 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x4183   # p00:40F1 entrada 1 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x418B   # p00:40F1 entrada 2 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x41B1   # p00:40F1 entrada 3 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x41E4   # p00:40F1 entrada 4 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x4388   # p00:40F1 entrada 5 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x43C5   # p00:40F1 entrada 6 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x441D   # p00:40F1 entrada 7 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x4480   # p00:40F1 entrada 8 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x44A3   # p00:40F1 entrada 9 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x44E0   # p00:40F1 entrada 10 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x457F   # p00:40F1 entrada 11 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x45A4   # p00:40F1 entrada 12 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x4603   # p00:40F1 entrada 13 de la tabla de 0x40F4 (call 0x408D en 0x40F1)
+0x461D   # a mano: p00:40ED pone 0x461D en la pila (ld hl / push hl) antes de despachar los estados 0-2: es su vuelta
+0x46A0   # p01:6105 call
+0x4713   # p06:B93A call
+0x4758   # p05:9FC3 call
+0x4797   # p06:A015 call
+0x479C   # p05:9FAE call
+0x4895   # sin entrada: lee de la VRAM a (DE) con inir (direccion de HL por p00:4909, cuenta de p00:48A8)
+0x48DC   # p01:7910 call
+0x4909   # sin entrada: R#14 y direccion de VRAM de HL para LEER (0x8E, sin el bit 6)
+0x494F   # sin entrada: HL = palabra de (DE) y cae en p00:4955
+0x49B0   # sin entrada: DE = HL y le da la vuelta a los 8 bits de A (p00:49B2)
+0x49BD   # sin entrada: llama a p00:49CE y copia lo que deja a la VRAM 0xD600 (L_48B0)
+0x49FC   # sin entrada: p00:4A44 y BC = 0, y salta a p00:4A0A
+0x4A07   # p04:6EE8 call
+0x4A12   # p05:9733 jp
+0x4A9D   # p02:8290 jp
+0x4B40   # p02:80DD call
+0x4C22   # sin entrada: HMMC (0xF0) de un rectangulo con los bytes de HL
+0x4C73   # p06:B99A jp
+0x4D6C   # p04:65E5 call
+0x4DA9   # sin entrada: B caracteres seguidos con L_4D86 / L_4E3F
+0x4DB4   # p05:970A call
+0x4DCE   # p02:902B call
+0x4E19   # p05:94B9 call
+0x4E39   # p04:7417 call
+0x5002   # p01:6030 jp
+0x5155   # p01:60F9 call
+0x51AD   # p04:7305 jp cc
+0x529C   # p05:96BB call
+0x538C   # p01:7779 call
+0x5396   # p01:7744 call
+0x540D   # p01:60FC call
+0x5421   # p03:BD59 call
+0x543A   # p02:828D call
+0x5451   # p06:A160 jp
+0x5456   # p06:A581 call
+0x545E   # sin entrada: call p00:547E / call 0xBC36 y cae en p00:5464
+0x54AA   # p02:8F6D call
+0x54AF   # p02:8273 call
+0x54B4   # p01:614B call
+0x54C1   # p01:761A jp
+0x5554   # p01:60FF call
+0x5566   # p01:6102 call
+0x5578   # p05:96FA call
+0x5596   # p03:A6C2 call
+0x55AA   # p04:6DFF call
+0x55B9   # p04:6674 call
+0x55CE   # p05:9F7F jp
+0x55D1   # p05:9F85 jp
+0x55F0   # p02:8270 call
+0x563F   # p01:605A call
+0x564C   # p01:60AA jp
+0x5690   # p06:A00F jp cc
+0x59DC   # sin entrada: lee el estado del sonido (0xC11B, 0xC11D, 0xC11F)
+0x59EA   # sin entrada: compara 0xC11C con 0xF9 y deja 0xC11F en A
+0x5A11   # p06:B92B call
+0x5A1A   # p06:B92E call
+0x5A97   # p01:7049 jp
+0x5AB8   # p01:761D call
+0x5ABD   # p03:B333 jp
+0x5B12   # p01:7605 call
+0x5B60   # sin entrada: 0xC273 = 0xFA80 y salta a p00:5B6E (como p00:5B68 con 0xF800)
+0x5B68   # p01:610B call
+0x5E2F   # p02:8C8A call
+0x5E74   # p01:6014 jp
+0x5F08   # p06:A302 call
+0x5FFE   # p01:6027 jr cc

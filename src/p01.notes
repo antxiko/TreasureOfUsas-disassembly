@@ -1,0 +1,39 @@
+# Notas del banco 01
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x6226 0x6234 saltos_6226  tabla de 7 palabras del despachador (call 0x408D en 0x6223); lo leen L_408D (14 bytes)
+F 0x6226 2
+D 0x6861 0x6867 saltos_6861  tabla de 3 palabras del despachador (call 0x408D en 0x685E); lo leen L_408D (6 bytes)
+F 0x6861 2
+D 0x699E 0x69AC saltos_699E  tabla de 7 palabras del despachador (call 0x408D en 0x699B); lo leen L_408D (14 bytes)
+F 0x699E 2
+D 0x6BE6 0x6BF8 saltos_6BE6  tabla de 9 palabras del despachador (call 0x408D en 0x6BE3); lo leen L_408D (18 bytes)
+F 0x6BE6 2
+D 0x6E3B 0x6E4D saltos_6E3B  tabla de 9 palabras del despachador (call 0x408D en 0x6E38); lo leen L_408D (18 bytes)
+F 0x6E3B 2
+D 0x6E6A 0x6E74 saltos_6E6A  tabla de 5 palabras del despachador (call 0x408D en 0x6E67); lo leen L_408D (10 bytes)
+F 0x6E6A 2
+D 0x6ECF 0x6ED3 saltos_6ECF  tabla de 2 palabras del despachador (call 0x408D en 0x6ECC); lo leen L_408D (4 bytes)
+F 0x6ECF 2
+D 0x758C 0x75A6 saltos_758C  tabla de 13 palabras del despachador (call 0x408D en 0x7589); lo leen L_408D (26 bytes)
+F 0x758C 2
+D 0x76AE 0x76C8 saltos_76AE  tabla de 13 palabras del despachador (call 0x408D en 0x76AB); lo leen L_408D (26 bytes)
+F 0x76AE 2
+D 0x77A0 0x77B8 saltos_77A0  tabla de 12 palabras del despachador (call 0x408D en 0x779D); lo leen L_408D (24 bytes)
+F 0x77A0 2
+# --- fin de los bloques de bloques.py ---
+
+# --- A MANO: comentarios, nombres y bloques ---
+D 0x6000 0x6002 ld_partido_cola  los dos ultimos bytes (14 C2, 0xC214) de `ld (0xC214),a`, que empieza en p00:5FFF
+D 0x6485 0x648F tabla_p646D  10 bytes que lee p01:646D (ld hl,0x6485)
+D 0x64A0 0x64AA tabla_p648F  10 bytes que lee p01:648F (ld hl,0x64A0)
+D 0x688B 0x6897 tabla_p687A  12 bytes: 0x688B lo lee p01:687A y 0x6891 p01:6883
+D 0x692B 0x6933 tabla_p68DF  8 bytes: 0x692B lo lee p01:68DF y 0x692F p01:68EB
+D 0x69E6 0x69EB tabla_p69BE  5 bytes que leen p01:69BE y p01:6AB1 (ld hl,0x69E6)
+D 0x6B83 0x6B8C tabla_p6B93  9 bytes que lee p01:6B93 (ld hl,0x6B83)
+D 0x6D59 0x6D5F tabla_p6D34  6 bytes que lee p01:6D34 (ld hl,0x6D59)
+D 0x7234 0x723D tabla_p721E  9 bytes que lee p01:721E (ld hl,0x7234)
+D 0x7429 0x7431 tabla_p740F  8 bytes: 0x7429 lo lee p01:740F y 0x742D p01:7402
+D 0x7442 0x7444 tabla_p743D  2 bytes que lee p01:743D (ld hl,0x7442)
+D 0x765B 0x7663 tabla_p7645  8 bytes que lee p01:7645 (ld hl,0x765B)
+D 0x7DAD 0x7DB1 tabla_p7D53  4 bytes que lee p01:7D53 (ld hl,0x7DAD)

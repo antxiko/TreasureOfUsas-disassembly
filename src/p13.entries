@@ -1,0 +1,26 @@
+# Puntos de entrada del banco 13 (se ejecuta en 0x6000).
+#
+# Cada uno lleva la instruccion que lo justifica. Los que ponen "pNN:XXXX"
+# vienen de OTRO banco: el trazador de una sola pagina no puede seguirlos,
+# porque en esa direccion -segun lo que haya en el registro del mapper- puede
+# estar cualquiera de seis bancos. Los que ponen "tabla" salen de una tabla
+# del despachador 0x408D, que va pegada detras de su `call` y esta declarada
+# como datos en el .nocode: el trazador tampoco puede seguirla.
+#
+# Los saltos y llamadas DENTRO del propio banco no se ponen aqui: los
+# encuentra tools/z80trace.py solo, siguiendo el flujo.
+#
+# Este fichero lo regenera `make semillas` (tools/bancos.py escribe).
+0x6000   # p00:4056 call
+0x6074   # p00:56D3 y p13:602A: ld hl,0x6074 / ld (0xC010..6),hl (canal sin nada que tocar)
+0x6095   # a mano: p13:608B pone 0x6095 en el puntero del canal (es un `ret`: canal parado)
+0x6126   # p00:5964: ld hl,0x6126 / ld (0xC018),hl; p13:6099 lo salta (sonido 0xFD)
+0x612D   # p00:596A: ld hl,0x612D / ld (0xC01A),hl; p13:60A3 lo salta (sonido 0xFD)
+0x6134   # p00:5794: ld hl,0x6134 / ld (0xC010),hl
+0x613B   # p00:579A: ld hl,0x613B / ld (0xC012),hl
+0x6142   # p00:57A0: ld hl,0x6142 / ld (0xC014),hl
+0x64D1   # p00:58A3: ld hl,0x64D1 / ld (0xC127),hl; p13:60B4 lo salta con `jp (hl)` (sonidos 0x70-0x7F)
+0x64D7   # p00:5826: ld hl,0x64D7 / ld (0xC010),hl
+0x64DD   # p00:582C: ld hl,0x64DD / ld (0xC012),hl
+0x64E3   # p00:5832: ld hl,0x64E3 / ld (0xC014),hl
+0x64E9   # p00:587C: ld hl,0x64E9 / ld (0xC016),hl

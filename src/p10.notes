@@ -1,0 +1,54 @@
+# Notas del banco 10
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x6000 0x6032 mapas_de_fase  25 palabras: el mapa RLE de cada fase 1-25 (p00:551F: p10:5FFE[0xC211]); lo leen p00:5516 (50 bytes)
+F 0x6000 2
+D 0x6032 0x603C metabloques_de_ruina  5 palabras: los metabloques RLE de cada ruina (p00:553C); lo leen p00:5533 (10 bytes)
+F 0x6032 2
+D 0x603C 0x6046 mapas_de_antesala  5 palabras: el mapa RLE de la antesala de cada ruina (p00:5557); lo leen p00:5554 (10 bytes)
+F 0x603C 2
+D 0x6046 0x60B7 mapa_antesala_0  RLE (L_5578): las tres pantallas de la antesala de la ruina 0; lo leen p00:5554 (113 bytes)
+F 0x6046 16
+D 0x60B7 0x6149 mapa_antesala_1  RLE (L_5578): las tres pantallas de la antesala de la ruina 1; lo leen p00:5554 (146 bytes)
+F 0x60B7 16
+D 0x6149 0x61BC mapa_antesala_2  RLE (L_5578): las tres pantallas de la antesala de la ruina 2; lo leen p00:5554 (115 bytes)
+F 0x6149 16
+D 0x61BC 0x6226 mapa_antesala_3  RLE (L_5578): las tres pantallas de la antesala de la ruina 3; lo leen p00:5554 (106 bytes)
+F 0x61BC 16
+D 0x6226 0x62B2 mapa_antesala_4  RLE (L_5578): las tres pantallas de la antesala de la ruina 4; lo leen p00:5554 (140 bytes)
+F 0x6226 16
+D 0x62B2 0x6413 mapa_fase_01  RLE (L_5578): el mapa de la fase 1, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (353 bytes)
+F 0x62B2 16
+D 0x6413 0x6619 mapa_fase_02  RLE (L_5578): el mapa de la fase 2, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (518 bytes)
+F 0x6413 16
+D 0x6619 0x67AD mapa_fase_03  RLE (L_5578): el mapa de la fase 3, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (404 bytes)
+F 0x6619 16
+D 0x67AD 0x691C mapa_fase_04  RLE (L_5578): el mapa de la fase 4, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (367 bytes)
+F 0x67AD 16
+D 0x691C 0x6ACF mapa_fase_06  RLE (L_5578): el mapa de la fase 6, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (435 bytes)
+F 0x691C 16
+D 0x6ACF 0x6D0D mapa_fase_07  RLE (L_5578): el mapa de la fase 7, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (574 bytes)
+F 0x6ACF 16
+D 0x6D0D 0x6F21 mapa_fase_08  RLE (L_5578): el mapa de la fase 8, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (532 bytes)
+F 0x6D0D 16
+D 0x6F21 0x709E mapa_fase_09  RLE (L_5578): el mapa de la fase 9, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (381 bytes)
+F 0x6F21 16
+D 0x709E 0x720C mapa_fase_11  RLE (L_5578): el mapa de la fase 11, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (366 bytes)
+F 0x709E 16
+D 0x720C 0x73B5 mapa_fase_12  RLE (L_5578): el mapa de la fase 12, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (425 bytes)
+F 0x720C 16
+D 0x73B5 0x75B5 mapa_fase_13  RLE (L_5578): el mapa de la fase 13, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (512 bytes)
+F 0x73B5 16
+D 0x75B5 0x780B mapa_fase_14  RLE (L_5578): el mapa de la fase 14, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (598 bytes)
+F 0x75B5 16
+D 0x780B 0x7A34 mapa_fase_16  RLE (L_5578): el mapa de la fase 16, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (553 bytes)
+F 0x780B 16
+D 0x7A34 0x7BC3 mapa_fase_17  RLE (L_5578): el mapa de la fase 17, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (399 bytes)
+F 0x7A34 16
+D 0x7BC3 0x7DC8 mapa_fase_18  RLE (L_5578): el mapa de la fase 18, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (517 bytes)
+F 0x7BC3 16
+D 0x7DC8 0x7FBF mapa_fase_19  RLE (L_5578): el mapa de la fase 19, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (503 bytes)
+F 0x7DC8 16
+D 0x7FBF 0x8000 mapa_fase_21  RLE (L_5578): el mapa de la fase 21, 48 bytes por pantalla (p15:BEBF) (sigue en el banco 11, en 0x8000); lo leen p00:5516 (65 bytes)
+F 0x7FBF 16
+# --- fin de los bloques de bloques.py ---

@@ -1,0 +1,24 @@
+# Sitios con el reparto de bancos FORZADO: 'pNN 0xPC b6000 b8000 bA000  # por que'.
+#
+# El trazador de cartucho entero (tools/bancos.py) junta en cada instruccion
+# todos los repartos con los que llega a ella. Aqui sobra uno: la
+# interrupcion (p00:403D) pone 13-14-15 (p00:4048), llama a la musica
+# (p13:6000) y devuelve el trio leyendo la copia en RAM 0xF0F1-0xF0F3
+# (p00:4059). El trazador no sabe que hay en esa copia, se queda con el 13-14-15
+# y entra con el en el bucle del juego (p00:40E0), donde todo lo que cae en
+# 0x6000-0xBFFF lo busca en los bancos 13-15.
+#
+# En la maquina no pasa: el unico codigo que corre fuera de la interrupcion es
+# INIT, que pone 1-2-3 (p00:40DB, call p00:5464) y se queda en `jr $`
+# (p00:40DE); la interrupcion no se anida (p00:4041, el bit 0 de 0xC00B) y el
+# bucle del juego solo entra si no esta ya dentro (p00:4073, 0xC005). Asi que
+# cada cuadro empieza con 1-2-3.
+p00 0x406C 1 2 3  # tras devolver el trio de la copia en RAM: el de INIT (p00:40DB)
+#
+# p00:4FEE salta a 0x6017 cuando el bit 6 de 0xC002 esta a cero. Ese bit lo
+# pone p00:4637 (0xC002 = 0x40 al pulsar para empezar) y lo quita p00:4454:
+# a cero es FUERA de partida, y el destino es p01:6017 (codigo, banco 1). El
+# trazador llega ademas desde p04:6093 con 4-5-6 puesto, y alli 0x6017 son
+# datos del banco 4. Que p04:6093 no corra nunca con el bit a cero esta
+# deducido de esto, NO comprobado en openMSX.
+p00 0x4FF3 1 2 3  # jp z,0x6017: p01:6017, fuera de partida (0xC002 bit 6 a cero)

@@ -1,0 +1,34 @@
+# Notas del banco 13
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x60CC 0x60D4 resto_60CC  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (8 bytes)
+F 0x60CC 16
+D 0x610E 0x6126 mascaras_de_canal  4 tablas de 6 bytes (p13:60DC/60E3/60EA/60F1 + 0xC10C * 2): la mascara del mezclador de cada canal; lo leen p13:60F5 (24 bytes)
+F 0x610E 6
+D 0x6325 0x6345 periodos  16 palabras: el periodo de cada nota (p13:6284 + (nota >> 3)), con 5 puntos de entrada segun 0xC122 (p13:625D); lo leen p13:6284 (32 bytes)
+F 0x6325 2
+D 0x66C4 0x670E efectos  37 palabras: el efecto 1-0x25 (p00:586D: p13:66C2[A]) y el 0x70-0x7F (p00:5894: p13:66C4[A & 15]); lo leen p00:56E3 (74 bytes)
+F 0x66C4 2
+D 0x670E 0x672C sonidos_40  5 x 3 palabras: los tres canales de los sonidos 0x40-0x44 (p00:580B: p13:670E[(A & 0x3F) * 6]); lo leen p00:57E6 (30 bytes)
+F 0x670E 6
+D 0x672C 0x678C musicas  16 x 3 palabras: los tres canales de las musicas 0x80-0x8F (p00:5775: p13:672C[(A & 0x7F) * 6]); lo leen p00:56E3 (96 bytes)
+F 0x672C 6
+D 0x678C 0x678E resto_678C  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (2 bytes)
+F 0x678C 16
+D 0x678E 0x6E2A envolvente_678E  envolvente o efecto (p13:6506), recorrido desde p13:66C4, 670E y p14:8D65; lo leen p13:6506 (1692 bytes)
+F 0x678E 16
+D 0x6E2A 0x6E2C resto_6E2A  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (2 bytes)
+F 0x6E2A 16
+D 0x6E2C 0x6FA6 envolvente_6E2C  envolvente o efecto (p13:6506), recorrido desde p13:66C4, 670E y p14:8D65; lo leen p13:6506 (378 bytes)
+F 0x6E2C 16
+D 0x6FA6 0x6FC1 pista_6FA6  pista de musica (p13:6203), recorrida desde p13:672C; lo leen p13:6203 (27 bytes)
+F 0x6FA6 16
+D 0x6FC1 0x6FC2 resto_6FC1  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (1 bytes)
+F 0x6FC1 16
+D 0x6FC2 0x73F1 pista_6FC2  pista de musica (p13:6203), recorrida desde p13:672C; lo leen p13:6203 (1071 bytes)
+F 0x6FC2 16
+D 0x73F1 0x73FE resto_73F1  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (13 bytes)
+F 0x73F1 16
+D 0x73FE 0x8000 pista_73FE  pista de musica (p13:6203), recorrida desde p13:672C (sigue en el banco 14, en 0x8000); lo leen p13:6203 (3074 bytes)
+F 0x73FE 16
+# --- fin de los bloques de bloques.py ---

@@ -1,0 +1,32 @@
+# Notas del banco 11
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0x8000 0x81B6 mapa_fase_21_cola  RLE (L_5578): el mapa de la fase 21, 48 bytes por pantalla (p15:BEBF) (sigue del banco 10); lo leen p00:5516 (438 bytes)
+F 0x8000 16
+D 0x81B6 0x842A mapa_fase_22  RLE (L_5578): el mapa de la fase 22, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (628 bytes)
+F 0x81B6 16
+D 0x842A 0x8691 mapa_fase_23  RLE (L_5578): el mapa de la fase 23, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (615 bytes)
+F 0x842A 16
+D 0x8691 0x88CB mapa_fase_24  RLE (L_5578): el mapa de la fase 24, 48 bytes por pantalla (p15:BEBF); lo leen p00:5516 (570 bytes)
+F 0x8691 16
+D 0x88CB 0x88D5 metabloques_de_antesala  5 palabras: los metabloques RLE de cada antesala (p00:5569); lo leen p00:5566 (10 bytes)
+F 0x88CB 2
+D 0x88D5 0x8A64 metabloques_antesala_0  RLE (L_5578): los metabloques de la antesala de la ruina 0; lo leen p00:5566 (399 bytes)
+F 0x88D5 16
+D 0x8A64 0x8BD0 metabloques_antesala_1  RLE (L_5578): los metabloques de la antesala de la ruina 1; lo leen p00:5566 (364 bytes)
+F 0x8A64 16
+D 0x8BD0 0x8D29 metabloques_antesala_2  RLE (L_5578): los metabloques de la antesala de la ruina 2; lo leen p00:5566 (345 bytes)
+F 0x8BD0 16
+D 0x8D29 0x8E3D metabloques_antesala_3  RLE (L_5578): los metabloques de la antesala de la ruina 3; lo leen p00:5566 (276 bytes)
+F 0x8D29 16
+D 0x8E3D 0x8FB7 metabloques_antesala_4  RLE (L_5578): los metabloques de la antesala de la ruina 4; lo leen p00:5566 (378 bytes)
+F 0x8E3D 16
+D 0x8FB7 0x9572 metabloques_ruina_0  RLE (L_5578): los metabloques de la ruina 0, 16 fichas cada uno; lo leen p00:5533 (1467 bytes)
+F 0x8FB7 16
+D 0x9572 0x9AD8 metabloques_ruina_1  RLE (L_5578): los metabloques de la ruina 1, 16 fichas cada uno; lo leen p00:5533 (1382 bytes)
+F 0x9572 16
+D 0x9AD8 0x9E91 metabloques_ruina_2  RLE (L_5578): los metabloques de la ruina 2, 16 fichas cada uno; lo leen p00:5533 (953 bytes)
+F 0x9AD8 16
+D 0x9E91 0xA000 metabloques_ruina_3  RLE (L_5578): los metabloques de la ruina 3, 16 fichas cada uno (sigue en el banco 12, en 0xA000); lo leen p00:5533 (367 bytes)
+F 0x9E91 16
+# --- fin de los bloques de bloques.py ---

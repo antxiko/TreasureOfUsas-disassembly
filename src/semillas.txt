@@ -1,0 +1,49 @@
+# Semillas a mano: 'pNN 0xADDR b6000 b8000 bA000  # por que'.
+#
+# El motor de sonido (p13:6000, lo llama la interrupcion con 13-14-15 en
+# p00:4056) salta a cada canal con `jp (hl)` (p13:6073) por el puntero que
+# hay en 0xC010/0xC012/0xC014/0xC016. Esos punteros los escriben:
+p13 0x6074 13 14 15  # p00:56D3 y p13:602A: ld hl,0x6074 / ld (0xC010..6),hl (canal sin nada que tocar)
+p13 0x6095 13 14 15  # a mano: p13:608B pone 0x6095 en el puntero del canal (es un `ret`: canal parado)
+p13 0x6134 13 14 15  # p00:5794: ld hl,0x6134 / ld (0xC010),hl
+p13 0x613B 13 14 15  # p00:579A: ld hl,0x613B / ld (0xC012),hl
+p13 0x6142 13 14 15  # p00:57A0: ld hl,0x6142 / ld (0xC014),hl
+p13 0x64D7 13 14 15  # p00:5826: ld hl,0x64D7 / ld (0xC010),hl
+p13 0x64DD 13 14 15  # p00:582C: ld hl,0x64DD / ld (0xC012),hl
+p13 0x64E3 13 14 15  # p00:5832: ld hl,0x64E3 / ld (0xC014),hl
+p13 0x64E9 13 14 15  # p00:587C: ld hl,0x64E9 / ld (0xC016),hl
+p13 0x64D1 13 14 15  # p00:58A3: ld hl,0x64D1 / ld (0xC127),hl; p13:60B4 lo salta con `jp (hl)` (sonidos 0x70-0x7F)
+p13 0x6126 13 14 15  # p00:5964: ld hl,0x6126 / ld (0xC018),hl; p13:6099 lo salta (sonido 0xFD)
+p13 0x612D 13 14 15  # p00:596A: ld hl,0x612D / ld (0xC01A),hl; p13:60A3 lo salta (sonido 0xFD)
+p00 0x461D 1 2 3  # a mano: p00:40ED pone 0x461D en la pila (ld hl / push hl) antes de despachar los estados 0-2: es su vuelta
+#
+# CODIGO SIN ENTRADA. Rutinas enteras (acaban en `ret` o caen en codigo ya
+# trazado) a las que ninguna instruccion del cartucho salta ni apunta con un
+# inmediato de 16 bits (tools/huecos.py, 2026-10-12). Van como codigo para que
+# el listado las lea; NO esta medido que no se ejecuten por un camino
+# calculado.
+p00 0x4909 1 2 3  # sin entrada: R#14 y direccion de VRAM de HL para LEER (0x8E, sin el bit 6)
+p00 0x494F 1 2 3  # sin entrada: HL = palabra de (DE) y cae en p00:4955
+p00 0x49B0 1 2 3  # sin entrada: DE = HL y le da la vuelta a los 8 bits de A (p00:49B2)
+p00 0x49BD 1 2 3  # sin entrada: llama a p00:49CE y copia lo que deja a la VRAM 0xD600 (L_48B0)
+p00 0x49FC 1 2 3  # sin entrada: p00:4A44 y BC = 0, y salta a p00:4A0A
+p00 0x4C22 1 2 3  # sin entrada: HMMC (0xF0) de un rectangulo con los bytes de HL
+p00 0x4DA9 1 2 3  # sin entrada: B caracteres seguidos con L_4D86 / L_4E3F
+p00 0x545E 1 2 3  # sin entrada: call p00:547E / call 0xBC36 y cae en p00:5464
+p00 0x59DC 1 2 3  # sin entrada: lee el estado del sonido (0xC11B, 0xC11D, 0xC11F)
+p00 0x59EA 1 2 3  # sin entrada: compara 0xC11C con 0xF9 y deja 0xC11F en A
+p00 0x5B60 1 2 3  # sin entrada: 0xC273 = 0xFA80 y salta a p00:5B6E (como p00:5B68 con 0xF800)
+p00 0x4895 1 2 3  # sin entrada: lee de la VRAM a (DE) con inir (direccion de HL por p00:4909, cuenta de p00:48A8)
+p01 0x614B 1 2 3  # sin entrada: call p00:54B4 / call 0xB8A5 / jp p00:5464
+p01 0x65E6 1 2 3  # sin entrada: neg / ret
+p01 0x6D7A 1 2 3  # sin entrada: (ix+0x0A) = ((ix+9) xor 1) + B
+p01 0x707E 1 2 3  # sin entrada: HL = (0xC249) + (0xC245)
+p02 0x8279 1 2 3  # sin entrada: inc hl x3 y vuelve al bucle de p02:825F
+p02 0x8971 1 2 3  # sin entrada: 0xCC36 = 0x80
+p02 0x8B0B 1 2 3  # sin entrada: ld a,0x0F y cae en p02:8B0D
+p02 0x8B68 1 2 3  # sin entrada: B + 2 si el bit 0 de (ix+0x17) esta puesto, y cae en p02:8B70
+p02 0x8BE7 1 2 3  # sin entrada: segun el bit 0 de (ix+0x17) y el 7 de (ix+0x0A), salta a p02:8B03
+p02 0x8BF5 1 2 3  # sin entrada: si el bit 7 de (ix+0x0A) esta puesto, salta a p02:8B03
+p02 0x9CF6 1 2 3  # sin entrada: E + (ix+8), p02:9D0F y 0xA683
+p02 0x9D0F 1 2 3  # sin entrada: p02:9D15 y salta 16 bytes adelante si no da cero
+p03 0xA8ED 1 2 3  # sin entrada: ajusta (ix+0x7E) segun (ix+0x7F)

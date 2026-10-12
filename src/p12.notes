@@ -1,0 +1,264 @@
+# Notas del banco 12
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA000 0xA230 metabloques_ruina_3_cola  RLE (L_5578): los metabloques de la ruina 3, 16 fichas cada uno (sigue del banco 11); lo leen p00:5533 (560 bytes)
+F 0xA000 16
+D 0xA230 0xA7A4 metabloques_ruina_4  RLE (L_5578): los metabloques de la ruina 4, 16 fichas cada uno; lo leen p00:5533 (1396 bytes)
+F 0xA230 16
+D 0xA7A4 0xA7A6 fichas_p5167_colores  tabla de colores de la lista fichas_p5167 (L_529C indexa con c >> 4); lo leen p00:5167 (2 bytes)
+F 0xA7A4 2
+D 0xA7A6 0xA7AA fichas_p5167_col0  2 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 5 bloques: (fichas_p5167_col0 A7A6-A7A8) (fichas_p5167_col0 A7A6-A7AA) (fichas_p5167_col0 A7A6-A7AA) (fichas_p5167_col0 A7A6-A7AA); lo leen p00:5167 (4 bytes)
+F 0xA7A6 2
+D 0xA7AA 0xA7C9 fichas_p5167  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5167 (31 bytes)
+F 0xA7AA 6
+D 0xA7C9 0xAAB9 fichas_p5167_f1  21 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_p5167; se solapan 2 bloques: (fichas_p5167_f0 A7C9-AAB9); lo leen p00:5167 (752 bytes)
+F 0xA7C9 16
+D 0xAAB9 0xAAC9 fichas_p5167_f3  1 fichas de 8x8 a 1 bit(s) por punto (8 bytes cada una), entrada 3 de la lista fichas_p5167; se solapan 2 bloques: (fichas_p5167_f2 AAB9-AAC9); lo leen p00:5167 (16 bytes)
+F 0xAAB9 8
+D 0xAAC9 0xAB39 fichas_p5167_f4  7 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 4 de la lista fichas_p5167; lo leen p00:5167 (112 bytes)
+F 0xAAC9 16
+D 0xAB39 0xAB66 mapa_sala5  RLE (L_5578): la pantalla de la sala de la puerta 5 (p00:552B); lo leen p00:552B (45 bytes)
+F 0xAB39 16
+D 0xAB66 0xADCB metabloques_sala5  RLE (L_5578): los metabloques de la sala de la puerta 5; lo leen p00:5548 (613 bytes)
+F 0xAB66 16
+D 0xADCB 0xADD3 fichas_p5372_colores  tabla de colores de la lista fichas_p5372 (L_529C indexa con c >> 4); lo leen p00:5372 (8 bytes)
+F 0xADCB 2
+D 0xADD3 0xADD7 fichas_p5372_col0  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5372 (4 bytes)
+F 0xADD3 4
+D 0xADD7 0xADDB fichas_p5372_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5372 (4 bytes)
+F 0xADD7 4
+D 0xADDB 0xADDF fichas_p5372_col2  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; lo leen p00:5372 (4 bytes)
+F 0xADDB 4
+D 0xADDF 0xADE3 fichas_p5372_col3  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 3 bloques: (fichas_p5372_col3 ADDF-ADE3) (fichas_p5372_col3 ADDF-ADE3); lo leen p00:5372 (4 bytes)
+F 0xADDF 4
+D 0xADE3 0xAE08 fichas_p5372  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:5372 (37 bytes)
+F 0xADE3 6
+D 0xAE08 0xAE48 fichas_p5372_f1  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_p5372; lo leen p00:5372 (64 bytes)
+F 0xAE08 16
+D 0xAE48 0xAE88 fichas_p5372_f2  4 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_p5372; lo leen p00:5372 (64 bytes)
+F 0xAE48 16
+D 0xAE88 0xAEB8 fichas_p5372_f0  3 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_p5372; lo leen p00:5372 (48 bytes)
+F 0xAE88 16
+D 0xAEB8 0xAF18 fichas_p5372_f4  6 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 4 de la lista fichas_p5372; lo leen p00:5372 (96 bytes)
+F 0xAEB8 16
+D 0xAF18 0xAF28 fichas_p5372_f3  1 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_p5372; lo leen p00:5372 (16 bytes)
+F 0xAF18 16
+D 0xAF28 0xAF48 fichas_p5372_f5  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 5 de la lista fichas_p5372; lo leen p00:5372 (32 bytes)
+F 0xAF28 16
+D 0xAF48 0xAF6B texto_p5383  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p00:5383 (35 bytes)
+F 0xAF48 16
+D 0xAF6B 0xAF71 fichas_p53BB_colores  tabla de colores de la lista fichas_p53BB (L_529C indexa con c >> 4); lo leen p00:53BB (6 bytes)
+F 0xAF6B 2
+D 0xAF71 0xAF79 fichas_p53BB_col0  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 4 bloques: (fichas_p53BB_col0 AF71-AF75) (fichas_p53BB_col0 AF71-AF79) (fichas_p53BB_col0 AF71-AF79); lo leen p00:53BB (8 bytes)
+F 0xAF71 4
+D 0xAF79 0xAF7D fichas_p53BB_col1  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_p53BB_col1 AF79-AF7D); lo leen p00:53BB (4 bytes)
+F 0xAF79 4
+D 0xAF7D 0xAF81 fichas_p53BB_col2  4 colores (indice -> color de la paleta) que L_529C copia a 0xDF00; se solapan 2 bloques: (fichas_p53BB_col2 AF7D-AF81); lo leen p00:53BB (4 bytes)
+F 0xAF7D 4
+D 0xAF81 0xAFB2 fichas_p53BB  lista de fichas (L_529C): [n] y n x [c][destino][cuantas][origen]; lo leen p00:53BB (49 bytes)
+F 0xAF81 6
+D 0xAFB2 0xB032 fichas_p53BB_f0  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 0 de la lista fichas_p53BB; lo leen p00:53BB (128 bytes)
+F 0xAFB2 16
+D 0xB032 0xB0B2 fichas_p53BB_f1  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 1 de la lista fichas_p53BB; lo leen p00:53BB (128 bytes)
+F 0xB032 16
+D 0xB0B2 0xB0D2 resto_B0B2  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (32 bytes)
+F 0xB0B2 16
+D 0xB0D2 0xB0F2 fichas_p53BB_f2  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 2 de la lista fichas_p53BB; lo leen p00:53BB (32 bytes)
+F 0xB0D2 16
+D 0xB0F2 0xB112 fichas_p53BB_f3  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 3 de la lista fichas_p53BB; lo leen p00:53BB (32 bytes)
+F 0xB0F2 16
+D 0xB112 0xB142 fichas_p53BB_f4  2 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 4 de la lista fichas_p53BB; lo leen p00:53BB (48 bytes)
+F 0xB112 24
+D 0xB142 0xB172 fichas_p53BB_f5  2 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 5 de la lista fichas_p53BB; lo leen p00:53BB (48 bytes)
+F 0xB142 24
+D 0xB172 0xB1F2 fichas_p53BB_f6  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 6 de la lista fichas_p53BB; lo leen p00:53BB (128 bytes)
+F 0xB172 16
+D 0xB1F2 0xB272 fichas_p53BB_f7  8 fichas de 8x8 a 2 bit(s) por punto (16 bytes cada una), entrada 7 de la lista fichas_p53BB; lo leen p00:53BB (128 bytes)
+F 0xB1F2 16
+D 0xB272 0xB27A fichas_por_fase  4 palabras: las 4 fichas de 2 bits de cada fase de la ruina (p00:5346: 0xC211 - (ruina * 5 + 1)); lo leen p00:5321 (8 bytes)
+F 0xB272 2
+D 0xB27A 0xB37A fichas_de_fase  4 x 64 bytes: dos pares de fichas de 2 bits que p00:5332 y p00:5340 cargan en 0xC818 y 0xCC18; lo leen p00:5321 (256 bytes)
+F 0xB27A 16
+D 0xB37A 0xB536 caracteres_p5143  44 caracteres de 1 bit (p00:5146, L_4CBF con B = 0x2C); se solapan 2 bloques: (por_fase_b4d2 B4D2-B536); lo leen p00:5143, p02:8F70 (444 bytes)
+F 0xB37A 8
+D 0xB536 0xB593 resto_B536  tablas cortas que apuntan p01:7F31 (0xB591); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p01:7F31 (93 bytes)
+F 0xB536 16
+D 0xB593 0xB5C5 por_fase_B591  25 palabras: la lista de cada fase 1-25 (p01:7F1F, indice 0xC211); lo leen p01:7F1F (50 bytes)
+F 0xB593 2
+D 0xB5C5 0xB5C9 lista_B5C5  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5C5 3
+D 0xB5C9 0xB5CD lista_B5C9  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5C9 3
+D 0xB5CD 0xB5D1 lista_B5CD  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5CD 3
+D 0xB5D1 0xB5D5 lista_B5D1  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5D1 3
+D 0xB5D5 0xB5D9 lista_B5D5  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5D5 3
+D 0xB5D9 0xB5E0 lista_B5D9  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (7 bytes)
+F 0xB5D9 3
+D 0xB5E0 0xB5E4 lista_B5E0  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5E0 3
+D 0xB5E4 0xB5EB lista_B5E4  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (7 bytes)
+F 0xB5E4 3
+D 0xB5EB 0xB5EF lista_B5EB  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5EB 3
+D 0xB5EF 0xB5F3 lista_B5EF  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5EF 3
+D 0xB5F3 0xB5F7 lista_B5F3  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5F3 3
+D 0xB5F7 0xB5FB lista_B5F7  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (4 bytes)
+F 0xB5F7 3
+D 0xB5FB 0xB602 lista_B5FB  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (7 bytes)
+F 0xB5FB 3
+D 0xB602 0xB603 lista_B602  3 bytes [pantalla][YX][YX] a 0xD180 hasta 0xFF; lo leen p01:7F1F (1 bytes)
+F 0xB602 3
+D 0xB603 0xB60D textos_por_ruina  5 palabras: el texto a maquina de cada ruina (p02:801E); lo leen p02:801E (10 bytes)
+F 0xB603 2
+D 0xB60D 0xB63B maquina_B60D  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (46 bytes)
+F 0xB60D 16
+D 0xB63B 0xB683 maquina_B63B  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (72 bytes)
+F 0xB63B 16
+D 0xB683 0xB6C8 maquina_B683  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (69 bytes)
+F 0xB683 16
+D 0xB6C8 0xB6FE maquina_B6C8  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (54 bytes)
+F 0xB6C8 16
+D 0xB6FE 0xB73C maquina_B6FE  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (62 bytes)
+F 0xB6FE 16
+D 0xB73C 0xB744 estados_B73C  4 palabras: el nombre de cada estado del personaje (p02:81B2, hasta 0xFF); lo leen p02:8168 (8 bytes)
+F 0xB73C 2
+D 0xB744 0xB74C estados_B744  4 palabras: el nombre de cada estado del personaje (p02:81B2, hasta 0xFF); lo leen p02:8168 (8 bytes)
+F 0xB744 2
+D 0xB74C 0xB754 estados_B74C  4 palabras: el nombre de cada estado del personaje (p02:81B2, hasta 0xFF); lo leen p02:8168 (8 bytes)
+F 0xB74C 2
+D 0xB754 0xB75C estados_B754  4 palabras: el nombre de cada estado del personaje (p02:81B2, hasta 0xFF); lo leen p02:8168 (8 bytes)
+F 0xB754 2
+D 0xB75C 0xB766 estado_B75C  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (10 bytes)
+F 0xB75C 16
+D 0xB766 0xB771 estado_B766  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (11 bytes)
+F 0xB766 16
+D 0xB771 0xB77C estado_B771  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (11 bytes)
+F 0xB771 16
+D 0xB77C 0xB784 estado_B77C  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (8 bytes)
+F 0xB77C 16
+D 0xB784 0xB78E estado_B784  nombre de estado, caracteres hasta 0xFF (p02:81B6); se solapan 2 bloques: (estado_B784 B784-B78E); lo leen p02:8168 (10 bytes)
+F 0xB784 16
+D 0xB78E 0xB798 estado_B78E  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (10 bytes)
+F 0xB78E 16
+D 0xB798 0xB7A2 estado_B798  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (10 bytes)
+F 0xB798 16
+D 0xB7A2 0xB7AA estado_B7A2  nombre de estado, caracteres hasta 0xFF (p02:81B6); se solapan 2 bloques: (estado_B7A2 B7A2-B7AA); lo leen p02:8168 (8 bytes)
+F 0xB7A2 16
+D 0xB7AA 0xB7B1 estado_B7AA  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (7 bytes)
+F 0xB7AA 16
+D 0xB7B1 0xB7B9 estado_B7B1  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (8 bytes)
+F 0xB7B1 16
+D 0xB7B9 0xB7C0 estado_B7B9  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (7 bytes)
+F 0xB7B9 16
+D 0xB7C0 0xB7C8 estado_B7C0  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (8 bytes)
+F 0xB7C0 16
+D 0xB7C8 0xB7D1 estado_B7C8  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (9 bytes)
+F 0xB7C8 16
+D 0xB7D1 0xB7DC estado_B7D1  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (11 bytes)
+F 0xB7D1 16
+D 0xB7DC 0xB7EC textos_B7DC  8 palabras: el texto a maquina segun el estado del personaje (+4 si 0xC208 no coincide); lo leen p02:8136 (16 bytes)
+F 0xB7DC 2
+D 0xB7EC 0xB7FC textos_B7EC  8 palabras: el texto a maquina segun el estado del personaje (+4 si 0xC208 no coincide); lo leen p02:813E (16 bytes)
+F 0xB7EC 2
+D 0xB7FC 0xB805 maquina_B7FC  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (9 bytes)
+F 0xB7FC 16
+D 0xB805 0xB810 maquina_B805  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (11 bytes)
+F 0xB805 16
+D 0xB810 0xB81A maquina_B810  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (10 bytes)
+F 0xB810 16
+D 0xB81A 0xB824 maquina_B81A  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (10 bytes)
+F 0xB81A 16
+D 0xB824 0xB82F maquina_B824  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (11 bytes)
+F 0xB824 16
+D 0xB82F 0xB837 maquina_B82F  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (8 bytes)
+F 0xB82F 16
+D 0xB837 0xB83F maquina_B837  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (8 bytes)
+F 0xB837 16
+D 0xB83F 0xB848 maquina_B83F  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (9 bytes)
+F 0xB83F 16
+D 0xB848 0xB850 maquina_B848  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (8 bytes)
+F 0xB848 16
+D 0xB850 0xB858 maquina_B850  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (8 bytes)
+F 0xB850 16
+D 0xB858 0xB85E cabecera_p81BD  6 bytes que p02:81BD copia a 0xC8B0 antes del nombre de estado (BIOS no japonesa); lo leen p02:81BD (6 bytes)
+F 0xB858 6
+D 0xB85E 0xB866 estados_B85E  4 palabras: el nombre de cada estado del personaje (p02:81B2, hasta 0xFF); lo leen p02:8168 (8 bytes)
+F 0xB85E 2
+D 0xB866 0xB875 estado_B866  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (15 bytes)
+F 0xB866 16
+D 0xB875 0xB880 estado_B875  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (11 bytes)
+F 0xB875 16
+D 0xB880 0xB897 estado_B880  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (23 bytes)
+F 0xB880 16
+D 0xB897 0xB8A1 estado_B897  nombre de estado, caracteres hasta 0xFF (p02:81B6); lo leen p02:8168 (10 bytes)
+F 0xB897 16
+D 0xB8A1 0xB8AF maquina_B8A1  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (14 bytes)
+F 0xB8A1 16
+D 0xB8AF 0xB8BB maquina_B8AF  texto a maquina (p02:8059): caracteres, 0xFD linea, 0xFE pausa, 0xFF acaba; lo leen p02:8059 (12 bytes)
+F 0xB8AF 16
+D 0xB8BB 0xB8ED por_fase_b8bb  25 palabras: la lista de cada fase (p02:912A: p12:B8BB[0xC211 - 1]; 0 = ninguna); lo leen p02:9126 (50 bytes)
+F 0xB8BB 2
+D 0xB8ED 0xB92A lista_b8bb_B8ED  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (61 bytes)
+F 0xB8ED 3
+D 0xB92A 0xB979 lista_b8bb_B92A  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (79 bytes)
+F 0xB92A 3
+D 0xB979 0xB9CB lista_b8bb_B979  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (82 bytes)
+F 0xB979 3
+D 0xB9CB 0xBA05 lista_b8bb_B9CB  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (58 bytes)
+F 0xB9CB 3
+D 0xBA05 0xBA45 lista_b8bb_BA05  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (64 bytes)
+F 0xBA05 3
+D 0xBA45 0xBAA0 lista_b8bb_BA45  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (91 bytes)
+F 0xBA45 3
+D 0xBAA0 0xBAE3 lista_b8bb_BAA0  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (67 bytes)
+F 0xBAA0 3
+D 0xBAE3 0xBB26 lista_b8bb_BAE3  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (67 bytes)
+F 0xBAE3 3
+D 0xBB26 0xBB66 lista_b8bb_BB26  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (64 bytes)
+F 0xBB26 3
+D 0xBB66 0xBBA6 lista_b8bb_BB66  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (64 bytes)
+F 0xBB66 3
+D 0xBBA6 0xBBE9 lista_b8bb_BBA6  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (67 bytes)
+F 0xBBA6 3
+D 0xBBE9 0xBC3B lista_b8bb_BBE9  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (82 bytes)
+F 0xBBE9 3
+D 0xBC3B 0xBCA5 lista_b8bb_BC3B  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (106 bytes)
+F 0xBC3B 3
+D 0xBCA5 0xBCF4 lista_b8bb_BCA5  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (79 bytes)
+F 0xBCA5 3
+D 0xBCF4 0xBD3D lista_b8bb_BCF4  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (73 bytes)
+F 0xBCF4 3
+D 0xBD3D 0xBD9B lista_b8bb_BD3D  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (94 bytes)
+F 0xBD3D 3
+D 0xBD9B 0xBDFC lista_b8bb_BD9B  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (97 bytes)
+F 0xBD9B 3
+D 0xBDFC 0xBE7B lista_b8bb_BDFC  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (127 bytes)
+F 0xBDFC 3
+D 0xBE7B 0xBEEB lista_b8bb_BE7B  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (112 bytes)
+F 0xBE7B 3
+D 0xBEEB 0xBF5B lista_b8bb_BEEB  registros de 3 bytes [pantalla][YX][..] hasta 0xFF (p02:9135); lo leen p02:9126 (112 bytes)
+F 0xBEEB 3
+D 0xBF5B 0xBF8D por_fase_BF59  25 palabras: la lista de cada fase 1-25 (p01:79A9, indice 0xC211); lo leen p01:79A9 (50 bytes)
+F 0xBF5B 2
+D 0xBF8D 0xBF91 lista_BF8D  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; lo leen p01:79A9 (4 bytes)
+F 0xBF8D 3
+D 0xBF91 0xBFA1 lista_BF91  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; lo leen p01:79A9 (16 bytes)
+F 0xBF91 3
+D 0xBFA1 0xBFA8 lista_BFA1  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; lo leen p01:79A9 (7 bytes)
+F 0xBFA1 3
+D 0xBFA8 0xBFBE lista_BFA8  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; lo leen p01:79A9 (22 bytes)
+F 0xBFA8 3
+D 0xBFBE 0xBFC5 lista_BFBE  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; lo leen p01:79A9 (7 bytes)
+F 0xBFBE 3
+D 0xBFC5 0xBFD2 lista_BFC5  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; lo leen p01:79A9 (13 bytes)
+F 0xBFC5 3
+D 0xBFD2 0xBFD9 lista_BFD2  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; lo leen p01:79A9 (7 bytes)
+F 0xBFD2 3
+D 0xBFD9 0xC000 lista_BFD9  3 bytes [pantalla][Y][X] a 0xCB00 hasta 0xFF; se solapan 3 bloques: (lista_BFEE BFEE-BFEF) (relleno_ff BFEE-C000); lo leen p01:79A9, nadie (39 bytes)
+F 0xBFD9 3
+# --- fin de los bloques de bloques.py ---

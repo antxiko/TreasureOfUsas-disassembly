@@ -1,0 +1,56 @@
+# Notas del banco 03
+
+# --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
+D 0xA09D 0xA0A5 saltos_A09D  tabla de 4 palabras del despachador (call 0x408D en 0xA09A); lo leen L_408D (8 bytes)
+F 0xA09D 2
+D 0xA40C 0xA422 resto_A40C  tablas cortas que apuntan p03:A3BF (0xA40C), p03:A3DE (0xA417); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:A3BF, p03:A3DE (22 bytes)
+F 0xA40C 16
+D 0xA530 0xA546 resto_A530  tablas cortas que apuntan p03:A50B (0xA530), p03:A521 (0xA53B); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:A50B, p03:A521 (22 bytes)
+F 0xA530 16
+D 0xA5B4 0xA5B7 resto_A5B4  tablas cortas que apuntan p03:A59E (0xA5B4); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:A59E (3 bytes)
+F 0xA5B4 16
+D 0xA5BD 0xA5C5 saltos_A5BD  tabla de 4 palabras del despachador (call 0x408D en 0xA5BA); lo leen L_408D (8 bytes)
+F 0xA5BD 2
+D 0xA5FA 0xA5FD resto_A5FA  tablas cortas que apuntan p03:A5DA (0xA5FA); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:A5DA (3 bytes)
+F 0xA5FA 16
+D 0xA802 0xA80A resto_A802  tablas cortas que apuntan p01:7569 (0xA802), p03:A7B0 (0xA802); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p01:7569, p03:A7B0 (8 bytes)
+F 0xA802 16
+D 0xA81D 0xA837 resto_A81D  tablas cortas que apuntan p03:A80C (0xA81D); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:A80C (26 bytes)
+F 0xA81D 16
+D 0xA869 0xA871 saltos_A869  tabla de 4 palabras del despachador (call 0x408D en 0xA866); lo leen L_408D (8 bytes)
+F 0xA869 2
+D 0xA8E9 0xA8ED resto_A8E9  SIN LECTOR A LA VISTA: ningun inmediato de 16 bits lo apunta con el banco puesto; lo leen nadie (4 bytes)
+F 0xA8E9 16
+D 0xAA3C 0xAA4C resto_AA3C  tablas cortas que apuntan p03:AA25 (0xAA3C); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:AA25 (16 bytes)
+F 0xAA3C 16
+D 0xAA7B 0xAA94 resto_AA7B  tablas cortas que apuntan p03:AA6A (0xAA7B); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:AA6A (25 bytes)
+F 0xAA7B 16
+D 0xABED 0xABF5 resto_ABED  tablas cortas que apuntan p03:AC4C (0xABED); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:AC4C (8 bytes)
+F 0xABED 16
+D 0xAC62 0xAC72 resto_AC62  tablas cortas que apuntan p03:AC32 (0xAC62); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:AC32 (16 bytes)
+F 0xAC62 16
+D 0xACB9 0xACC9 resto_ACB9  tablas cortas que apuntan p03:AC81 (0xACB9); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:AC81 (16 bytes)
+F 0xACB9 16
+D 0xB051 0xB05B saltos_B051  tabla de 5 palabras del despachador (call 0x408D en 0xB04E); lo leen L_408D (10 bytes)
+F 0xB051 2
+D 0xB16A 0xB170 saltos_B16A  tabla de 3 palabras del despachador (call 0x408D en 0xB167); lo leen L_408D (6 bytes)
+F 0xB16A 2
+D 0xB249 0xB259 resto_B249  tablas cortas que apuntan p03:B209 (0xB249); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:B209 (16 bytes)
+F 0xB249 16
+D 0xB290 0xB298 saltos_B290  tabla de 4 palabras del despachador (call 0x408D en 0xB28D); lo leen L_408D (8 bytes)
+F 0xB290 2
+D 0xB319 0xB321 saltos_B319  tabla de 4 palabras del despachador (call 0x408D en 0xB316); lo leen L_408D (8 bytes)
+F 0xB319 2
+D 0xB34F 0xB35F resto_B34F  tablas cortas que apuntan p03:B347 (0xB34F); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:B347 (16 bytes)
+F 0xB34F 16
+D 0xB371 0xB379 resto_B371  tablas cortas que apuntan p03:B369 (0xB371); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:B369 (8 bytes)
+F 0xB371 16
+D 0xB62B 0xB62F resto_B62B  tablas cortas que apuntan p03:B60A (0xB62B); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:B60A (4 bytes)
+F 0xB62B 16
+D 0xB774 0xB78E saltos_B774  tabla de 13 palabras del despachador (call 0x408D en 0xB771); lo leen L_408D (26 bytes)
+F 0xB774 2
+D 0xB9F7 0xBA0C resto_B9F7  tablas cortas que apuntan p03:B8C9 (0xB9F7); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:B8C9 (21 bytes)
+F 0xB9F7 16
+D 0xBFF1 0xC000 resto_BFF1  tablas cortas que apuntan p03:BFE6 (0xBFF1); el tamano de cada una sale del lector siguiente, no de recorrerla; lo leen p03:BFE6 (15 bytes)
+F 0xBFF1 16
+# --- fin de los bloques de bloques.py ---

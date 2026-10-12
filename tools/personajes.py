@@ -188,10 +188,115 @@ def anima(ruta, escala=3):
                  duration=round(paso_gif * 1000 / 60), loop=0)
 
 
+# LOS GOLPES DE CLES. Con Cles (0xC240 = 1) p00:5B1A anade los fotogramas de
+# p14:9F4A[estado] ([n] y n punteros) a la pagina 0 desde la linea 0xD8
+# (0x6C00), volteado y tal cual como los otros. El golpe es un disparo que
+# nace en la Y y la X de Cles (p01:6BAE; p01:6C12 no la toca con Cles) y cuyos
+# sprites salen del registro p09:B7C9[(ix+0x0A)]: [n] y n x [dy][dx][patron]
+# [color], con dy y dx con signo (p01:6FCD). Segun el estado:
+#   0  tipo 6 (p01:6CE6): los 2 fotogramas van a la linea 0xF1 (patrones
+#      0x10-0x1C) alternando cada 2 cuadros (p01:6867) y el registro 0x0F o
+#      0x10 los pone como 4 sprites de un color (0x0D): un dibujo de 32 x 32
+#      que se aleja (velocidad 0x400)
+#   1 y 2  tipos 7 y 8 (p01:687A): el cuerpo de p01:688B[accion] a la linea
+#      0xF0 y la otra mitad de p01:6891[accion] a la 0xF1; el registro es
+#      p01:6D59[accion] (+3 mirando a la izquierda): 9 de pie, 0x0A en el aire
+#      y 0x0B en la escalera
+#   3  tipo 9 (p01:68C8): el cuerpo da vueltas por los 4 fotogramas, uno cada
+#      2 cuadros (0xC00D & 6)
+# Aqui todo mira a la derecha (las lineas impares: el fotograma tal cual).
+GOLPES = 0x9F4A
+REGISTROS = 0xB7C9         # p09:B7C9
+REGISTRO_ACCION = 0x6D59   # p01:6D59
+LINEA_CUERPO = 0x688B      # p01:688B
+LINEA_GOLPE = 0x6891       # p01:6891
+
+
+def golpes(estado):
+    a = palabra(T131415, GOLPES + 2 * estado)
+    return [compone(palabra(T131415, a + 1 + 2 * k)) for k in range(leer(T131415, a))]
+
+
+def registro(n):
+    from rom import T789
+    a = palabra(T789, REGISTROS + 2 * n)
+    return [tuple(leer(T789, a + 1 + 4 * i + j) for j in range(4)) for i in range(leer(T789, a))]
+
+
+def con_signo(b):
+    return b - 256 if b >= 0x80 else b
+
+
+def pinta_sprite(img, buf, p, x0, y0, color, mezcla):
+    """El sprite 16 x 16 de patron p (0x00-0x1C: p * 8 dentro de las dos
+    lineas 0xF0 y 0xF1) en (x0, y0). mezcla: OR con lo que haya (bit CC)."""
+    for y in range(16):
+        for x in range(16):
+            b = buf[p * 8 + (16 if x >= 8 else 0) + y]
+            if b & (0x80 >> (x & 7)):
+                q = (x0 + x, y0 + y)
+                if 0 <= q[0] < img.width and 0 <= q[1] < img.height:
+                    previo = mezcla.get(q, 0) if color & 0x40 else 0
+                    c = (color & 0x0F) | previo
+                    mezcla[q] = c
+                    img.putpixel(q, PALETA_CLES[c])
+
+
+def cuerpo(img, buf, cx, cy, mezcla):
+    """p01:68D9: dos parejas de sprites en (Y - 0x20, X - 8) y (Y - 0x10, X - 8)
+    con los patrones 0/4 y 8/0x0C, la segunda con el bit CC (0x49)."""
+    for dy, p in ((-0x20, 0), (-0x10, 8)):
+        pinta_sprite(img, buf, p, cx - 8, cy + dy, COLOR_0, mezcla)
+        pinta_sprite(img, buf, p + 4, cx - 8, cy + dy, 0x40 | COLOR_1, mezcla)
+
+
+def golpe(img, buf, reg, cx, cy, mezcla):
+    for dy, dx, p, color in registro(reg):
+        pinta_sprite(img, buf, p, cx + con_signo(dx), cy + con_signo(dy), color, mezcla)
+
+
+PALETA_CLES = {}
+
+
+def ataques(ruta, escala=3):
+    from PIL import Image
+    from rom import T123
+    import fases
+    v = fases.vram_de_ruina(0)
+    v.paleta(T123, PALETA_PERSONAJE[1])
+    PALETA_CLES.update({c: v.rgb(c) for c in range(16)})
+    f = {e: golpes(e) for e in range(4)}
+    celda = 48
+    imgs = []
+    for g in range(4):                      # un cuadro de GIF = 2 del juego
+        img = Image.new("RGB", (3 * celda, 4 * celda), (24, 24, 24))
+        # 0: el dibujo de 32 x 32 (registro 0x0F: mirando a la derecha)
+        buf = bytes(0x80) + f[0][g % 2]
+        golpe(img, buf, 0x0F, celda // 2, celda - 8, {})
+        # 1 y 2: de pie, en el aire y en la escalera
+        for e in (1, 2):
+            for c, accion in enumerate((0, 2, 5)):
+                cuerpo_k = (leer(T123, LINEA_CUERPO + accion) - 0xD8) // 2
+                golpe_k = (leer(T123, LINEA_GOLPE + accion) - 0xD8) // 2
+                reg = leer(T123, REGISTRO_ACCION + accion)
+                buf = f[e][cuerpo_k] + f[e][golpe_k]
+                mezcla = {}
+                cx, cy = c * celda + celda // 2, e * celda + celda - 8
+                golpe(img, buf, reg, cx, cy, mezcla)
+                cuerpo(img, buf, cx, cy, mezcla)
+        # 3: la vuelta
+        cuerpo(img, f[3][g], celda // 2, 3 * celda + celda - 8, {})
+        imgs.append(img.resize((img.width * escala, img.height * escala), Image.NEAREST))
+    imgs[0].save(ruta, save_all=True, append_images=imgs[1:],
+                 duration=round(2 * 1000 / 60), loop=0)
+
+
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "hoja":
         hoja(sys.argv[2])
     elif len(sys.argv) >= 3 and sys.argv[1] == "anima":
         anima(sys.argv[2])
+    elif len(sys.argv) >= 3 and sys.argv[1] == "ataques":
+        ataques(sys.argv[2])
     else:
-        sys.exit("uso: personajes.py hoja <png> | anima <gif>")
+        sys.exit("uso: personajes.py hoja <png> | anima <gif> | ataques <gif>")

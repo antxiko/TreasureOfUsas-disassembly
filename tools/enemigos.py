@@ -149,7 +149,8 @@ def ruina_de(tipo):
 
 def pinta(img, vram, piezas, cx, cy, pal):
     mezcla = {}
-    for dy, dx, pat, color in reversed(piezas):     # el de menor numero, encima
+    # en orden de sprite: el de menor numero tapa; el bit CC hace OR (como actores.py)
+    for dy, dx, pat, color in piezas:
         base = 0xF800 + pat * 8
         for y in range(16):
             for x in range(16):
@@ -157,7 +158,12 @@ def pinta(img, vram, piezas, cx, cy, pal):
                 if b & (0x80 >> (x & 7)):
                     q = (cx + dx + x, cy + dy + y)
                     if 0 <= q[0] < img.width and 0 <= q[1] < img.height:
-                        c = (color & 0x0F) | (mezcla.get(q, 0) if color & 0x40 else 0)
+                        if color & 0x40:
+                            c = (color & 0x0F) | mezcla.get(q, 0)
+                        elif q in mezcla:
+                            continue
+                        else:
+                            c = color & 0x0F
                         mezcla[q] = c
                         img.putpixel(q, pal[c])
 

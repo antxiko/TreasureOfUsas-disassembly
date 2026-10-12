@@ -59,7 +59,15 @@ ANIMACION = {
     13: ((0, 1), 8, "p02:9BAB: alterna_fotograma con 0"),
     14: ((0x27, 0x28), 8, "p02:9B06: alterna_fotograma con 0x27"),
     15: ((0x79, 0x7A), 4, "p03:A0A5: alterna_79_7b, cada 4 cuadros"),
+    # los jefes del final de las fases (en la ruina 0, la ultima pantalla de
+    # las fases 1-4; vida_por_ruina, p03:AB36, les suma ruina * 16)
+    30: ((0x45, 0x46), 8, "p03:ABF5: fotograma_45_46, 0x45 o 0x46 segun 0xC00D & 8"),
+    31: ((0x47, 0x48), 8, "p03:AE4F: 0x47 o 0x48 segun 0xC00D & 8"),
+    32: ((0x49,), 1, "p03:AED8: 0x49 (0x4B al saltar, p03:AFB9)"),
+    33: ((0x4F,), 1, "p03:B08E: 0x4F, o 0x50 con el personaje a la derecha"),
 }
+ENEMIGOS = (1, 2, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15)
+JEFES = (30, 31, 32, 33)
 
 
 def rle49ce(trio, a):
@@ -154,7 +162,9 @@ def paleta(tipo):
 def pinta(img, tipo, f, cx, cy, pat, cols, pal):
     mezcla = {}
     ps = piezas(tipo, f)
-    for k in reversed(range(len(ps))):          # el de menor numero, encima
+    # en orden de sprite: el de menor numero tapa a los demas, y el que lleva el
+    # bit CC hace OR con lo que ya pusieron los de menor numero
+    for k in range(len(ps)):
         dy, dx, p = ps[k]
         color = cols[k]
         base = 0xF800 + p * 8
@@ -164,7 +174,12 @@ def pinta(img, tipo, f, cx, cy, pat, cols, pal):
                 if b & (0x80 >> (x & 7)):
                     q = (cx + dx + x, cy + dy + y)
                     if 0 <= q[0] < img.width and 0 <= q[1] < img.height:
-                        c = (color & 0x0F) | (mezcla.get(q, 0) if color & 0x40 else 0)
+                        if color & 0x40:
+                            c = (color & 0x0F) | mezcla.get(q, 0)
+                        elif q in mezcla:
+                            continue
+                        else:
+                            c = color & 0x0F
                         mezcla[q] = c
                         img.putpixel(q, pal[c])
 
@@ -174,7 +189,7 @@ def anima(ruta, tipos=None, escala=3):
     from math import lcm
     from PIL import Image
     # el tipo 3 no tiene piezas de sprite (p06:B62A[3] = 0)
-    tipos = tipos or sorted(ANIMACION)
+    tipos = tipos or ENEMIGOS
     datos = {t: (patrones(t), colores(t), paleta(t)) for t in tipos}
     ciclo = 1
     for t in tipos:
@@ -198,5 +213,7 @@ def anima(ruta, tipos=None, escala=3):
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "anima":
         anima(sys.argv[2])
+    elif len(sys.argv) >= 3 and sys.argv[1] == "jefes":
+        anima(sys.argv[2], JEFES)
     else:
-        sys.exit("uso: actores.py anima <gif>")
+        sys.exit("uso: actores.py anima <gif> | jefes <gif>")

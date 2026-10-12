@@ -399,6 +399,31 @@ C 0x8CBE ...y otra vez a (0x68, 0x78) de la 0
 C 0x8CE7 en la sala 5: la paleta de p00:5A8D...
 C 0x8CED ...y borra 0x10 x 0x20 en (0xA4, 0)
 C 0x8D32 el sonido 0x24 y el paso siguiente
+C 0x8EBA a 0xC888-0xC88B
+C 0x8ECB y la cuenta del parpadeo del borde
+C 0x8ED9 cada 4 cuadros...
+C 0x8EE2 ...de (0x60, 0x90) de la pagina 1...
+C 0x8EE5 ...a la X de 0xC889...
+C 0x8EE9 ...y la Y 0xC888 - las lineas ya puestas, de 0xC88B de ancho
+C 0x8F0B el bit 0 de la cuenta: 15...
+C 0x9129 la lista de objetos de la fase (p12:B8BB)
+C 0x9132 sin lista, nada
+C 0x9133 hasta 0x80 registros de 3 bytes
+C 0x9135 los de esta pantalla
+C 0x913F 0xFF: se acabo
+C 0x914B [YX]: X = el nibble alto + 8...
+C 0x9151 ...Y = el nibble bajo * 16 + 0x24
+C 0x915C la clase del objeto
+C 0x9162 ya cogido: nada
+C 0x9166 el objeto (C = 0x2A, B = la clase)
+C 0x916F 0xA0 registros de 4 bytes
+C 0x9174 la X...
+C 0x9179 ...la Y...
+C 0x917F ...la pantalla...
+C 0x9186 ...y la fase
+C 0x918A el registro siguiente
+C 0x9191 no esta: sin acarreo
+C 0x9193 esta: acarreo
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x8015 empieza_texto_de_ruina con 12: el texto a maquina de la ruina (p12:B603)
@@ -507,10 +532,10 @@ L 0x9049 lee_c319 con 9: 3 bytes de p09:BED3 + 3 * (0xC211 - 1) a 0xC319
 L 0x9098 cuenta_c314 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
 L 0x90BA cuenta_30_d502 0xC314 = 0x30 y p02:8F94 con DE = (0xD502)
 L 0x90C8 cuadro_c314 con 0xC316: la cuenta 0xC314 y, con 0xC310 >= 2, copia 16 x 0x30 de (0xD500) a (0xD502)
-L 0x90F0 marcas_y_vuelve con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
-L 0x9120 marcas_de_la_pantalla con 12: los registros de p12:B8BB de la pantalla (p02:9148)
-L 0x9148 marca crea el actor 0x2A en la casilla [YX] del registro
-L 0x916C ya_marcado busca la casilla en 0xE000 con la pantalla y la fase
+L 0x90F0 objetos_de_la_lista_y_vuelve con 12: los objetos de la lista de la pantalla (p12:B8BB) y vuelve con 1-2-3
+L 0x9120 objetos_de_la_lista con 12: los objetos de p12:B8BB[fase] de esta pantalla ([pantalla][YX][clase]; p02:9148)
+L 0x9148 crea_objeto el objeto 0x2A de clase B en la casilla [YX] del registro, si no se ha cogido ya (p02:916C)
+L 0x916C ya_cogido acarreo si la casilla (D, E) de esta pantalla y fase esta entre los objetos cogidos de 0xE000
 L 0x9195 busca_de_la_pantalla con 9: el registro de p09:B12B[0xC211 - 1] de la pantalla; acarreo si no hay
 L 0x91BE registro_de_la_pantalla avanza de 4 en 4 hasta el de la pantalla 0xC212; acarreo en el 0xFF
 L 0x91D2 lee_b70d A = p09:B70D[A - 1]
@@ -1077,7 +1102,6 @@ C 0x90CD lee la cuenta de la sala del final de fase o de la sala 5
 C 0x90D9 lee las dos posiciones de la sala del final de fase y el byte siguiente (16 bits)
 C 0x90E4 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 C 0x90F0 banco_12_en_a000: pone el banco 12 en 0xA000
-C 0x90F3 marcas_de_la_pantalla: con 12: los registros de p12:B8BB de la pantalla (p02:9148)
 C 0x90F6 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x9102 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0x9109 lee la ruina (0-4)
@@ -1087,11 +1111,7 @@ C 0x911D banco_12_en_a000: pone el banco 12 en 0xA000
 C 0x9120 lee en la sala de la puerta 5
 C 0x9126 lee la fase (1-25: ruina * 5 + puerta)
 C 0x912D palabra_a: HL = la palabra A de la tabla HL
-C 0x9135 lee la pantalla de la fase (desde 1)
-C 0x913A marca: crea el actor 0x2A en la casilla [YX] del registro
-C 0x915E ya_marcado: busca la casilla en 0xE000 con la pantalla y la fase
 C 0x9163 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-C 0x9166 crea_actor: el actor C en (D, E) en el primer hueco de 0xC400
 C 0x9169 banco_12_en_a000: pone el banco 12 en 0xA000
 C 0x917C lee la pantalla de la fase (desde 1)
 C 0x9183 lee la fase (1-25: ruina * 5 + puerta)

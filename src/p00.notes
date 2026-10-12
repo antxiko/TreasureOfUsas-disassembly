@@ -1859,7 +1859,7 @@ C 0x5EB3 paleta_vacia: fuera de la sala 5: la paleta p06:B35B (vacia)
 C 0x5EB6 juegos_de_la_pantalla_y_vuelve: p02:823C y vuelve con 1-2-3
 C 0x5EB9 borra_actores: pone a cero 0xC400-0xC7FF y 0xCC60-0xCC63
 C 0x5EBC prepara_la_pantalla: borra 0xCC40-0xCC4F y prepara los actores de la pantalla (p02:87B6)
-C 0x5EBF marcas_y_vuelve: con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
+C 0x5EBF objetos_de_la_lista_y_vuelve: con 12: los objetos de la lista de la pantalla (p12:B8BB) y vuelve con 1-2-3
 C 0x5EC2 prepara_la_sala_5: 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo suyo
 C 0x5EC5 sala_del_final_de_fase: en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), cuentas a cero, 0xC316 = 1, juegos 0x27 y 0x30, p09:BED3 y el actor 0x23
 C 0x5EC8 apunta a el personaje que se lleva (0 o 1)

@@ -4630,7 +4630,7 @@ cambia_de_pantalla:		; pinta la pantalla nueva: mapa, actores, objetos y sprites
 	call 08236h		;5eb6   ; juegos_de_la_pantalla_y_vuelve: p02:823C y vuelve con 1-2-3
 	call borra_actores		;5eb9   ; borra_actores: pone a cero 0xC400-0xC7FF y 0xCC60-0xCC63
 	call 087a1h		;5ebc   ; prepara_la_pantalla: borra 0xCC40-0xCC4F y prepara los actores de la pantalla (p02:87B6)
-	call 090f0h		;5ebf   ; marcas_y_vuelve: con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
+	call 090f0h		;5ebf   ; objetos_de_la_lista_y_vuelve: con 12: los objetos de la lista de la pantalla (p12:B8BB) y vuelve con 1-2-3
 	call 08cd6h		;5ec2   ; prepara_la_sala_5: 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo suyo
 	jp 08f16h		;5ec5   ; sala_del_final_de_fase: en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), cuentas a cero, 0xC316 = 1, juegos 0x27 y 0x30, p09:BED3 y el actor 0x23
 borra_personajes:		; pone a cero 0xC240-0xC258

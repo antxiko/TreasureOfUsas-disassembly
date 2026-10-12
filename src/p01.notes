@@ -869,7 +869,7 @@ L 0x744D medidas_del_disparo las medidas del disparo IY de p15:BEAD[tipo - 1]
 L 0x74A9 caja_del_actor con 6: la caja del actor IX de p06:B6D3[tipo - 1]
 L 0x74CB cajas_se_tocan acarreo si las dos cajas (D, E, H, L y las de HL') se tocan
 L 0x74E7 umbral_de_fichas fuera de la sala 5, el umbral de fichas de p01:704C (0xC222 = 0x11, 0xC223 = 0x12)
-L 0x7509 marca_en_e000 un hueco en 0xE000 (de 4 en 4) para el actor IX salvo el tipo 0x29
+L 0x7509 anota_objeto_cogido anota en 0xE000 la X, la Y, la pantalla y la fase del objeto IX cogido (salvo el tipo 0x29 y las clases desde la 5), para que no vuelva a salir
 L 0x7583 despacha_por_personaje despacha A con IX = la ficha del personaje
 L 0x761D sprites_a426_encima los patrones de p15:A426 y dos sprites encima del personaje
 L 0x7625 globo_encima los sprites 8 y 9 en (Y - 0x30, X - 8) del personaje, patrones 0x28 y 0x2C y sus colores (p01:765B)
@@ -1632,7 +1632,6 @@ C 0x7525 lee la X del actor
 C 0x752A lee la Y del actor
 C 0x752F lee la pantalla de la fase (desde 1)
 C 0x7534 lee la fase (1-25: ruina * 5 + puerta)
-C 0x7539 marca_en_e000: un hueco en 0xE000 (de 4 en 4) para el actor IX salvo el tipo 0x29
 C 0x7548 despacha_por_personaje: despacha A con IX = la ficha del personaje
 C 0x7554 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 C 0x755A lee la X del actor

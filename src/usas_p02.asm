@@ -2255,7 +2255,7 @@ L_8EA6:
 	ret			;8eb6
 prepara_c888:		; 4 bytes de p02:8ED2 a 0xC888 y sus cuentas
 	ld hl,08ed2h		;8eb7   ; 4 bytes de p02:8ED2: los limites del dibujo que se descubre
-	ld de,0c888h		;8eba
+	ld de,0c888h		;8eba   ; a 0xC888-0xC88B
 	ldi		;8ebd
 	ldi		;8ebf
 	ldi		;8ec1
@@ -2265,7 +2265,7 @@ prepara_c888:		; 4 bytes de p02:8ED2 a 0xC888 y sus cuentas
 	inc e			;8ec8
 	xor a			;8ec9
 	ld (de),a			;8eca
-	ld a,(0c88ch)		;8ecb
+	ld a,(0c88ch)		;8ecb   ; y la cuenta del parpadeo del borde
 	ld (0c88eh),a		;8ece
 	ret			;8ed1
 
@@ -2284,15 +2284,15 @@ DATA_resto_8ED2:
 
 paso_c888:		; cada 4 cuadros, el siguiente paso del dibujo de 0xC888 (p02:8F06)
 	call parpadeo_r7		;8ed6   ; cada 4 cuadros una linea mas del dibujo de (0x60, 0x90)
-	ld hl,0c88dh		;8ed9
+	ld hl,0c88dh		;8ed9   ; cada 4 cuadros...
 	inc (hl)			;8edc
 	cp 004h		;8edd
 	ret c			;8edf
 	ld (hl),000h		;8ee0
-	ld hl,09060h		;8ee2
-	ld a,(0c889h)		;8ee5
+	ld hl,09060h		;8ee2   ; ...de (0x60, 0x90) de la pagina 1...
+	ld a,(0c889h)		;8ee5   ; ...a la X de 0xC889...
 	ld d,a			;8ee8
-	ld a,(0c88ch)		;8ee9
+	ld a,(0c88ch)		;8ee9   ; ...y la Y 0xC888 - las lineas ya puestas, de 0xC88B de ancho
 	ld b,a			;8eec
 	ld a,(0c888h)		;8eed
 	sub b			;8ef0
@@ -2311,7 +2311,7 @@ parpadeo_r7:		; R#7 (color del borde) 15 o 14 segun 0xC88E
 	ld hl,0c88eh		;8f06   ; el borde (R#7) parpadea entre 15 y 14
 	dec (hl)			;8f09
 	ld a,(hl)			;8f0a
-	rra			;8f0b
+	rra			;8f0b   ; el bit 0 de la cuenta: 15...
 	ld b,00fh		;8f0c
 	jr c,L_8F11		;8f0e
 	dec b			;8f10
@@ -2604,9 +2604,9 @@ cuadro_c314:		; con 0xC316: la cuenta 0xC314 y, con 0xC310 >= 2, copia 16 x 0x30
 	ld de,(0d502h)		;90e7
 	ld a,001h		;90eb
 	jp L_8F94		;90ed
-marcas_y_vuelve:		; con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
+objetos_de_la_lista_y_vuelve:		; con 12: los objetos de la lista de la pantalla (p12:B8BB) y vuelve con 1-2-3
 	call 054aah		;90f0   ; banco_12_en_a000: pone el banco 12 en 0xA000
-	call marcas_de_la_pantalla		;90f3   ; marcas_de_la_pantalla: con 12: los registros de p12:B8BB de la pantalla (p02:9148)
+	call objetos_de_la_lista		;90f3
 	jp 05464h		;90f6   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 L_90F9:
 	ld de,0787ch		;90f9
@@ -2626,40 +2626,40 @@ L_9112:
 	call 05464h		;9117   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	call crea_actor		;911a   ; crea_actor: el actor C en (D, E) en el primer hueco de 0xC400
 	jp 054aah		;911d   ; banco_12_en_a000: pone el banco 12 en 0xA000
-marcas_de_la_pantalla:		; con 12: los registros de p12:B8BB de la pantalla (p02:9148)
+objetos_de_la_lista:		; con 12: los objetos de p12:B8BB[fase] de esta pantalla ([pantalla][YX][clase]; p02:9148)
 	ld a,(0c20ah)		;9120   ; lee en la sala de la puerta 5
 	or a			;9123
 	jr nz,L_9109		;9124
 	ld a,(0c211h)		;9126   ; lee la fase (1-25: ruina * 5 + puerta)
-	dec a			;9129
+	dec a			;9129   ; la lista de objetos de la fase (p12:B8BB)
 	ld hl,0b8bbh		;912a
 	call 0543ah		;912d   ; palabra_a: HL = la palabra A de la tabla HL
 	ld a,h			;9130
 	or l			;9131
-	ret z			;9132
-	ld b,080h		;9133
+	ret z			;9132   ; sin lista, nada
+	ld b,080h		;9133   ; hasta 0x80 registros de 3 bytes
 L_9135:
-	ld a,(0c212h)		;9135   ; lee la pantalla de la fase (desde 1)
+	ld a,(0c212h)		;9135   ; los de esta pantalla
 	cp (hl)			;9138
 	push hl			;9139
-	call z,marca		;913a   ; marca: crea el actor 0x2A en la casilla [YX] del registro
+	call z,crea_objeto		;913a
 	pop hl			;913d
 	ld a,(hl)			;913e
-	cp 0ffh		;913f
+	cp 0ffh		;913f   ; 0xFF: se acabo
 	ret z			;9141
 	inc hl			;9142
 	inc hl			;9143
 	inc hl			;9144
 	djnz L_9135		;9145
 	ret			;9147
-marca:		; crea el actor 0x2A en la casilla [YX] del registro
+crea_objeto:		; el objeto 0x2A de clase B en la casilla [YX] del registro, si no se ha cogido ya (p02:916C)
 	ld c,02ah		;9148
 	inc hl			;914a
-	ld a,(hl)			;914b
+	ld a,(hl)			;914b   ; [YX]: X = el nibble alto + 8...
 	and 0f0h		;914c
 	add a,008h		;914e
 	ld d,a			;9150
-	ld a,(hl)			;9151
+	ld a,(hl)			;9151   ; ...Y = el nibble bajo * 16 + 0x24
 	and 00fh		;9152
 	add a,a			;9154
 	add a,a			;9155
@@ -2668,43 +2668,43 @@ marca:		; crea el actor 0x2A en la casilla [YX] del registro
 	add a,024h		;9158
 	ld e,a			;915a
 	inc hl			;915b
-	ld b,(hl)			;915c
+	ld b,(hl)			;915c   ; la clase del objeto
 	push bc			;915d
-	call ya_marcado		;915e   ; ya_marcado: busca la casilla en 0xE000 con la pantalla y la fase
+	call ya_cogido		;915e
 	pop bc			;9161
-	ret c			;9162
+	ret c			;9162   ; ya cogido: nada
 	call 05464h		;9163   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-	call crea_actor		;9166   ; crea_actor: el actor C en (D, E) en el primer hueco de 0xC400
+	call crea_actor		;9166   ; el objeto (C = 0x2A, B = la clase)
 	jp 054aah		;9169   ; banco_12_en_a000: pone el banco 12 en 0xA000
-ya_marcado:		; busca la casilla en 0xE000 con la pantalla y la fase
+ya_cogido:		; acarreo si la casilla (D, E) de esta pantalla y fase esta entre los objetos cogidos de 0xE000
 	ld hl,0e000h		;916c
-	ld b,0a0h		;916f
+	ld b,0a0h		;916f   ; 0xA0 registros de 4 bytes
 L_9171:
 	push hl			;9171
 	ld a,(hl)			;9172
 	inc hl			;9173
-	cp d			;9174
+	cp d			;9174   ; la X...
 	jr nz,L_9187		;9175
 	ld a,(hl)			;9177
 	inc hl			;9178
-	cp e			;9179
+	cp e			;9179   ; ...la Y...
 	jr nz,L_9187		;917a
 	ld a,(0c212h)		;917c   ; lee la pantalla de la fase (desde 1)
-	cp (hl)			;917f
+	cp (hl)			;917f   ; ...la pantalla...
 	jr nz,L_9187		;9180
 	inc hl			;9182
 	ld a,(0c211h)		;9183   ; lee la fase (1-25: ruina * 5 + puerta)
-	cp (hl)			;9186
+	cp (hl)			;9186   ; ...y la fase
 L_9187:
 	pop hl			;9187
 	jr z,L_9193		;9188
-	ld a,004h		;918a
+	ld a,004h		;918a   ; el registro siguiente
 	call 04083h		;918c   ; hl_mas_a: HL = HL + A
 	djnz L_9171		;918f
-	or a			;9191
+	or a			;9191   ; no esta: sin acarreo
 	ret			;9192
 L_9193:
-	scf			;9193
+	scf			;9193   ; esta: acarreo
 	ret			;9194
 busca_de_la_pantalla:		; con 9: el registro de p09:B12B[0xC211 - 1] de la pantalla; acarreo si no hay
 	ld hl,0b12bh		;9195

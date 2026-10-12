@@ -164,6 +164,104 @@ C 0x97D7 el rojo al nibble alto del primer byte (0RRR0BBB)
 C 0x97DE el azul: el paso menos 0xCA09
 C 0x9FAE dos cifras de (HL)
 C 0x9FB4 el siguiente par de cifras y la siguiente columna (E + C)
+C 0x941F R#7 = 0x0F: el borde del color 15
+C 0x9426 HMMV de 0xA8 x 0x48 en (0x28, 0x40) de la pagina 1, color 0
+C 0x9435 la paleta del rotulo
+C 0x943B el rotulo desde (0x40, 0x40)
+C 0x944A 0xC240 = 0x3C (la cuenta)...
+C 0x944D ...0xC241 = 0x31 (las lineas que faltan)...
+C 0x9450 ...y 0xC242 = 0 (sin acabar)
+C 0x9453 13 caracteres de 1 bit en (8, 0) con el color 1
+C 0x9465 13 en (0x70, 0) con el color 2
+C 0x9474 26 en (0xD8, 0) con el color 3
+C 0x9486 cada 2 cuadros...
+C 0x948C ...una linea menos que falta
+C 0x948F todas: rotulo descubierto
+C 0x9495 0x31 - las que faltan: las lineas ya descubiertas...
+C 0x9499 ...de 0xA8 de ancho desde (0x28, 0x40)...
+C 0x949E ...al mismo sitio de la pagina 0
+C 0x94A3 el principio de la fila
+C 0x94A7 0xFF + 1 = 0
+C 0x94AA 0xFE + 2 = 0
+C 0x94B8 una ficha y 8 a la derecha
+C 0x9665 la lista de fichas de la ruina
+C 0x9671 la primera vez...
+C 0x9681 la cuenta de 0xAC cuadros...
+C 0x9685 ...cada 16...
+C 0x968C ...en la posicion de la ruina (p05:96AB)...
+C 0x9693 ...la ficha 0x1A o 0x1B, alternando (0xC8E9)
+C 0x96A5 acabado
+C 0x96B5 las listas de fichas del titulo
+C 0x96C7 y el RLE de p05:96CD a la VRAM
+C 0x96ED la primera terna del fundido a cero
+C 0x96F4 el RLE del mapa del titulo a 0xE400
+C 0x9700 desde (0x1C, 0x48): 15 filas de 14 fichas
+C 0x9709 una ficha
+C 0x970E 8 a la derecha
+C 0x9716 la fila siguiente, 8 mas abajo
+C 0x971C el color 13 = (0x77, 0x07): el blanco de la fuente
+C 0x9728 el texto p05:9736...
+C 0x972B ...solo sin la BIOS japonesa
+C 0x974A cada color, de 15 a 0...
+C 0x974C ...a negro
+C 0x9758 el paso del sprite...
+C 0x975A .../ 4 & 7...
+C 0x975F ...en la tabla p05:9782: su Y y su X
+C 0x976C el patron 4
+C 0x9778 el color 13 en sus 16 lineas
+C 0x9780 el paso siguiente
+C 0x979C 3 bytes por terna
+C 0x97A6 0xFF: el fundido acabado
+C 0x97A9 el color
+C 0x97AC el rojo (nibble alto del primer byte)...
+C 0x97B2 ...7 - rojo
+C 0x97B9 el azul (nibble bajo)
+C 0x97C3 el verde (el segundo byte)
+C 0x97CF rojo = paso - (7 - rojo), sin bajar de 0
+C 0x97E1 azul, igual
+C 0x97F0 verde, igual
+C 0x9802 el paso siguiente...
+C 0x9807 ...a los 8, el color siguiente
+C 0x980F acabado: el sprite 0 en (0x10, 0x9C)...
+C 0x9819 ...y el 1 en (0xE0, 0x9C), patron 0...
+C 0x982A ...color 15
+C 0x9831 el titulo, listo
+C 0x983A 0x30 bytes
+C 0x9843 0x19 bytes de 0xCA10
+C 0x9849 el texto del idioma de la BIOS
+C 0x9856 la linea (0xCA02)...
+C 0x985D ...pasadas las 0x19 primeras, se salta en el texto...
+C 0x9867 ...y si no, en el destino
+C 0x986B 0xFF: el prologo acabado...
+C 0x986F ...0xCA01 = 1...
+C 0x9874 ...borra 0xE0 x 8 en (0xA0, 0x10)...
+C 0x987D ...y PUSH SPACE KEY
+C 0x988F 0xFF detras de la linea
+C 0x9892 en (0xA0, 0x20) menos la cuenta: sube
+C 0x98A7 8 pasos por linea
+C 0x98AF la linea siguiente
+C 0x9EE2 la mejora 0
+C 0x9EEC el RLE de p06:A226 a la VRAM
+C 0x9EF2 el texto de INFORMATION
+C 0x9F1C ...los de los numeros...
+C 0x9F2A ...y el de las monedas, doble
+C 0x9F54 los retratos en su sitio de INFORMATION
+C 0x9F59 de los dos personajes, los bytes 0-15 de la ficha...
+C 0x9F62 ...a los 16-31: la copia para deshacer (F2)
+C 0x9F75 y las monedas, en 0xC22B
+C 0x9F88 las cifras de los niveles
+C 0x9F8E de los dos personajes
+C 0x9F93 0x19 entre columna y columna
+C 0x9FA0 el siguiente, 0x80 a la derecha
+C 0x9FB5 el par siguiente
+C 0x9FBC la vida de Wit en su barra
+C 0x9FC6 y sus niveles 1 y 2 (velocidad y salto)
+C 0x9FD7 lo mismo con Cles
+C 0x9FF0 + 1
+C 0x9FFE con la tecla especial 1 (F2): deshace (p06:A01E)
+C 0x9EFE los recuadros (H = X, L = Y; D x E): (0x32, 0x1F) de 0x1A x 0x0A...
+C 0x9F07 ...(0xAE, 0x1F) de 0x23 x 0x0A...
+C 0x9F0E ...los de los retratos, 0x32 x 0x32 en (0x27, 0x2B) y (0xA7, 0x2B)...
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x941C pinta_el_rotulo el rotulo del arranque en la pagina 1: R#7 = 0x0F, HMMV, caracteres p05:94C3-9550, paleta p05:9614 y fichas p05:9624
@@ -247,7 +345,6 @@ C 0x9837 apunta a el titulo, listo
 C 0x983D borra: pone a cero BC + 1 bytes desde HL
 C 0x9840 apunta a la linea del prologo en curso
 C 0x9846 borra: pone a cero BC + 1 bytes desde HL
-C 0x9856 lee la linea del prologo
 C 0x985A apunta a la linea del prologo en curso
 C 0x9864 hl_mas_a: HL = HL + A
 C 0x9868 de_mas_a: DE = DE + A
@@ -286,7 +383,6 @@ C 0x9F56 retratos_en: los retratos de los dos personajes con 0xDE80 = A (p06:A4B
 C 0x9F5B apunta a la ficha del personaje 0 (14 bytes)
 C 0x9F64 de_mas_a: DE = DE + A
 C 0x9F70 hl_mas_a: HL = HL + A
-C 0x9F75 lee las monedas (16 bits) y el byte siguiente (16 bits)
 C 0x9F78 guarda las monedas al entrar en INFORMATION y el byte siguiente (16 bits)
 C 0x9F7F lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
 C 0x9F85 lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)

@@ -660,75 +660,75 @@ DATA_pantalla_p73B4:
 
 pinta_el_rotulo:		; el rotulo del arranque en la pagina 1: R#7 = 0x0F, HMMV, caracteres p05:94C3-9550, paleta p05:9614 y fichas p05:9624
 	call 04a1fh		;941c   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
-	ld b,00fh		;941f
+	ld b,00fh		;941f   ; R#7 = 0x0F: el borde del color 15
 	ld c,007h		;9421
 	call 00047h		;9423   ; BIOS WRTVDP - Writes data in the VDP-register
-	ld hl,02840h		;9426
+	ld hl,02840h		;9426   ; HMMV de 0xA8 x 0x48 en (0x28, 0x40) de la pagina 1, color 0
 	ld bc,0a848h		;9429
 	xor a			;942c
 	ld d,001h		;942d
 	call 04ba2h		;942f   ; rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
 	call caracteres_del_titulo		;9432   ; caracteres_del_titulo: los tres RLE de caracteres del titulo (p05:94C3, 950B, 9550) a la VRAM
-	ld hl,09614h		;9435
+	ld hl,09614h		;9435   ; la paleta del rotulo
 	call 04a9dh		;9438   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
-	ld de,04040h		;943b
+	ld de,04040h		;943b   ; el rotulo desde (0x40, 0x40)
 	ld hl,09624h		;943e
 	call rotulo		;9441   ; rotulo: las fichas del rotulo de HL: 0xFE [dx] baja una fila, 0xFF acaba
 	call 04a12h		;9444   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 	ld hl,0c240h		;9447   ; apunta a el personaje que se lleva (0 o 1)
-	ld (hl),03ch		;944a
+	ld (hl),03ch		;944a   ; 0xC240 = 0x3C (la cuenta)...
 	inc hl			;944c
-	ld (hl),031h		;944d
+	ld (hl),031h		;944d   ; ...0xC241 = 0x31 (las lineas que faltan)...
 	inc hl			;944f
-	ld (hl),000h		;9450
+	ld (hl),000h		;9450   ; ...y 0xC242 = 0 (sin acabar)
 	ret			;9452
 caracteres_del_titulo:		; los tres RLE de caracteres del titulo (p05:94C3, 950B, 9550) a la VRAM
-	ld de,094c3h		;9453
+	ld de,094c3h		;9453   ; 13 caracteres de 1 bit en (8, 0) con el color 1
 	ld hl,0e800h		;9456   ; apunta a bufer de fichas decodificadas
 	call 050b5h		;9459   ; rle_guardando_hl: p00:5578 sin tocar HL
 	ld de,00800h		;945c
 	ld bc,00d01h		;945f
 	call 050bbh		;9462   ; caracteres_guardando_hl: p00:4CBF sin tocar HL
-	ld de,0950bh		;9465
+	ld de,0950bh		;9465   ; 13 en (0x70, 0) con el color 2
 	call 050b5h		;9468   ; rle_guardando_hl: p00:5578 sin tocar HL
 	ld de,07000h		;946b
 	ld bc,00d02h		;946e
 	call 050bbh		;9471   ; caracteres_guardando_hl: p00:4CBF sin tocar HL
-	ld de,09550h		;9474
+	ld de,09550h		;9474   ; 26 en (0xD8, 0) con el color 3
 	call 050b5h		;9477   ; rle_guardando_hl: p00:5578 sin tocar HL
 	ld de,0d800h		;947a
 	ld bc,01a03h		;947d
 	jp 04cbfh		;9480   ; caracteres: B caracteres de 1 bit de HL en (D, E) de la pagina 1 con el color C
 descubre_el_rotulo:		; cada 2 cuadros, 0x31 - 0xC241 lineas del rotulo de la pagina 1 a la 0; con 0xC241 a cero, 0xC242 = 1
 	ld hl,0c240h		;9483   ; 0xC240 cuenta cuadros; cada 2, 0xC241 baja
-	dec (hl)			;9486
+	dec (hl)			;9486   ; cada 2 cuadros...
 	ld a,(hl)			;9487
 	and 001h		;9488
 	ret nz			;948a
 	inc hl			;948b
-	dec (hl)			;948c
+	dec (hl)			;948c   ; ...una linea menos que falta
 	jr nz,L_9495		;948d   ; a cero: 0xC242 = 1, se acaba
-	ld a,001h		;948f
+	ld a,001h		;948f   ; todas: rotulo descubierto
 	ld (0c242h),a		;9491
 	ret			;9494
 L_9495:
-	ld a,031h		;9495
+	ld a,031h		;9495   ; 0x31 - las que faltan: las lineas ya descubiertas...
 	sub (hl)			;9497
 	ld c,a			;9498
-	ld b,0a8h		;9499
+	ld b,0a8h		;9499   ; ...de 0xA8 de ancho desde (0x28, 0x40)...
 	ld hl,02840h		;949b
-	ld d,h			;949e
+	ld d,h			;949e   ; ...al mismo sitio de la pagina 0
 	ld e,l			;949f
 	jp 04841h		;94a0   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 rotulo:		; las fichas del rotulo de HL: 0xFE [dx] baja una fila, 0xFF acaba
-	push de			;94a3
+	push de			;94a3   ; el principio de la fila
 L_94A4:
 	ld a,(hl)			;94a4   ; [ficha]: 0xFF acaba, 0xFE baja una fila
 	inc hl			;94a5
 	ld c,a			;94a6
-	inc a			;94a7
+	inc a			;94a7   ; 0xFF + 1 = 0
 	jr z,L_94C1		;94a8
-	inc a			;94aa
+	inc a			;94aa   ; 0xFE + 2 = 0
 	jr nz,L_94B8		;94ab
 	pop de			;94ad   ; 0xFE [dx]: la fila siguiente empieza en D + dx y E + 8
 	ld a,(hl)			;94ae
@@ -740,7 +740,7 @@ L_94A4:
 	ld e,a			;94b5
 	jr rotulo		;94b6
 L_94B8:
-	ld a,c			;94b8
+	ld a,c			;94b8   ; una ficha y 8 a la derecha
 	call 04e19h		;94b9   ; ficha_de_pagina_1: la ficha A de la pagina 1 a (D, E) de la pagina 1 (HMMM)
 	call 04e3fh		;94bc   ; avanza_ocho: D + 8, y E + 8 si D da la vuelta
 	jr L_94A4		;94bf
@@ -818,12 +818,12 @@ DATA_rotulo_titulo:
 
 
 lista_9241:		; la lista de fichas p05:9241 (colores p05:9231)
-	ld hl,09241h		;9665
+	ld hl,09241h		;9665   ; la lista de fichas de la ruina
 	ld de,09231h		;9668
 	jp 0529ch		;966b   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
 parpadeo_de_ruina:		; 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
 	ld a,(0c890h)		;966e   ; la primera vez: 0xC89A = 0xAC y 0xC890 = 1
-	and a			;9671
+	and a			;9671   ; la primera vez...
 	jr nz,L_967E		;9672
 	ld a,0ach		;9674
 	ld (0c89ah),a		;9676   ; guarda la cuenta del parpadeo de la ruina
@@ -832,16 +832,16 @@ parpadeo_de_ruina:		; 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion d
 	ret			;967d
 L_967E:
 	ld hl,0c89ah		;967e   ; apunta a la cuenta del parpadeo de la ruina
-	dec (hl)			;9681
+	dec (hl)			;9681   ; la cuenta de 0xAC cuadros...
 	jp z,L_96A5		;9682
-	ld a,(hl)			;9685
+	ld a,(hl)			;9685   ; ...cada 16...
 	and 00fh		;9686
 	ret nz			;9688
 	ld a,(0c21dh)		;9689   ; lee la ruina (0-4)
-	ld hl,096abh		;968c
+	ld hl,096abh		;968c   ; ...en la posicion de la ruina (p05:96AB)...
 	call 0543ah		;968f   ; palabra_a: HL = la palabra A de la tabla HL
 	ex de,hl			;9692
-	ld hl,0c8e9h		;9693
+	ld hl,0c8e9h		;9693   ; ...la ficha 0x1A o 0x1B, alternando (0xC8E9)
 	ld a,(hl)			;9696
 	cp 01bh		;9697
 	jr z,L_96A1		;9699
@@ -853,7 +853,7 @@ L_96A1:
 	ld a,01ah		;96a1
 	jr L_969D		;96a3
 L_96A5:
-	ld a,001h		;96a5
+	ld a,001h		;96a5   ; acabado
 	ld (0c899h),a		;96a7   ; guarda el parpadeo de la ruina acabado
 	ret			;96aa
 
@@ -874,13 +874,13 @@ DATA_coordenadas_por_ruina:
 
 
 fichas_del_titulo:		; las listas de fichas p05:83B3 y p05:9A4B y el RLE de p05:96CD a la VRAM
-	ld hl,083b3h		;96b5
+	ld hl,083b3h		;96b5   ; las listas de fichas del titulo
 	ld de,083adh		;96b8
 	call 0529ch		;96bb   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
 	ld hl,09a4bh		;96be
 	ld de,09a29h		;96c1
 	call 0529ch		;96c4   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
-	ld de,096cdh		;96c7
+	ld de,096cdh		;96c7   ; y el RLE de p05:96CD a la VRAM
 	jp 04926h		;96ca   ; rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
 
 ; ----------------------------------------------------------------------
@@ -898,40 +898,40 @@ DATA_patrones_p96CA:
 
 mapa_del_titulo:		; el mapa de 14 x 15 fichas del RLE p05:9988 (en 0xE400), con la pantalla apagada
 	call 04a1fh		;96ea   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
-	xor a			;96ed
+	xor a			;96ed   ; la primera terna del fundido a cero
 	ld (0ca07h),a		;96ee   ; guarda el paso del fundido del titulo (0-7)
 	ld (0ca06h),a		;96f1   ; guarda el color en curso del fundido del titulo
-	ld de,09988h		;96f4
+	ld de,09988h		;96f4   ; el RLE del mapa del titulo a 0xE400
 	ld hl,0e400h		;96f7   ; apunta a los metabloques (16 fichas cada uno)
 	call 05578h		;96fa   ; rle: RLE de DE a HL: 0 acaba, n < 0x80 repite el siguiente, si no copia n & 0x7F
 	ld hl,0e400h		;96fd   ; apunta a los metabloques (16 fichas cada uno)
-	ld de,0481ch		;9700
+	ld de,0481ch		;9700   ; desde (0x1C, 0x48): 15 filas de 14 fichas
 	ld b,00fh		;9703
 L_9705:
 	push bc			;9705
 	push de			;9706
 	ld b,00eh		;9707
 L_9709:
-	ld a,(hl)			;9709
+	ld a,(hl)			;9709   ; una ficha
 	call 04db4h		;970a   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 	inc hl			;970d
-	ld a,d			;970e
+	ld a,d			;970e   ; 8 a la derecha
 	add a,008h		;970f
 	ld d,a			;9711
 	djnz L_9709		;9712
 	pop de			;9714
 	pop bc			;9715
-	ld a,e			;9716
+	ld a,e			;9716   ; la fila siguiente, 8 mas abajo
 	add a,008h		;9717
 	ld e,a			;9719
 	djnz L_9705		;971a
-	ld a,00dh		;971c
+	ld a,00dh		;971c   ; el color 13 = (0x77, 0x07): el blanco de la fuente
 	ld de,07707h		;971e
 	call 04a73h		;9721   ; pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 	xor a			;9724
 	ld (0c003h),a		;9725   ; guarda la cuenta de cuadros
-	ld hl,09736h		;9728
-	ld a,(0002bh)		;972b
+	ld hl,09736h		;9728   ; el texto p05:9736...
+	ld a,(0002bh)		;972b   ; ...solo sin la BIOS japonesa
 	and 00fh		;972e
 	call nz,04d4ah		;9730   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	jp 04a12h		;9733   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
@@ -952,35 +952,35 @@ DATA_texto_p9728:
 paleta_a_negro:		; los 16 colores de la paleta a cero
 	ld b,010h		;9748
 L_974A:
-	ld a,b			;974a
+	ld a,b			;974a   ; cada color, de 15 a 0...
 	dec a			;974b
-	ld de,00000h		;974c
+	ld de,00000h		;974c   ; ...a negro
 	call 04a73h		;974f   ; pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 	djnz L_974A		;9752
 	ret			;9754
 sprite_del_titulo:		; el sprite 0 en la Y y X de p05:9782[(0xCA05 >> 2) & 7], color 13; 0xCA05 + 1
 	ld hl,0ca05h		;9755   ; apunta a el paso del sprite del titulo
-	ld a,(hl)			;9758
+	ld a,(hl)			;9758   ; el paso del sprite...
 	push hl			;9759
-	rra			;975a
+	rra			;975a   ; .../ 4 & 7...
 	rra			;975b
 	and 007h		;975c
 	add a,a			;975e
-	ld hl,09782h		;975f
+	ld hl,09782h		;975f   ; ...en la tabla p05:9782: su Y y su X
 	call 04083h		;9762   ; hl_mas_a: HL = HL + A
 	ld de,0de00h		;9765   ; apunta a los atributos de los sprites en RAM
 	ldi		;9768
 	ldi		;976a
-	ld a,004h		;976c
+	ld a,004h		;976c   ; el patron 4
 	ld (de),a			;976e
 	ld hl,0dc00h		;976f   ; apunta a los colores de los sprites en RAM (16 por sprite)
 	ld de,0dc01h		;9772
 	ld bc,0000fh		;9775
-	ld (hl),00dh		;9778
+	ld (hl),00dh		;9778   ; el color 13 en sus 16 lineas
 	ldir		;977a
 	call 05690h		;977c   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	pop hl			;977f
-	inc (hl)			;9780
+	inc (hl)			;9780   ; el paso siguiente
 	ret			;9781
 
 ; ----------------------------------------------------------------------
@@ -1008,42 +1008,42 @@ fundido_del_titulo:		; cada 4 cuadros, un paso del fundido desde negro de la pal
 	ret nz			;9797
 	ld de,0ca06h		;9798   ; apunta a el color en curso del fundido del titulo
 	ld a,(de)			;979b   ; la terna 0xCA06 de la paleta: [color][RB][G]
-	ld b,a			;979c
+	ld b,a			;979c   ; 3 bytes por terna
 	add a,a			;979d
 	add a,b			;979e
 	ld hl,0b550h		;979f
 	call 04083h		;97a2   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;97a5   ; 0xFF: acabado
-	inc a			;97a6
+	inc a			;97a6   ; 0xFF: el fundido acabado
 	jr z,L_980C		;97a7
-	ld c,(hl)			;97a9
+	ld c,(hl)			;97a9   ; el color
 	inc hl			;97aa
 	ld a,(hl)			;97ab   ; 7 menos cada componente (rojo, azul, verde) a 0xCA08-0xCA0A
-	and 0f0h		;97ac
+	and 0f0h		;97ac   ; el rojo (nibble alto del primer byte)...
 	rra			;97ae
 	rra			;97af
 	rra			;97b0
 	rra			;97b1
-	sub 007h		;97b2
+	sub 007h		;97b2   ; ...7 - rojo
 	neg		;97b4
 	inc e			;97b6
 	inc e			;97b7
 	ld (de),a			;97b8
-	ld a,(hl)			;97b9
+	ld a,(hl)			;97b9   ; el azul (nibble bajo)
 	and 00fh		;97ba
 	sub 007h		;97bc
 	neg		;97be
 	inc e			;97c0
 	ld (de),a			;97c1
 	inc hl			;97c2
-	ld a,(hl)			;97c3
+	ld a,(hl)			;97c3   ; el verde (el segundo byte)
 	and 00fh		;97c4
 	sub 007h		;97c6
 	neg		;97c8
 	inc e			;97ca
 	ld (de),a			;97cb
 	ld a,(0ca08h)		;97cc   ; rojo: el paso (0xCA07) menos ese valor, sin bajar de cero
-	ld b,a			;97cf
+	ld b,a			;97cf   ; rojo = paso - (7 - rojo), sin bajar de 0
 	ld a,(0ca07h)		;97d0   ; lee el paso del fundido del titulo (0-7)
 	sub b			;97d3
 	jr nc,L_97D7		;97d4
@@ -1056,7 +1056,7 @@ L_97D7:
 	and 0f0h		;97db
 	ld d,a			;97dd
 	ld a,(0ca09h)		;97de   ; el azul: el paso menos 0xCA09
-	ld b,a			;97e1
+	ld b,a			;97e1   ; azul, igual
 	ld a,(0ca07h)		;97e2   ; lee el paso del fundido del titulo (0-7)
 	sub b			;97e5
 	jr nc,L_97E9		;97e6
@@ -1066,7 +1066,7 @@ L_97E9:
 	or d			;97eb
 	ld d,a			;97ec
 	ld a,(0ca0ah)		;97ed   ; verde, igual
-	ld b,a			;97f0
+	ld b,a			;97f0   ; verde, igual
 	ld a,(0ca07h)		;97f1   ; lee el paso del fundido del titulo (0-7)
 	sub b			;97f4
 	jr nc,L_97F8		;97f5
@@ -1077,24 +1077,24 @@ L_97F8:
 	ld a,c			;97fb   ; el color con esos tres valores
 	call 04a73h		;97fc   ; pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 	ld hl,0ca07h		;97ff   ; 8 pasos por color; luego el siguiente color de la paleta
-	inc (hl)			;9802
+	inc (hl)			;9802   ; el paso siguiente...
 	ld a,(hl)			;9803
 	cp 008h		;9804
 	ret c			;9806
-	ld (hl),000h		;9807
+	ld (hl),000h		;9807   ; ...a los 8, el color siguiente
 	dec hl			;9809
 	inc (hl)			;980a
 	ret			;980b
 L_980C:
 	ld hl,0de00h		;980c   ; apunta a los atributos de los sprites en RAM
-	ld (hl),09ch		;980f
+	ld (hl),09ch		;980f   ; acabado: el sprite 0 en (0x10, 0x9C)...
 	inc l			;9811
 	ld (hl),010h		;9812
 	inc l			;9814
 	ld (hl),000h		;9815
 	inc l			;9817
 	inc l			;9818
-	ld (hl),09ch		;9819
+	ld (hl),09ch		;9819   ; ...y el 1 en (0xE0, 0x9C), patron 0...
 	inc l			;981b
 	ld (hl),0e0h		;981c
 	inc l			;981e
@@ -1102,46 +1102,46 @@ L_980C:
 	ld hl,0dc00h		;9821   ; apunta a los colores de los sprites en RAM (16 por sprite)
 	ld de,0dc01h		;9824
 	ld bc,0001fh		;9827
-	ld (hl),00fh		;982a
+	ld (hl),00fh		;982a   ; ...color 15
 	ldir		;982c
 	call 05690h		;982e   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
-	ld a,001h		;9831
+	ld a,001h		;9831   ; el titulo, listo
 	ld (0ca00h),a		;9833   ; guarda el titulo, listo
 	ret			;9836
 borra_ca00:		; pone a cero 0xCA00-0xCA2F
 	ld hl,0ca00h		;9837   ; apunta a el titulo, listo
-	ld bc,0002fh		;983a
+	ld bc,0002fh		;983a   ; 0x30 bytes
 	jp 05f08h		;983d   ; borra: pone a cero BC + 1 bytes desde HL
 linea_del_prologo:		; una linea del prologo (p05:994D con la BIOS japonesa, p05:98B1 si no) que sube; al acabar, 0xCA01 = 1 y el texto p00:5068
 	ld hl,0ca10h		;9840   ; apunta a la linea del prologo en curso
-	ld bc,00018h		;9843
+	ld bc,00018h		;9843   ; 0x19 bytes de 0xCA10
 	call 05f08h		;9846   ; borra: pone a cero BC + 1 bytes desde HL
-	ld a,(0002bh)		;9849
+	ld a,(0002bh)		;9849   ; el texto del idioma de la BIOS
 	and 00fh		;984c
 	ld hl,0994dh		;984e
 	jr z,L_9856		;9851
 	ld hl,098b1h		;9853
 L_9856:
-	ld a,(0ca02h)		;9856   ; lee la linea del prologo
+	ld a,(0ca02h)		;9856   ; la linea (0xCA02)...
 	ld b,a			;9859
 	ld de,0ca10h		;985a   ; apunta a la linea del prologo en curso
-	ld a,019h		;985d
+	ld a,019h		;985d   ; ...pasadas las 0x19 primeras, se salta en el texto...
 	sub b			;985f
 	jr nc,L_9868		;9860
 	neg		;9862
 	call 04083h		;9864   ; hl_mas_a: HL = HL + A
-	xor a			;9867
+	xor a			;9867   ; ...y si no, en el destino
 L_9868:
 	call 04088h		;9868   ; de_mas_a: DE = DE + A
-	ld a,(hl)			;986b
+	ld a,(hl)			;986b   ; 0xFF: el prologo acabado...
 	inc a			;986c
 	jr nz,L_9883		;986d
-	ld a,001h		;986f
+	ld a,001h		;986f   ; ...0xCA01 = 1...
 	ld (0ca01h),a		;9871   ; guarda el prologo, acabado
-	ld hl,010a0h		;9874
+	ld hl,010a0h		;9874   ; ...borra 0xE0 x 8 en (0xA0, 0x10)...
 	ld bc,0e008h		;9877
 	call 05e2fh		;987a   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
-	ld hl,05068h		;987d
+	ld hl,05068h		;987d   ; ...y PUSH SPACE KEY
 	jp 04d4ah		;9880   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 L_9883:
 	ld c,(hl)			;9883   ; copia una linea del texto (hasta B caracteres o 0xFF) a 0xCA10
@@ -1154,8 +1154,8 @@ L_9883:
 	djnz L_9883		;988b
 L_988D:
 	ld a,0ffh		;988d   ; la linea en (0xA0, 0x20) menos la cuenta de 0xCA03 (sube)
-	ld (0ca2ah),a		;988f
-	ld de,020a0h		;9892
+	ld (0ca2ah),a		;988f   ; 0xFF detras de la linea
+	ld de,020a0h		;9892   ; en (0xA0, 0x20) menos la cuenta: sube
 	ld a,(0ca03h)		;9895   ; lee la cuenta de la linea del prologo (8 pasos)
 	ld b,a			;9898
 	ld a,d			;9899
@@ -1165,13 +1165,13 @@ L_988D:
 	ld c,0ffh		;989f
 	call 04d54h		;98a1   ; texto_en_de: el texto de HL en la posicion (D, E) que ya hay, con C (p00:4D4A sin leer [X][Y])
 	ld hl,0ca03h		;98a4   ; cada 8 pasos, la siguiente linea (0xCA02)
-	inc (hl)			;98a7
+	inc (hl)			;98a7   ; 8 pasos por linea
 	ld a,(hl)			;98a8
 	cp 008h		;98a9
 	ret c			;98ab
 	ld (hl),000h		;98ac
 	dec hl			;98ae
-	inc (hl)			;98af
+	inc (hl)			;98af   ; la linea siguiente
 	ret			;98b0
 
 ; ----------------------------------------------------------------------
@@ -1389,34 +1389,34 @@ entra_en_informacion:		; la pantalla INFORMATION: guarda el personaje (0xC229), 
 	call 04a1fh		;9ed9   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	ld a,(0c2b0h)		;9edc   ; lee la ficha del personaje 0 (14 bytes)
 	ld (0c229h),a		;9edf   ; guarda el personaje elegido en INFORMATION
-	xor a			;9ee2
+	xor a			;9ee2   ; la mejora 0
 	ld (0c228h),a		;9ee3   ; guarda la mejora elegida en INFORMATION (0-2)
 	call pinta_informacion		;9ee6   ; pinta_informacion: patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 END, F2 CANCEL), recuadros y lineas
 	jp 04a12h		;9ee9   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 pinta_informacion:		; patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 END, F2 CANCEL), recuadros y lineas
-	ld de,0a226h		;9eec
+	ld de,0a226h		;9eec   ; el RLE de p06:A226 a la VRAM
 	call 04926h		;9eef   ; rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
-	ld hl,0a173h		;9ef2
+	ld hl,0a173h		;9ef2   ; el texto de INFORMATION
 	call 04d4ah		;9ef5   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	call 0a45ch		;9ef8   ; lista_a7f8: la lista de fichas p06:A7F8
 	call 0a465h		;9efb   ; paleta_b351: la paleta p06:B351
-	ld hl,0321fh		;9efe
+	ld hl,0321fh		;9efe   ; los recuadros (H = X, L = Y; D x E): (0x32, 0x1F) de 0x1A x 0x0A...
 	ld de,01a0ah		;9f01
 	call 0a494h		;9f04   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-	ld h,0aeh		;9f07
+	ld h,0aeh		;9f07   ; ...(0xAE, 0x1F) de 0x23 x 0x0A...
 	ld d,023h		;9f09
 	call 0a494h		;9f0b   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-	ld hl,0272bh		;9f0e
+	ld hl,0272bh		;9f0e   ; ...los de los retratos, 0x32 x 0x32 en (0x27, 0x2B) y (0xA7, 0x2B)...
 	ld de,03232h		;9f11
 	call 0a494h		;9f14   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	ld h,0a7h		;9f17
 	call 0a494h		;9f19   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-	ld hl,00763h		;9f1c
+	ld hl,00763h		;9f1c   ; ...los de los numeros...
 	ld de,0724ch		;9f1f
 	call 0a494h		;9f22   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	ld h,087h		;9f25
 	call 0a494h		;9f27   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
-	ld hl,010b4h		;9f2a
+	ld hl,010b4h		;9f2a   ; ...y el de las monedas, doble
 	ld de,0601ch		;9f2d
 	call 0a494h		;9f30   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	inc h			;9f33
@@ -1434,16 +1434,16 @@ pinta_informacion:		; patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 
 	call numeros_de_informacion		;9f4b   ; numeros_de_informacion: los numeros de las fichas de los dos personajes en INFORMATION
 	call lineas_a200		;9f4e   ; lineas_a200: las lineas horizontales de p06:A200
 	call lineas_a21f		;9f51   ; lineas_a21f: las lineas verticales de p06:A21F
-	ld a,001h		;9f54
+	ld a,001h		;9f54   ; los retratos en su sitio de INFORMATION
 	call 0a4beh		;9f56   ; retratos_en: los retratos de los dos personajes con 0xDE80 = A (p06:A4BD con A)
-	ld b,002h		;9f59
+	ld b,002h		;9f59   ; de los dos personajes, los bytes 0-15 de la ficha...
 	ld hl,0c2b0h		;9f5b   ; apunta a la ficha del personaje 0 (14 bytes)
 L_9F5E:
 	push hl			;9f5e
 	push bc			;9f5f
 	ld d,h			;9f60
 	ld e,l			;9f61
-	ld a,010h		;9f62
+	ld a,010h		;9f62   ; ...a los 16-31: la copia para deshacer (F2)
 	call 04088h		;9f64   ; de_mas_a: DE = DE + A
 	ld bc,00010h		;9f67
 	ldir		;9f6a
@@ -1452,7 +1452,7 @@ L_9F5E:
 	ld a,020h		;9f6e
 	call 04083h		;9f70   ; hl_mas_a: HL = HL + A
 	djnz L_9F5E		;9f73
-	ld hl,(0c259h)		;9f75   ; lee las monedas (16 bits) y el byte siguiente (16 bits)
+	ld hl,(0c259h)		;9f75   ; y las monedas, en 0xC22B
 	ld (0c22bh),hl		;9f78   ; guarda las monedas al entrar en INFORMATION y el byte siguiente (16 bits)
 	ret			;9f7b
 lineas_a21f:		; las lineas verticales de p06:A21F
@@ -1462,21 +1462,21 @@ lineas_a200:		; las lineas horizontales de p06:A200
 	ld hl,0a200h		;9f82
 	jp 055d1h		;9f85   ; lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
 cifras_c2b9:		; las cifras de 0xC2B9 de los dos personajes
-	ld hl,0c2b9h		;9f88
+	ld hl,0c2b9h		;9f88   ; las cifras de los niveles
 	ld de,04273h		;9f8b
-	ld b,002h		;9f8e
+	ld b,002h		;9f8e   ; de los dos personajes
 L_9F90:
 	push hl			;9f90
 	push de			;9f91
 	push bc			;9f92
-	ld c,019h		;9f93
+	ld c,019h		;9f93   ; 0x19 entre columna y columna
 	call tres_cifras		;9f95   ; tres_cifras: 3 pares de cifras de HL (p00:479C)
 	pop bc			;9f98
 	pop de			;9f99
 	pop hl			;9f9a
 	ld a,020h		;9f9b
 	call 04083h		;9f9d   ; hl_mas_a: HL = HL + A
-	ld a,d			;9fa0
+	ld a,d			;9fa0   ; el siguiente, 0x80 a la derecha
 	add a,080h		;9fa1
 	ld d,a			;9fa3
 	djnz L_9F90		;9fa4
@@ -1493,18 +1493,18 @@ L_9FA9:
 	pop de			;9fb2
 	pop hl			;9fb3
 	inc l			;9fb4   ; el siguiente par de cifras y la siguiente columna (E + C)
-	inc l			;9fb5
+	inc l			;9fb5   ; el par siguiente
 	ld a,e			;9fb6
 	add a,c			;9fb7
 	ld e,a			;9fb8
 	djnz L_9FA9		;9fb9
 	ret			;9fbb
 numeros_de_informacion:		; los numeros de las fichas de los dos personajes en INFORMATION
-	ld hl,0c2b5h		;9fbc
+	ld hl,0c2b5h		;9fbc   ; la vida de Wit en su barra
 	ld a,(hl)			;9fbf
 	ld de,03467h		;9fc0
 	call 04758h		;9fc3   ; barra_de_cuartos: la barra de A / 4 trozos llenos de (HL - 1) / 4 (trozos de 4 x 8 de la pagina 1)
-	ld hl,0c2b1h		;9fc6
+	ld hl,0c2b1h		;9fc6   ; y sus niveles 1 y 2 (velocidad y salto)
 	ld de,03480h		;9fc9
 	call numero_guardando		;9fcc   ; numero_guardando: p06:A550 con (HL) + 1 sin tocar registros
 	inc l			;9fcf
@@ -1512,7 +1512,7 @@ numeros_de_informacion:		; los numeros de las fichas de los dos personajes en IN
 	add a,019h		;9fd1
 	ld e,a			;9fd3
 	call numero_guardando		;9fd4   ; numero_guardando: p06:A550 con (HL) + 1 sin tocar registros
-	ld hl,0c2d5h		;9fd7
+	ld hl,0c2d5h		;9fd7   ; lo mismo con Cles
 	ld a,(hl)			;9fda
 	ld de,0b467h		;9fdb
 	call 04758h		;9fde   ; barra_de_cuartos: la barra de A / 4 trozos llenos de (HL - 1) / 4 (trozos de 4 x 8 de la pagina 1)
@@ -1525,7 +1525,7 @@ numeros_de_informacion:		; los numeros de las fichas de los dos personajes en IN
 	ld e,a			;9fee
 numero_guardando:		; p06:A550 con (HL) + 1 sin tocar registros
 	ld a,(hl)			;9fef   ; el numero (HL) + 1 sin tocar los registros (p06:A550)
-	inc a			;9ff0
+	inc a			;9ff0   ; + 1
 	push hl			;9ff1
 	push de			;9ff2
 	push bc			;9ff3
@@ -1536,5 +1536,5 @@ numero_guardando:		; p06:A550 con (HL) + 1 sin tocar registros
 	ret			;9ffa
 cuadro_de_informacion:		; un cuadro de INFORMATION: teclas, cursor, compra y numeros; con la tecla especial 2, deshace (sigue en p06:A000)
 	ld a,(0c00eh)		;9ffb   ; lee las teclas especiales
-	rra			;9ffe
+	rra			;9ffe   ; con la tecla especial 1 (F2): deshace (p06:A01E)
 	rra			;9fff

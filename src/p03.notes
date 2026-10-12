@@ -143,6 +143,44 @@ C 0xA1A3 segun el bit 2 de la cuenta
 C 0xA1B4 quieto en su destino
 C 0xA1C3 y la espera segun el animo del personaje
 C 0xA0B0 con (ix+0x1D) a cero, hacia abajo: velocidad Y 4 con frenado 0x40...
+C 0xA1DB 0x20 con el animo 0 (feliz)...
+C 0xA1E0 ...0x10 con el 3 (enfadado)...
+C 0xA1E6 ...8 con el 1 o el 2
+C 0xA1EC hacia el personaje: 2 a la derecha o -2 a la izquierda
+C 0xA1F8 0x5A a la derecha, 0x5B a la izquierda
+C 0xA1FF el tipo 49 (generador de la sala 5): sin choques, 0x30 cuadros
+C 0xA225 0-5: hacia donde (0xC313)
+C 0xA229 de 3 en adelante, desde la X 0x58 en la Y 0x82; si no, desde 0xA8
+C 0xA232 el actor 0x39
+C 0xA23C el tipo 50: sin choques, 0x21 cuadros
+C 0xA245 cada 0x30 cuadros...
+C 0xA24D ...segun la mitad de la pantalla del personaje...
+C 0xA252 ...desde la X 0x60 o 0xA0, en la Y 0x64...
+C 0xA259 ...el actor 0x3E
+C 0xA263 el tipo 51: sin choques, 0x40 cuadros...
+C 0xA273 ...y el actor 0x1C en (0x2E, 0x80)
+C 0xA27E el tipo 51: la pantalla tiembla (R#18)
+C 0xA288 al azar...
+C 0xA290 ...una X de 0 a 0xF8...
+C 0xA299 ...o la del personaje si cae cerca...
+C 0xA29D ...y el actor 0x3C en la Y 0x30
+C 0xA2E5 ...o 0 en los cuadros impares de la cuenta: el temblor
+C 0xA2F7 el tipo 52: sin choques, 0x10 cuadros
+C 0xA300 cada 0x10 cuadros, dos actores 0x3B...
+C 0xA30A ...uno en (0x44, 0x50) con 0xC313 = 1...
+C 0xA311 ...y otro en (0x44, 0xB0) con 0xC313 = 0
+C 0xA321 el tipo 53: 0x10 cuadros y sin choques
+C 0xA332 3, 4, 6 o 7: 3 + el azar & 3, saltando el 5
+C 0xA346 el actor 0x37...
+C 0xA348 ...en (0x38, 0x80), (0x38, 0x70) con el 5 o (0x38, 0x60) del 6 en adelante
+C 0xA35D el sonido 0x15
+C 0xA362 su posicion, guardada en (ix+0x1E) y (ix+0x1D)...
+C 0xA36E ...y en (0x10, 0x10), quieto
+C 0xA380 la plantilla 0xC313 de p06:AEBC
+C 0xA389 (ix+0x1C) = 0x50
+C 0xA397 A * 12...
+C 0xA39C ...- A: A * 11
+C 0xA2DB R#18 = 0xC0 (0xE0 con (ix+0x1E) a cero) y 0xC313 su negativo...
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0xA005 rebota_si_choca invierte la velocidad X (p02:8B03) si choca de lado o si (ix+0x11) & 15 es cero
@@ -305,59 +343,45 @@ C 0xA1C6 el paso del actor = 0x00
 C 0xA1D4 guarda el fotograma del actor (p02:8A42)
 C 0xA1D8 estado_del_que_se_lleva: A = el estado del personaje que se lleva
 C 0xA1E8 guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
-C 0xA1EC compara_x: compara la X del personaje con la del actor
 C 0xA1F5 velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 C 0xA1FB fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
-C 0xA1FF las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0xA203 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x30
 C 0xA20C la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 C 0xA213 lee la cuenta de cuadros del juego
 C 0xA226 guarda cuenta de trabajo de los actores
 C 0xA236 crea_actor_0: p02:8615 con B = 0
-C 0xA23C las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0xA240 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x21
-C 0xA245 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xA249 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x30
-C 0xA24D lee la X del personaje
 C 0xA25D crea_actor_0: p02:8615 con B = 0
 C 0xA264 guarda las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
 C 0xA267 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x40
 C 0xA26E guarda cuenta de trabajo de los actores
 C 0xA278 crea_actor_0: p02:8615 con B = 0
-C 0xA27E velocidad_por_1e: 0xC313 = -(0xC0, 0xE0 o 0) y p00:55AA
 C 0xA281 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xA285 vueltas_1f: (ix+0x1F) + 1; hasta 6: (ix+0x11) = 0x40 y (ix+0x1E) = 0
 C 0xA28B lee la cuenta de cuadros del juego
-C 0xA299 cerca_en_x: si A + 0x20 < 0x40: D = la X del personaje
 C 0xA2A5 crea_actor_0: p02:8615 con B = 0
 C 0xA2B0 lee la X del personaje
 C 0xA2BF la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x40
 C 0xA2CC la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x08
-C 0xA2E5 lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xA2F1 guarda cuenta de trabajo de los actores
 C 0xA2F4 ajuste_de_pantalla: R#18 (ajuste de la imagen) = D
-C 0xA2F7 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0xA2FB la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x10
-C 0xA300 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xA304 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x10
 C 0xA30D crea_tipo_3b: 0xC313 = A y crea el actor 0x3B
 C 0xA314 guarda cuenta de trabajo de los actores
 C 0xA31B crea_actor_0: p02:8615 con B = 0
-C 0xA321 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x10
 C 0xA325 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
 C 0xA32E la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x30
 C 0xA337 lee la cuenta de cuadros del juego
 C 0xA343 guarda cuenta de trabajo de los actores
 C 0xA357 crea_actor_0: p02:8615 con B = 0
 C 0xA35F sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
-C 0xA362 lee la X del actor
 C 0xA368 lee la Y del actor
-C 0xA36E la X del actor = 0x10
 C 0xA372 la Y del actor = 0x10
 C 0xA377 guarda si el actor se mueve (p02:8367)
 C 0xA37A guarda la X del actor (fraccion)
 C 0xA37D guarda la Y del actor (fraccion)
-C 0xA380 lee cuenta de trabajo de los actores
 C 0xA386 plantilla_aebc: la plantilla (ix+0x1F) * 11 de p06:AEBC (p00:5596)
 C 0xA39D hl_mas_a: HL = HL + A
 C 0xA3A0 plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)

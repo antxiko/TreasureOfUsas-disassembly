@@ -103,13 +103,60 @@ def imagen(v, pagina, x0, y0, ancho, alto, escala=2):
     return img.resize((ancho * escala, alto * escala), Image.NEAREST)
 
 
+# LA INTRO ANIMADA.
+# El rotulo (p05:9483): 0xC240 = 0x3C y 0xC241 = 0x31 (p05:9447); cada 2
+# cuadros 0xC241 baja y se copian a la pagina 0 las 0x31 - 0xC241 primeras
+# lineas de 0xA8 puntos desde (0x28, 0x40): de 1 a 0x30.
+# El titulo (p05:9792): la paleta empieza a negro (p05:9748) y cada 4 cuadros
+# da un paso: el color de la terna 0xCA06 de p06:B550 en el paso 0xCA07 (0-7)
+# lleva cada componente a max(0, paso - (7 - valor final)); a los 8 pasos, el
+# color siguiente, hasta el 0xFF.
+def ternas(trio, a):
+    out = []
+    while leer(trio, a) != 0xFF:
+        r, rb, g = leer(trio, a), leer(trio, a + 1), leer(trio, a + 2)
+        out.append((r & 0x0F, ((rb >> 4) & 7, g & 7, rb & 7)))
+        a += 3
+    return out
+
+
+def intro(ruta, escala=2):
+    from PIL import Image
+    cuadros, duraciones = [], []
+    v = vram_del_rotulo()
+    for lineas in range(1, 0x31):
+        img = Image.new("RGB", (256, 212))
+        for y in range(lineas):
+            for x in range(0xA8):
+                img.putpixel((0x28 + x, 0x40 + y), v.rgb(v.punto(1, 0x28 + x, 0x40 + y)))
+        cuadros.append(img)
+        duraciones.append(2)
+    duraciones[-1] = 60                     # el rotulo entero, un segundo
+    t = vram_del_titulo()
+    final = list(t.pal)
+    t.pal = [(0, 0, 0)] * 16
+    for color, (r, g, b) in ternas(T456, 0xB550):
+        for paso in range(8):
+            t.pal[color] = tuple(max(0, paso - (7 - c)) for c in (r, g, b))
+            cuadros.append(imagen(t, 0, 0, 0, 256, 212, 1))
+            duraciones.append(4)
+    t.pal = final
+    cuadros.append(imagen(t, 0, 0, 0, 256, 212, 1))
+    duraciones.append(120)
+    cuadros = [c.resize((256 * escala, 212 * escala), Image.NEAREST) for c in cuadros]
+    cuadros[0].save(ruta, save_all=True, append_images=cuadros[1:],
+                    duration=[round(d * 1000 / 60) for d in duraciones], loop=0)
+
+
 def main(argv):
     if len(argv) >= 3 and argv[1] == "rotulo":
         imagen(vram_del_rotulo(), 1, 0x28, 0x40, 0xA8, 0x48).save(argv[2])
+    elif len(argv) >= 3 and argv[1] == "intro":
+        intro(argv[2])
     elif len(argv) >= 3 and argv[1] == "titulo":
         imagen(vram_del_titulo(), 0, 0, 0, 256, 212).save(argv[2])
     else:
-        sys.exit("uso: titulo.py rotulo|titulo <png>")
+        sys.exit("uso: titulo.py rotulo|titulo <png> | intro <gif>")
 
 
 if __name__ == "__main__":

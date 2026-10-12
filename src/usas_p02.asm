@@ -2606,7 +2606,7 @@ cuadro_c314:		; con 0xC316: la cuenta 0xC314 y, con 0xC310 >= 2, copia 16 x 0x30
 	jp L_8F94		;90ed
 objetos_de_la_lista_y_vuelve:		; con 12: los objetos de la lista de la pantalla (p12:B8BB) y vuelve con 1-2-3
 	call 054aah		;90f0   ; banco_12_en_a000: pone el banco 12 en 0xA000
-	call objetos_de_la_lista		;90f3
+	call objetos_de_la_lista		;90f3   ; objetos_de_la_lista: con 12: los objetos de p12:B8BB[fase] de esta pantalla ([pantalla][YX][clase]; p02:9148)
 	jp 05464h		;90f6   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 L_90F9:
 	ld de,0787ch		;90f9
@@ -2642,7 +2642,7 @@ L_9135:
 	ld a,(0c212h)		;9135   ; los de esta pantalla
 	cp (hl)			;9138
 	push hl			;9139
-	call z,crea_objeto		;913a
+	call z,crea_objeto		;913a   ; crea_objeto: el objeto 0x2A de clase B en la casilla [YX] del registro, si no se ha cogido ya (p02:916C)
 	pop hl			;913d
 	ld a,(hl)			;913e
 	cp 0ffh		;913f   ; 0xFF: se acabo
@@ -2670,7 +2670,7 @@ crea_objeto:		; el objeto 0x2A de clase B en la casilla [YX] del registro, si no
 	inc hl			;915b
 	ld b,(hl)			;915c   ; la clase del objeto
 	push bc			;915d
-	call ya_cogido		;915e
+	call ya_cogido		;915e   ; ya_cogido: acarreo si la casilla (D, E) de esta pantalla y fase esta entre los objetos cogidos de 0xE000
 	pop bc			;9161
 	ret c			;9162   ; ya cogido: nada
 	call 05464h		;9163   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -3554,7 +3554,7 @@ L_979A:
 	ld a,(0c00dh)		;979c   ; lee la cuenta de cuadros del juego
 	and 007h		;979f
 	call z,sube_hacia_el_personaje		;97a1   ; sube_hacia_el_personaje: la Y del actor hacia 0x20 por encima del personaje
-	call rebota_en_borde		;97a4   ; rebota_en_borde: cerca de un borde, sonido 0x0A y cambia el sentido (ix+0x17)
+	call rebota_en_borde		;97a4   ; rebota_en_borde: cerca de un borde, invierte la velocidad X (p02:8B03) y cambia el sentido (ix+0x17)
 	dec (ix+011h)		;97a7   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;97aa
 	ld (ix+011h),01ah		;97ab   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x1A
@@ -3578,7 +3578,7 @@ L_97D3:
 	add a,(ix+003h)		;97d3   ; le suma la Y del actor
 	ld (ix+003h),a		;97d6   ; guarda la Y del actor
 	ret			;97d9
-rebota_en_borde:		; cerca de un borde, sonido 0x0A y cambia el sentido (ix+0x17)
+rebota_en_borde:		; cerca de un borde, invierte la velocidad X (p02:8B03) y cambia el sentido (ix+0x17)
 	ld a,(ix+005h)		;97da   ; lee la X del actor
 	add a,(ix+00ah)		;97dd   ; le suma la velocidad X del actor (alta)
 	add a,010h		;97e0
@@ -4021,12 +4021,12 @@ L_9B04:
 	ld c,027h		;9b06
 	call alterna_fotograma		;9b08   ; alterna_fotograma: cada 8 cuadros, (ix+0x10) alterna con C
 	call choque_lateral		;9b0b   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
-	call nz,sonido_y_sigue		;9b0e   ; sonido_y_sigue: el sonido 0x0A y p02:9AFE
+	call nz,rebota_y_sigue		;9b0e   ; rebota_y_sigue: invierte la velocidad X (p02:8B03) y sigue en p02:9AFE
 	call se_para_si_choca		;9b11   ; se_para_si_choca: si choca (p02:9D05): velocidad X 0, Y 0x400 y paso 0
 	ret nc			;9b14
 	ld (ix+001h),002h		;9b15   ; el paso del actor = 0x02
 	jp L_9AC1		;9b19
-sonido_y_sigue:		; el sonido 0x0A y p02:9AFE
+rebota_y_sigue:		; invierte la velocidad X (p02:8B03) y sigue en p02:9AFE
 	call invierte_velocidad_x		;9b1c   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	jr L_9AFE		;9b1f
 L_9B21:
@@ -4642,7 +4642,7 @@ L_9FC2:
 	ld a,(ix+001h)		;9fc2   ; lee el paso del actor
 	and a			;9fc5
 	jr nz,$+78		;9fc6
-	call 0a005h		;9fc8   ; choca_o_cuenta: el sonido 0x0A si choca de lado o si (ix+0x11) & 15 es cero
+	call 0a005h		;9fc8   ; rebota_si_choca: invierte la velocidad X (p02:8B03) si choca de lado o si (ix+0x11) & 15 es cero
 	ld de,05153h		;9fcb
 	call fotograma_por_sentido		;9fce   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 	dec (ix+011h)		;9fd1   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)

@@ -556,7 +556,7 @@ L 0x96FA llega_al_punto (ix+0x1F) + 1 si el actor esta en la Y y X de HL
 L 0x9735 fotograma_3d_3f p02:9B8D con 0x3D / 0x3F
 L 0x973B marca_1c (ix+0x1C) bit 0
 L 0x97C5 sube_hacia_el_personaje la Y del actor hacia 0x20 por encima del personaje
-L 0x97DA rebota_en_borde cerca de un borde, sonido 0x0A y cambia el sentido (ix+0x17)
+L 0x97DA rebota_en_borde cerca de un borde, invierte la velocidad X (p02:8B03) y cambia el sentido (ix+0x17)
 L 0x9823 crea_tipo_15 crea un actor 0x15 en su posicion con IX = 0xCC3A
 L 0x9882 cuenta_tipo_15 A = cuantos actores de tipo 0x15 hay
 L 0x98D2 mira_al_personaje_2b (ix+0x10) = 0x2B o 0x2C (+ 2 mientras (ix+0x1C))
@@ -567,7 +567,7 @@ L 0x997D busca_tipo_3 HL = el primer actor de tipo 3
 L 0x9992 cuenta_1e_20 (ix+0x1E) - 1; a cero, 0x20 y la direccion hacia el personaje
 L 0x99C9 al_azar_9a2a una direccion al azar de p02:9A2A
 L 0x9A4D fotograma_41 cada 4 cuadros, el fotograma alrededor de 0x41
-L 0x9B1C sonido_y_sigue el sonido 0x0A y p02:9AFE
+L 0x9B1C rebota_y_sigue invierte la velocidad X (p02:8B03) y sigue en p02:9AFE
 L 0x9B8D fotograma_por_sentido (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 L 0x9B9A alterna_fotograma cada 8 cuadros, (ix+0x10) alterna con C
 L 0x9C1C busca_suelo_arriba casillas hacia arriba desde el actor (p01:704C)
@@ -1102,6 +1102,7 @@ C 0x90CD lee la cuenta de la sala del final de fase o de la sala 5
 C 0x90D9 lee las dos posiciones de la sala del final de fase y el byte siguiente (16 bits)
 C 0x90E4 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 C 0x90F0 banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x90F3 objetos_de_la_lista: con 12: los objetos de p12:B8BB[fase] de esta pantalla ([pantalla][YX][clase]; p02:9148)
 C 0x90F6 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x9102 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0x9109 lee la ruina (0-4)
@@ -1111,6 +1112,8 @@ C 0x911D banco_12_en_a000: pone el banco 12 en 0xA000
 C 0x9120 lee en la sala de la puerta 5
 C 0x9126 lee la fase (1-25: ruina * 5 + puerta)
 C 0x912D palabra_a: HL = la palabra A de la tabla HL
+C 0x913A crea_objeto: el objeto 0x2A de clase B en la casilla [YX] del registro, si no se ha cogido ya (p02:916C)
+C 0x915E ya_cogido: acarreo si la casilla (D, E) de esta pantalla y fase esta entre los objetos cogidos de 0xE000
 C 0x9163 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x9169 banco_12_en_a000: pone el banco 12 en 0xA000
 C 0x917C lee la pantalla de la fase (desde 1)
@@ -1348,7 +1351,7 @@ C 0x9790 el fotograma del actor (p02:8A42) = 0x1A
 C 0x9794 invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0x979C lee la cuenta de cuadros del juego
 C 0x97A1 sube_hacia_el_personaje: la Y del actor hacia 0x20 por encima del personaje
-C 0x97A4 rebota_en_borde: cerca de un borde, sonido 0x0A y cambia el sentido (ix+0x17)
+C 0x97A4 rebota_en_borde: cerca de un borde, invierte la velocidad X (p02:8B03) y cambia el sentido (ix+0x17)
 C 0x97A7 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0x97AB la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x1A
 C 0x97B2 lee la Y del personaje
@@ -1475,7 +1478,7 @@ C 0x9AFB velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 C 0x9B01 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 C 0x9B08 alterna_fotograma: cada 8 cuadros, (ix+0x10) alterna con C
 C 0x9B0B choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
-C 0x9B0E sonido_y_sigue: el sonido 0x0A y p02:9AFE
+C 0x9B0E rebota_y_sigue: invierte la velocidad X (p02:8B03) y sigue en p02:9AFE
 C 0x9B11 se_para_si_choca: si choca (p02:9D05): velocidad X 0, Y 0x400 y paso 0
 C 0x9B15 el paso del actor = 0x02
 C 0x9B1C invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
@@ -1676,7 +1679,7 @@ C 0x9FB4 el fotograma del actor (p02:8A42) = 0x51
 C 0x9FB8 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 C 0x9FBE velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 C 0x9FC2 lee el paso del actor
-C 0x9FC8 choca_o_cuenta: el sonido 0x0A si choca de lado o si (ix+0x11) & 15 es cero
+C 0x9FC8 rebota_si_choca: invierte la velocidad X (p02:8B03) si choca de lado o si (ix+0x11) & 15 es cero
 C 0x9FCE fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 C 0x9FD1 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0x9FD5 lee la Y del personaje

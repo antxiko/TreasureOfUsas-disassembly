@@ -1632,6 +1632,7 @@ C 0x7525 lee la X del actor
 C 0x752A lee la Y del actor
 C 0x752F lee la pantalla de la fase (desde 1)
 C 0x7534 lee la fase (1-25: ruina * 5 + puerta)
+C 0x7539 anota_objeto_cogido: anota en 0xE000 la X, la Y, la pantalla y la fase del objeto IX cogido (salvo el tipo 0x29 y las clases desde la 5), para que no vuelva a salir
 C 0x7548 despacha_por_personaje: despacha A con IX = la ficha del personaje
 C 0x7554 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 C 0x755A lee la X del actor

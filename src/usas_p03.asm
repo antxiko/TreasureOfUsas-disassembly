@@ -17,7 +17,7 @@
 L_A000:
 	ld (ix+011h),020h		;a000   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 	ret			;a004
-choca_o_cuenta:		; el sonido 0x0A si choca de lado o si (ix+0x11) & 15 es cero
+rebota_si_choca:		; invierte la velocidad X (p02:8B03) si choca de lado o si (ix+0x11) & 15 es cero
 	call 09cc8h		;a005   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
 	jp nz,08b03h		;a008   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld a,(ix+011h)		;a00b   ; lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
@@ -25,10 +25,10 @@ choca_o_cuenta:		; el sonido 0x0A si choca de lado o si (ix+0x11) & 15 es cero
 	jp z,08b03h		;a010   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ret			;a013
 L_A014:
-	ld a,(ix+008h)		;a014   ; lee la velocidad Y del actor (alta)
+	ld a,(ix+008h)		;a014   ; subiendo (velocidad Y negativa)...
 	cp 080h		;a017
 	jr c,L_A024		;a019
-	add a,0f0h		;a01b
+	add a,0f0h		;a01b   ; ...la casilla de arriba: si choca, la Y al reves
 	ld e,a			;a01d
 	call 09d07h		;a01e   ; choque_7: p02:9D09 con D = 7
 	call nz,08affh		;a021   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
@@ -36,38 +36,38 @@ L_A024:
 	call frena_caida		;a024   ; frena_caida: si la velocidad Y esta entre 6 y 0x50: 0x600 y sin aceleracion
 	call 09cc8h		;a027   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
 	call nz,08b03h		;a02a   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
-	ld de,05254h		;a02d
+	ld de,05254h		;a02d   ; 0x52 a la derecha, 0x54 a la izquierda
 	call 09b8dh		;a030   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
-	ld a,(ix+008h)		;a033   ; lee la velocidad Y del actor (alta)
+	ld a,(ix+008h)		;a033   ; bajando:
 	cp 080h		;a036
 	ret nc			;a038
-	ld e,000h		;a039
+	ld e,000h		;a039   ; la casilla de debajo...
 	call 09d07h		;a03b   ; choque_7: p02:9D09 con D = 7
-	jr nz,L_A05D		;a03e
-	ld e,(ix+008h)		;a040   ; lee la velocidad Y del actor (alta)
+	jr nz,L_A05D		;a03e   ; ...con suelo justo debajo, salta (p03:A05D)
+	ld e,(ix+008h)		;a040   ; ...si toca suelo en este cuadro: aterriza
 	call 09d07h		;a043   ; choque_7: p02:9D09 con D = 7
 	ret z			;a046
 	ld (ix+00bh),000h		;a047   ; si el actor acelera (p02:8393) = 0x00
 	call alinea_y		;a04b   ; alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
-	ld h,001h		;a04e
+	ld h,001h		;a04e   ; 1 a la derecha, 0x20 cuadros y el paso anterior
 	call 08b8bh		;a050   ; velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 	ld (ix+011h),020h		;a053   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 	dec (ix+001h)		;a057   ; baja el paso del actor
 	jp 08b7eh		;a05a   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
 L_A05D:
-	ld h,0fch		;a05d
+	ld h,0fch		;a05d   ; salto: velocidad Y -4
 	jp 08b80h		;a05f   ; velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
 L_A062:
 	call espera_al_azar		;a062   ; espera_al_azar: (ix+0x11) = el numero del actor * 16 + un numero al azar
-	ld a,(ix+005h)		;a065   ; lee la X del actor
+	ld a,(ix+005h)		;a065   ; la casilla 0x10 a la izquierda
 	sub 010h		;a068
 	ld d,a			;a06a
 	ld e,(ix+003h)		;a06b   ; lee la Y del actor
 	push de			;a06e
 	call 070bfh		;a06f   ; ficha_en_menos_1: A = la ficha de 0xD200 en (D, E) - 1 (p01:7176) y sigue en p01:7141
 	pop de			;a072
-	jr c,L_A086		;a073
-	ld (ix+010h),079h		;a075   ; el fotograma del actor (p02:8A42) = 0x79
+	jr c,L_A086		;a073   ; con pared a la izquierda, mira a la izquierda (p03:A086)
+	ld (ix+010h),079h		;a075   ; si no: a la derecha, fotograma 0x79, 4 a la derecha
 	xor a			;a079
 	ld (ix+01ch),a		;a07a
 	ld a,(ix+005h)		;a07d   ; lee la X del actor
@@ -75,7 +75,7 @@ L_A062:
 	ld (ix+005h),a		;a082   ; guarda la X del actor
 	ret			;a085
 L_A086:
-	ld a,(ix+005h)		;a086   ; lee la X del actor
+	ld a,(ix+005h)		;a086   ; a la izquierda: 4 a la izquierda, fotograma 0x7B
 	sub 004h		;a089
 	ld (ix+005h),a		;a08b   ; guarda la X del actor
 	ld (ix+01ch),001h		;a08e
@@ -101,48 +101,48 @@ DATA_saltos_A09D:
 
 
 L_A0A5:
-	call alterna_79_7b		;a0a5   ; alterna_79_7b: cada 4 cuadros, el fotograma alterna con 0x79 o 0x7B segun (ix+0x1C)
+	call alterna_79_7b		;a0a5   ; el tipo 15, paso 0: quieto y alternando el fotograma
 	dec (ix+011h)		;a0a8   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;a0ab
 	call salto_al_azar		;a0ac   ; salto_al_azar: guarda la X en (ix+0x1F) y escoge al azar hacia donde ir
-	ret nc			;a0af
-	ld a,(ix+01dh)		;a0b0
+	ret nc			;a0af   ; sin sitio, espera
+	ld a,(ix+01dh)		;a0b0   ; con (ix+0x1D) a cero, hacia abajo: velocidad Y 4 con frenado 0x40...
 	or a			;a0b3
 	ld h,004h		;a0b4
 	ld de,0ffc0h		;a0b6
 	jr z,L_A0C0		;a0b9
-	ld h,0fch		;a0bb
+	ld h,0fch		;a0bb   ; ...hacia arriba: -4 con 0x40
 	ld de,00040h		;a0bd
 L_A0C0:
 	ld (ix+00dh),d		;a0c0   ; guarda la aceleracion Y del actor (alta)
 	ld (ix+00ch),e		;a0c3   ; guarda la aceleracion Y del actor
 	call 08b80h		;a0c6   ; velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
-	ld a,(ix+01ch)		;a0c9
+	ld a,(ix+01ch)		;a0c9   ; y 1 o -1 en X segun hacia donde mira
 	or a			;a0cc
 	ld h,001h		;a0cd
 	jr nz,L_A0D3		;a0cf
 	ld h,0ffh		;a0d1
 L_A0D3:
 	call 08b8bh		;a0d3   ; velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
-	ld (ix+011h),020h		;a0d6   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
+	ld (ix+011h),020h		;a0d6   ; 0x20 cuadros, con aceleracion, al paso siguiente
 	ld (ix+00bh),001h		;a0da   ; si el actor acelera (p02:8393) = 0x01
 	inc (ix+001h)		;a0de   ; sube el paso del actor
 	ret			;a0e1
 espera_al_azar:		; (ix+0x11) = el numero del actor * 16 + un numero al azar
 	call 08b4fh		;a0e2   ; azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
-	ld b,a			;a0e5
+	ld b,a			;a0e5   ; 
 	push ix		;a0e6
 	pop hl			;a0e8
-	ld de,0c400h		;a0e9   ; apunta a los 8 actores (0x80 bytes cada uno)
+	ld de,0c400h		;a0e9   ; el numero del actor (IX - 0xC400) / 0x80...
 	or a			;a0ec
 	sbc hl,de		;a0ed
 	add hl,hl			;a0ef
 	ld a,h			;a0f0
-	add a,a			;a0f1
+	add a,a			;a0f1   ; ...* 16...
 	add a,a			;a0f2
 	add a,a			;a0f3
 	add a,a			;a0f4
-	add a,b			;a0f5
+	add a,b			;a0f5   ; ...+ el numero al azar
 	ld (ix+011h),a		;a0f6   ; guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret			;a0f9
 alterna_79_7b:		; cada 4 cuadros, el fotograma alterna con 0x79 o 0x7B segun (ix+0x1C)
@@ -151,11 +151,11 @@ alterna_79_7b:		; cada 4 cuadros, el fotograma alterna con 0x79 o 0x7B segun (ix
 	ret nz			;a0ff
 	ld a,(ix+01ch)		;a100
 	or a			;a103
-	ld c,07bh		;a104
+	ld c,07bh		;a104   ; 0x7B mirando a la izquierda, 0x79 a la derecha
 	jr nz,L_A10A		;a106
 	ld c,079h		;a108
 L_A10A:
-	ld a,(ix+010h)		;a10a   ; lee el fotograma del actor (p02:8A42)
+	ld a,(ix+010h)		;a10a   ; alterna entre C y C + 1
 	sub c			;a10d
 	xor 001h		;a10e
 	add a,c			;a110
@@ -165,7 +165,7 @@ salto_al_azar:		; guarda la X en (ix+0x1F) y escoge al azar hacia donde ir
 	ld a,(ix+005h)		;a115   ; lee la X del actor
 	ld (ix+01fh),a		;a118
 	ld d,a			;a11b
-	ld a,(ix+01ch)		;a11c
+	ld a,(ix+01ch)		;a11c   ; 0x10 por delante de su X
 	or a			;a11f
 	ld a,0f0h		;a120
 	jr nz,L_A126		;a122
@@ -175,46 +175,46 @@ L_A126:
 	ld d,a			;a127
 	call 08b4fh		;a128   ; azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
 	ld b,a			;a12b
-	and 002h		;a12c
+	and 002h		;a12c   ; con el bit 1 del azar...
 	ld a,b			;a12e
 	jr z,L_A13D		;a12f
-	ld a,(0c244h)		;a131   ; lee la Y del personaje
+	ld a,(0c244h)		;a131   ; ...hacia el personaje (arriba o abajo)...
 	cp (ix+003h)		;a134   ; compara con la Y del actor
 	ld a,000h		;a137
 	jr c,L_A13D		;a139
 	ld a,001h		;a13b
 L_A13D:
-	and 001h		;a13d
-	ld e,0e0h		;a13f
+	and 001h		;a13d   ; ...si no, al azar
+	ld e,0e0h		;a13f   ; 0x20 arriba o abajo
 	jr z,L_A145		;a141
 	ld e,020h		;a143
 L_A145:
-	ld (ix+01dh),a		;a145
+	ld (ix+01dh),a		;a145   ; hacia donde va
 	ld a,(ix+003h)		;a148   ; lee la Y del actor
 	add a,e			;a14b
 	ld e,a			;a14c
-	ld (ix+01eh),a		;a14d
-	jp 070bfh		;a150   ; ficha_en_menos_1: A = la ficha de 0xD200 en (D, E) - 1 (p01:7176) y sigue en p01:7141
+	ld (ix+01eh),a		;a14d   ; la Y de destino
+	jp 070bfh		;a150   ; la ficha del destino
 L_A153:
 	ld a,(ix+003h)		;a153   ; lee la Y del actor
-	cp 0d4h		;a156
+	cp 0d4h		;a156   ; no pasa de 0xD4
 	jr c,L_A15E		;a158
 	ld (ix+003h),0d4h		;a15a   ; la Y del actor = 0xD4
 L_A15E:
 	call fotograma_7a_7c		;a15e   ; fotograma_7a_7c: en cuadros pares, el fotograma de 0x7A7D / 0x7C7E segun (ix+0x1C)
 	dec (ix+011h)		;a161   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;a164
-	ld (ix+00bh),000h		;a165   ; si el actor acelera (p02:8393) = 0x00
+	ld (ix+00bh),000h		;a165   ; sin aceleracion, al paso siguiente, 0x10 cuadros
 	inc (ix+001h)		;a169   ; sube el paso del actor
 	ld (ix+011h),010h		;a16c   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x10
-	ld a,(ix+01ch)		;a170
+	ld a,(ix+01ch)		;a170   ; 2 o -2 en X
 	or a			;a173
 	ld h,0feh		;a174
 	jr nz,L_A17A		;a176
 	ld h,002h		;a178
 L_A17A:
 	call 08b8bh		;a17a   ; velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
-	ld a,(ix+008h)		;a17d   ; lee la velocidad Y del actor (alta)
+	ld a,(ix+008h)		;a17d   ; y 2 o -2 en Y, segun hacia donde iba
 	cp 080h		;a180
 	ld h,002h		;a182
 	jr c,L_A188		;a184
@@ -226,16 +226,16 @@ fotograma_7a_7c:		; en cuadros pares, el fotograma de 0x7A7D / 0x7C7E segun (ix+
 	ld a,(0c00dh)		;a18c   ; lee la cuenta de cuadros del juego
 	and 001h		;a18f
 	ret nz			;a191
-	ld de,07a7dh		;a192
+	ld de,07a7dh		;a192   ; 0x7A / 0x7D mirando a la derecha...
 	ld hl,07c7eh		;a195
-	ld a,(ix+01ch)		;a198
+	ld a,(ix+01ch)		;a198   ; ...0x7C / 0x7E a la izquierda
 	or a			;a19b
 	ld a,b			;a19c
 	jr z,L_A1A0		;a19d
 	ex de,hl			;a19f
 L_A1A0:
 	ld a,(0c00dh)		;a1a0   ; lee la cuenta de cuadros del juego
-	and 004h		;a1a3
+	and 004h		;a1a3   ; segun el bit 2 de la cuenta
 	ld a,d			;a1a5
 	jr z,L_A1A9		;a1a6
 	ld a,e			;a1a8
@@ -246,12 +246,12 @@ L_A1AD:
 	call fotograma_7a_7c		;a1ad   ; fotograma_7a_7c: en cuadros pares, el fotograma de 0x7A7D / 0x7C7E segun (ix+0x1C)
 	dec (ix+011h)		;a1b0   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;a1b3
-	call 08ba9h		;a1b4   ; para_actor: velocidades a cero
+	call 08ba9h		;a1b4   ; quieto en su destino
 	ld a,(ix+01fh)		;a1b7
 	ld (ix+005h),a		;a1ba   ; guarda la X del actor
 	ld a,(ix+01eh)		;a1bd
 	ld (ix+003h),a		;a1c0   ; guarda la Y del actor
-	call espera_por_estado		;a1c3   ; espera_por_estado: (ix+0x11) = 0x20, 0x10 u 8 segun el estado del personaje
+	call espera_por_estado		;a1c3   ; y la espera segun el animo del personaje
 	ld (ix+001h),000h		;a1c6   ; el paso del actor = 0x00
 	ld a,(ix+01ch)		;a1ca
 	or a			;a1cd
@@ -1829,7 +1829,7 @@ L_AD74:
 	djnz L_ADDD		;ad7a
 	ld a,040h		;ad7c
 	call crea_27_cada		;ad7e   ; crea_27_cada: (ix+0x1F) - 1; a cero, A y crea el actor 0x27
-	call rebota_arriba		;ad81   ; rebota_arriba: si se sale por arriba: rebota con velocidad al azar y sonido 0x0A
+	call rebota_arriba		;ad81   ; rebota_arriba: si se sale por arriba: rebota con velocidad al azar e invierte la X (p02:8B03)
 	ld a,(ix+008h)		;ad84   ; lee la velocidad Y del actor (alta)
 	cp 080h		;ad87
 	jr nc,L_AD9C		;ad89
@@ -1972,7 +1972,7 @@ L_AE75:
 	call 04bdeh		;aea2   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 	inc (ix+003h)		;aea5   ; sube la Y del actor
 	ret			;aea8
-rebota_arriba:		; si se sale por arriba: rebota con velocidad al azar y sonido 0x0A
+rebota_arriba:		; si se sale por arriba: rebota con velocidad al azar e invierte la X (p02:8B03)
 	ld a,(ix+003h)		;aea9   ; lee la Y del actor
 	add a,(ix+008h)		;aeac   ; le suma la velocidad Y del actor (alta)
 	add a,02ch		;aeaf

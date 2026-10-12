@@ -176,6 +176,7 @@ imagenes: $(ROM)
 	$(PYIMG) tools/objetos.py $(IMG)/objetos.png
 	$(PYIMG) tools/actores.py anima $(IMG)/enemigos.gif
 	$(PYIMG) tools/actores.py jefes $(IMG)/jefes_de_fase.gif
+	$(PYIMG) tools/estatua.py $(IMG)/sala5_estatua.png
 	$(PYIMG) tools/retratos.py hoja $(IMG)/retratos.png
 	$(PYIMG) tools/retratos.py habla $(IMG)/retratos_hablan.gif
 

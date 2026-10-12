@@ -3199,7 +3199,7 @@ L_7525:
 	ld (hl),a			;7537
 	ret			;7538
 L_7539:
-	call anota_objeto_cogido		;7539
+	call anota_objeto_cogido		;7539   ; anota_objeto_cogido: anota en 0xE000 la X, la Y, la pantalla y la fase del objeto IX cogido (salvo el tipo 0x29 y las clases desde la 5), para que no vuelva a salir
 	ld a,(ix+015h)		;753c
 	dec a			;753f
 	push iy		;7540

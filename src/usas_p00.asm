@@ -1493,52 +1493,52 @@ L_4A0A:
 	pop bc			;4a0e
 	call borra_pagina		;4a0f   ; borra_pagina: HMMV de 256 x C lineas a 0 y R#23 = 0
 pantalla_encendida:		; R#1 con el bit 6 (pantalla) y sprites encendidos
-	ld a,(0f3e0h)		;4a12
-	or 040h		;4a15
+	ld a,(0f3e0h)		;4a12   ; la copia de R#1 de la BIOS (RG1SAV)...
+	or 040h		;4a15   ; ...con el bit 6: pantalla encendida
 	ld b,a			;4a17
-	ld c,001h		;4a18
+	ld c,001h		;4a18   ; a R#1
 	call 00047h		;4a1a   ; BIOS WRTVDP - Writes data in the VDP-register
 	jr sprites_encendidos		;4a1d
 pantalla_apagada:		; R#1 sin el bit 6 y sprites apagados (R#8)
-	ld a,(0f3e0h)		;4a1f
-	and 0bfh		;4a22
+	ld a,(0f3e0h)		;4a1f   ; la copia de R#1 de la BIOS (RG1SAV)...
+	and 0bfh		;4a22   ; ...sin el bit 6: pantalla apagada
 	ld b,a			;4a24
-	ld c,001h		;4a25
+	ld c,001h		;4a25   ; a R#1
 	call 00047h		;4a27   ; BIOS WRTVDP - Writes data in the VDP-register
 	jr sprites_apagados		;4a2a
 apaga_y_borra_todo:		; pantalla apagada, sprites escondidos y la pagina 0 borrada
 	call pantalla_apagada		;4a2c   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	call esconde_sprites		;4a2f   ; esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
-	ld bc,000d4h		;4a32
+	ld bc,000d4h		;4a32   ; las 0xD4 (212) lineas
 borra_pagina:		; HMMV de 256 x C lineas a 0 y R#23 = 0
-	ld hl,00000h		;4a35
+	ld hl,00000h		;4a35   ; desde (0, 0) de la pagina 0, color 0
 	xor a			;4a38
 	ld d,a			;4a39
 	call rellena_rectangulo		;4a3a   ; rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
-	ld b,000h		;4a3d
+	ld b,000h		;4a3d   ; R#23 (el desplazamiento vertical) = 0
 	ld c,017h		;4a3f
 	jp 00047h		;4a41   ; BIOS WRTVDP - Writes data in the VDP-register
 esconde_sprites:		; Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
 	call esconde_sprites_ram		;4a44   ; esconde_sprites_ram: Y = 0xE0 en los 32 atributos de 0xDE00
-	ld hl,0f600h		;4a47
-	ld a,0e0h		;4a4a
+	ld hl,0f600h		;4a47   ; la tabla de atributos de la pagina 1...
+	ld a,0e0h		;4a4a   ; ...con Y = 0xE0 (escondido): 0x80 bytes
 	ld bc,00080h		;4a4c
 	call llena_vram		;4a4f   ; llena_vram: llena BC bytes de la VRAM HL con A
-	ld hl,07600h		;4a52
+	ld hl,07600h		;4a52   ; y la de la pagina 0
 	ld a,0e0h		;4a55
 	ld bc,00080h		;4a57
 	jp llena_vram		;4a5a   ; llena_vram: llena BC bytes de la VRAM HL con A
 sprites_apagados:		; R#8 con el bit 1 (sin sprites)
-	ld a,(0ffe7h)		;4a5d
-	or 002h		;4a60
+	ld a,(0ffe7h)		;4a5d   ; la copia de R#8 de la BIOS (RG8SAV)...
+	or 002h		;4a60   ; ...con el bit 1: sin sprites
 	ld b,a			;4a62
-	ld c,008h		;4a63
+	ld c,008h		;4a63   ; a R#8
 	jp 00047h		;4a65   ; BIOS WRTVDP - Writes data in the VDP-register
 sprites_encendidos:		; R#8 sin el bit 1
-	ld a,(0ffe7h)		;4a68
-	and 0fdh		;4a6b
+	ld a,(0ffe7h)		;4a68   ; la copia de R#8...
+	and 0fdh		;4a6b   ; ...sin el bit 1: con sprites
 	ld b,a			;4a6d
-	ld c,008h		;4a6e
+	ld c,008h		;4a6e   ; a R#8
 	jp 00047h		;4a70   ; BIOS WRTVDP - Writes data in the VDP-register
 pon_color:		; el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 	push bc			;4a73
@@ -1547,16 +1547,16 @@ pon_color:		; el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0x
 	ld a,(00007h)		;4a76
 	inc a			;4a79
 	ld c,a			;4a7a
-	di			;4a7b
-	out (c),b		;4a7c
+	di			;4a7b   ; sin interrupciones mientras se habla con el VDP
+	out (c),b		;4a7c   ; el color en curso...
 	ld a,090h		;4a7e   ; R#16 = el color: el siguiente par va a ese registro de paleta
 	out (c),a		;4a80
 	inc c			;4a82   ; por el puerto 0x9A: rojo-azul y verde
 	out (c),d		;4a83
-	push af			;4a85
+	push af			;4a85   ; una pausa entre las dos escrituras de la paleta
 	pop af			;4a86
 	out (c),e		;4a87
-	dec c			;4a89
+	dec c			;4a89   ; el puerto 0x99
 	ld hl,0f680h		;4a8a   ; la copia en VRAM de la paleta: 0xF680 + color * 2
 	ld a,b			;4a8d
 	add a,a			;4a8e
@@ -1573,31 +1573,31 @@ pon_color:		; el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0x
 pon_paleta:		; ternas [color][RB][G] de HL hasta 0xFF
 	ld a,(hl)			;4a9d   ; [color]: 0xFF acaba
 	inc hl			;4a9e
-	inc a			;4a9f
+	inc a			;4a9f   ; 0xFF + 1 = 0: acaba
 	ret z			;4aa0
-	dec a			;4aa1
+	dec a			;4aa1   ; el color
 	ld d,(hl)			;4aa2   ; [RB][G]
 	inc hl			;4aa3
 	ld e,(hl)			;4aa4
 	inc hl			;4aa5
 	call pon_color		;4aa6   ; pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
-	jr pon_paleta		;4aa9
+	jr pon_paleta		;4aa9   ; la terna siguiente
 espera_al_vdp:		; espera a que acabe el comando del VDP (S#2 bit 0)
-	ld a,002h		;4aab
+	ld a,002h		;4aab   ; S#2...
 	call lee_estado_vdp		;4aad   ; lee_estado_vdp: A = el registro de estado A del VDP
-	rra			;4ab0
+	rra			;4ab0   ; ...su bit 0 (CE): el comando sigue en marcha
 	jr c,espera_al_vdp		;4ab1
 	ret			;4ab3
 lee_estado_vdp:		; A = el registro de estado A del VDP
 	push bc			;4ab4
 	push hl			;4ab5
 	ld hl,(00006h)		;4ab6   ; 0x0006/0x0007: los puertos del VDP que da la BIOS
-	inc h			;4ab9
+	inc h			;4ab9   ; el puerto 0x99 (registros) y el 0x99 de lectura
 	inc l			;4aba
 	ld c,h			;4abb
-	di			;4abc
+	di			;4abc   ; sin interrupciones mientras se habla con el VDP
 	out (c),a		;4abd   ; R#15 = A: el registro de estado a leer
-	ld a,08fh		;4abf
+	ld a,08fh		;4abf   ; 0x8F: R#15
 	out (c),a		;4ac1
 	ld c,l			;4ac3
 	in a,(c)		;4ac4   ; lo lee por el puerto 0x99
@@ -1614,23 +1614,23 @@ lee_estado_vdp:		; A = el registro de estado A del VDP
 	ret			;4ad3
 linea_horizontal:		; LINE (0x70) horizontal (ARG = 0) de B puntos en (H, L) de la pagina 0xC8E0, color C
 	push de			;4ad4
-	call espera_al_vdp		;4ad5   ; espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
+	call espera_al_vdp		;4ad5   ; que acabe el comando anterior
 	push bc			;4ad8
-	ld a,(00007h)		;4ad9
+	ld a,(00007h)		;4ad9   ; el puerto 0x99
 	inc a			;4adc
 	ld c,a			;4add
 	ld a,024h		;4ade   ; R#17 = 36 (0x24) con autoincremento: de R#36 en adelante
 	di			;4ae0
-	out (c),a		;4ae1
-	ld a,091h		;4ae3
+	out (c),a		;4ae1   ; a R#17...
+	ld a,091h		;4ae3   ; 0x91: R#17
 	out (c),a		;4ae5
-	inc c			;4ae7
+	inc c			;4ae7   ; el puerto 0x9B: los registros seguidos desde R#36
 	inc c			;4ae8
 	out (c),h		;4ae9   ; DX = H, DY = L
-	xor a			;4aeb
+	xor a			;4aeb   ; DX alto = 0
 	out (c),a		;4aec
 	out (c),l		;4aee
-	pop hl			;4af0
+	pop hl			;4af0   ; B y C del principio en H y L
 	pop de			;4af1
 	ld a,(0c8e0h)		;4af2   ; DY alto: la pagina, de 0xC8E0
 	out (c),a		;4af5
@@ -1638,11 +1638,11 @@ linea_horizontal:		; LINE (0x70) horizontal (ARG = 0) de B puntos en (H, L) de l
 	out (c),h		;4af8
 	xor a			;4afa
 	out (c),a		;4afb
-	xor a			;4afd
+	xor a			;4afd   ; NY = 0...
 	out (c),a		;4afe
 	out (c),a		;4b00
-	out (c),l		;4b02
-	out (c),a		;4b04
+	out (c),l		;4b02   ; el color (C)
+	out (c),a		;4b04   ; ARG = 0: eje mayor X
 	ld a,070h		;4b06   ; 0x70: LINE
 	out (c),a		;4b08
 	ei			;4b0a
@@ -1650,30 +1650,30 @@ linea_horizontal:		; LINE (0x70) horizontal (ARG = 0) de B puntos en (H, L) de l
 linea_vertical:		; LINE (0x70) vertical (ARG = 1) de B puntos en (H, L), color C
 	call espera_al_vdp		;4b0c   ; espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
 	push bc			;4b0f
-	ld a,(00007h)		;4b10
+	ld a,(00007h)		;4b10   ; el puerto 0x99
 	inc a			;4b13
 	ld c,a			;4b14
 	ld a,024h		;4b15   ; R#17 = 36: de R#36 en adelante
-	di			;4b17
+	di			;4b17   ; sin interrupciones mientras se habla con el VDP
 	out (c),a		;4b18
 	ld a,091h		;4b1a
-	out (c),a		;4b1c
-	inc c			;4b1e
+	out (c),a		;4b1c   ; 0x91: R#17
+	inc c			;4b1e   ; el puerto 0x9B
 	inc c			;4b1f
 	out (c),h		;4b20   ; DX = H, DY = L, NX = B - 1 (eje mayor), NY = 0
 	xor a			;4b22
 	out (c),a		;4b23
 	out (c),l		;4b25
 	out (c),a		;4b27
-	pop hl			;4b29
-	dec h			;4b2a
+	pop hl			;4b29   ; B y C del principio en H y L
+	dec h			;4b2a   ; NX = B - 1
 	out (c),h		;4b2b
 	xor a			;4b2d
 	out (c),a		;4b2e
 	xor a			;4b30
 	out (c),a		;4b31
 	out (c),a		;4b33
-	out (c),l		;4b35
+	out (c),l		;4b35   ; el color (C)
 	inc a			;4b37   ; ARG = 1: eje mayor Y, vertical
 	out (c),a		;4b38
 	ld a,070h		;4b3a   ; 0x70: LINE
@@ -1681,19 +1681,19 @@ linea_vertical:		; LINE (0x70) vertical (ARG = 1) de B puntos en (H, L), color C
 	ei			;4b3e
 	ret			;4b3f
 linea:		; LINE (0x70) de (H, L) con largo D y E
-	call espera_al_vdp		;4b40   ; espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
+	call espera_al_vdp		;4b40   ; que acabe el comando anterior
 	push bc			;4b43
-	ld a,(00007h)		;4b44
+	ld a,(00007h)		;4b44   ; el puerto 0x99
 	inc a			;4b47
 	ld c,a			;4b48
 	ld a,024h		;4b49   ; R#17 = 36
-	di			;4b4b
+	di			;4b4b   ; sin interrupciones
 	out (c),a		;4b4c
-	ld a,091h		;4b4e
+	ld a,091h		;4b4e   ; 0x91: R#17
 	out (c),a		;4b50
-	inc c			;4b52
+	inc c			;4b52   ; el puerto 0x9B
 	inc c			;4b53
-	out (c),h		;4b54
+	out (c),h		;4b54   ; DX = H, DY = L
 	xor a			;4b56
 	out (c),a		;4b57
 	out (c),l		;4b59
@@ -1706,27 +1706,27 @@ linea:		; LINE (0x70) de (H, L) con largo D y E
 	out (c),e		;4b64
 	xor a			;4b66
 	out (c),a		;4b67
-	out (c),l		;4b69
-	xor a			;4b6b
+	out (c),l		;4b69   ; el color (C, de B y C del principio)
+	xor a			;4b6b   ; ARG = 0
 	out (c),a		;4b6c
 	ld a,070h		;4b6e   ; 0x70: LINE
 	out (c),a		;4b70
 	ei			;4b72
 	ret			;4b73
 rectangulo:		; los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
-	ld b,e			;4b74
+	ld b,e			;4b74   ; el lado izquierdo: E puntos hacia abajo
 	call linea_vertical_guardando_todo		;4b75   ; linea_vertical_guardando_todo: p00:4B0C sin tocar HL, DE ni BC
-	ld b,d			;4b78
+	ld b,d			;4b78   ; el de arriba: D puntos a la derecha
 	call linea_horizontal_guardando_todo		;4b79   ; linea_horizontal_guardando_todo: p00:4AD4 sin tocar HL, DE ni BC
 	push hl			;4b7c
-	ld a,l			;4b7d
+	ld a,l			;4b7d   ; el de abajo: en la Y + E - 1
 	dec a			;4b7e
 	add a,e			;4b7f
 	ld l,a			;4b80
 	ld b,d			;4b81
 	call linea_horizontal_guardando_todo		;4b82   ; linea_horizontal_guardando_todo: p00:4AD4 sin tocar HL, DE ni BC
 	pop hl			;4b85
-	ld a,h			;4b86
+	ld a,h			;4b86   ; el derecho: en la X + D - 1
 	dec a			;4b87
 	add a,d			;4b88
 	ld h,a			;4b89
@@ -1754,15 +1754,15 @@ rellena_rectangulo:		; HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D co
 	ex af,af'			;4ba2
 	call espera_al_vdp		;4ba3   ; el color en A' y espera a que acabe el comando anterior
 	push bc			;4ba6
-	ld a,(00007h)		;4ba7
+	ld a,(00007h)		;4ba7   ; el puerto 0x99
 	inc a			;4baa
 	ld c,a			;4bab
 	ld a,024h		;4bac   ; R#17 = 36: DX y DY de H y L, pagina D
-	di			;4bae
+	di			;4bae   ; sin interrupciones
 	out (c),a		;4baf
-	ld a,091h		;4bb1
+	ld a,091h		;4bb1   ; 0x91: R#17
 	out (c),a		;4bb3
-	inc c			;4bb5
+	inc c			;4bb5   ; el puerto 0x9B
 	inc c			;4bb6
 	out (c),h		;4bb7
 	xor a			;4bb9
@@ -1771,21 +1771,21 @@ rellena_rectangulo:		; HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D co
 	out (c),d		;4bbe
 	pop hl			;4bc0
 	out (c),h		;4bc1   ; NX = H (B): 0 quiere decir 256
-	cp h			;4bc3
+	cp h			;4bc3   ; NX alto: 1 si NX bajo es 0 (256)
 	jr nz,L_4BC7		;4bc4
 	inc a			;4bc6
 L_4BC7:
 	out (c),a		;4bc7
 	xor a			;4bc9
 	out (c),l		;4bca   ; NY = L (C), con lo mismo
-	cp l			;4bcc
+	cp l			;4bcc   ; NY alto: 1 si NY bajo es 0
 	jr nz,L_4BD0		;4bcd
 	inc a			;4bcf
 L_4BD0:
 	out (c),a		;4bd0
 	ex af,af'			;4bd2
 	out (c),a		;4bd3   ; el color (A')
-	xor a			;4bd5
+	xor a			;4bd5   ; ARG = 0
 	out (c),a		;4bd6
 	ld a,0c0h		;4bd8   ; 0xC0: HMMV
 	out (c),a		;4bda
@@ -1795,15 +1795,15 @@ copia_rectangulo:		; HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | 
 	ex af,af'			;4bde
 	call espera_al_vdp		;4bdf   ; espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
 	push bc			;4be2
-	ld a,(00007h)		;4be3
+	ld a,(00007h)		;4be3   ; el puerto 0x99
 	inc a			;4be6
 	ld c,a			;4be7
 	ld a,020h		;4be8   ; R#17 = 32 (0x20): de R#32 (SX) en adelante
-	di			;4bea
+	di			;4bea   ; sin interrupciones
 	out (c),a		;4beb
-	ld a,091h		;4bed
+	ld a,091h		;4bed   ; 0x91: R#17
 	out (c),a		;4bef
-	inc c			;4bf1
+	inc c			;4bf1   ; el puerto 0x9B
 	inc c			;4bf2
 	out (c),h		;4bf3   ; SX = H, SY = L
 	xor a			;4bf5
@@ -1822,13 +1822,13 @@ copia_rectangulo:		; HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | 
 	rra			;4c09
 	and 003h		;4c0a
 	out (c),a		;4c0c
-	pop hl			;4c0e
+	pop hl			;4c0e   ; B y C del principio en H y L
 	out (c),h		;4c0f   ; NX = B, NY = C
 	xor a			;4c11
 	out (c),a		;4c12
 	out (c),l		;4c14
-	out (c),a		;4c16
-	out (c),a		;4c18
+	out (c),a		;4c16   ; el color (no se usa en HMMM)...
+	out (c),a		;4c18   ; ...y ARG = 0
 	out (c),a		;4c1a
 	ld a,0d0h		;4c1c   ; 0xD0: HMMM
 	out (c),a		;4c1e
@@ -1836,23 +1836,23 @@ copia_rectangulo:		; HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | 
 	ret			;4c21
 hmmc:		; HMMC (0xF0): un rectangulo con los bytes de HL
 	ex af,af'			;4c22
-	call espera_al_vdp		;4c23   ; espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
+	call espera_al_vdp		;4c23   ; que acabe el comando anterior
 	push bc			;4c26
-	ld a,(00007h)		;4c27
+	ld a,(00007h)		;4c27   ; el puerto 0x99
 	inc a			;4c2a
 	ld c,a			;4c2b
 	ld a,024h		;4c2c   ; R#17 = 36: DX y DY de D y E
-	di			;4c2e
+	di			;4c2e   ; sin interrupciones
 	out (c),a		;4c2f
-	ld a,091h		;4c31
+	ld a,091h		;4c31   ; 0x91: R#17
 	out (c),a		;4c33
-	inc c			;4c35
+	inc c			;4c35   ; el puerto 0x9B
 	inc c			;4c36
 	out (c),d		;4c37
 	xor a			;4c39
 	out (c),a		;4c3a
 	out (c),e		;4c3c
-	ex af,af'			;4c3e
+	ex af,af'			;4c3e   ; la pagina de destino (A')
 	out (c),a		;4c3f
 	pop de			;4c41   ; NX y NY de BC (pila)
 	out (c),d		;4c42
@@ -1867,41 +1867,41 @@ hmmc:		; HMMC (0xF0): un rectangulo con los bytes de HL
 	out (c),a		;4c50
 	ld a,0f0h		;4c52   ; 0xF0: HMMC
 	out (c),a		;4c54
-	dec c			;4c56
+	dec c			;4c56   ; el puerto 0x99
 	dec c			;4c57
 	ld a,0ach		;4c58   ; R#17 = 44 sin autoincremento: los demas bytes van a CLR
 	out (c),a		;4c5a
-	ld a,091h		;4c5c
+	ld a,091h		;4c5c   ; 0x91: R#17
 	out (c),a		;4c5e
-	inc c			;4c60
+	inc c			;4c60   ; el puerto 0x9B: CLR
 	inc c			;4c61
 L_4C62:
 	ld a,002h		;4c62   ; S#2: con TR (bit 7) a uno se manda el siguiente; con CE (bit 0) a cero acaba
 	call lee_estado_vdp		;4c64   ; lee_estado_vdp: A = el registro de estado A del VDP
-	rra			;4c67
+	rra			;4c67   ; CE a cero: el comando ha acabado
 	ret nc			;4c68
-	add a,a			;4c69
+	add a,a			;4c69   ; TR (bit 7) al acarreo
 	add a,a			;4c6a
-	jr nc,L_4C62		;4c6b
-	ld a,(hl)			;4c6d
+	jr nc,L_4C62		;4c6b   ; sin TR, otra vez
+	ld a,(hl)			;4c6d   ; el siguiente byte a CLR
 	inc hl			;4c6e
 	out (c),a		;4c6f
 	jr L_4C62		;4c71
 copia_con_operacion:		; LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 	ex af,af'			;4c73
-	call espera_al_vdp		;4c74   ; espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
+	call espera_al_vdp		;4c74   ; que acabe el comando anterior
 	push bc			;4c77
-	ld a,(00007h)		;4c78
+	ld a,(00007h)		;4c78   ; el puerto 0x99
 	inc a			;4c7b
 	ld c,a			;4c7c
 	ld a,020h		;4c7d   ; R#17 = 32: de SX en adelante
-	di			;4c7f
+	di			;4c7f   ; sin interrupciones
 	out (c),a		;4c80
-	ld a,091h		;4c82
+	ld a,091h		;4c82   ; 0x91: R#17
 	out (c),a		;4c84
-	inc c			;4c86
+	inc c			;4c86   ; el puerto 0x9B
 	inc c			;4c87
-	out (c),h		;4c88
+	out (c),h		;4c88   ; SX = H, SY = L
 	xor a			;4c8a
 	out (c),a		;4c8b
 	out (c),l		;4c8d
@@ -1911,7 +1911,7 @@ copia_con_operacion:		; LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = p
 	ld l,a			;4c92
 	and 003h		;4c93
 	out (c),a		;4c95
-	out (c),d		;4c97
+	out (c),d		;4c97   ; DX = D, DY = E
 	xor a			;4c99
 	out (c),a		;4c9a
 	out (c),e		;4c9c
@@ -1921,8 +1921,8 @@ copia_con_operacion:		; LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = p
 	rlca			;4ca1
 	and 003h		;4ca2
 	out (c),a		;4ca4
-	pop hl			;4ca6
-	out (c),h		;4ca7
+	pop hl			;4ca6   ; B y C del principio en H y L
+	out (c),h		;4ca7   ; NX = B, NY = C
 	xor a			;4ca9
 	out (c),a		;4caa
 	out (c),l		;4cac
@@ -1938,15 +1938,15 @@ copia_con_operacion:		; LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = p
 	ei			;4cbd
 	ret			;4cbe
 caracteres:		; B caracteres de 1 bit de HL en (D, E) de la pagina 1 con el color C
-	xor a			;4cbf
+	xor a			;4cbf   ; en la pagina 1 (0xDE80 = 0)
 	ld (0de80h),a		;4cc0   ; guarda variable de trabajo del banco 0
 L_4CC3:
 	call caracter		;4cc3   ; caracter: un caracter de 1 bit de HL a 4 bits (p00:4D24) y a la VRAM
 	call avanza_ocho		;4cc6   ; avanza_ocho: D + 8, y E + 8 si D da la vuelta
-	djnz L_4CC3		;4cc9
+	djnz L_4CC3		;4cc9   ; B caracteres
 	ret			;4ccb
 caracteres_pagina0:		; como p00:4CBF en la pagina 0
-	ld a,001h		;4ccc
+	ld a,001h		;4ccc   ; en la pagina 0 (0xDE80 = 1)
 	ld (0de80h),a		;4cce   ; guarda variable de trabajo del banco 0
 	jr L_4CC3		;4cd1
 caracter:		; un caracter de 1 bit de HL a 4 bits (p00:4D24) y a la VRAM
@@ -1956,22 +1956,22 @@ caracter:		; un caracter de 1 bit de HL a 4 bits (p00:4D24) y a la VRAM
 	push de			;4cd6
 	call caracter_a_4_bits		;4cd7   ; caracter_a_4_bits: 8 bytes de 1 bit de HL a 32 de 4 bits en 0xC1C0 con el color C
 	pop de			;4cda
-	ld b,d			;4cdb
+	ld b,d			;4cdb   ; la direccion de VRAM de (D, E): E * 0x80 + D / 2
 	ld d,e			;4cdc
 	ld e,b			;4cdd
 	srl d		;4cde
 	rr e		;4ce0
-	ld a,(0de80h)		;4ce2   ; lee variable de trabajo del banco 0
+	ld a,(0de80h)		;4ce2   ; en la pagina 1...
 	and a			;4ce5
 	jr nz,L_4CEC		;4ce6
-	ld a,d			;4ce8
+	ld a,d			;4ce8   ; ...0x8000 mas alla
 	add a,080h		;4ce9
 	ld d,a			;4ceb
 L_4CEC:
-	ld hl,0c1c0h		;4cec
+	ld hl,0c1c0h		;4cec   ; los 32 bytes de 4 bits de 0xC1C0
 	call ficha_a_vram		;4cef   ; ficha_a_vram: una ficha de 8x8 a 4 bits (32 bytes de HL) en la VRAM DE
 	pop hl			;4cf2
-	ld bc,00008h		;4cf3
+	ld bc,00008h		;4cf3   ; el caracter siguiente, 8 bytes mas alla
 	add hl,bc			;4cf6
 	pop de			;4cf7
 	pop bc			;4cf8
@@ -1994,11 +1994,11 @@ L_4CFD:
 fichas_a_vram:		; B fichas de 32 bytes de HL seguidas en la VRAM DE (0x400 por fila de fichas)
 	push bc			;4d0f
 	call ficha_a_vram		;4d10   ; ficha_a_vram: una ficha de 8x8 a 4 bits (32 bytes de HL) en la VRAM DE
-	ld a,004h		;4d13
+	ld a,004h		;4d13   ; la siguiente ficha, 4 bytes (8 puntos) a la derecha
 	add a,e			;4d15
-	cp 080h		;4d16
+	cp 080h		;4d16   ; al llegar al final de la fila de 0x80 bytes...
 	jr nz,L_4D1F		;4d18
-	ld a,004h		;4d1a
+	ld a,004h		;4d1a   ; ...la siguiente fila de fichas: 0x400 mas alla
 	add a,d			;4d1c
 	ld d,a			;4d1d
 	xor a			;4d1e
@@ -2016,15 +2016,15 @@ L_4D29:
 	ex de,hl			;4d2b
 	ld a,(de)			;4d2c
 	ld d,a			;4d2d
-	ld b,004h		;4d2e
+	ld b,004h		;4d2e   ; 4 bytes de 4 bits por fila
 L_4D30:
-	ld a,c			;4d30
+	ld a,c			;4d30   ; el punto: el color C si el bit esta a uno...
 	rl d		;4d31
 	jr c,L_4D36		;4d33
-	xor a			;4d35
+	xor a			;4d35   ; ...0 si no
 L_4D36:
 	rld		;4d36
-	ld a,c			;4d38
+	ld a,c			;4d38   ; el segundo punto del byte, igual
 	rl d		;4d39
 	jr c,L_4D3E		;4d3b
 	xor a			;4d3d
@@ -2034,7 +2034,7 @@ L_4D3E:
 	djnz L_4D30		;4d41
 	ex de,hl			;4d43
 	pop hl			;4d44
-	inc hl			;4d45
+	inc hl			;4d45   ; la siguiente fila
 	pop bc			;4d46
 	djnz L_4D29		;4d47
 	ret			;4d49

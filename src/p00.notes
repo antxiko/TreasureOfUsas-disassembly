@@ -526,6 +526,117 @@ C 0x49EE n bytes mas en la cuenta
 C 0x49F4 el byte que se repite
 C 0x49F6 n veces
 C 0x49FF con C = 0 para p00:4A0F
+C 0x4A12 la copia de R#1 de la BIOS (RG1SAV)...
+C 0x4A15 ...con el bit 6: pantalla encendida
+C 0x4A18 a R#1
+C 0x4A1F la copia de R#1 de la BIOS (RG1SAV)...
+C 0x4A22 ...sin el bit 6: pantalla apagada
+C 0x4A25 a R#1
+C 0x4A32 las 0xD4 (212) lineas
+C 0x4A35 desde (0, 0) de la pagina 0, color 0
+C 0x4A3D R#23 (el desplazamiento vertical) = 0
+C 0x4A47 la tabla de atributos de la pagina 1...
+C 0x4A4A ...con Y = 0xE0 (escondido): 0x80 bytes
+C 0x4A52 y la de la pagina 0
+C 0x4A5D la copia de R#8 de la BIOS (RG8SAV)...
+C 0x4A60 ...con el bit 1: sin sprites
+C 0x4A63 a R#8
+C 0x4A68 la copia de R#8...
+C 0x4A6B ...sin el bit 1: con sprites
+C 0x4A6E a R#8
+C 0x4A7B sin interrupciones mientras se habla con el VDP
+C 0x4A7C el color en curso...
+C 0x4A85 una pausa entre las dos escrituras de la paleta
+C 0x4A89 el puerto 0x99
+C 0x4A9F 0xFF + 1 = 0: acaba
+C 0x4AA1 el color
+C 0x4AA9 la terna siguiente
+C 0x4AAB S#2...
+C 0x4AB0 ...su bit 0 (CE): el comando sigue en marcha
+C 0x4AB9 el puerto 0x99 (registros) y el 0x99 de lectura
+C 0x4ABC sin interrupciones mientras se habla con el VDP
+C 0x4ABF 0x8F: R#15
+C 0x4AD5 que acabe el comando anterior
+C 0x4AD9 el puerto 0x99
+C 0x4AE1 a R#17...
+C 0x4AE3 0x91: R#17
+C 0x4AE7 el puerto 0x9B: los registros seguidos desde R#36
+C 0x4AEB DX alto = 0
+C 0x4AF0 B y C del principio en H y L
+C 0x4AFD NY = 0...
+C 0x4B02 el color (C)
+C 0x4B04 ARG = 0: eje mayor X
+C 0x4B10 el puerto 0x99
+C 0x4B17 sin interrupciones mientras se habla con el VDP
+C 0x4B1C 0x91: R#17
+C 0x4B1E el puerto 0x9B
+C 0x4B29 B y C del principio en H y L
+C 0x4B2A NX = B - 1
+C 0x4B35 el color (C)
+C 0x4B40 que acabe el comando anterior
+C 0x4B44 el puerto 0x99
+C 0x4B4B sin interrupciones
+C 0x4B4E 0x91: R#17
+C 0x4B52 el puerto 0x9B
+C 0x4B54 DX = H, DY = L
+C 0x4B69 el color (C, de B y C del principio)
+C 0x4B6B ARG = 0
+C 0x4B74 el lado izquierdo: E puntos hacia abajo
+C 0x4B78 el de arriba: D puntos a la derecha
+C 0x4B7D el de abajo: en la Y + E - 1
+C 0x4B86 el derecho: en la X + D - 1
+C 0x4BA7 el puerto 0x99
+C 0x4BAE sin interrupciones
+C 0x4BB1 0x91: R#17
+C 0x4BB5 el puerto 0x9B
+C 0x4BC3 NX alto: 1 si NX bajo es 0 (256)
+C 0x4BCC NY alto: 1 si NY bajo es 0
+C 0x4BD5 ARG = 0
+C 0x4BE3 el puerto 0x99
+C 0x4BEA sin interrupciones
+C 0x4BED 0x91: R#17
+C 0x4BF1 el puerto 0x9B
+C 0x4C0E B y C del principio en H y L
+C 0x4C16 el color (no se usa en HMMM)...
+C 0x4C18 ...y ARG = 0
+C 0x4C23 que acabe el comando anterior
+C 0x4C27 el puerto 0x99
+C 0x4C2E sin interrupciones
+C 0x4C31 0x91: R#17
+C 0x4C35 el puerto 0x9B
+C 0x4C3E la pagina de destino (A')
+C 0x4C56 el puerto 0x99
+C 0x4C5C 0x91: R#17
+C 0x4C60 el puerto 0x9B: CLR
+C 0x4C67 CE a cero: el comando ha acabado
+C 0x4C69 TR (bit 7) al acarreo
+C 0x4C6B sin TR, otra vez
+C 0x4C6D el siguiente byte a CLR
+C 0x4C74 que acabe el comando anterior
+C 0x4C78 el puerto 0x99
+C 0x4C7F sin interrupciones
+C 0x4C82 0x91: R#17
+C 0x4C86 el puerto 0x9B
+C 0x4C88 SX = H, SY = L
+C 0x4C97 DX = D, DY = E
+C 0x4CA6 B y C del principio en H y L
+C 0x4CA7 NX = B, NY = C
+C 0x4CBF en la pagina 1 (0xDE80 = 0)
+C 0x4CC9 B caracteres
+C 0x4CCC en la pagina 0 (0xDE80 = 1)
+C 0x4CDB la direccion de VRAM de (D, E): E * 0x80 + D / 2
+C 0x4CE2 en la pagina 1...
+C 0x4CE8 ...0x8000 mas alla
+C 0x4CEC los 32 bytes de 4 bits de 0xC1C0
+C 0x4CF3 el caracter siguiente, 8 bytes mas alla
+C 0x4D13 la siguiente ficha, 4 bytes (8 puntos) a la derecha
+C 0x4D16 al llegar al final de la fila de 0x80 bytes...
+C 0x4D1A ...la siguiente fila de fichas: 0x400 mas alla
+C 0x4D2E 4 bytes de 4 bits por fila
+C 0x4D30 el punto: el color C si el bit esta a uno...
+C 0x4D35 ...0 si no
+C 0x4D38 el segundo punto del byte, igual
+C 0x4D45 la siguiente fila
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x403D interrupcion gancho H.TIMI: la musica con 13-14-15 (p13:6000) y, si no esta ya dentro, el cuadro del juego
@@ -1164,9 +1275,7 @@ C 0x4A5A llena_vram: llena BC bytes de la VRAM HL con A
 C 0x4A91 direccion_vram: R#14 y la direccion de ESCRITURA de VRAM de HL
 C 0x4AA6 pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 C 0x4AAD lee_estado_vdp: A = el registro de estado A del VDP
-C 0x4AD5 espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
 C 0x4B0C espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
-C 0x4B40 espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
 C 0x4B75 linea_vertical_guardando_todo: p00:4B0C sin tocar HL, DE ni BC
 C 0x4B79 linea_horizontal_guardando_todo: p00:4AD4 sin tocar HL, DE ni BC
 C 0x4B82 linea_horizontal_guardando_todo: p00:4AD4 sin tocar HL, DE ni BC
@@ -1174,15 +1283,12 @@ C 0x4B8B linea_vertical_guardando_todo: p00:4B0C sin tocar HL, DE ni BC
 C 0x4B91 linea_vertical: LINE (0x70) vertical (ARG = 1) de B puntos en (H, L), color C
 C 0x4B9B linea_horizontal: LINE (0x70) horizontal (ARG = 0) de B puntos en (H, L) de la pagina 0xC8E0, color C
 C 0x4BDF espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
-C 0x4C23 espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
 C 0x4C64 lee_estado_vdp: A = el registro de estado A del VDP
-C 0x4C74 espera_al_vdp: espera a que acabe el comando del VDP (S#2 bit 0)
 C 0x4CC0 guarda variable de trabajo del banco 0
 C 0x4CC3 caracter: un caracter de 1 bit de HL a 4 bits (p00:4D24) y a la VRAM
 C 0x4CC6 avanza_ocho: D + 8, y E + 8 si D da la vuelta
 C 0x4CCE guarda variable de trabajo del banco 0
 C 0x4CD7 caracter_a_4_bits: 8 bytes de 1 bit de HL a 32 de 4 bits en 0xC1C0 con el color C
-C 0x4CE2 lee variable de trabajo del banco 0
 C 0x4CEF ficha_a_vram: una ficha de 8x8 a 4 bits (32 bytes de HL) en la VRAM DE
 C 0x4D01 copia_a_vram: copia BC bytes de HL a la VRAM DE (otir)
 C 0x4D10 ficha_a_vram: una ficha de 8x8 a 4 bits (32 bytes de HL) en la VRAM DE

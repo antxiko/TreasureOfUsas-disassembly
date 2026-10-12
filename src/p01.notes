@@ -403,6 +403,197 @@ C 0x62F8 ...si cambia, cae
 C 0x62FA la misma: sigue andando
 C 0x62FC al llegar al borde: 0x20 cuadros...
 C 0x6342 cae: sin cuenta de andar sin suelo...
+C 0x6802 Cles en la sala 5 o en la del final de fase...
+C 0x6805 ...con 6 y 0x4B
+C 0x6808 la capa 0
+C 0x680C la capa 1 (con el bit CC)
+C 0x6811 la accion 6
+C 0x681D 0xC24F a cero
+C 0x6821 muriendo, la linea 0xD1
+C 0x682B muriendo...
+C 0x6832 con golpe de Cles en marcha...
+C 0x6833 ...sus cuadros (p01:6851)
+C 0x6838 la linea 0xD0 + el cuadro de la pagina 1...
+C 0x683D ...a la linea 0xF0 de la pagina 1: los 4 patrones del personaje
+C 0x6841 una linea de 256 puntos (B = 0)
+C 0x6843 de la pagina 1 a la 1
+C 0x6848 sin golpe en marcha
+C 0x6854 si no queda el primer disparo...
+C 0x6855 ...se acaba el golpe
+C 0x685A con el estado 0, el cuerpo de siempre
+C 0x685D estados 1-3: tabla p01:6861
+C 0x686A 0xD8 + 2 en cuadros alternos...
+C 0x686F ...+ 1 si el disparo va a la derecha ((ix+9))
+C 0x6878 y a la linea 0xF1 (p01:689B)
+C 0x687A el cuerpo de p01:688B segun la accion...
+C 0x6883 ...y el golpe de p01:6891 a la linea 0xF1
+C 0x6897 a la linea 0xF0
+C 0x689B a la linea 0xF1
+C 0x689D de (0, L) de la pagina 0
+C 0x689F una linea de 256
+C 0x68A2 de la pagina 0 a la 1
+C 0x68AA con la postura de disparo, la accion 0...
+C 0x68AD ...si no, la de 0xC24B
+C 0x68B8 en la escalera, la direccion de las teclas - 1...
+C 0x68BD ...si no, el sentido
+C 0x68C3 + la entrada de la tabla: la linea
+C 0x68CB el estado 3: 4 cuadros, uno cada 2 del juego (0xC00D & 6)...
+C 0x68D1 ...+ el sentido
+C 0x68D2 desde la linea 0xD8
+C 0x68DD muriendo...
+C 0x68E7 ...con el paso 2 de la muerte...
+C 0x68EB ...los desplazamientos de p01:692F
+C 0x68EF dos parejas de sprites
+C 0x68F1 desde el patron 0
+C 0x68F9 la Y del personaje...
+C 0x68FD ...+ dy
+C 0x6900 la Y del sprite
+C 0x6903 la X del personaje...
+C 0x6905 ...+ dx
+C 0x6908 la X del sprite
+C 0x690F la Y del segundo sprite, la misma
+C 0x6912 su X
+C 0x6915 su patron, 4 mas
+C 0x6918 la pareja siguiente, 8 patrones mas
+C 0x6926 y los del sprite 2 en 0xDC20
+C 0x6936 dos bloques
+C 0x6938 el color de la capa...
+C 0x693A ...en 16 lineas
+C 0x694A cada 0x40 cuadros, p06:B259
+C 0x6955 con 0xC262...
+C 0x6962 muriendo...
+C 0x6968 si la cuenta de 0xC26B...
+C 0x696D ...los sprites escondidos (Y = 0xE0)
+C 0x6979 con el actor 0x30 en 0xC400...
+C 0x697D ...y su paso...
+C 0x6983 ...los colores del sprite a 0
+C 0x6986 si no, 0x0D
+C 0x6991 32 lineas de 0xDC00 con ese color
+C 0x69AC el cuadro 0 + el sentido
+C 0x69B0 la accion 0: parado (0xC255)...
+C 0x69B6 ...con el cuadro 0
+C 0x69BB andando sobre el vacio, el paso siguiente sin esperar
+C 0x69BE el ritmo del nivel de velocidad
+C 0x69CA cuando la cuenta llega al ritmo...
+C 0x69CC ...se pone a cero y el cuadro siguiente
+C 0x69D3 dos lineas por cuadro: 0, 2, 4, 6...
+C 0x69D9 ...y vuelta al 0
+C 0x69E1 + el sentido
+C 0x69EB las acciones 1 y 2: el cuadro 8 + el sentido
+C 0x69F8 la accion 3: el cuadro par que hay + el sentido
+C 0x6A08 los colores de la muerte: 6 y 0x49
+C 0x6A10 cuenta >= 0x60: cada 16 cuadros...
+C 0x6A16 >= 0x20: cada 4...
+C 0x6A1C 0x1F: el final (p01:6A65)
+C 0x6A24 solo cada C + 1 cuadros
+C 0x6A2A alternando el dibujo de (0x98, 0) y (0x98, 0x10)
+C 0x6A36 en X - 8...
+C 0x6A3D ...e Y - 0x27 (Wit) o Y - 0x21 (Cles)
+C 0x6A4A primero el fondo guardado en (0x98, 0x20)...
+C 0x6A50 ...tal cual (LMMM 0x40)
+C 0x6A57 y encima el dibujo con TIMP (0x48)
+C 0x6A5F el paso 1 de la muerte
+C 0x6A65 el paso 2...
+C 0x6A7F ...el fondo otra vez, sin el dibujo
+C 0x6A8D los patrones de la muerte, p06:B21B y p06:B238, a la VRAM 0xE880-0xE8DF
+C 0x6AAE la accion 5 (escalera): con arriba o abajo...
+C 0x6AAF ...el cuadro 12 o 13 (p01:6AD2)
+C 0x6AB1 subiendo, al ritmo del nivel de velocidad
+C 0x6ABD sin llegar al ritmo, p01:6ADA
+C 0x6AC7 el cuadro siguiente: 10, 11 y vuelta al 10
+C 0x6AD2 la direccion - 1 + 12
+C 0x6ADD si el cuadro no es el 10 o el 11...
+C 0x6AE4 ...el 10
+C 0x6AFA muriendo, ni disparo ni cambio
+C 0x6B00 con el doble salto pedido, no se dispara
+C 0x6B05 la tecla de disparo (0x10)
+C 0x6B0B con disparos en marcha, no
+C 0x6B10 Wit: el tipo 4 - estado...
+C 0x6B1F Cles: el tipo estado + 6
+C 0x6B21 B = el tipo
+C 0x6B27 en la escalera, sin direccion, no
+C 0x6B29 el tipo 3 (Wit tranquilo): hasta 4 a la vez (p01:6B3A)
+C 0x6B2D el tipo 4 (Wit feliz): tres a la vez (p01:6B4E)
+C 0x6B34 los demas, de uno en uno: si el primero esta libre
+C 0x6B3C mira los 4 huecos
+C 0x6B44 el primer hueco libre
+C 0x6B4D ninguno libre: nada
+C 0x6B4E el tipo 4 solo si los 3 primeros estan libres
+C 0x6B5F los tres: el primero con el sonido 4...
+C 0x6B64 ...y los otros dos con el 5
+C 0x6B77 la accion 5 (escalera)...
+C 0x6B7E ...sin direccion: acarreo
+C 0x6B91 el sonido del tipo: p01:6B83[B - 1]
+C 0x6B9F el tipo en el hueco
+C 0x6BA3 los otros 0x1F bytes a cero
+C 0x6BAD la Y del disparo...
+C 0x6BB9 la X: la del personaje
+C 0x6BC0 hasta el sentido (ix+9)
+C 0x6BC8 en la escalera...
+C 0x6BCD ...la direccion - 1; si no, el sentido
+C 0x6BD3 el sentido del disparo
+C 0x6BD4 el fotograma 1
+C 0x6BD8 el registro de sprite 0
+C 0x6BDF despacha el tipo - 1 (tabla p01:6BE6)
+C 0x6BFB solo en el suelo
+C 0x6BFD el tipo 9 (la bola de Cles) no cambia la postura
+C 0x6C01 4 cuadros con el tipo 7, 8 con los demas
+C 0x6C0C la accion 2 mientras tanto
+C 0x6C15 con Cles, nada
+C 0x6C1A el tipo 1 (el rayo), 4 mas abajo
+C 0x6C25 con la postura de disparo, - 4
+C 0x6C2D en el aire (cuadros 8 y 9)...
+C 0x6C35 ...o en la escalera (0x14-0x17): - 4
+C 0x6C3B si no, - 0x0A
+C 0x6C40 la Y - 4
+C 0x6C48 el tipo 1 sale 8 puntos por delante...
+C 0x6C4A ...los demas, 2
+C 0x6C53 a la izquierda (0), hacia atras
+C 0x6C71 el tipo 4: registro 0x11 a la izquierda...
+C 0x6C76 ...0x13 a la derecha
+C 0x6C88 el tipo 1 (el rayo): (ix+0x0E) = ((ix+0x0D) - 8) / 2, lo que se queda entero
+C 0x6C99 registro 1 a la izquierda...
+C 0x6CA0 ...5 a la derecha; 4 cuadros de espera
+C 0x6CA8 sin alcance ((ix+0x0D) = 0xFF)
+C 0x6CB6 el tipo 5: registros 0x11-0x14
+C 0x6CC0 segun el hueco del sprite
+C 0x6CC8 el numero del disparo...
+C 0x6CD1 ...(su desplazamiento en 0xC320 / 0x20)
+C 0x6CEF el golpe de Cles en marcha
+C 0x6CF7 el doble de alcance
+C 0x6CFE velocidad X 0x400
+C 0x6D0B el registro 0x0F mirando a la derecha...
+C 0x6D10 ...o 0x10 a la izquierda
+C 0x6D16 el tipo 7: alcance 4
+C 0x6D1C el tipo 8: alcance 8
+C 0x6D20 el golpe de Cles en marcha
+C 0x6D2C con la postura de disparo, la accion 0
+C 0x6D34 el registro de p01:6D59 segun la accion
+C 0x6D41 en la escalera, la direccion - 1...
+C 0x6D4E ...mirando a la derecha, tal cual
+C 0x6D53 a la izquierda, el registro + 3
+C 0x6D6B el golpe de Cles en marcha
+C 0x6D70 alcance 0x18
+C 0x6D7D el sentido, al reves...
+C 0x6D7F ...+ B: el registro
+C 0x6D84 velocidad 0x800: 8 puntos por cuadro
+C 0x6D8A a la izquierda, negativa
+C 0x6D95 el numero del disparo: su desplazamiento en 0xC320 / 0x20...
+C 0x6DA7 ...+ 4: el hueco de sprite
+C 0x6DB1 los 4 disparos
+C 0x6DC1 el siguiente, 0x20 bytes mas alla
+C 0x6DD7 X + velocidad X
+C 0x6DEA Y + velocidad Y
+C 0x6DFA la X fuera de 0x0A-0xF4...
+C 0x6E05 ...o la Y fuera de 0x14-0xD7: se borra
+C 0x6E0D el alcance: 0xFF sin limite...
+C 0x6E13 ...si no, a cero se borra
+C 0x6E17 sus 8 sprites...
+C 0x6E1F (4 bytes por sprite)
+C 0x6E24 ...con Y = 0xE0: escondidos
+C 0x6E2A y la ficha a cero
+C 0x6E37 el tipo - 1: tabla p01:6E3B
+C 0x6CD5 el disparo 1 casi recto (velocidad Y 0x0001); el 2 sube en diagonal (0xF802)
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x6017 teclas_de_la_demo la demo: 0xC00A cuenta los cuadros de la tecla; al acabar, la siguiente de p01:603C (0xFF acaba)
@@ -977,7 +1168,6 @@ C 0x6B96 hl_mas_a: HL = HL + A
 C 0x6B9A sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x6BAE lee la Y del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x6BB2 ajusta_disparo: la Y del disparo segun su tipo y 0xC253
-C 0x6BB9 lee la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 C 0x6BC5 lee la accion del personaje (4 muere, 5 escalera)
 C 0x6BCA lee el sentido del personaje
 C 0x6BCF lee la direccion de las teclas (0, 1, 2)

@@ -1116,59 +1116,59 @@ colores_del_personaje:		; 0xC24C/0xC24D segun el personaje y la sala
 	ld a,(0c20ah)		;67fb   ; lee en la sala de la puerta 5
 	ld b,a			;67fe
 	ld a,(0c316h)		;67ff   ; lee en la sala del final de fase
-	or b			;6802
+	or b			;6802   ; Cles en la sala 5 o en la del final de fase...
 	jr z,L_6808		;6803
-	ld de,0064bh		;6805
+	ld de,0064bh		;6805   ; ...con 6 y 0x4B
 L_6808:
-	ld a,d			;6808
+	ld a,d			;6808   ; la capa 0
 	ld (0c24ch),a		;6809   ; guarda el color de la capa 0 del personaje
-	ld a,e			;680c
+	ld a,e			;680c   ; la capa 1 (con el bit CC)
 	ld (0c24dh),a		;680d   ; guarda el color de la capa 1 del personaje
 	ret			;6810
 accion_6:		; accion 6, los colores del personaje y sin invencible (0xC256 = 0)
-	ld a,006h		;6811
+	ld a,006h		;6811   ; la accion 6
 	ld (0c24bh),a		;6813   ; guarda la accion del personaje (4 muere, 5 escalera)
 	call colores_del_personaje		;6816   ; colores_del_personaje: 0xC24C/0xC24D segun el personaje y la sala
 	xor a			;6819
 	ld (0c256h),a		;681a   ; guarda invencible
-	ld (0c24fh),a		;681d
+	ld (0c24fh),a		;681d   ; 0xC24F a cero
 	ret			;6820
 L_6821:
-	ld a,001h		;6821
+	ld a,001h		;6821   ; muriendo, la linea 0xD1
 	jr L_6838		;6823
 dibuja_al_personaje:		; las fichas del personaje en la pagina 1 segun 0xC253 y 0xC26F
 	call ficha_del_personaje		;6825   ; ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 	ld a,(0c24bh)		;6828   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 004h		;682b
+	cp 004h		;682b   ; muriendo...
 	jr z,L_6821		;682d
 	ld a,(0c26fh)		;682f   ; lee el golpe de Cles en marcha
-	or a			;6832
-	jr nz,L_6851		;6833
+	or a			;6832   ; con golpe de Cles en marcha...
+	jr nz,L_6851		;6833   ; ...sus cuadros (p01:6851)
 L_6835:
 	ld a,(0c253h)		;6835   ; lee el cuadro de animacion del personaje
 L_6838:
-	add a,0d0h		;6838
+	add a,0d0h		;6838   ; la linea 0xD0 + el cuadro de la pagina 1...
 	ld h,000h		;683a
 	ld l,a			;683c
-	ld d,h			;683d
+	ld d,h			;683d   ; ...a la linea 0xF0 de la pagina 1: los 4 patrones del personaje
 	ld e,0f0h		;683e
 	ld b,h			;6840
-	ld c,001h		;6841
-	ld a,005h		;6843
+	ld c,001h		;6841   ; una linea de 256 puntos (B = 0)
+	ld a,005h		;6843   ; de la pagina 1 a la 1
 	jp 04bdeh		;6845   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 L_6848:
-	xor a			;6848
+	xor a			;6848   ; sin golpe en marcha
 	ld (0c26fh),a		;6849   ; guarda el golpe de Cles en marcha
 	ld a,(0c253h)		;684c   ; lee el cuadro de animacion del personaje
 	jr L_6838		;684f
 L_6851:
 	ld a,(0c320h)		;6851   ; lee los 4 disparos (0x20 bytes cada uno)
-	or a			;6854
-	jr z,L_6848		;6855
+	or a			;6854   ; si no queda el primer disparo...
+	jr z,L_6848		;6855   ; ...se acaba el golpe
 	ld a,(ix+006h)		;6857   ; lee el estado del personaje (0-3)
-	or a			;685a
+	or a			;685a   ; con el estado 0, el cuerpo de siempre
 	jr z,L_6835		;685b
-	dec a			;685d
+	dec a			;685d   ; estados 1-3: tabla p01:6861
 	call 0408dh		;685e   ; despacha: salta a la palabra A de la tabla pegada detras del `call`
 
 ; ----------------------------------------------------------------------
@@ -1187,21 +1187,21 @@ DATA_saltos_6861:
 
 cuadro_de_animacion:		; L = el cuadro (0xD8 + 2 cada 2 cuadros) segun (ix+9)
 	ld a,(0c00dh)		;6867   ; lee la cuenta de cuadros del juego
-	and 002h		;686a
+	and 002h		;686a   ; 0xD8 + 2 en cuadros alternos...
 	add a,0d8h		;686c
 	ld l,a			;686e
-	ld a,(ix+009h)		;686f
+	ld a,(ix+009h)		;686f   ; ...+ 1 si el disparo va a la derecha ((ix+9))
 	or a			;6872
 	jr z,L_6876		;6873
 	inc l			;6875
 L_6876:
 	ld h,000h		;6876
-	jr $+35		;6878
+	jr $+35		;6878   ; y a la linea 0xF1 (p01:689B)
 L_687A:
-	ld hl,0688bh		;687a
+	ld hl,0688bh		;687a   ; el cuerpo de p01:688B segun la accion...
 	call cuadro_de_la_accion		;687d   ; cuadro_de_la_accion: HL = el cuadro de la accion 0xC24B y el sentido 0xC250
 	call copia_linea_f0		;6880   ; copia_linea_f0: una linea de (H, L) a (D, 0xF0) (p00:4BDE)
-	ld hl,06891h		;6883
+	ld hl,06891h		;6883   ; ...y el golpe de p01:6891 a la linea 0xF1
 	call cuadro_de_la_accion		;6886   ; cuadro_de_la_accion: HL = el cuadro de la accion 0xC24B y el sentido 0xC250
 	jr $+18		;6889
 
@@ -1217,92 +1217,92 @@ DATA_tabla_p687A:
 
 
 copia_linea_f0:		; una linea de (H, L) a (D, 0xF0) (p00:4BDE)
-	ld e,0f0h		;6897
+	ld e,0f0h		;6897   ; a la linea 0xF0
 	jr L_689D		;6899
 L_689B:
-	ld e,0f1h		;689b
+	ld e,0f1h		;689b   ; a la linea 0xF1
 L_689D:
-	ld d,000h		;689d
-	ld bc,00001h		;689f
-	ld a,004h		;68a2
+	ld d,000h		;689d   ; de (0, L) de la pagina 0
+	ld bc,00001h		;689f   ; una linea de 256
+	ld a,004h		;68a2   ; de la pagina 0 a la 1
 	jp 04bdeh		;68a4   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 cuadro_de_la_accion:		; HL = el cuadro de la accion 0xC24B y el sentido 0xC250
 	ld a,(0c26ch)		;68a7   ; lee la cuenta de la postura de disparo (4 u 8)
-	or a			;68aa
+	or a			;68aa   ; con la postura de disparo, la accion 0...
 	ld a,000h		;68ab
-	jr nz,L_68B2		;68ad
+	jr nz,L_68B2		;68ad   ; ...si no, la de 0xC24B
 	ld a,(0c24bh)		;68af   ; lee la accion del personaje (4 muere, 5 escalera)
 L_68B2:
 	call 04083h		;68b2   ; hl_mas_a: HL = HL + A
 	ld a,(0c24bh)		;68b5   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 005h		;68b8
+	cp 005h		;68b8   ; en la escalera, la direccion de las teclas - 1...
 	ld a,(0c250h)		;68ba   ; lee el sentido del personaje
-	jr nz,L_68C3		;68bd
+	jr nz,L_68C3		;68bd   ; ...si no, el sentido
 	ld a,(0c254h)		;68bf   ; lee la direccion de las teclas (0, 1, 2)
 	dec a			;68c2
 L_68C3:
-	add a,(hl)			;68c3
+	add a,(hl)			;68c3   ; + la entrada de la tabla: la linea
 	ld l,a			;68c4
 	ld h,000h		;68c5
 	ret			;68c7
 L_68C8:
 	ld a,(0c00dh)		;68c8   ; lee la cuenta de cuadros del juego
-	and 006h		;68cb
+	and 006h		;68cb   ; el estado 3: 4 cuadros, uno cada 2 del juego (0xC00D & 6)...
 	ld b,a			;68cd
 	ld a,(0c250h)		;68ce   ; lee el sentido del personaje
-	add a,b			;68d1
-	add a,0d8h		;68d2
+	add a,b			;68d1   ; ...+ el sentido
+	add a,0d8h		;68d2   ; desde la linea 0xD8
 	ld l,a			;68d4
 	ld h,000h		;68d5
 	jr copia_linea_f0		;68d7
 sprites_del_personaje_a_ram:		; los atributos de los sprites del personaje en 0xDE00
 	exx			;68d9
 	ld a,(0c24bh)		;68da   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 004h		;68dd
+	cp 004h		;68dd   ; muriendo...
 	ld hl,0692bh		;68df
 	jr nz,L_68EE		;68e2
 	ld a,(0c26bh)		;68e4   ; lee el paso de la muerte (1 o 2)
-	cp 002h		;68e7
+	cp 002h		;68e7   ; ...con el paso 2 de la muerte...
 	jr nz,L_68EE		;68e9
-	ld hl,0692fh		;68eb
+	ld hl,0692fh		;68eb   ; ...los desplazamientos de p01:692F
 L_68EE:
 	exx			;68ee
-	ld b,002h		;68ef
-	ld c,000h		;68f1
+	ld b,002h		;68ef   ; dos parejas de sprites
+	ld c,000h		;68f1   ; desde el patron 0
 	ld de,0de00h		;68f3   ; apunta a los atributos de los sprites en RAM
 L_68F6:
 	ld hl,0c244h		;68f6   ; cada sprite del personaje: Y y X del personaje mas el desplazamiento de HL'
-	ld a,(hl)			;68f9
+	ld a,(hl)			;68f9   ; la Y del personaje...
 	inc hl			;68fa
 	inc hl			;68fb
 	exx			;68fc
-	add a,(hl)			;68fd
+	add a,(hl)			;68fd   ; ...+ dy
 	inc hl			;68fe
 	exx			;68ff
-	ld (de),a			;6900
+	ld (de),a			;6900   ; la Y del sprite
 	inc de			;6901
 	ex af,af'			;6902
-	ld a,(hl)			;6903
+	ld a,(hl)			;6903   ; la X del personaje...
 	exx			;6904
-	add a,(hl)			;6905
+	add a,(hl)			;6905   ; ...+ dx
 	inc hl			;6906
 	exx			;6907
-	ld (de),a			;6908
+	ld (de),a			;6908   ; la X del sprite
 	ex de,hl			;6909
 	inc hl			;690a
 	ld (hl),c			;690b   ; el patron (C) y los colores del personaje
 	ex af,af'			;690c
 	inc hl			;690d
 	inc hl			;690e
-	ld (hl),a			;690f
+	ld (hl),a			;690f   ; la Y del segundo sprite, la misma
 	ex af,af'			;6910
 	inc hl			;6911
-	ld (hl),a			;6912
+	ld (hl),a			;6912   ; su X
 	inc hl			;6913
 	ld a,c			;6914   ; el siguiente patron, 4 mas
-	add a,004h		;6915
+	add a,004h		;6915   ; su patron, 4 mas
 	ld (hl),a			;6917
-	add a,004h		;6918
+	add a,004h		;6918   ; la pareja siguiente, 8 patrones mas
 	ld c,a			;691a
 	inc hl			;691b
 	inc hl			;691c
@@ -1310,7 +1310,7 @@ L_68F6:
 	djnz L_68F6		;691e
 	ld hl,0dc00h		;6920   ; los colores de los sprites del personaje en 0xDC00 y 0xDC20
 	call colores_a_ram		;6923   ; colores_a_ram: 16 + 16 colores de 0xC24C/0xC24D a HL
-	ld hl,0dc20h		;6926
+	ld hl,0dc20h		;6926   ; y los del sprite 2 en 0xDC20
 	jr $+10		;6929
 
 ; ----------------------------------------------------------------------
@@ -1326,11 +1326,11 @@ DATA_tabla_p68DF:
 
 colores_a_ram:		; 16 + 16 colores de 0xC24C/0xC24D a HL
 	ld de,0c24ch		;6933   ; apunta a el color de la capa 0 del personaje
-	ld c,002h		;6936
+	ld c,002h		;6936   ; dos bloques
 L_6938:
-	ld a,(de)			;6938
+	ld a,(de)			;6938   ; el color de la capa...
 	inc de			;6939
-	ld b,010h		;693a
+	ld b,010h		;693a   ; ...en 16 lineas
 L_693C:
 	ld (hl),a			;693c   ; C bloques de B bytes con A
 	inc hl			;693d
@@ -1341,42 +1341,42 @@ L_693C:
 cuadro_de_personaje_y_disparos:		; p06:B259, p06:B2FC, la accion y los sprites
 	call ficha_del_personaje		;6944   ; ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 	ld a,(0c00dh)		;6947   ; lee la cuenta de cuadros del juego
-	and 03fh		;694a
+	and 03fh		;694a   ; cada 0x40 cuadros, p06:B259
 	call z,0b259h		;694c   ; mira_el_globo: sin globo (0xC272) y sin morir: lo que sigue de los objetos de animo
 	call 0b2fch		;694f   ; cuenta_del_globo: esconde el sprite 8, cuenta 0xC272 (p03:B30A) y, sin disparos, sigue
 	call despacha_accion		;6952   ; despacha_accion: despacha la accion del personaje (0xC24B)
-	ld a,(0c262h)		;6955
+	ld a,(0c262h)		;6955   ; con 0xC262...
 	or a			;6958
 	call nz,nada_6aea		;6959   ; nada_6aea: solo ret
 	call sprites_del_personaje_a_ram		;695c   ; sprites_del_personaje_a_ram: los atributos de los sprites del personaje en 0xDE00
 	ld a,(0c24bh)		;695f   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 004h		;6962
+	cp 004h		;6962   ; muriendo...
 	ret nz			;6964
 	ld a,(0c26bh)		;6965   ; lee el paso de la muerte (1 o 2)
-	or a			;6968
+	or a			;6968   ; si la cuenta de 0xC26B...
 	ret z			;6969
 	dec a			;696a
 	jr nz,L_6976		;696b
-	ld a,0e0h		;696d
+	ld a,0e0h		;696d   ; ...los sprites escondidos (Y = 0xE0)
 	ld (0de00h),a		;696f   ; guarda los atributos de los sprites en RAM
 	ld (0de04h),a		;6972   ; guarda la Y del sprite 1 en RAM
 	ret			;6975
 L_6976:
 	ld a,(0c400h)		;6976   ; lee los 8 actores (0x80 bytes cada uno)
-	cp 030h		;6979
+	cp 030h		;6979   ; con el actor 0x30 en 0xC400...
 	jr nz,L_6986		;697b
-	ld a,(0c401h)		;697d
+	ld a,(0c401h)		;697d   ; ...y su paso...
 	or a			;6980
 	jr z,L_6986		;6981
-	xor a			;6983
+	xor a			;6983   ; ...los colores del sprite a 0
 	jr L_6988		;6984
 L_6986:
-	ld a,00dh		;6986
+	ld a,00dh		;6986   ; si no, 0x0D
 L_6988:
 	ld hl,0dc00h		;6988   ; apunta a los colores de los sprites en RAM (16 por sprite)
 	ld de,0dc01h		;698b
 	ld bc,0001fh		;698e
-	ld (hl),a			;6991
+	ld (hl),a			;6991   ; 32 lineas de 0xDC00 con ese color
 	ldir		;6992
 	ret			;6994
 despacha_accion:		; despacha la accion del personaje (0xC24B)
@@ -1403,36 +1403,36 @@ DATA_saltos_699E:
 
 
 cuadro_parado:		; el cuadro de animacion parado o el de p01:69E6[(ix+1)]
-	ld a,000h		;69ac
+	ld a,000h		;69ac   ; el cuadro 0 + el sentido
 	jr L_69DD		;69ae
 L_69B0:
-	ld a,(0c255h)		;69b0
+	ld a,(0c255h)		;69b0   ; la accion 0: parado (0xC255)...
 	or a			;69b3
 	ld a,000h		;69b4
-	jr nz,L_69DD		;69b6
+	jr nz,L_69DD		;69b6   ; ...con el cuadro 0
 	ld a,(0c266h)		;69b8   ; lee la cuenta de Cles andando sin suelo (0x20 cuadros)
-	or a			;69bb
+	or a			;69bb   ; andando sobre el vacio, el paso siguiente sin esperar
 	jr nz,L_69CC		;69bc
-	ld hl,069e6h		;69be
+	ld hl,069e6h		;69be   ; el ritmo del nivel de velocidad
 	ld a,(ix+001h)		;69c1   ; lee el nivel de velocidad del personaje (indice de p01:6485)
 	call 04083h		;69c4   ; hl_mas_a: HL = HL + A
 	ld a,(0c252h)		;69c7   ; lee la cuenta de cuadros del paso del personaje
-	cp (hl)			;69ca
+	cp (hl)			;69ca   ; cuando la cuenta llega al ritmo...
 	ret c			;69cb
 L_69CC:
-	xor a			;69cc
+	xor a			;69cc   ; ...se pone a cero y el cuadro siguiente
 	ld (0c252h),a		;69cd   ; guarda la cuenta de cuadros del paso del personaje
 	ld a,(0c253h)		;69d0   ; lee el cuadro de animacion del personaje
-	add a,002h		;69d3
+	add a,002h		;69d3   ; dos lineas por cuadro: 0, 2, 4, 6...
 	cp 008h		;69d5
 	jr c,L_69DB		;69d7
-	ld a,000h		;69d9
+	ld a,000h		;69d9   ; ...y vuelta al 0
 L_69DB:
 	and 006h		;69db
 L_69DD:
 	ld b,a			;69dd
 	ld a,(0c250h)		;69de   ; lee el sentido del personaje
-	add a,b			;69e1
+	add a,b			;69e1   ; + el sentido
 	ld (0c253h),a		;69e2   ; guarda el cuadro de animacion del personaje
 	ret			;69e5
 
@@ -1448,14 +1448,14 @@ DATA_tabla_p69BE:
 
 
 L_69EB:
-	ld b,008h		;69eb
+	ld b,008h		;69eb   ; las acciones 1 y 2: el cuadro 8 + el sentido
 	ld a,(0c250h)		;69ed   ; lee el sentido del personaje
 	add a,b			;69f0
 	ld (0c253h),a		;69f1   ; guarda el cuadro de animacion del personaje
 	ret			;69f4
 L_69F5:
 	ld a,(0c253h)		;69f5   ; lee el cuadro de animacion del personaje
-	and 0feh		;69f8
+	and 0feh		;69f8   ; la accion 3: el cuadro par que hay + el sentido
 	ld b,a			;69fa
 	ld a,(0c250h)		;69fb   ; lee el sentido del personaje
 	add a,b			;69fe
@@ -1464,35 +1464,35 @@ L_69F5:
 L_6A03:
 	ld a,006h		;6a03   ; los colores del personaje: 6 y 0x49
 	ld (0c24ch),a		;6a05   ; guarda el color de la capa 0 del personaje
-	ld a,049h		;6a08
+	ld a,049h		;6a08   ; los colores de la muerte: 6 y 0x49
 	ld (0c24dh),a		;6a0a   ; guarda el color de la capa 1 del personaje
 	ld a,(0c260h)		;6a0d   ; 0xC260, la cuenta de invencible: el parpadeo, mas lento al final
-	cp 060h		;6a10
+	cp 060h		;6a10   ; cuenta >= 0x60: cada 16 cuadros...
 	ld c,00fh		;6a12
 	jr nc,L_6A21		;6a14
-	cp 020h		;6a16
+	cp 020h		;6a16   ; >= 0x20: cada 4...
 	ld c,003h		;6a18
 	jr nc,L_6A21		;6a1a
-	cp 01fh		;6a1c
+	cp 01fh		;6a1c   ; 0x1F: el final (p01:6A65)
 	jr z,L_6A65		;6a1e
 	ret			;6a20
 L_6A21:
 	ld a,(0c260h)		;6a21   ; cada C + 1 cuadros cambia el dibujo de (0x98, 0x00) o (0x98, 0x10)
-	and c			;6a24
+	and c			;6a24   ; solo cada C + 1 cuadros
 	ret nz			;6a25
 	inc c			;6a26
 	ld a,(0c260h)		;6a27   ; lee la cuenta de invencible
-	and c			;6a2a
+	and c			;6a2a   ; alternando el dibujo de (0x98, 0) y (0x98, 0x10)
 	ld hl,00098h		;6a2b
 	jr nz,L_6A33		;6a2e
 	ld hl,01098h		;6a30
 L_6A33:
 	ld a,(0c246h)		;6a33   ; lee la X del personaje
-	sub 008h		;6a36
+	sub 008h		;6a36   ; en X - 8...
 	ld d,a			;6a38
 	ld a,(0c240h)		;6a39   ; lee el personaje que se lleva (0 o 1)
 	or a			;6a3c
-	ld b,027h		;6a3d
+	ld b,027h		;6a3d   ; ...e Y - 0x27 (Wit) o Y - 0x21 (Cles)
 	jr z,L_6A43		;6a3f
 	ld b,021h		;6a41
 L_6A43:
@@ -1501,20 +1501,20 @@ L_6A43:
 	ld e,a			;6a47
 	push hl			;6a48
 	push de			;6a49
-	ld hl,02098h		;6a4a
+	ld hl,02098h		;6a4a   ; primero el fondo guardado en (0x98, 0x20)...
 	ld bc,01018h		;6a4d
-	ld a,040h		;6a50
+	ld a,040h		;6a50   ; ...tal cual (LMMM 0x40)
 	call 04c73h		;6a52   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 	pop de			;6a55
 	pop hl			;6a56
-	ld bc,01018h		;6a57
+	ld bc,01018h		;6a57   ; y encima el dibujo con TIMP (0x48)
 	ld a,048h		;6a5a
 	call 04c73h		;6a5c   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
-	ld a,001h		;6a5f
+	ld a,001h		;6a5f   ; el paso 1 de la muerte
 	ld (0c26bh),a		;6a61   ; guarda el paso de la muerte (1 o 2)
 	ret			;6a64
 L_6A65:
-	ld a,002h		;6a65
+	ld a,002h		;6a65   ; el paso 2...
 	ld (0c26bh),a		;6a67   ; guarda el paso de la muerte (1 o 2)
 	ld a,(0c246h)		;6a6a   ; lee la X del personaje
 	sub 008h		;6a6d
@@ -1528,12 +1528,12 @@ L_6A7A:
 	ld a,(0c244h)		;6a7a   ; lee la Y del personaje
 	sub b			;6a7d
 	ld e,a			;6a7e
-	ld hl,02098h		;6a7f
+	ld hl,02098h		;6a7f   ; ...el fondo otra vez, sin el dibujo
 	ld bc,01018h		;6a82
 	ld a,040h		;6a85
 	call 04c73h		;6a87   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 	call 054b4h		;6a8a   ; banco_6_en_a000: pone el banco 6 en 0xA000
-	ld de,0b21bh		;6a8d
+	ld de,0b21bh		;6a8d   ; los patrones de la muerte, p06:B21B y p06:B238, a la VRAM 0xE880-0xE8DF
 	ld hl,0e880h		;6a90
 	call 0492ch		;6a93   ; rle_a_vram: RLE de DE a la VRAM HL: 0 acaba, n < 0x80 repite, 0x80 otra direccion, si no copia n & 0x7F
 	ld de,0b21bh		;6a96
@@ -1545,18 +1545,18 @@ L_6A7A:
 	jp 05464h		;6aa8   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 L_6AAB:
 	ld a,(0c254h)		;6aab   ; lee la direccion de las teclas (0, 1, 2)
-	or a			;6aae
-	jr nz,L_6AD2		;6aaf
-	ld hl,069e6h		;6ab1
+	or a			;6aae   ; la accion 5 (escalera): con arriba o abajo...
+	jr nz,L_6AD2		;6aaf   ; ...el cuadro 12 o 13 (p01:6AD2)
+	ld hl,069e6h		;6ab1   ; subiendo, al ritmo del nivel de velocidad
 	ld a,(ix+001h)		;6ab4   ; lee el nivel de velocidad del personaje (indice de p01:6485)
 	call 04083h		;6ab7   ; hl_mas_a: HL = HL + A
 	ld a,(0c252h)		;6aba   ; lee la cuenta de cuadros del paso del personaje
-	cp (hl)			;6abd
+	cp (hl)			;6abd   ; sin llegar al ritmo, p01:6ADA
 	jr c,L_6ADA		;6abe
 	xor a			;6ac0
 	ld (0c252h),a		;6ac1   ; guarda la cuenta de cuadros del paso del personaje
 	ld a,(0c253h)		;6ac4   ; lee el cuadro de animacion del personaje
-	inc a			;6ac7
+	inc a			;6ac7   ; el cuadro siguiente: 10, 11 y vuelta al 10
 	cp 00ch		;6ac8
 	jr c,L_6ACE		;6aca
 	ld a,00ah		;6acc
@@ -1564,19 +1564,19 @@ L_6ACE:
 	ld (0c253h),a		;6ace   ; guarda el cuadro de animacion del personaje
 	ret			;6ad1
 L_6AD2:
-	dec a			;6ad2
+	dec a			;6ad2   ; la direccion - 1 + 12
 	ld b,00ch		;6ad3
 	add a,b			;6ad5
 	ld (0c253h),a		;6ad6   ; guarda el cuadro de animacion del personaje
 	ret			;6ad9
 L_6ADA:
 	ld a,(0c253h)		;6ada   ; lee el cuadro de animacion del personaje
-	sub 00ah		;6add
+	sub 00ah		;6add   ; si el cuadro no es el 10 o el 11...
 	jr c,L_6AE4		;6adf
 	cp 002h		;6ae1
 	ret c			;6ae3
 L_6AE4:
-	ld a,00ah		;6ae4
+	ld a,00ah		;6ae4   ; ...el 10
 	ld (0c253h),a		;6ae6   ; guarda el cuadro de animacion del personaje
 	ret			;6ae9
 nada_6aea:		; solo ret
@@ -1587,19 +1587,19 @@ disparos_y_cambio:		; disparos, sus sprites y la tecla 0x10 de cambiar de person
 	call sprites_de_disparos		;6af1   ; sprites_de_disparos: esconde 4 sprites y, con 9, los de los disparos (p01:6F9F)
 	call ficha_del_personaje		;6af4   ; ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 	ld a,(0c24bh)		;6af7   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 004h		;6afa
+	cp 004h		;6afa   ; muriendo, ni disparo ni cambio
 	ret z			;6afc
 	ld a,(0c21ch)		;6afd   ; lee el jefe vencido (no queda ningun 0x19)
-	or a			;6b00
+	or a			;6b00   ; con el doble salto pedido, no se dispara
 	ret nz			;6b01
 	ld a,(0c006h)		;6b02   ; lee las teclas nuevas
-	and 010h		;6b05
+	and 010h		;6b05   ; la tecla de disparo (0x10)
 	ret z			;6b07
 	ld a,(0c257h)		;6b08   ; lee hay disparos en marcha
-	or a			;6b0b
+	or a			;6b0b   ; con disparos en marcha, no
 	ret nz			;6b0c
 	ld a,(0c240h)		;6b0d   ; lee el personaje que se lleva (0 o 1)
-	or a			;6b10
+	or a			;6b10   ; Wit: el tipo 4 - estado...
 	jr nz,L_6B1C		;6b11
 	ld a,003h		;6b13
 	sub (ix+006h)		;6b15   ; le resta el estado del personaje (0-3)
@@ -1607,38 +1607,38 @@ disparos_y_cambio:		; disparos, sus sprites y la tecla 0x10 de cambiar de person
 	jp L_6B21		;6b19
 L_6B1C:
 	ld a,(ix+006h)		;6b1c   ; lee el estado del personaje (0-3)
-	add a,006h		;6b1f
+	add a,006h		;6b1f   ; Cles: el tipo estado + 6
 L_6B21:
-	ld b,a			;6b21
+	ld b,a			;6b21   ; B = el tipo
 	push bc			;6b22
 	call subiendo_escalera		;6b23   ; subiendo_escalera: Z si la accion es 5 (escalera) y 0xC254; acarreo si 0xC254 es cero
 	pop bc			;6b26
-	ret c			;6b27
+	ret c			;6b27   ; en la escalera, sin direccion, no
 	ld a,b			;6b28
-	cp 003h		;6b29
+	cp 003h		;6b29   ; el tipo 3 (Wit tranquilo): hasta 4 a la vez (p01:6B3A)
 	jr z,L_6B3A		;6b2b
-	cp 004h		;6b2d
+	cp 004h		;6b2d   ; el tipo 4 (Wit feliz): tres a la vez (p01:6B4E)
 	jr z,L_6B4E		;6b2f
 	ld hl,0c320h		;6b31   ; apunta a los 4 disparos (0x20 bytes cada uno)
-	ld a,(hl)			;6b34
+	ld a,(hl)			;6b34   ; los demas, de uno en uno: si el primero esta libre
 	or a			;6b35
 	ret nz			;6b36
 	jp nuevo_disparo		;6b37   ; nuevo_disparo: el sonido de p01:6B83[B - 1] y la ficha del disparo en HL
 L_6B3A:
 	ld b,003h		;6b3a
-	ld c,004h		;6b3c
+	ld c,004h		;6b3c   ; mira los 4 huecos
 	ld hl,0c320h		;6b3e   ; apunta a los 4 disparos (0x20 bytes cada uno)
 	ld de,00020h		;6b41
 L_6B44:
-	ld a,(hl)			;6b44
+	ld a,(hl)			;6b44   ; el primer hueco libre
 	or a			;6b45
 	jp z,nuevo_disparo		;6b46   ; nuevo_disparo: el sonido de p01:6B83[B - 1] y la ficha del disparo en HL
 	add hl,de			;6b49
 	dec c			;6b4a
 	jr nz,L_6B44		;6b4b
-	ret			;6b4d
+	ret			;6b4d   ; ninguno libre: nada
 L_6B4E:
-	ld b,003h		;6b4e
+	ld b,003h		;6b4e   ; el tipo 4 solo si los 3 primeros estan libres
 	ld hl,0c320h		;6b50   ; apunta a los 4 disparos (0x20 bytes cada uno)
 	ld de,00020h		;6b53
 L_6B56:
@@ -1648,9 +1648,9 @@ L_6B56:
 	add hl,de			;6b59
 	djnz L_6B56		;6b5a
 	ld hl,0c320h		;6b5c   ; apunta a los 4 disparos (0x20 bytes cada uno)
-	ld b,004h		;6b5f
+	ld b,004h		;6b5f   ; los tres: el primero con el sonido 4...
 	call nuevo_disparo		;6b61   ; nuevo_disparo: el sonido de p01:6B83[B - 1] y la ficha del disparo en HL
-	ld hl,0c340h		;6b64
+	ld hl,0c340h		;6b64   ; ...y los otros dos con el 5
 	ld b,005h		;6b67
 	call nuevo_disparo		;6b69   ; nuevo_disparo: el sonido de p01:6B83[B - 1] y la ficha del disparo en HL
 	ld hl,0c360h		;6b6c
@@ -1658,11 +1658,11 @@ L_6B56:
 	jp nuevo_disparo		;6b71   ; nuevo_disparo: el sonido de p01:6B83[B - 1] y la ficha del disparo en HL
 subiendo_escalera:		; Z si la accion es 5 (escalera) y 0xC254; acarreo si 0xC254 es cero
 	ld a,(0c24bh)		;6b74   ; lee la accion del personaje (4 muere, 5 escalera)
-	sub 005h		;6b77
+	sub 005h		;6b77   ; la accion 5 (escalera)...
 	or a			;6b79
 	ret nz			;6b7a
 	ld a,(0c254h)		;6b7b   ; lee la direccion de las teclas (0, 1, 2)
-	or a			;6b7e
+	or a			;6b7e   ; ...sin direccion: acarreo
 	scf			;6b7f
 	ret z			;6b80
 	or a			;6b81
@@ -1683,7 +1683,7 @@ nuevo_disparo:		; el sonido de p01:6B83[B - 1] y la ficha del disparo en HL
 	call postura_de_disparo		;6b8c   ; postura_de_disparo: en accion 0: 0xC26C = 4 u 8 y la accion 2
 	push hl			;6b8f
 	push bc			;6b90
-	ld a,b			;6b91
+	ld a,b			;6b91   ; el sonido del tipo: p01:6B83[B - 1]
 	dec a			;6b92
 	ld hl,06b83h		;6b93
 	call 04083h		;6b96   ; hl_mas_a: HL = HL + A
@@ -1691,10 +1691,10 @@ nuevo_disparo:		; el sonido de p01:6B83[B - 1] y la ficha del disparo en HL
 	call 056e3h		;6b9a   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	pop bc			;6b9d
 	pop hl			;6b9e
-	ld (hl),b			;6b9f
+	ld (hl),b			;6b9f   ; el tipo en el hueco
 	push hl			;6ba0
 	pop ix		;6ba1
-	ld d,h			;6ba3
+	ld d,h			;6ba3   ; los otros 0x1F bytes a cero
 	ld e,l			;6ba4
 	inc de			;6ba5
 	ld b,01fh		;6ba6
@@ -1703,34 +1703,34 @@ L_6BA9:
 	ld (de),a			;6ba9
 	inc de			;6baa
 	djnz L_6BA9		;6bab
-	inc hl			;6bad
+	inc hl			;6bad   ; la Y del disparo...
 	ld de,(0c243h)		;6bae   ; lee la Y del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
 	call ajusta_disparo		;6bb2   ; ajusta_disparo: la Y del disparo segun su tipo y 0xC253
 	ld (hl),e			;6bb5
 	inc hl			;6bb6
 	ld (hl),d			;6bb7
 	inc hl			;6bb8
-	ld de,(0c245h)		;6bb9   ; lee la X del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
+	ld de,(0c245h)		;6bb9   ; la X: la del personaje
 	ld (hl),e			;6bbd
 	inc hl			;6bbe
 	ld (hl),d			;6bbf
-	inc hl			;6bc0
+	inc hl			;6bc0   ; hasta el sentido (ix+9)
 	inc hl			;6bc1
 	inc hl			;6bc2
 	inc hl			;6bc3
 	inc hl			;6bc4
 	ld a,(0c24bh)		;6bc5   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 005h		;6bc8
+	cp 005h		;6bc8   ; en la escalera...
 	ld a,(0c250h)		;6bca   ; lee el sentido del personaje
-	jr nz,L_6BD3		;6bcd
+	jr nz,L_6BD3		;6bcd   ; ...la direccion - 1; si no, el sentido
 	ld a,(0c254h)		;6bcf   ; lee la direccion de las teclas (0, 1, 2)
 	dec a			;6bd2
 L_6BD3:
-	ld (hl),a			;6bd3
-	ld (ix+010h),001h		;6bd4
-	ld (ix+00ah),000h		;6bd8
+	ld (hl),a			;6bd3   ; el sentido del disparo
+	ld (ix+010h),001h		;6bd4   ; el fotograma 1
+	ld (ix+00ah),000h		;6bd8   ; el registro de sprite 0
 	call x_del_disparo		;6bdc   ; x_del_disparo: (ix+4) + 2 u 8 segun el tipo y el sentido (ix+9)
-	ld a,(ix+000h)		;6bdf
+	ld a,(ix+000h)		;6bdf   ; despacha el tipo - 1 (tabla p01:6BE6)
 	dec a			;6be2
 	call 0408dh		;6be3   ; despacha: salta a la palabra A de la tabla pegada detras del `call`
 
@@ -1756,62 +1756,62 @@ DATA_saltos_6BE6:
 
 postura_de_disparo:		; en accion 0: 0xC26C = 4 u 8 y la accion 2
 	ld a,(0c24bh)		;6bf8   ; lee la accion del personaje (4 muere, 5 escalera)
-	or a			;6bfb
+	or a			;6bfb   ; solo en el suelo
 	ret nz			;6bfc
-	ld a,b			;6bfd
+	ld a,b			;6bfd   ; el tipo 9 (la bola de Cles) no cambia la postura
 	cp 009h		;6bfe
 	ret z			;6c00
-	ld a,004h		;6c01
+	ld a,004h		;6c01   ; 4 cuadros con el tipo 7, 8 con los demas
 	cp 007h		;6c03
 	jr z,L_6C09		;6c05
 	ld a,008h		;6c07
 L_6C09:
 	ld (0c26ch),a		;6c09   ; guarda la cuenta de la postura de disparo (4 u 8)
-	ld a,002h		;6c0c
+	ld a,002h		;6c0c   ; la accion 2 mientras tanto
 	ld (0c24bh),a		;6c0e   ; guarda la accion del personaje (4 muere, 5 escalera)
 	ret			;6c11
 ajusta_disparo:		; la Y del disparo segun su tipo y 0xC253
 	ld a,(0c240h)		;6c12   ; lee el personaje que se lleva (0 o 1)
-	or a			;6c15
+	or a			;6c15   ; con Cles, nada
 	ret nz			;6c16
 	ld a,(ix+000h)		;6c17   ; lee el tipo del disparo
-	cp 001h		;6c1a
+	cp 001h		;6c1a   ; el tipo 1 (el rayo), 4 mas abajo
 	jr nz,L_6C22		;6c1c
 	ld a,d			;6c1e
 	add a,004h		;6c1f
 	ld d,a			;6c21
 L_6C22:
 	ld a,(0c26ch)		;6c22   ; la Y del disparo segun el cuadro del personaje (0xC253)
-	or a			;6c25
+	or a			;6c25   ; con la postura de disparo, - 4
 	jr nz,L_6C40		;6c26
 	ld a,(0c253h)		;6c28   ; lee el cuadro de animacion del personaje
 	cp 008h		;6c2b   ; en los cuadros 8 y 9 no se toca
-	jr z,L_6C40		;6c2d
+	jr z,L_6C40		;6c2d   ; en el aire (cuadros 8 y 9)...
 	cp 009h		;6c2f
 	jr z,L_6C40		;6c31
 	sub 014h		;6c33   ; de 0x14 a 0x17, tampoco
-	jr c,L_6C3B		;6c35
+	jr c,L_6C3B		;6c35   ; ...o en la escalera (0x14-0x17): - 4
 	cp 004h		;6c37
 	jr c,L_6C40		;6c39
 L_6C3B:
-	ld a,d			;6c3b
+	ld a,d			;6c3b   ; si no, - 0x0A
 	sub 00ah		;6c3c
 	ld d,a			;6c3e
 	ret			;6c3f
 L_6C40:
-	ld a,d			;6c40
+	ld a,d			;6c40   ; la Y - 4
 	sub 004h		;6c41
 	ld d,a			;6c43
 	ret			;6c44
 x_del_disparo:		; (ix+4) + 2 u 8 segun el tipo y el sentido (ix+9)
 	ld a,(ix+000h)		;6c45   ; lee el tipo del disparo
-	cp 001h		;6c48
-	ld b,0feh		;6c4a
+	cp 001h		;6c48   ; el tipo 1 sale 8 puntos por delante...
+	ld b,0feh		;6c4a   ; ...los demas, 2
 	jr nz,L_6C50		;6c4c
 	ld b,0f8h		;6c4e
 L_6C50:
 	ld a,(ix+009h)		;6c50   ; lee el sentido del disparo (0: a la izquierda)
-	or a			;6c53
+	or a			;6c53   ; a la izquierda (0), hacia atras
 	ld a,b			;6c54
 	jr z,L_6C59		;6c55
 	neg		;6c57
@@ -1827,10 +1827,10 @@ L_6C60:
 L_6C6B:
 	call disparo_recto		;6c6b   ; disparo_recto: p01:6D75, p01:6D84 y p01:6D95
 	ld a,(ix+009h)		;6c6e   ; lee el sentido del disparo (0: a la izquierda)
-	or a			;6c71
+	or a			;6c71   ; el tipo 4: registro 0x11 a la izquierda...
 	ld a,011h		;6c72
 	jr z,L_6C78		;6c74
-	ld a,013h		;6c76
+	ld a,013h		;6c76   ; ...0x13 a la derecha
 L_6C78:
 	ld (ix+00ah),a		;6c78   ; guarda el registro de sprite del disparo (p09:B7C9)
 	ret			;6c7b
@@ -1840,46 +1840,46 @@ disparo_recto:		; p01:6D75, p01:6D84 y p01:6D95
 	jp sprite_del_disparo		;6c82   ; sprite_del_disparo: (ix+0x0C) = 4 + el numero del disparo
 L_6C85:
 	call disparo_8		;6c85   ; disparo_8: (ix+0x0D) = 8
-	ld a,(ix+00dh)		;6c88
+	ld a,(ix+00dh)		;6c88   ; el tipo 1 (el rayo): (ix+0x0E) = ((ix+0x0D) - 8) / 2, lo que se queda entero
 	sub 008h		;6c8b
 	srl a		;6c8d
 	ld (ix+00eh),a		;6c8f
 	ld (ix+00ah),001h		;6c92   ; el registro de sprite del disparo (p09:B7C9) = 0x01
 	ld a,(ix+009h)		;6c96   ; lee el sentido del disparo (0: a la izquierda)
-	or a			;6c99
+	or a			;6c99   ; registro 1 a la izquierda...
 	jr z,L_6CA0		;6c9a
 	ld (ix+00ah),005h		;6c9c   ; el registro de sprite del disparo (p09:B7C9) = 0x05
 L_6CA0:
-	ld a,004h		;6ca0
+	ld a,004h		;6ca0   ; ...5 a la derecha; 4 cuadros de espera
 	ld (ix+00ch),a		;6ca2   ; guarda el hueco de sprite del disparo
 	ld (ix+011h),a		;6ca5
-	ld (ix+00dh),0ffh		;6ca8
+	ld (ix+00dh),0ffh		;6ca8   ; sin alcance ((ix+0x0D) = 0xFF)
 	ret			;6cac
 L_6CAD:
 	call disparo_8		;6cad   ; disparo_8: (ix+0x0D) = 8
 	call sprite_del_disparo		;6cb0   ; sprite_del_disparo: (ix+0x0C) = 4 + el numero del disparo
 	ld a,(ix+009h)		;6cb3   ; lee el sentido del disparo (0: a la izquierda)
-	or a			;6cb6
+	or a			;6cb6   ; el tipo 5: registros 0x11-0x14
 	ld b,011h		;6cb7
 	jr z,L_6CBD		;6cb9
 	ld b,013h		;6cbb
 L_6CBD:
 	ld a,(ix+00ch)		;6cbd   ; lee el hueco de sprite del disparo
-	cp 005h		;6cc0
+	cp 005h		;6cc0   ; segun el hueco del sprite
 	jr z,L_6CC5		;6cc2
 	inc b			;6cc4
 L_6CC5:
 	ld (ix+00ah),b		;6cc5   ; guarda el registro de sprite del disparo (p09:B7C9)
-	push ix		;6cc8
+	push ix		;6cc8   ; el numero del disparo...
 	pop hl			;6cca
 	or a			;6ccb
 	ld de,0c320h		;6ccc   ; apunta a los 4 disparos (0x20 bytes cada uno)
 	sbc hl,de		;6ccf
-	add hl,hl			;6cd1
+	add hl,hl			;6cd1   ; ...(su desplazamiento en 0xC320 / 0x20)
 	add hl,hl			;6cd2
 	add hl,hl			;6cd3
 	ld a,h			;6cd4
-	cp 001h		;6cd5
+	cp 001h		;6cd5   ; el disparo 1 casi recto (velocidad Y 0x0001); el 2 sube en diagonal (0xF802)
 	ld b,000h		;6cd7
 	jr z,L_6CDD		;6cd9
 	ld b,0f8h		;6cdb
@@ -1891,45 +1891,45 @@ L_6CE6:
 	call cuadro_de_animacion		;6ce6   ; cuadro_de_animacion: L = el cuadro (0xD8 + 2 cada 2 cuadros) segun (ix+9)
 	ld a,(0c244h)		;6ce9   ; lee la Y del personaje
 	ld (ix+002h),a		;6cec   ; guarda la Y del disparo
-	ld a,001h		;6cef
+	ld a,001h		;6cef   ; el golpe de Cles en marcha
 	ld (0c26fh),a		;6cf1   ; guarda el golpe de Cles en marcha
 	call disparo_8		;6cf4   ; disparo_8: (ix+0x0D) = 8
-	ld a,(ix+00dh)		;6cf7
+	ld a,(ix+00dh)		;6cf7   ; el doble de alcance
 	add a,a			;6cfa
 	ld (ix+00dh),a		;6cfb
-	ld de,00400h		;6cfe
+	ld de,00400h		;6cfe   ; velocidad X 0x400
 	call velocidad_del_disparo		;6d01   ; velocidad_del_disparo: (ix+7, 8) = DE, negada (p02:8B39) si (ix+9) es cero
 	ld (ix+00ch),004h		;6d04   ; el hueco de sprite del disparo = 0x04
 	ld a,(ix+009h)		;6d08   ; lee el sentido del disparo (0: a la izquierda)
-	or a			;6d0b
+	or a			;6d0b   ; el registro 0x0F mirando a la derecha...
 	ld a,00fh		;6d0c
 	jr nz,L_6D12		;6d0e
-	ld a,010h		;6d10
+	ld a,010h		;6d10   ; ...o 0x10 a la izquierda
 L_6D12:
 	ld (ix+00ah),a		;6d12   ; guarda el registro de sprite del disparo (p09:B7C9)
 	ret			;6d15
 L_6D16:
-	ld (ix+00dh),004h		;6d16
+	ld (ix+00dh),004h		;6d16   ; el tipo 7: alcance 4
 	jr L_6D20		;6d1a
 L_6D1C:
-	ld (ix+00dh),008h		;6d1c
+	ld (ix+00dh),008h		;6d1c   ; el tipo 8: alcance 8
 L_6D20:
-	ld a,001h		;6d20
+	ld a,001h		;6d20   ; el golpe de Cles en marcha
 	ld (0c26fh),a		;6d22   ; guarda el golpe de Cles en marcha
 	ld (ix+00ch),004h		;6d25   ; el hueco de sprite del disparo = 0x04
 L_6D29:
 	ld a,(0c26ch)		;6d29   ; lee la cuenta de la postura de disparo (4 u 8)
-	or a			;6d2c
+	or a			;6d2c   ; con la postura de disparo, la accion 0
 	ld a,000h		;6d2d
 	jr nz,L_6D34		;6d2f
 	ld a,(0c24bh)		;6d31   ; lee la accion del personaje (4 muere, 5 escalera)
 L_6D34:
-	ld hl,06d59h		;6d34
+	ld hl,06d59h		;6d34   ; el registro de p01:6D59 segun la accion
 	call 04083h		;6d37   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;6d3a
 	ld (ix+00ah),a		;6d3b   ; guarda el registro de sprite del disparo (p09:B7C9)
 	ld a,(0c24bh)		;6d3e   ; lee la accion del personaje (4 muere, 5 escalera)
-	cp 005h		;6d41
+	cp 005h		;6d41   ; en la escalera, la direccion - 1...
 	jr nz,L_6D4B		;6d43
 	ld a,(0c254h)		;6d45   ; lee la direccion de las teclas (0, 1, 2)
 	dec a			;6d48
@@ -1937,10 +1937,10 @@ L_6D34:
 L_6D4B:
 	ld a,(0c250h)		;6d4b   ; lee el sentido del personaje
 L_6D4E:
-	or a			;6d4e
+	or a			;6d4e   ; ...mirando a la derecha, tal cual
 	ret nz			;6d4f
 	ld a,(ix+00ah)		;6d50   ; lee el registro de sprite del disparo (p09:B7C9)
-	add a,003h		;6d53
+	add a,003h		;6d53   ; a la izquierda, el registro + 3
 	ld (ix+00ah),a		;6d55   ; guarda el registro de sprite del disparo (p09:B7C9)
 	ret			;6d58
 
@@ -1960,30 +1960,30 @@ L_6D5F:
 	ld (ix+002h),a		;6d62   ; guarda la Y del disparo
 	ld a,(0c246h)		;6d65   ; lee la X del personaje
 	ld (ix+004h),a		;6d68   ; guarda la X del disparo
-	ld a,001h		;6d6b
+	ld a,001h		;6d6b   ; el golpe de Cles en marcha
 	ld (0c26fh),a		;6d6d   ; guarda el golpe de Cles en marcha
-	ld (ix+00dh),018h		;6d70
+	ld (ix+00dh),018h		;6d70   ; alcance 0x18
 	ret			;6d74
 disparo_8:		; (ix+0x0D) = 8
 	ld (ix+00dh),008h		;6d75
 	ret			;6d79
 L_6D7A:
 	ld a,(ix+009h)		;6d7a   ; lee el sentido del disparo (0: a la izquierda)
-	xor 001h		;6d7d
-	add a,b			;6d7f
+	xor 001h		;6d7d   ; el sentido, al reves...
+	add a,b			;6d7f   ; ...+ B: el registro
 	ld (ix+00ah),a		;6d80   ; guarda el registro de sprite del disparo (p09:B7C9)
 	ret			;6d83
 velocidad_800:		; p01:6D87 con DE = 0x800
-	ld de,00800h		;6d84
+	ld de,00800h		;6d84   ; velocidad 0x800: 8 puntos por cuadro
 velocidad_del_disparo:		; (ix+7, 8) = DE, negada (p02:8B39) si (ix+9) es cero
 	ld a,(ix+009h)		;6d87   ; lee el sentido del disparo (0: a la izquierda)
-	or a			;6d8a
+	or a			;6d8a   ; a la izquierda, negativa
 	call z,08b39h		;6d8b   ; niega_de: DE = -DE
 	ld (ix+007h),e		;6d8e   ; guarda la velocidad X del disparo
 	ld (ix+008h),d		;6d91   ; guarda la velocidad X del disparo (alta)
 	ret			;6d94
 sprite_del_disparo:		; (ix+0x0C) = 4 + el numero del disparo
-	push ix		;6d95
+	push ix		;6d95   ; el numero del disparo: su desplazamiento en 0xC320 / 0x20...
 	pop hl			;6d97
 	or a			;6d98
 	ld de,0c320h		;6d99   ; apunta a los 4 disparos (0x20 bytes cada uno)
@@ -1996,12 +1996,12 @@ sprite_del_disparo:		; (ix+0x0C) = 4 + el numero del disparo
 	rra			;6da3
 	rra			;6da4
 	and 007h		;6da5
-	add a,004h		;6da7
+	add a,004h		;6da7   ; ...+ 4: el hueco de sprite
 	ld (ix+00ch),a		;6da9   ; guarda el hueco de sprite del disparo
 	ret			;6dac
 disparos:		; los 4 disparos de 0xC320 (0x20 bytes cada uno)
 	ld ix,0c320h		;6dad   ; apunta a los 4 disparos (0x20 bytes cada uno)
-	ld b,004h		;6db1
+	ld b,004h		;6db1   ; los 4 disparos
 L_6DB3:
 	push bc			;6db3
 	call despacha_disparo		;6db4   ; despacha_disparo: despacha el tipo del disparo - 1
@@ -2009,7 +2009,7 @@ L_6DB3:
 	call disparo_fuera		;6dba   ; disparo_fuera: si se sale de 0x0A-0xF5 en X o 0x14-0xD8 en Y, se borra
 	pop bc			;6dbd
 	ld de,00020h		;6dbe
-	add ix,de		;6dc1
+	add ix,de		;6dc1   ; el siguiente, 0x20 bytes mas alla
 	djnz L_6DB3		;6dc3
 	ret			;6dc5
 mueve_disparo:		; (ix+3, 4) + (ix+7, 8) y (ix+1, 2) + (ix+5, 6)
@@ -2020,14 +2020,14 @@ mueve_disparo:		; (ix+3, 4) + (ix+7, 8) y (ix+1, 2) + (ix+5, 6)
 	ld d,(ix+008h)		;6dce   ; lee la velocidad X del disparo (alta)
 	ld l,(ix+003h)		;6dd1   ; lee la X del disparo (fraccion)
 	ld h,(ix+004h)		;6dd4   ; lee la X del disparo
-	add hl,de			;6dd7
+	add hl,de			;6dd7   ; X + velocidad X
 	ld (ix+003h),l		;6dd8   ; guarda la X del disparo (fraccion)
 	ld (ix+004h),h		;6ddb   ; guarda la X del disparo
 	ld e,(ix+005h)		;6dde   ; lee la velocidad Y del disparo
 	ld d,(ix+006h)		;6de1   ; lee la velocidad Y del disparo (alta)
 	ld l,(ix+001h)		;6de4   ; lee la Y del disparo (fraccion)
 	ld h,(ix+002h)		;6de7   ; lee la Y del disparo
-	add hl,de			;6dea
+	add hl,de			;6dea   ; Y + velocidad Y
 	ld (ix+001h),l		;6deb   ; guarda la Y del disparo (fraccion)
 	ld (ix+002h),h		;6dee   ; guarda la Y del disparo
 	ret			;6df1
@@ -2036,33 +2036,33 @@ disparo_fuera:		; si se sale de 0x0A-0xF5 en X o 0x14-0xD8 en Y, se borra
 	or a			;6df5
 	ret z			;6df6
 	ld a,(ix+004h)		;6df7   ; lee la X del disparo
-	cp 0f5h		;6dfa
+	cp 0f5h		;6dfa   ; la X fuera de 0x0A-0xF4...
 	jr nc,borra_disparo		;6dfc
 	cp 00ah		;6dfe
 	jr c,borra_disparo		;6e00
 	ld a,(ix+002h)		;6e02   ; lee la Y del disparo
-	cp 0d8h		;6e05
+	cp 0d8h		;6e05   ; ...o la Y fuera de 0x14-0xD7: se borra
 	jr nc,borra_disparo		;6e07
 	cp 014h		;6e09
 	jr c,borra_disparo		;6e0b
-	ld a,(ix+00dh)		;6e0d
+	ld a,(ix+00dh)		;6e0d   ; el alcance: 0xFF sin limite...
 	cp 0ffh		;6e10
 	ret z			;6e12
-	dec (ix+00dh)		;6e13
+	dec (ix+00dh)		;6e13   ; ...si no, a cero se borra
 	ret nz			;6e16
 borra_disparo:		; esconde sus 8 sprites (0xDE00) y lo pone a cero
-	ld b,008h		;6e17
+	ld b,008h		;6e17   ; sus 8 sprites...
 	ld de,0de00h		;6e19   ; apunta a los atributos de los sprites en RAM
 	ld a,(ix+00ch)		;6e1c   ; lee el hueco de sprite del disparo
-	add a,a			;6e1f
+	add a,a			;6e1f   ; (4 bytes por sprite)
 	add a,a			;6e20
 	call 04088h		;6e21   ; de_mas_a: DE = DE + A
-	ld a,0e0h		;6e24
+	ld a,0e0h		;6e24   ; ...con Y = 0xE0: escondidos
 L_6E26:
 	ld (de),a			;6e26
 	inc de			;6e27
 	djnz L_6E26		;6e28
-	xor a			;6e2a
+	xor a			;6e2a   ; y la ficha a cero
 	ld (ix+000h),a		;6e2b   ; guarda el tipo del disparo
 	ld (0c26fh),a		;6e2e   ; guarda el golpe de Cles en marcha
 	ret			;6e31
@@ -2070,7 +2070,7 @@ despacha_disparo:		; despacha el tipo del disparo - 1
 	ld a,(ix+000h)		;6e32   ; lee el tipo del disparo
 	or a			;6e35
 	ret z			;6e36
-	dec a			;6e37
+	dec a			;6e37   ; el tipo - 1: tabla p01:6E3B
 	call 0408dh		;6e38   ; despacha: salta a la palabra A de la tabla pegada detras del `call`
 
 ; ----------------------------------------------------------------------

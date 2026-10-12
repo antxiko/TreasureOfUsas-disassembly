@@ -301,9 +301,8 @@ def ataques(ruta, escala=3):
 #          registro 5; luego cada cuadro registro + 1 y X + 16 hasta el 8; y
 #          registro - 1 y X + 16 hasta el 5 (p01:6EA3); y se borra
 #   tipos 2 y 3 (p01:6E51) recto a 8 puntos por cuadro (0x800, p01:6D84),
-#          registro 0
-#   tipo 4 (p01:6EC9) igual de rapido, registro 0x13, y pegado al suelo (aqui,
-#          suelo llano)
+#          registro 0, y se borran a los 8 cuadros (alcance)
+#   tipo 4 (p01:6EC9) sale con dos del tipo 5 (p01:6B4E): ver simula_disparo
 # Todo mirando a la derecha. Un cuadro del GIF es un cuadro del juego, a 50 por
 # segundo (el GIF no baja de 20 ms).
 SPRITES_WIT = 0xA31B
@@ -328,7 +327,13 @@ def patrones_de_disparo(estado):
 
 
 def simula_disparo(tipo, x, y, cuadros):
-    """[(cuadro, registro, X, Y) o None] cuadro a cuadro."""
+    """[[(registro, X, Y), ...] o []] cuadro a cuadro: los disparos en pantalla.
+
+    Los tipos 2-5 nacen con un alcance de 8 cuadros ((ix+0x0D) = 8, p01:6D75)
+    y a los 8 se borran (p01:6E0D); el 1 no tiene alcance (0xFF, p01:6CA8).
+    El tipo 4 sale con dos del tipo 5 (p01:6B4E): el 4 recto, registro 0x13;
+    los dos 5 en los huecos de sprite 5 y 6 (registros 0x13 y 0x14,
+    p01:6CBD) con la velocidad Y 0x0001 y 0xF802 (p01:6CD4)."""
     fuera = []
     if tipo == 1:
         x += 8
@@ -350,13 +355,19 @@ def simula_disparo(tipo, x, y, cuadros):
                     fase = 4
             elif fase == 4:
                 reg = None
-            fuera.append(None if reg is None else (reg, x, y))
+            fuera.append([] if reg is None else [(reg, x, y)])
         return fuera
-    x += 2
-    reg = 0x13 if tipo == 4 else 0
-    for _ in range(cuadros):
-        x += 8
-        fuera.append((reg, x, y - 4) if x < 300 else None)
+    if tipo == 4:
+        tiros = [(0x13, 0), (0x13, 0x0001), (0x14, 0xF802 - 0x10000)]
+    else:
+        tiros = [(0, 0)]
+    x0, y0 = x + 2, (y - 4) * 256
+    for t in range(cuadros):
+        vivos = []
+        for reg, vy in tiros:
+            if t < 8:               # 8 cuadros de alcance
+                vivos.append((reg, x0 + 8 * (t + 1), (y0 + vy * (t + 1)) // 256))
+        fuera.append(vivos)
     return fuera
 
 
@@ -369,17 +380,15 @@ def dispara(ruta, escala=3, cuadros=36):
     pal = {c: v.rgb(c) for c in range(16)}
     fotos = {e: [compone(f) for f in fotogramas(0, e)] for e in range(4)}
     tiros = {e: simula_disparo(4 - e, 24, 0, cuadros) for e in range(4)}
-    alto = 40
+    alto = 96
     imgs = []
     for t in range(cuadros):
         img = Image.new("RGB", (240, 4 * alto), (24, 24, 24))
         for e in range(4):
             cy = e * alto + alto - 4
             buf = fotos[e][4 if t < 8 else 0] + patrones_de_disparo(e)[0x80:]
-            tiro = tiros[e][t]
             mezcla = {}
-            if tiro:
-                reg, x, y = tiro
+            for reg, x, y in tiros[e][t]:
                 golpe(img, buf, reg, x, cy + y, mezcla, pal)
             cuerpo(img, buf, 24, cy, mezcla, pal)
         imgs.append(img.resize((img.width * escala, img.height * escala), Image.NEAREST))

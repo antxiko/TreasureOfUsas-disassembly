@@ -951,7 +951,7 @@ C 0x607D cuadro_de_personaje_y_disparos: p06:B259, p06:B2FC, la accion y los spr
 C 0x6080 disparos_y_cambio: disparos, sus sprites y la tecla 0x10 de cambiar de personaje
 C 0x6083 cuadro_de_la_sala_5: en la sala 5, despacha 0xC310 (tabla p02:8D01)
 C 0x6086 cuadro_del_final_de_fase: con 0xC316 y sin morir: la cuenta 0xC314 y despacha 0xC310 (tabla p02:8FBF)
-C 0x6089 cuadro_de_actores: el jefe (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
+C 0x6089 cuadro_de_actores: las esperas (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
 C 0x608C sale_por_la_entrada: en la pantalla 1, junto a la entrada y pulsando hacia fuera: 0xC215 = 3 o 4
 C 0x6092 cuenta_ccb7: 0xCCB7 - 1 si no es cero
 C 0x6095 actores_de_cd00: los 9 actores de 0xCD00: su paso, movimiento, piezas y sprites
@@ -964,12 +964,12 @@ C 0x60A7 actores_contra_el_personaje: los 8 actores con (ix+0x13) bit 0 contra e
 C 0x60AA atributos_rotados: los colores de los sprites (p00:5676) y los atributos de 0xDE00 a la VRAM 0x7600 empezando cada cuadro por otro sprite (0xC00C + 0x68): el parpadeo cuando hay muchos
 C 0x60AD lee las banderas (bit 6: en partida)
 C 0x60B3 lee la accion del personaje (4 muere, 5 escalera)
-C 0x60B9 lee el jefe vencido (no queda ningun 0x19)
+C 0x60B9 lee no queda ningun 0x19 (la sala 5, acabada)
 C 0x60BE lee las teclas especiales
 C 0x60C5 guarda la pausa
 C 0x60CA sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x60CF lee en la sala de la puerta 5
-C 0x60D4 lee el jefe vencido (no queda ningun 0x19)
+C 0x60D4 lee no queda ningun 0x19 (la sala 5, acabada)
 C 0x60D9 lee la X del personaje
 C 0x60ED pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 C 0x60F0 lleva_segun_ficha_0: 0xC240 = el byte 0 de la ficha del personaje 0
@@ -1307,7 +1307,7 @@ C 0x6AEE disparos: los 4 disparos de 0xC320 (0x20 bytes cada uno)
 C 0x6AF1 sprites_de_disparos: esconde 4 sprites y, con 9, los de los disparos (p01:6F9F)
 C 0x6AF4 ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 C 0x6AF7 lee la accion del personaje (4 muere, 5 escalera)
-C 0x6AFD lee el jefe vencido (no queda ningun 0x19)
+C 0x6AFD lee no queda ningun 0x19 (la sala 5, acabada)
 C 0x6B02 lee las teclas nuevas
 C 0x6B08 lee hay disparos en marcha
 C 0x6B0D lee el personaje que se lleva (0 o 1)

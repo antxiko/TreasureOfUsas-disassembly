@@ -1369,7 +1369,7 @@ L_A9DD:
 	ld a,000h		;a9e6
 	ld (0c31dh),a		;a9e8
 	inc a			;a9eb
-	ld (0c21ch),a		;a9ec   ; guarda el jefe vencido (no queda ningun 0x19)
+	ld (0c21ch),a		;a9ec   ; guarda no queda ningun 0x19 (la sala 5, acabada)
 	ld a,(0c24bh)		;a9ef   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;a9f2
 	ret z			;a9f4

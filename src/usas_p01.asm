@@ -88,7 +88,7 @@ cuadro_de_partida:		; un cuadro de la partida: p00:563F y, en cuadros pares, 0xC
 	call disparos_y_cambio		;6080   ; disparos_y_cambio: disparos, sus sprites y la tecla 0x10 de cambiar de personaje
 	call 08cf6h		;6083   ; cuadro_de_la_sala_5: en la sala 5, despacha 0xC310 (tabla p02:8D01)
 	call 08fabh		;6086   ; cuadro_del_final_de_fase: con 0xC316 y sin morir: la cuenta 0xC314 y despacha 0xC310 (tabla p02:8FBF)
-	call 08293h		;6089   ; cuadro_de_actores: el jefe (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
+	call 08293h		;6089   ; cuadro_de_actores: las esperas (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
 	call sale_por_la_entrada		;608c   ; sale_por_la_entrada: en la pantalla 1, junto a la entrada y pulsando hacia fuera: 0xC215 = 3 o 4
 	jp L_60CF		;608f   ; y lo de la sala 5
 L_6092:
@@ -108,7 +108,7 @@ pausa:		; en partida, si se pulsa la tecla de 0xC00E bit 0: 0xC008 = 1 y el soni
 	ld a,(0c24bh)		;60b3   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;60b6   ; ni muriendo
 	ret z			;60b8
-	ld a,(0c21ch)		;60b9   ; lee el jefe vencido (no queda ningun 0x19)
+	ld a,(0c21ch)		;60b9   ; lee no queda ningun 0x19 (la sala 5, acabada)
 	and a			;60bc   ; ni con 0xC21C puesto (no queda ningun 0x19)
 	ret nz			;60bd
 	ld a,(0c00eh)		;60be   ; lee las teclas especiales
@@ -124,7 +124,7 @@ L_60CF:
 	ld a,(0c20ah)		;60cf   ; lee en la sala de la puerta 5
 	and a			;60d2
 	ret z			;60d3   ; solo en la sala 5...
-	ld a,(0c21ch)		;60d4   ; lee el jefe vencido (no queda ningun 0x19)
+	ld a,(0c21ch)		;60d4   ; lee no queda ningun 0x19 (la sala 5, acabada)
 	and a			;60d7
 	ret z			;60d8   ; ...con 0xC21C puesto...
 	ld a,(0c246h)		;60d9   ; lee la X del personaje
@@ -1589,7 +1589,7 @@ disparos_y_cambio:		; disparos, sus sprites y la tecla 0x10 de cambiar de person
 	ld a,(0c24bh)		;6af7   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;6afa   ; muriendo, ni disparo ni cambio
 	ret z			;6afc
-	ld a,(0c21ch)		;6afd   ; lee el jefe vencido (no queda ningun 0x19)
+	ld a,(0c21ch)		;6afd   ; lee no queda ningun 0x19 (la sala 5, acabada)
 	or a			;6b00   ; con el doble salto pedido, no se dispara
 	ret nz			;6b01
 	ld a,(0c006h)		;6b02   ; lee las teclas nuevas

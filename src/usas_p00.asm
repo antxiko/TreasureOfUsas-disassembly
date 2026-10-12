@@ -639,7 +639,7 @@ L_44BF:
 	call 0bc0ch		;44cb   ; prepara_la_captura: sentido y cuentas de la antesala a cero, 0xCC18 = 0x78; con 0xC31C distinto de 3, los colores de la antesala
 	call bancos_1_2_3		;44ce   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	xor a			;44d1
-	ld (0c21ch),a		;44d2   ; guarda el jefe vencido (no queda ningun 0x19)
+	ld (0c21ch),a		;44d2   ; guarda no queda ningun 0x19 (la sala 5, acabada)
 	ld (0c216h),a		;44d5   ; sin captura pendiente
 	ld a,089h		;44d8   ; la musica 0x89 (la antesala)
 	call sonido		;44da   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
@@ -655,7 +655,7 @@ L_44E0:
 	ld (0c217h),a		;44ec   ; sin fin de ruina pendiente
 	ld (0c8abh),a		;44ef   ; guarda el texto a maquina ya ha salido
 	ld (0cc10h),a		;44f2   ; guarda la pantalla de la antesala (0-2)
-	ld (0c21ch),a		;44f5   ; guarda el jefe vencido (no queda ningun 0x19)
+	ld (0c21ch),a		;44f5   ; guarda no queda ningun 0x19 (la sala 5, acabada)
 	ld hl,0c21dh		;44f8   ; apunta a la ruina (0-4)
 	inc (hl)			;44fb   ; la ruina siguiente
 	push hl			;44fc
@@ -4627,9 +4627,9 @@ cambia_de_pantalla:		; pinta la pantalla nueva: mapa, actores, objetos y sprites
 	call 07f7bh		;5ead   ; bloque_de_pantalla: el bloque de 0xD180 de esta pantalla, si lo hay
 	call 0772eh		;5eb0   ; crea_enemigos_de_pantalla: fuera de la sala 5: el bloque 0x0D y los enemigos de p15:A4F9[fase][pantalla] en 0xCD00
 	call paleta_vacia		;5eb3   ; paleta_vacia: fuera de la sala 5: la paleta p06:B35B (vacia)
-	call 08236h		;5eb6   ; entra_jefe_y_vuelve: p02:823C y vuelve con 1-2-3
+	call 08236h		;5eb6   ; juegos_de_la_pantalla_y_vuelve: p02:823C y vuelve con 1-2-3
 	call borra_actores		;5eb9   ; borra_actores: pone a cero 0xC400-0xC7FF y 0xCC60-0xCC63
-	call 087a1h		;5ebc   ; prepara_la_pantalla: borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p02:87B6)
+	call 087a1h		;5ebc   ; prepara_la_pantalla: borra 0xCC40-0xCC4F y prepara los actores de la pantalla (p02:87B6)
 	call 090f0h		;5ebf   ; marcas_y_vuelve: con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
 	call 08cd6h		;5ec2   ; prepara_la_sala_5: 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo suyo
 	jp 08f16h		;5ec5   ; sala_del_final_de_fase: en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), cuentas a cero, 0xC316 = 1, juegos 0x27 y 0x30, p09:BED3 y el actor 0x23

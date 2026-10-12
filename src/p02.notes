@@ -68,7 +68,6 @@ C 0x85B8 cuenta los actores de tipo 2 (C); el 0x17 o un tipo por debajo de 0x14 
 C 0x85F4 cada 4 cuadros
 C 0x85FF 0x20 o 0x40 cuadros segun 0xCC3C
 C 0x8787 un byte de la lista por pieza, de 5 en 5 desde (ix+0x25)
-C 0x87B6 todas las cuentas del jefe a su valor inicial
 C 0x87D2 el registro de la pantalla en p09:B12B; si no hay o es 0xFF, nada
 C 0x881C el registro libre de 0xCC40 en IX
 C 0x8823 [tipo] y dos bytes de HL, luego el tipo y A
@@ -121,7 +120,6 @@ C 0x9288 el byte (ix+A): la pieza
 C 0x928C * 16 + 0xDCA0: sus colores
 C 0x9295 la Y del actor sube una linea
 C 0x9335 (ix+0x1F) + B: el siguiente sentido; 0xFF pasa a 7 y 8 a 0
-
 C 0x88DE cada trozo: 24 x 8 con TIMP
 C 0x88EC el siguiente: 8 lineas mas abajo y 0x18 mas a la derecha en el origen
 C 0x8A30 D + 8, E + 0x14: del actor al sitio de su dibujo
@@ -139,6 +137,147 @@ C 0x9C29 sube de B en B desde E mientras haya casillas: hasta 0x30
 C 0x9C36 con acarreo de p01:704C, alli
 C 0x9C54 baja de B en B: hasta 0xD0
 C 0x9C61 sin acarreo de p01:704C, alli
+C 0x8000 con el texto ya en marcha, la letra siguiente (p02:8039)
+C 0x8006 en la ruina 0...
+C 0x8007 ...habla primero el personaje 1 (Cles)
+C 0x800B y en la 3 tambien
+C 0x800F en las demas, el 0 (Wit)
+C 0x801E el texto de la ruina: p12:B603[ruina]
+C 0x802A 8 cuadros entre letra y letra
+C 0x802F sin acabar
+C 0x8036 en marcha
+C 0x803C la cara del que habla: Wit...
+C 0x804A la espera hasta la letra siguiente...
+C 0x804B ...sin acabar, nada
+C 0x804F con el recuadro por borrar...
+C 0x8055 ...se borra una vez
+C 0x805F la letra siguiente
+C 0x8064 0xFF: acaba; 0xFE: habla el otro; 0xFD: otra linea
+C 0x806E una letra de la fuente en la posicion
+C 0x8082 la linea siguiente: 12 lineas mas abajo, desde el principio de la linea
+C 0x8089 8 cuadros
+C 0x8090 0xFE: 0x1E cuadros de espera...
+C 0x8098 ...el otro personaje...
+C 0x809F ...y su recuadro, por borrar
+C 0x80A7 en (0x30, 0x58)
+C 0x80B3 0xFF: ya no esta en marcha...
+C 0x80B7 ...ha acabado y ya ha salido
+C 0x80C0 borra 0x6D x 0x30 en (0x28, 0x4A)
+C 0x80CF la linea que une el recuadro con la cara: de Wit...
+C 0x80D5 ...o de Cles
+C 0x80D8 8 de largo en cada eje, color 0x0D
+C 0x80E3 las lineas verticales del recuadro de Wit (p06:A7C8)...
+C 0x80E9 ...o de Cles (p06:A7D6)
+C 0x80F2 y las horizontales (p06:A7CF / p06:A7DD)
+C 0x8103 con el texto en marcha, la letra siguiente
+C 0x811F si ha caido alguno...
+C 0x8124 ...solo el texto de la ruina
+C 0x8130 sin la BIOS japonesa, p02:815A
+C 0x8135 la frase de la puerta de Wit (p12:B7DC)...
+C 0x813E ...o de Cles (p12:B7EC), segun su animo
+C 0x8145 la puerta del companero capturado (0xC208)...
+C 0x8149 ...en esta puerta: las 4 primeras frases; si no, las 4 siguientes
+C 0x8150 + el animo
+C 0x815D en ingles, ante la puerta del capturado...
+C 0x815E ...WILL HELP YOU
+C 0x8163 si no, DO MY BEST!
+C 0x8176 sin la BIOS japonesa, p02:81BD
+C 0x817B con Wit: su frase de ir (p12:B73C) y la de Cles al despedirle (p12:B754)
+C 0x8182 B = el animo de Wit
+C 0x818A B' = el animo de Cles
+C 0x818E con Cles: la suya (p12:B74C) y la de Wit (p12:B744)
+C 0x81A1 0xFE: habla el otro
+C 0x81A5 la segunda frase detras
+C 0x81AB 0xFF: acaba
+C 0x81B2 la cadena del animo B
+C 0x81B7 hasta la 0xFF
+C 0x81BD en ingles: BYE!! (p12:B858)...
+C 0x81C5 ...y la frase del animo del que se queda (p12:B85E)
+C 0x81D5 0xFF: acaba
+C 0x81DB la boca de Wit (p06:A774) en (0x28, 0x44)
+C 0x81E4 B = su animo
+C 0x81E7 la de Cles (p06:A794) en (0xC8, 0x44)
+C 0x81F4 cada 8 cuadros
+C 0x81FB 0xC8AC alterna entre 0 y 1: la boca abierta o cerrada
+C 0x8202 (0xC8AC * 4 + animo) * 4: el bloque de 2 x 2 fichas
+C 0x820C 2 x 2 fichas
+C 0x8215 los juegos 0x28 y 0x19
+C 0x8222 y el de la ruina (p02:822C)
+C 0x823F en la sala 5, sus juegos (p02:8215)
+C 0x8245 el primer registro
+C 0x824C sin registro, nada
+C 0x824D 0xFF: nada
+C 0x8251 los juegos 0x28 y 0x29
+C 0x8262 cada registro de esta pantalla:
+C 0x8265 su tipo: su paleta...
+C 0x826B ...y su juego de sprites
+C 0x8279 el registro siguiente, 4 bytes
+C 0x8280 p09:B74A[tipo - 1]: cual de las paletas
+C 0x8288 0: sin paleta propia
+C 0x828A p09:B781[n - 1]
+C 0x829A los 8 actores
+C 0x829F libre: el siguiente
+C 0x82A9 borrado por su manejador: el siguiente
+C 0x82B8 sin vida, segun el tipo
+C 0x82C9 los 8 actores
+C 0x82D2 el tipo 0x37 no tiene fotograma
+C 0x82E5 el tipo - 1
+C 0x87B6 todas las cuentas de las esperas a su valor inicial
+C 0x836B quieto: nada
+C 0x8378 Y + velocidad Y (16 bits)
+C 0x838B X + velocidad X
+C 0x8392 (los tipos 36-38 vienen aqui: nada)
+C 0x8397 sin aceleracion: nada
+C 0x83A4 velocidad Y + aceleracion Y
+C 0x83B7 velocidad X + aceleracion X
+C 0x83C2 el 0x21 puede salir
+C 0x83C8 por debajo de 0xE4...
+C 0x83CF ...o fuera de 0x0A-0xF4 en X: se borra
+C 0x83DD (ix+0x20): cuantas piezas
+C 0x83E3 cada pieza: su hueco...
+C 0x83E7 ...su sprite (0xDE28 + hueco * 4) escondido (Y = 0xE0)...
+C 0x83F2 ...y su hueco libre en 0xCC80
+C 0x83F8 la pieza siguiente, 5 bytes mas alla
+C 0x8404 en la sala del final de fase, los tipos 0x1E-0x21 (los jefes)...
+C 0x840F ...al morir dan lo de p02:84AC
+C 0x8415 los tipos por debajo de 0x10...
+C 0x8419 ...cuentan en 0xE30B
+C 0x8422 solo con (ix+0x1E) por debajo de 0x10
+C 0x8436 al morir: el sonido 0x1C...
+C 0x843E ...el tipo que era, en (ix+0x1E)...
+C 0x8444 ...y se rehace como tipo 0x28 (la explosion): 2 piezas, colores 0x0E y 0x4D, vida 1
+C 0x8463 sin tipo, 0xFF
+C 0x8469 quieto, sin choques, fotograma 0x65 y 2 cuadros
+C 0x847C el tipo 0x28: cada 2 cuadros...
+C 0x8483 ...los fotogramas 0x65-0x67...
+C 0x8492 ...y al acabar, con 2 o mas muertes (0xE30B)...
+C 0x849B ...se cuentan de nuevo y, si no hay ya un objeto 0x29...
+C 0x84A1 ...queda un objeto (p03:A70D)
+C 0x84AC un jefe vencido: el sonido 0x44...
+C 0x84BA ...fuera todos los actores...
+C 0x84BE ...y en su sitio el actor 0x1D
+C 0x84C9 sin piezas, nada
+C 0x84F7 el angulo (p02:8530)
+C 0x84FE 0x3F - angulo
+C 0x8502 p15:BDD6: el seno y el coseno de cada angulo
+C 0x8507 C = la parte X (p15:BDD6[angulo])
+C 0x850B y la parte Y (p15:BDD6[0x3F - angulo])
+C 0x8513 la velocidad X: A * C / 32, con su signo
+C 0x851E la velocidad Y: A * la parte Y / 32, con su signo
+C 0x852C HL = la velocidad X, DE = la Y
+C 0x8535 la Y del personaje - 0x10 - la del actor...
+C 0x853D ...en valor absoluto; el signo en 0xE306
+C 0x8558 + la fila
+C 0x8581 * 8 en A:HL (tres desplazamientos)...
+C 0x8588 ...y el byte alto: / 32
+C 0x8591 8 vueltas, bit a bit
+C 0x859D muriendo, nada
+C 0x85A1 con bastantes actores, nada
+C 0x85BC el 0x17 cuenta siempre
+C 0x85C0 del 0x14 en adelante no cuentan
+C 0x85C6 el tipo 2 cuenta...
+C 0x85CF ...y los de clase distinta de 1 (p09:B70D)
+C 0x85E3 menos que p02:85EF[ruina]: acarreo
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x8015 empieza_texto_de_ruina con 12: el texto a maquina de la ruina (p12:B603)
@@ -151,10 +290,10 @@ L 0x81DB cara_del_personaje_0 la cara del personaje 0 segun su estado (p06:A774)
 L 0x81E7 cara_del_personaje_1 la cara del personaje 1 segun su estado (p06:A794), cada 8 cuadros
 L 0x8215 juegos_de_la_sala_5 los juegos de sprites 0x28, 0x19 y el de la ruina (p02:822C)
 L 0x8231 juego_30 el juego de sprites 0x30 (p00:55F0)
-L 0x8236 entra_jefe_y_vuelve p02:823C y vuelve con 1-2-3
-L 0x823C entra_jefe con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
-L 0x827F paleta_de_jefe con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
-L 0x8293 cuadro_de_actores el jefe (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
+L 0x8236 juegos_de_la_pantalla_y_vuelve p02:823C y vuelve con 1-2-3
+L 0x823C juegos_de_la_pantalla con 9: los juegos de sprites 0x28 y 0x29 y, por cada actor de la lista de la pantalla (p09:B12B), su paleta y su juego
+L 0x827F paleta_del_tipo con 9: la paleta del tipo A, p09:B781[p09:B74A[A - 1] - 1], si tiene
+L 0x8293 cuadro_de_actores las esperas (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
 L 0x82C5 fotogramas_de_actores el fotograma de los 8 actores de 0xC400, salvo el tipo 0x37 (p02:8A42)
 L 0x82E2 despacha_tipo despacha el tipo del actor - 1 (tabla p02:82E9, 63 tipos)
 L 0x8367 mueve_actor si (ix+6): Y += velocidad Y y X += velocidad X (16 bits)
@@ -171,15 +310,15 @@ L 0x84F1 direccion_hacia las velocidades hacia el personaje con las tablas de p1
 L 0x8530 distancia_al_personaje diferencias de Y y X con el personaje y sus signos (0xE306)
 L 0x857A escala_velocidad DE = H * E / 32 (p02:858C)
 L 0x858C multiplica HL = H * E (8 x 8 bits)
-L 0x8598 cuadro_de_jefe si no muere el personaje y hay jefe (p02:85B1): sus cuentas y dibujos
-L 0x85B1 busca_jefe acarreo si hay un actor de tipo 2 o 0x17 en 0xC400
+L 0x8598 cuadro_de_las_esperas si no muere el personaje y hay pocos actores (p02:85B1): las cuentas que sueltan los actores de 0xCC40
+L 0x85B1 pocos_actores acarreo si los actores que cuentan (el tipo 2, el 0x17 y los de clase distinta de 1 por debajo de 0x14) son menos que p02:85EF[ruina]
 L 0x85F4 cuenta_cc3b cada 4 cuadros, 0xCC3B - 1; a cero, 0x20 o 0x40 y 0xCC3C cambia
 L 0x8613 crea_actor_0 p02:8615 con B = 0
 L 0x8615 crea_actor el actor C en (D, E) en el primer hueco de 0xC400
 L 0x8769 piezas_al_crear con 6: las piezas del tipo (p06:B569 y p06:B5A8)
 L 0x8791 pon_pieza el byte D en la pieza E del actor 0xDE83
-L 0x87A1 prepara_la_pantalla borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p02:87B6)
-L 0x87B6 prepara_jefe pone a cero las cuentas del jefe y busca el de la pantalla (p02:9195)
+L 0x87A1 prepara_la_pantalla borra 0xCC40-0xCC4F y prepara los actores de la pantalla (p02:87B6)
+L 0x87B6 prepara_los_actores pone a cero las cuentas y recorre la lista de la pantalla (p02:9195): la clase 1 se crea ya, las 2 y 3 esperan en 0xCC40
 L 0x881C anota_cc40 anota el registro de HL en el primer hueco de 0xCC40
 L 0x882E hueco_cc40 DE = el primer hueco libre de 0xCC40 (4 de 4 bytes)
 L 0x883D cuadro_de_cc40 los 4 registros de 0xCC40 y el dibujo del de 0xCC35
@@ -397,23 +536,23 @@ C 0x821F lee la ruina (0-4)
 C 0x8225 hl_mas_a: HL = HL + A
 C 0x8229 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 C 0x8233 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
-C 0x8236 entra_jefe: con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
+C 0x8236 juegos_de_la_pantalla: con 9: los juegos de sprites 0x28 y 0x29 y, por cada actor de la lista de la pantalla (p09:B12B), su paleta y su juego
 C 0x8239 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x823C lee en la sala de la puerta 5
 C 0x8242 banco_9_en_a000: pone el banco 9 en 0xA000
-C 0x8246 guarda el registro del jefe en la lista de la pantalla
+C 0x8246 guarda el registro en curso de la lista de la pantalla
 C 0x8249 busca_de_la_pantalla: con 9: el registro de p09:B12B[0xC211 - 1] de la pantalla; acarreo si no hay
 C 0x8253 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 C 0x8258 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 C 0x825B banco_9_en_a000: pone el banco 9 en 0xA000
 C 0x825F lee la pantalla de la fase (desde 1)
-C 0x8267 paleta_de_jefe: con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+C 0x8267 paleta_del_tipo: con 9: la paleta del tipo A, p09:B781[p09:B74A[A - 1] - 1], si tiene
 C 0x8270 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 C 0x8273 banco_9_en_a000: pone el banco 9 en 0xA000
 C 0x8283 hl_mas_a: HL = HL + A
 C 0x828D palabra_a: HL = la palabra A de la tabla HL
 C 0x8290 pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
-C 0x8293 cuadro_de_jefe: si no muere el personaje y hay jefe (p02:85B1): sus cuentas y dibujos
+C 0x8293 cuadro_de_las_esperas: si no muere el personaje y hay pocos actores (p02:85B1): las cuentas que sueltan los actores de 0xCC40
 C 0x8296 apunta a los 8 actores (0x80 bytes cada uno)
 C 0x829C lee el tipo del actor
 C 0x82A3 despacha_tipo: despacha el tipo del actor - 1 (tabla p02:82E9, 63 tipos)
@@ -468,7 +607,6 @@ C 0x8425 apunta a los 8 actores (0x80 bytes cada uno)
 C 0x8438 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x843B lee el tipo del actor
 C 0x8441 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
-C 0x8444 el tipo del actor = 0x28
 C 0x8448 el paso del actor = 0x00
 C 0x844C las piezas del actor (p02:8648) = 0x02
 C 0x8458 la vida del actor (p01:721A) = 0x01
@@ -478,19 +616,16 @@ C 0x846D guarda si el actor acelera (p02:8393)
 C 0x8470 el fotograma del actor (p02:8A42) = 0x65
 C 0x8474 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x02
 C 0x8478 guarda las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
-C 0x847C baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0x8480 lee el paso del actor
 C 0x8487 sube el fotograma del actor (p02:8A42)
 C 0x848A la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x02
 C 0x848E sube el paso del actor
 C 0x8497 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 C 0x849E hay_tipo_29: acarreo si ningun actor de 0xC400 es de tipo 0x29
-C 0x84A1 en_objeto_29: borra el actor y lo rehace como objeto de tipo 0x29: 2 piezas, colores 0x0D y 0x4E
 C 0x84A4 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 C 0x84AE sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x84B1 lee la X del actor
 C 0x84B4 lee la Y del actor
-C 0x84BA borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
 C 0x84C0 crea_actor_0: p02:8615 con B = 0
 C 0x84C6 lee las piezas del actor (p02:8648)
 C 0x84CE marca_pieza: 0xCC80 + A = 1
@@ -506,11 +641,10 @@ C 0x8510 escala_velocidad: DE = H * E / 32 (p02:858C)
 C 0x8517 niega_de: DE = -DE
 C 0x8522 escala_velocidad: DE = H * E / 32 (p02:858C)
 C 0x8529 niega_de: DE = -DE
-C 0x8535 lee la Y del personaje
 C 0x855C hl_mas_a: HL = HL + A
 C 0x857E multiplica: HL = H * E (8 x 8 bits)
 C 0x8598 lee la accion del personaje (4 muere, 5 escalera)
-C 0x859E busca_jefe: acarreo si hay un actor de tipo 2 o 0x17 en 0xC400
+C 0x859E pocos_actores: acarreo si los actores que cuentan (el tipo 2, el 0x17 y los de clase distinta de 1 por debajo de 0x14) son menos que p02:85EF[ruina]
 C 0x85A2 banco_9_en_a000: pone el banco 9 en 0xA000
 C 0x85A5 cuenta_cc3b: cada 4 cuadros, 0xCC3B - 1; a cero, 0x20 o 0x40 y 0xCC3C cambia
 C 0x85A8 cuenta_cc36: 0xCC3D = 3, 0xCC36 - 1 y el siguiente de 0xCC37 (0-3)
@@ -518,9 +652,7 @@ C 0x85AB cuenta_cc39: 0xCC3D = 2 y 0xCC39 - 1
 C 0x85AE bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x85B1 apunta a los 8 actores (0x80 bytes cada uno)
 C 0x85CA banco_9_en_a000: pone el banco 9 en 0xA000
-C 0x85CF lee_b70d: A = p09:B70D[A - 1]
 C 0x85D4 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-C 0x85E3 lee la ruina (0-4)
 C 0x85E9 hl_mas_a: HL = HL + A
 C 0x861E guarda variable de trabajo del banco 0
 C 0x8625 apunta a los 8 actores (0x80 bytes cada uno)
@@ -558,11 +690,11 @@ C 0x879B hl_mas_a: HL = HL + A
 C 0x87A1 apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 C 0x87A7 borra: pone a cero BC + 1 bytes desde HL
 C 0x87AA banco_9_en_a000: pone el banco 9 en 0xA000
-C 0x87AD prepara_jefe: pone a cero las cuentas del jefe y busca el de la pantalla (p02:9195)
+C 0x87AD prepara_los_actores: pone a cero las cuentas y recorre la lista de la pantalla (p02:9195): la clase 1 se crea ya, las 2 y 3 esperan en 0xCC40
 C 0x87B0 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x87B3 recorre_cc40: los 4 registros de 0xCC40
 C 0x87BA guarda el registro de 0xCC40 en curso
-C 0x87BD guarda el registro del jefe en la lista de la pantalla
+C 0x87BD guarda el registro en curso de la lista de la pantalla
 C 0x87D9 lee la pantalla de la fase (desde 1)
 C 0x87E1 lee_b70d: A = p09:B70D[A - 1]
 C 0x8800 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -584,10 +716,10 @@ C 0x88A5 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E);
 C 0x88D5 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 C 0x88E6 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 C 0x890D espera_cc3c: (HL) = 0x30 o 0x60 segun 0xCC3C
-C 0x8910 lee el registro del jefe en la lista de la pantalla
-C 0x8918 guarda el registro del jefe en la lista de la pantalla
+C 0x8910 lee el registro en curso de la lista de la pantalla
+C 0x8918 guarda el registro en curso de la lista de la pantalla
 C 0x891B guarda el registro de 0xCC40 en curso
-C 0x891E apunta a el registro del jefe en la lista de la pantalla
+C 0x891E apunta a el registro en curso de la lista de la pantalla
 C 0x8922 apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 C 0x8927 hl_mas_a: HL = HL + A
 C 0x894E lee la X del personaje
@@ -596,8 +728,8 @@ C 0x895C desplaza_8_20: D + 8 y E + 0x14
 C 0x895F crea_actor_0: p02:8615 con B = 0
 C 0x8962 banco_9_en_a000: pone el banco 9 en 0xA000
 C 0x8965 lee el registro de 0xCC40 en curso
-C 0x8968 guarda el registro del jefe en la lista de la pantalla
-C 0x896D guarda el registro del jefe en la lista de la pantalla
+C 0x8968 guarda el registro en curso de la lista de la pantalla
+C 0x896D guarda el registro en curso de la lista de la pantalla
 C 0x8983 lee la X del personaje
 C 0x8990 dibujo_cc35: copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
 C 0x899C copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
@@ -614,7 +746,7 @@ C 0x89E3 lee el registro de 0xCC40 en curso
 C 0x89E9 hl_mas_a: HL = HL + A
 C 0x89F0 lee la X del personaje
 C 0x8A03 lee el registro de 0xCC40 en curso
-C 0x8A06 guarda el registro del jefe en la lista de la pantalla
+C 0x8A06 guarda el registro en curso de la lista de la pantalla
 C 0x8A09 dibujo_cc35: copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
 C 0x8A0F copia_24x8: copia 24 x 8 de (H, 0x38) a (D, E) con TIMP
 C 0x8A20 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
@@ -692,7 +824,7 @@ C 0x8C7D lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger l
 C 0x8C8A borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0x8C93 copia_9060: copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
 C 0x8C99 copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
-C 0x8C9C lee el jefe vencido (no queda ningun 0x19)
+C 0x8C9C lee no queda ningun 0x19 (la sala 5, acabada)
 C 0x8CA7 borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0x8CAA borra_d45e_y_actores: pone a cero 4 registros de 0xD45E y borra los actores
 C 0x8CAD copia_6098: copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
@@ -735,11 +867,11 @@ C 0x8DCC lee cuenta de trabajo de los actores
 C 0x8DD0 guarda cuenta de trabajo de los actores
 C 0x8DDC lee la accion del personaje (4 muere, 5 escalera)
 C 0x8DE2 apunta a los 8 actores (0x80 bytes cada uno)
-C 0x8DF3 guarda el jefe vencido (no queda ningun 0x19)
+C 0x8DF3 guarda no queda ningun 0x19 (la sala 5, acabada)
 C 0x8DF8 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x8DFB sin_tipo_19: si no queda ningun actor de tipo 0x19: 0xC21C = 1 y el sonido 0x42
 C 0x8DFE color_12_parpadea: el color 12 de la paleta de p02:8E26 segun la cuenta de cuadros
-C 0x8E01 lee el jefe vencido (no queda ningun 0x19)
+C 0x8E01 lee no queda ningun 0x19 (la sala 5, acabada)
 C 0x8E06 borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
 C 0x8E09 suma_c310: 0xC310 + 1
 C 0x8E0E sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
@@ -778,7 +910,7 @@ C 0x8F2F paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
 C 0x8F32 lee_d500: con 12: los 4 bytes de la fase de p12:B4D2 a 0xD500
 C 0x8F36 guarda el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0x8F39 guarda la cuenta de la sala del final de fase o de la sala 5
-C 0x8F3C guarda el jefe vencido (no queda ningun 0x19)
+C 0x8F3C guarda no queda ningun 0x19 (la sala 5, acabada)
 C 0x8F40 guarda en la sala del final de fase
 C 0x8F43 paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
 C 0x8F48 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
@@ -803,7 +935,7 @@ C 0x8FBC despacha: salta a la palabra A de la tabla pegada detras del `call`
 C 0x8FD0 apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0x8FD5 apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0x8FD9 banco_9_en_a000: pone el banco 9 en 0xA000
-C 0x8FDF paleta_de_jefe: con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+C 0x8FDF paleta_del_tipo: con 9: la paleta del tipo A, p09:B781[p09:B74A[A - 1] - 1], si tiene
 C 0x8FE2 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x8FE7 lee los 3 bytes de la fase de p09:BED3
 C 0x8FEF crea_actor_0: p02:8615 con B = 0
@@ -852,7 +984,7 @@ C 0x918C hl_mas_a: HL = HL + A
 C 0x9198 lee la fase (1-25: ruina * 5 + puerta)
 C 0x919C palabra_a: HL = la palabra A de la tabla HL
 C 0x91A3 registro_de_la_pantalla: avanza de 4 en 4 hasta el de la pantalla 0xC212; acarreo en el 0xFF
-C 0x91A7 lee el registro del jefe en la lista de la pantalla
+C 0x91A7 lee el registro en curso de la lista de la pantalla
 C 0x91AC hl_mas_a: HL = HL + A
 C 0x91AF lee la pantalla de la fase (desde 1)
 C 0x91B8 lee_b70d: A = p09:B70D[A - 1]

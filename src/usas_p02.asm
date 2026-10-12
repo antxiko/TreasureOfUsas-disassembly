@@ -15,15 +15,15 @@
 
 
 L_8000:
-	and a			;8000
+	and a			;8000   ; con el texto ya en marcha, la letra siguiente (p02:8039)
 	jr nz,L_8039		;8001
 	ld a,(0c21dh)		;8003   ; lee la ruina (0-4)
-	and a			;8006
-	ld b,001h		;8007
+	and a			;8006   ; en la ruina 0...
+	ld b,001h		;8007   ; ...habla primero el personaje 1 (Cles)
 	jr z,L_8011		;8009
-	cp 003h		;800b
+	cp 003h		;800b   ; y en la 3 tambien
 	jr z,L_8011		;800d
-	ld b,000h		;800f
+	ld b,000h		;800f   ; en las demas, el 0 (Wit)
 L_8011:
 	ld a,b			;8011
 	ld (0c8a9h),a		;8012   ; guarda el personaje del texto
@@ -31,20 +31,20 @@ empieza_texto_de_ruina:		; con 12: el texto a maquina de la ruina (p12:B603)
 	call recuadro_del_texto		;8015   ; recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
 	call posicion_del_texto		;8018   ; posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x30, 0x58)
 	call 054aah		;801b   ; banco_12_en_a000: pone el banco 12 en 0xA000
-	ld hl,0b603h		;801e
+	ld hl,0b603h		;801e   ; el texto de la ruina: p12:B603[ruina]
 	ld a,(0c21dh)		;8021   ; lee la ruina (0-4)
 	call 0543ah		;8024   ; palabra_a: HL = la palabra A de la tabla HL
 	ld (0c8a1h),hl		;8027   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
-	ld a,008h		;802a
+	ld a,008h		;802a   ; 8 cuadros entre letra y letra
 	ld (0c8a5h),a		;802c   ; guarda la espera hasta la siguiente letra
-	xor a			;802f
+	xor a			;802f   ; sin acabar
 	ld (0c8a6h),a		;8030   ; guarda el texto a maquina ha acabado
 	ld hl,0c8a0h		;8033   ; apunta a el texto a maquina en marcha
-	inc (hl)			;8036
+	inc (hl)			;8036   ; en marcha
 	jr L_80A4		;8037
 L_8039:
 	ld a,(0c8a9h)		;8039   ; lee el personaje del texto
-	and a			;803c
+	and a			;803c   ; la cara del que habla: Wit...
 	jr nz,L_8044		;803d
 	call cara_del_personaje_0		;803f   ; cara_del_personaje_0: la cara del personaje 0 segun su estado (p06:A774)
 	jr L_8047		;8042
@@ -52,28 +52,28 @@ L_8044:
 	call cara_del_personaje_1		;8044   ; cara_del_personaje_1: la cara del personaje 1 segun su estado (p06:A794), cada 8 cuadros
 L_8047:
 	ld hl,0c8a5h		;8047   ; apunta a la espera hasta la siguiente letra
-	dec (hl)			;804a
-	ret nz			;804b
+	dec (hl)			;804a   ; la espera hasta la letra siguiente...
+	ret nz			;804b   ; ...sin acabar, nada
 	ld a,(0c8aah)		;804c   ; lee el recuadro del texto, por borrar
-	and a			;804f
+	and a			;804f   ; con el recuadro por borrar...
 	jr z,L_8059		;8050
 	call recuadro_del_texto		;8052   ; recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
-	xor a			;8055
+	xor a			;8055   ; ...se borra una vez
 	ld (0c8aah),a		;8056   ; guarda el recuadro del texto, por borrar
 L_8059:
 	call 054aah		;8059   ; banco_12_en_a000: pone el banco 12 en 0xA000
 	ld hl,(0c8a1h)		;805c   ; lee el puntero del texto a maquina y el byte siguiente (16 bits)
-	ld a,(hl)			;805f
+	ld a,(hl)			;805f   ; la letra siguiente
 	inc hl			;8060
 	ld (0c8a1h),hl		;8061   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
-	ld b,a			;8064
+	ld b,a			;8064   ; 0xFF: acaba; 0xFE: habla el otro; 0xFD: otra linea
 	inc a			;8065
 	jr z,L_80B3		;8066
 	inc a			;8068
 	jr z,L_8090		;8069
 	inc a			;806b
 	jr z,L_807B		;806c
-	ld a,b			;806e
+	ld a,b			;806e   ; una letra de la fuente en la posicion
 	ld de,(0c8a3h)		;806f   ; lee la posicion del texto a maquina y el byte siguiente (16 bits)
 	call 04d86h		;8073   ; caracter_de_la_fuente: el caracter A de la fuente de la pagina 1 a (D, E) (HMMM)
 	call 04e39h		;8076   ; avanza_caracter: D + 8 (+ 4 si el caracter es 0x7B), y E + 8 al pasar de linea
@@ -81,60 +81,60 @@ L_8059:
 L_807B:
 	ld de,(0c8a7h)		;807b   ; lee el principio de la linea del texto a maquina y el byte siguiente (16 bits)
 	ld a,(0c8a3h)		;807f   ; lee la posicion del texto a maquina
-	add a,00ch		;8082
+	add a,00ch		;8082   ; la linea siguiente: 12 lineas mas abajo, desde el principio de la linea
 	ld e,a			;8084
 L_8085:
 	ld (0c8a3h),de		;8085   ; guarda la posicion del texto a maquina y el byte siguiente (16 bits)
-	ld a,008h		;8089
+	ld a,008h		;8089   ; 8 cuadros
 	ld (0c8a5h),a		;808b   ; guarda la espera hasta la siguiente letra
 	jr L_80A4		;808e
 L_8090:
-	ld a,01eh		;8090
+	ld a,01eh		;8090   ; 0xFE: 0x1E cuadros de espera...
 	ld (0c8a5h),a		;8092   ; guarda la espera hasta la siguiente letra
 	ld hl,0c8a9h		;8095   ; apunta a el personaje del texto
-	ld a,(hl)			;8098
+	ld a,(hl)			;8098   ; ...el otro personaje...
 	xor 001h		;8099
 	ld (hl),a			;809b
 	call posicion_del_texto		;809c   ; posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x30, 0x58)
-	ld a,001h		;809f
+	ld a,001h		;809f   ; ...y su recuadro, por borrar
 	ld (0c8aah),a		;80a1   ; guarda el recuadro del texto, por borrar
 L_80A4:
 	jp 05464h		;80a4   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 posicion_del_texto:		; 0xC8A7 y 0xC8A3 = (0x30, 0x58)
-	ld de,05830h		;80a7
+	ld de,05830h		;80a7   ; en (0x30, 0x58)
 	ld (0c8a7h),de		;80aa   ; guarda el principio de la linea del texto a maquina y el byte siguiente (16 bits)
 	ld (0c8a3h),de		;80ae   ; guarda la posicion del texto a maquina y el byte siguiente (16 bits)
 	ret			;80b2
 L_80B3:
-	xor a			;80b3
+	xor a			;80b3   ; 0xFF: ya no esta en marcha...
 	ld (0c8a0h),a		;80b4   ; guarda el texto a maquina en marcha
-	inc a			;80b7
+	inc a			;80b7   ; ...ha acabado y ya ha salido
 	ld (0c8a6h),a		;80b8   ; guarda el texto a maquina ha acabado
 	ld (0c8abh),a		;80bb   ; guarda el texto a maquina ya ha salido
 	jr L_80A4		;80be
 recuadro_del_texto:		; borra el recuadro, su marco y sus lineas segun 0xC8A9
-	ld hl,04a28h		;80c0
+	ld hl,04a28h		;80c0   ; borra 0x6D x 0x30 en (0x28, 0x4A)
 	ld bc,06d30h		;80c3
 	call 05e2fh		;80c6   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	call 054b4h		;80c9   ; banco_6_en_a000: pone el banco 6 en 0xA000
 	ld a,(0c8a9h)		;80cc   ; lee el personaje del texto
-	and a			;80cf
+	and a			;80cf   ; la linea que une el recuadro con la cara: de Wit...
 	ld hl,04a2bh		;80d0
 	jr z,L_80D8		;80d3
-	ld hl,0ac4ch		;80d5
+	ld hl,0ac4ch		;80d5   ; ...o de Cles
 L_80D8:
-	ld de,00808h		;80d8
+	ld de,00808h		;80d8   ; 8 de largo en cada eje, color 0x0D
 	ld c,00dh		;80db
 	call 04b40h		;80dd   ; linea: LINE (0x70) de (H, L) con largo D y E
 	ld a,(0c8a9h)		;80e0   ; lee el personaje del texto
-	and a			;80e3
+	and a			;80e3   ; las lineas verticales del recuadro de Wit (p06:A7C8)...
 	ld hl,0a7c8h		;80e4
 	jr z,L_80EC		;80e7
-	ld hl,0a7d6h		;80e9
+	ld hl,0a7d6h		;80e9   ; ...o de Cles (p06:A7D6)
 L_80EC:
 	call 055ceh		;80ec   ; lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
 	ld a,(0c8a9h)		;80ef   ; lee el personaje del texto
-	and a			;80f2
+	and a			;80f2   ; y las horizontales (p06:A7CF / p06:A7DD)
 	ld hl,0a7cfh		;80f3
 	jr z,L_80FB		;80f6
 	ld hl,0a7ddh		;80f8
@@ -143,7 +143,7 @@ L_80FB:
 	jr L_80A4		;80fe
 texto_de_la_antesala:		; el texto a maquina de la antesala: si no esta en marcha, el recuadro, los nombres por animo y el texto de la puerta
 	ld a,(0c8a0h)		;8100   ; lee el texto a maquina en marcha
-	and a			;8103
+	and a			;8103   ; con el texto en marcha, la letra siguiente
 	jp nz,L_8039		;8104
 	call recuadro_del_texto		;8107   ; recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
 	call nombres_de_estado		;810a   ; nombres_de_estado: con 12: los nombres de estado de los dos personajes en 0xC8B0
@@ -153,42 +153,42 @@ texto_de_la_antesala:		; el texto a maquina de la antesala: si no esta en marcha
 	ld hl,0c8b0h		;8116   ; apunta a el texto de los nombres por animo
 	ld (0c8a1h),hl		;8119   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
 	ld a,(0c2b0h)		;811c   ; lee la ficha del personaje 0 (14 bytes)
-	ld b,a			;811f
+	ld b,a			;811f   ; si ha caido alguno...
 	ld a,(0c2d0h)		;8120   ; lee la ficha del personaje 1 (14 bytes)
 	or b			;8123
-	ret z			;8124
+	ret z			;8124   ; ...solo el texto de la ruina
 	call 054aah		;8125   ; banco_12_en_a000: pone el banco 12 en 0xA000
 	call 061c2h		;8128   ; puerta_de_la_antesala: B = la puerta (1-5) segun 0xCC10 y la X 0xCC13
 	ld a,(0002bh)		;812b
 	and 00fh		;812e
-	jr nz,L_815A		;8130
+	jr nz,L_815A		;8130   ; sin la BIOS japonesa, p02:815A
 	ld a,(0c240h)		;8132   ; lee el personaje que se lleva (0 o 1)
-	and a			;8135
+	and a			;8135   ; la frase de la puerta de Wit (p12:B7DC)...
 	ld hl,0b7dch		;8136
 	ld a,(0c2b6h)		;8139   ; lee el estado del personaje 0
 	jr z,L_8144		;813c
-	ld hl,0b7ech		;813e
+	ld hl,0b7ech		;813e   ; ...o de Cles (p12:B7EC), segun su animo
 	ld a,(0c2d6h)		;8141   ; lee el estado del personaje 1
 L_8144:
 	push af			;8144   ; 0xC208: si es el mismo, la mitad de la tabla de antes (C = 0); si no, la de despues (C = 4)
-	ld a,(0c208h)		;8145
+	ld a,(0c208h)		;8145   ; la puerta del companero capturado (0xC208)...
 	cp b			;8148
-	ld c,000h		;8149
+	ld c,000h		;8149   ; ...en esta puerta: las 4 primeras frases; si no, las 4 siguientes
 	jr z,L_814F		;814b
 	ld c,004h		;814d
 L_814F:
 	pop af			;814f
-	add a,c			;8150
+	add a,c			;8150   ; + el animo
 	call 0543ah		;8151   ; palabra_a: HL = la palabra A de la tabla HL
 L_8154:
 	ld (0c8a1h),hl		;8154   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
 	jp 05464h		;8157   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 L_815A:
 	ld a,(0c208h)		;815a   ; el texto p12:B8A1 si 0xC208 es B; si no, p12:B8AF
-	cp b			;815d
-	ld hl,0b8a1h		;815e
+	cp b			;815d   ; en ingles, ante la puerta del capturado...
+	ld hl,0b8a1h		;815e   ; ...WILL HELP YOU
 	jr z,L_8154		;8161
-	ld hl,0b8afh		;8163
+	ld hl,0b8afh		;8163   ; si no, DO MY BEST!
 	jr L_8154		;8166
 nombres_de_estado:		; con 12: los nombres de estado de los dos personajes en 0xC8B0
 	call 054aah		;8168   ; banco_12_en_a000: pone el banco 12 en 0xA000
@@ -196,19 +196,19 @@ nombres_de_estado:		; con 12: los nombres de estado de los dos personajes en 0xC
 	ld a,(0002bh)		;816e
 	and 00fh		;8171
 	ld a,(0c240h)		;8173   ; lee el personaje que se lleva (0 o 1)
-	jr nz,L_81BD		;8176
+	jr nz,L_81BD		;8176   ; sin la BIOS japonesa, p02:81BD
 	ld de,0c8b0h		;8178   ; apunta a el texto de los nombres por animo
-	and a			;817b
+	and a			;817b   ; con Wit: su frase de ir (p12:B73C) y la de Cles al despedirle (p12:B754)
 	ld hl,0b73ch		;817c
 	ld a,(0c2b6h)		;817f   ; lee el estado del personaje 0
-	ld b,a			;8182
+	ld b,a			;8182   ; B = el animo de Wit
 	exx			;8183
 	ld hl,0b754h		;8184
 	ld a,(0c2d6h)		;8187   ; lee el estado del personaje 1
-	ld b,a			;818a
+	ld b,a			;818a   ; B' = el animo de Cles
 	exx			;818b
 	jr z,L_819E		;818c
-	ld hl,0b74ch		;818e
+	ld hl,0b74ch		;818e   ; con Cles: la suya (p12:B74C) y la de Wit (p12:B744)
 	ld a,(0c2d6h)		;8191   ; lee el estado del personaje 1
 	ld b,a			;8194
 	exx			;8195
@@ -218,31 +218,31 @@ nombres_de_estado:		; con 12: los nombres de estado de los dos personajes en 0xC
 	exx			;819d
 L_819E:
 	call copia_nombre		;819e   ; copia_nombre: copia a DE la cadena A de la tabla HL hasta 0xFF
-	ld a,0feh		;81a1
+	ld a,0feh		;81a1   ; 0xFE: habla el otro
 	ld (de),a			;81a3
 	inc de			;81a4
-	push de			;81a5
+	push de			;81a5   ; la segunda frase detras
 	exx			;81a6
 	pop de			;81a7
 	call copia_nombre		;81a8   ; copia_nombre: copia a DE la cadena A de la tabla HL hasta 0xFF
-	ld a,0ffh		;81ab
+	ld a,0ffh		;81ab   ; 0xFF: acaba
 	ld (de),a			;81ad
 	exx			;81ae
 	jp 05464h		;81af   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 copia_nombre:		; copia a DE la cadena A de la tabla HL hasta 0xFF
-	ld a,b			;81b2
+	ld a,b			;81b2   ; la cadena del animo B
 	call 0543ah		;81b3   ; palabra_a: HL = la palabra A de la tabla HL
 L_81B6:
 	ld a,(hl)			;81b6
-	inc a			;81b7
+	inc a			;81b7   ; hasta la 0xFF
 	ret z			;81b8
 	ldi		;81b9
 	jr L_81B6		;81bb
 L_81BD:
-	ld hl,0b858h		;81bd
+	ld hl,0b858h		;81bd   ; en ingles: BYE!! (p12:B858)...
 	ld bc,00006h		;81c0
 	ldir		;81c3
-	and a			;81c5
+	and a			;81c5   ; ...y la frase del animo del que se queda (p12:B85E)
 	ld a,(0c2b6h)		;81c6   ; lee el estado del personaje 0
 	jr nz,L_81CE		;81c9
 	ld a,(0c2d6h)		;81cb   ; lee el estado del personaje 1
@@ -250,31 +250,31 @@ L_81CE:
 	ld b,a			;81ce
 	ld hl,0b85eh		;81cf
 	call copia_nombre		;81d2   ; copia_nombre: copia a DE la cadena A de la tabla HL hasta 0xFF
-	ld a,0ffh		;81d5
+	ld a,0ffh		;81d5   ; 0xFF: acaba
 	ld (de),a			;81d7
 	jp 05464h		;81d8   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 cara_del_personaje_0:		; la cara del personaje 0 segun su estado (p06:A774)
-	ld hl,0a774h		;81db
+	ld hl,0a774h		;81db   ; la boca de Wit (p06:A774) en (0x28, 0x44)
 	ld de,02844h		;81de
 	ld a,(0c2b6h)		;81e1   ; lee el estado del personaje 0
-	ld b,a			;81e4
+	ld b,a			;81e4   ; B = su animo
 	jr L_81F1		;81e5
 cara_del_personaje_1:		; la cara del personaje 1 segun su estado (p06:A794), cada 8 cuadros
-	ld hl,0a794h		;81e7
+	ld hl,0a794h		;81e7   ; la de Cles (p06:A794) en (0xC8, 0x44)
 	ld de,0c844h		;81ea
 	ld a,(0c2d6h)		;81ed   ; lee el estado del personaje 1
 	ld b,a			;81f0
 L_81F1:
 	ld a,(0c003h)		;81f1   ; lee la cuenta de cuadros
-	and 007h		;81f4
+	and 007h		;81f4   ; cada 8 cuadros
 	ret nz			;81f6
 	push bc			;81f7
 	call 054b4h		;81f8   ; banco_6_en_a000: pone el banco 6 en 0xA000
-	ld bc,0c8ach		;81fb
+	ld bc,0c8ach		;81fb   ; 0xC8AC alterna entre 0 y 1: la boca abierta o cerrada
 	ld a,(bc)			;81fe
 	xor 001h		;81ff
 	ld (bc),a			;8201
-	add a,a			;8202
+	add a,a			;8202   ; (0xC8AC * 4 + animo) * 4: el bloque de 2 x 2 fichas
 	add a,a			;8203
 	ld b,a			;8204
 	pop af			;8205
@@ -282,16 +282,16 @@ L_81F1:
 	add a,a			;8207
 	add a,a			;8208
 	call 04083h		;8209   ; hl_mas_a: HL = HL + A
-	ld bc,00202h		;820c
+	ld bc,00202h		;820c   ; 2 x 2 fichas
 	call 0ba24h		;820f   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 	jp 05464h		;8212   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 juegos_de_la_sala_5:		; los juegos de sprites 0x28, 0x19 y el de la ruina (p02:822C)
-	ld a,028h		;8215
+	ld a,028h		;8215   ; los juegos 0x28 y 0x19
 	call 055f0h		;8217   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 	ld a,019h		;821a
 	call 055f0h		;821c   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 	ld a,(0c21dh)		;821f   ; lee la ruina (0-4)
-	ld hl,0822ch		;8222
+	ld hl,0822ch		;8222   ; y el de la ruina (p02:822C)
 	call 04083h		;8225   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;8228
 	jp 055f0h		;8229   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
@@ -312,22 +312,22 @@ DATA_resto_822C:
 juego_30:		; el juego de sprites 0x30 (p00:55F0)
 	ld a,030h		;8231
 	jp 055f0h		;8233   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
-entra_jefe_y_vuelve:		; p02:823C y vuelve con 1-2-3
-	call entra_jefe		;8236   ; entra_jefe: con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
+juegos_de_la_pantalla_y_vuelve:		; p02:823C y vuelve con 1-2-3
+	call juegos_de_la_pantalla		;8236   ; juegos_de_la_pantalla: con 9: los juegos de sprites 0x28 y 0x29 y, por cada actor de la lista de la pantalla (p09:B12B), su paleta y su juego
 	jp 05464h		;8239   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-entra_jefe:		; con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
+juegos_de_la_pantalla:		; con 9: los juegos de sprites 0x28 y 0x29 y, por cada actor de la lista de la pantalla (p09:B12B), su paleta y su juego
 	ld a,(0c20ah)		;823c   ; lee en la sala de la puerta 5
-	or a			;823f
+	or a			;823f   ; en la sala 5, sus juegos (p02:8215)
 	jr nz,$-43		;8240
 	call 054afh		;8242   ; banco_9_en_a000: pone el banco 9 en 0xA000
-	xor a			;8245
-	ld (0cc37h),a		;8246   ; guarda el registro del jefe en la lista de la pantalla
+	xor a			;8245   ; el primer registro
+	ld (0cc37h),a		;8246   ; guarda el registro en curso de la lista de la pantalla
 	call busca_de_la_pantalla		;8249   ; busca_de_la_pantalla: con 9: el registro de p09:B12B[0xC211 - 1] de la pantalla; acarreo si no hay
-	ret c			;824c
-	cp 0ffh		;824d
+	ret c			;824c   ; sin registro, nada
+	cp 0ffh		;824d   ; 0xFF: nada
 	ret z			;824f
 	push hl			;8250
-	ld a,028h		;8251
+	ld a,028h		;8251   ; los juegos 0x28 y 0x29
 	call 055f0h		;8253   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 	ld a,029h		;8256
 	call 055f0h		;8258   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
@@ -335,14 +335,14 @@ entra_jefe:		; con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantall
 	pop hl			;825e
 L_825F:
 	ld a,(0c212h)		;825f   ; lee la pantalla de la fase (desde 1)
-	cp (hl)			;8262
+	cp (hl)			;8262   ; cada registro de esta pantalla:
 	ret nz			;8263
 	inc hl			;8264
-	ld a,(hl)			;8265
+	ld a,(hl)			;8265   ; su tipo: su paleta...
 	push hl			;8266
-	call paleta_de_jefe		;8267   ; paleta_de_jefe: con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+	call paleta_del_tipo		;8267   ; paleta_del_tipo: con 9: la paleta del tipo A, p09:B781[p09:B74A[A - 1] - 1], si tiene
 	pop hl			;826a
-	ld a,(hl)			;826b
+	ld a,(hl)			;826b   ; ...y su juego de sprites
 	inc hl			;826c
 	inc hl			;826d
 	inc hl			;826e
@@ -352,7 +352,7 @@ L_825F:
 	pop hl			;8276
 	jr L_825F		;8277
 L_8279:
-	inc hl			;8279
+	inc hl			;8279   ; el registro siguiente, 4 bytes
 	inc hl			;827a
 	inc hl			;827b
 	jr L_825F		;827c
@@ -369,36 +369,36 @@ DATA_resto_827E:
 ; ======================================================================
 
 
-paleta_de_jefe:		; con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+paleta_del_tipo:		; con 9: la paleta del tipo A, p09:B781[p09:B74A[A - 1] - 1], si tiene
 	dec a			;827f
-	ld hl,0b74ah		;8280
+	ld hl,0b74ah		;8280   ; p09:B74A[tipo - 1]: cual de las paletas
 	call 04083h		;8283   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;8286
 	or a			;8287
-	ret z			;8288
+	ret z			;8288   ; 0: sin paleta propia
 	dec a			;8289
-	ld hl,0b781h		;828a
+	ld hl,0b781h		;828a   ; p09:B781[n - 1]
 	call 0543ah		;828d   ; palabra_a: HL = la palabra A de la tabla HL
 	jp 04a9dh		;8290   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
-cuadro_de_actores:		; el jefe (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
-	call cuadro_de_jefe		;8293   ; cuadro_de_jefe: si no muere el personaje y hay jefe (p02:85B1): sus cuentas y dibujos
+cuadro_de_actores:		; las esperas (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
+	call cuadro_de_las_esperas		;8293   ; cuadro_de_las_esperas: si no muere el personaje y hay pocos actores (p02:85B1): las cuentas que sueltan los actores de 0xCC40
 	ld ix,0c400h		;8296   ; apunta a los 8 actores (0x80 bytes cada uno)
-	ld b,008h		;829a
+	ld b,008h		;829a   ; los 8 actores
 L_829C:
 	ld a,(ix+000h)		;829c   ; lee el tipo del actor
-	and a			;829f
+	and a			;829f   ; libre: el siguiente
 	jr z,L_82BD		;82a0
 	push bc			;82a2
 	call despacha_tipo		;82a3   ; despacha_tipo: despacha el tipo del actor - 1 (tabla p02:82E9, 63 tipos)
 	ld a,(ix+000h)		;82a6   ; lee el tipo del actor
-	and a			;82a9
+	and a			;82a9   ; borrado por su manejador: el siguiente
 	jr z,L_82B5		;82aa
 	call mueve_actor		;82ac   ; mueve_actor: si (ix+6): Y += velocidad Y y X += velocidad X (16 bits)
 	call acelera_actor		;82af   ; acelera_actor: si (ix+0x0B): velocidades += aceleraciones
 	call actor_fuera		;82b2   ; actor_fuera: salvo el tipo 0x21, se borra si sale por abajo o por los lados
 L_82B5:
 	ld a,(ix+012h)		;82b5   ; lee la vida del actor (p01:721A)
-	and a			;82b8
+	and a			;82b8   ; sin vida, segun el tipo
 	call z,actor_por_tipo		;82b9   ; actor_por_tipo: segun 0xC316 y el tipo: cuentas y p02:84AC
 	pop bc			;82bc
 L_82BD:
@@ -408,13 +408,13 @@ L_82BD:
 	ret			;82c4
 fotogramas_de_actores:		; el fotograma de los 8 actores de 0xC400, salvo el tipo 0x37 (p02:8A42)
 	ld ix,0c400h		;82c5   ; apunta a los 8 actores (0x80 bytes cada uno)
-	ld b,008h		;82c9
+	ld b,008h		;82c9   ; los 8 actores
 L_82CB:
 	push bc			;82cb
 	ld a,(ix+000h)		;82cc   ; lee el tipo del actor
 	and a			;82cf
 	jr z,L_82D9		;82d0
-	cp 037h		;82d2
+	cp 037h		;82d2   ; el tipo 0x37 no tiene fotograma
 	jr z,L_82D9		;82d4
 	call fotograma_del_actor		;82d6   ; fotograma_del_actor: con 15: el fotograma (ix+0x10) del actor (p02:8A42)
 L_82D9:
@@ -425,7 +425,7 @@ L_82D9:
 	ret			;82e1
 despacha_tipo:		; despacha el tipo del actor - 1 (tabla p02:82E9, 63 tipos)
 	ld a,(ix+000h)		;82e2   ; lee el tipo del actor
-	dec a			;82e5
+	dec a			;82e5   ; el tipo - 1
 	call 0408dh		;82e6   ; despacha: salta a la palabra A de la tabla pegada detras del `call`
 
 ; ----------------------------------------------------------------------
@@ -505,51 +505,51 @@ DATA_saltos_82E9:
 mueve_actor:		; si (ix+6): Y += velocidad Y y X += velocidad X (16 bits)
 	ld a,(ix+006h)		;8367   ; lee si el actor se mueve (p02:8367)
 	and a			;836a
-	ret z			;836b
+	ret z			;836b   ; quieto: nada
 	ld e,(ix+007h)		;836c   ; lee la velocidad Y del actor
 	ld d,(ix+008h)		;836f   ; lee la velocidad Y del actor (alta)
 	ld l,(ix+002h)		;8372   ; lee la Y del actor (fraccion)
 	ld h,(ix+003h)		;8375   ; lee la Y del actor
-	add hl,de			;8378
+	add hl,de			;8378   ; Y + velocidad Y (16 bits)
 	ld (ix+002h),l		;8379   ; guarda la Y del actor (fraccion)
 	ld (ix+003h),h		;837c   ; guarda la Y del actor
 	ld e,(ix+009h)		;837f   ; lee la velocidad X del actor
 	ld d,(ix+00ah)		;8382   ; lee la velocidad X del actor (alta)
 	ld l,(ix+004h)		;8385   ; lee la X del actor (fraccion)
 	ld h,(ix+005h)		;8388   ; lee la X del actor
-	add hl,de			;838b
+	add hl,de			;838b   ; X + velocidad X
 	ld (ix+004h),l		;838c   ; guarda la X del actor (fraccion)
 	ld (ix+005h),h		;838f   ; guarda la X del actor
 L_8392:
-	ret			;8392
+	ret			;8392   ; (los tipos 36-38 vienen aqui: nada)
 acelera_actor:		; si (ix+0x0B): velocidades += aceleraciones
 	ld a,(ix+00bh)		;8393   ; lee si el actor acelera (p02:8393)
 	and a			;8396
-	ret z			;8397
+	ret z			;8397   ; sin aceleracion: nada
 	ld e,(ix+00ch)		;8398   ; lee la aceleracion Y del actor
 	ld d,(ix+00dh)		;839b   ; lee la aceleracion Y del actor (alta)
 	ld l,(ix+007h)		;839e   ; lee la velocidad Y del actor
 	ld h,(ix+008h)		;83a1   ; lee la velocidad Y del actor (alta)
-	add hl,de			;83a4
+	add hl,de			;83a4   ; velocidad Y + aceleracion Y
 	ld (ix+007h),l		;83a5   ; guarda la velocidad Y del actor
 	ld (ix+008h),h		;83a8   ; guarda la velocidad Y del actor (alta)
 	ld e,(ix+00eh)		;83ab   ; lee la aceleracion X del actor
 	ld d,(ix+00fh)		;83ae   ; lee la aceleracion X del actor (alta)
 	ld l,(ix+009h)		;83b1   ; lee la velocidad X del actor
 	ld h,(ix+00ah)		;83b4   ; lee la velocidad X del actor (alta)
-	add hl,de			;83b7
+	add hl,de			;83b7   ; velocidad X + aceleracion X
 	ld (ix+009h),l		;83b8   ; guarda la velocidad X del actor
 	ld (ix+00ah),h		;83bb   ; guarda la velocidad X del actor (alta)
 	ret			;83be
 actor_fuera:		; salvo el tipo 0x21, se borra si sale por abajo o por los lados
 	ld a,(ix+000h)		;83bf   ; lee el tipo del actor
-	cp 021h		;83c2
+	cp 021h		;83c2   ; el 0x21 puede salir
 	ret z			;83c4
 	ld a,(ix+003h)		;83c5   ; lee la Y del actor
-	cp 0e4h		;83c8
+	cp 0e4h		;83c8   ; por debajo de 0xE4...
 	jr nc,borra_actor		;83ca
 	ld a,(ix+005h)		;83cc   ; lee la X del actor
-	cp 0f5h		;83cf
+	cp 0f5h		;83cf   ; ...o fuera de 0x0A-0xF4 en X: se borra
 	jr nc,borra_actor		;83d1
 	cp 00ah		;83d3
 	ret nc			;83d5
@@ -558,15 +558,15 @@ borra_actor:		; tipo 0, libera sus piezas y esconde sus sprites
 	ld (ix+000h),a		;83d7   ; guarda el tipo del actor
 	push ix		;83da
 	pop hl			;83dc
-	set 5,l		;83dd
+	set 5,l		;83dd   ; (ix+0x20): cuantas piezas
 	ld c,(hl)			;83df
 	ld a,c			;83e0
 	and a			;83e1
 	ret z			;83e2
-	inc l			;83e3
+	inc l			;83e3   ; cada pieza: su hueco...
 L_83E4:
 	ld de,0de28h		;83e4   ; apunta a la Y del sprite 10 en RAM
-	ld a,(hl)			;83e7
+	ld a,(hl)			;83e7   ; ...su sprite (0xDE28 + hueco * 4) escondido (Y = 0xE0)...
 	add a,a			;83e8
 	add a,a			;83e9
 	add a,e			;83ea
@@ -574,11 +574,11 @@ L_83E4:
 	ld a,0e0h		;83ec
 	ld (de),a			;83ee
 	ld de,0cc80h		;83ef   ; apunta a las piezas de sprite ocupadas (22)
-	ld a,(hl)			;83f2
+	ld a,(hl)			;83f2   ; ...y su hueco libre en 0xCC80
 	call 04088h		;83f3   ; de_mas_a: DE = DE + A
 	xor a			;83f6
 	ld (de),a			;83f7
-	ld a,l			;83f8
+	ld a,l			;83f8   ; la pieza siguiente, 5 bytes mas alla
 	add a,005h		;83f9
 	ld l,a			;83fb
 	dec c			;83fc
@@ -587,22 +587,22 @@ L_83E4:
 actor_por_tipo:		; segun 0xC316 y el tipo: cuentas y p02:84AC
 	ld a,(0c316h)		;8400   ; lee en la sala del final de fase
 	or a			;8403
-	jr z,L_8412		;8404
+	jr z,L_8412		;8404   ; en la sala del final de fase, los tipos 0x1E-0x21 (los jefes)...
 	ld a,(ix+000h)		;8406   ; lee el tipo del actor
 	cp 01eh		;8409
 	jr c,L_8412		;840b
 	cp 022h		;840d
-	jp c,L_84AC		;840f
+	jp c,L_84AC		;840f   ; ...al morir dan lo de p02:84AC
 L_8412:
 	ld a,(ix+000h)		;8412   ; lee el tipo del actor
-	cp 010h		;8415
+	cp 010h		;8415   ; los tipos por debajo de 0x10...
 	jr nc,L_8436		;8417
-	ld hl,0e30bh		;8419
+	ld hl,0e30bh		;8419   ; ...cuentan en 0xE30B
 	inc (hl)			;841c
 	jr L_8436		;841d
 hay_tipo_29:		; acarreo si ningun actor de 0xC400 es de tipo 0x29
 	ld a,(ix+01eh)		;841f
-	cp 010h		;8422
+	cp 010h		;8422   ; solo con (ix+0x1E) por debajo de 0x10
 	ret nc			;8424
 	ld hl,0c400h		;8425   ; apunta a los 8 actores (0x80 bytes cada uno)
 	ld de,00080h		;8428
@@ -616,12 +616,12 @@ L_842F:
 	scf			;8434   ; ninguno: acarreo
 	ret			;8435
 L_8436:
-	ld a,01ch		;8436
+	ld a,01ch		;8436   ; al morir: el sonido 0x1C...
 	call 056e3h		;8438   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	ld a,(ix+000h)		;843b   ; lee el tipo del actor
-	ld (ix+01eh),a		;843e
+	ld (ix+01eh),a		;843e   ; ...el tipo que era, en (ix+0x1E)...
 	call borra_actor		;8441   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
-	ld (ix+000h),028h		;8444   ; el tipo del actor = 0x28
+	ld (ix+000h),028h		;8444   ; ...y se rehace como tipo 0x28 (la explosion): 2 piezas, colores 0x0E y 0x4D, vida 1
 	ld (ix+001h),000h		;8448   ; el paso del actor = 0x00
 	ld (ix+020h),002h		;844c   ; las piezas del actor (p02:8648) = 0x02
 	ld (ix+025h),00eh		;8450
@@ -631,10 +631,10 @@ L_8436:
 L_845F:
 	ld a,(ix+01eh)		;845f
 	or a			;8462
-	jr nz,L_8469		;8463
+	jr nz,L_8469		;8463   ; sin tipo, 0xFF
 	ld (ix+01eh),0ffh		;8465
 L_8469:
-	xor a			;8469
+	xor a			;8469   ; quieto, sin choques, fotograma 0x65 y 2 cuadros
 	ld (ix+006h),a		;846a   ; guarda si el actor se mueve (p02:8367)
 	ld (ix+00bh),a		;846d   ; guarda si el actor acelera (p02:8393)
 	ld (ix+010h),065h		;8470   ; el fotograma del actor (p02:8A42) = 0x65
@@ -642,23 +642,23 @@ L_8469:
 	ld (ix+013h),a		;8478   ; guarda las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
 	ret			;847b
 L_847C:
-	dec (ix+011h)		;847c   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
+	dec (ix+011h)		;847c   ; el tipo 0x28: cada 2 cuadros...
 	ret nz			;847f
 	ld a,(ix+001h)		;8480   ; lee el paso del actor
-	cp 002h		;8483
+	cp 002h		;8483   ; ...los fotogramas 0x65-0x67...
 	jr nc,L_8492		;8485
 	inc (ix+010h)		;8487   ; sube el fotograma del actor (p02:8A42)
 	ld (ix+011h),002h		;848a   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x02
 	inc (ix+001h)		;848e   ; sube el paso del actor
 	ret			;8491
 L_8492:
-	ld a,(0e30bh)		;8492
+	ld a,(0e30bh)		;8492   ; ...y al acabar, con 2 o mas muertes (0xE30B)...
 	cp 002h		;8495
 	jp c,borra_actor		;8497   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 	xor a			;849a
-	ld (0e30bh),a		;849b
+	ld (0e30bh),a		;849b   ; ...se cuentan de nuevo y, si no hay ya un objeto 0x29...
 	call hay_tipo_29		;849e   ; hay_tipo_29: acarreo si ningun actor de 0xC400 es de tipo 0x29
-	jp c,0a70dh		;84a1   ; en_objeto_29: borra el actor y lo rehace como objeto de tipo 0x29: 2 piezas, colores 0x0D y 0x4E
+	jp c,0a70dh		;84a1   ; ...queda un objeto (p03:A70D)
 	jp borra_actor		;84a4   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 
 ; ----------------------------------------------------------------------
@@ -674,21 +674,21 @@ DATA_resto_84A7:
 
 
 L_84AC:
-	ld a,044h		;84ac
+	ld a,044h		;84ac   ; un jefe vencido: el sonido 0x44...
 	call 056e3h		;84ae   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	ld d,(ix+005h)		;84b1   ; lee la X del actor
 	ld e,(ix+003h)		;84b4   ; lee la Y del actor
 	push ix		;84b7
 	push de			;84b9
-	call borra_todos_los_actores		;84ba   ; borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
+	call borra_todos_los_actores		;84ba   ; ...fuera todos los actores...
 	pop de			;84bd
-	ld c,01dh		;84be
+	ld c,01dh		;84be   ; ...y en su sitio el actor 0x1D
 	call crea_actor_0		;84c0   ; crea_actor_0: p02:8615 con B = 0
 	pop ix		;84c3
 	ret			;84c5
 marca_piezas:		; marca en 0xCC80 las piezas (ix+0x21) y (ix+0x26)
 	ld a,(ix+020h)		;84c6   ; lee las piezas del actor (p02:8648)
-	or a			;84c9
+	or a			;84c9   ; sin piezas, nada
 	ret z			;84ca
 	ld a,(ix+021h)		;84cb
 	call marca_pieza		;84ce   ; marca_pieza: 0xCC80 + A = 1
@@ -712,43 +712,43 @@ apunta_al_personaje:		; con 15: la direccion del actor hacia el personaje (p02:8
 direccion_hacia:		; las velocidades hacia el personaje con las tablas de p15:BD96/BDD6
 	ld (0e302h),a		;84f1
 	call distancia_al_personaje		;84f4   ; distancia_al_personaje: diferencias de Y y X con el personaje y sus signos (0xE306)
-	ld a,(0e304h)		;84f7
+	ld a,(0e304h)		;84f7   ; el angulo (p02:8530)
 	ld e,a			;84fa
 	ld d,000h		;84fb
 	ld a,e			;84fd
-	sub 03fh		;84fe
+	sub 03fh		;84fe   ; 0x3F - angulo
 	neg		;8500
-	ld hl,0bdd6h		;8502
+	ld hl,0bdd6h		;8502   ; p15:BDD6: el seno y el coseno de cada angulo
 	push hl			;8505
 	add hl,de			;8506
-	ld c,(hl)			;8507
+	ld c,(hl)			;8507   ; C = la parte X (p15:BDD6[angulo])
 	pop hl			;8508
 	ld e,a			;8509
 	add hl,de			;850a
-	ld a,(hl)			;850b
+	ld a,(hl)			;850b   ; y la parte Y (p15:BDD6[0x3F - angulo])
 	ld (0e308h),a		;850c
 	ld e,c			;850f
 	call escala_velocidad		;8510   ; escala_velocidad: DE = H * E / 32 (p02:858C)
-	ld a,(0e306h)		;8513
+	ld a,(0e306h)		;8513   ; la velocidad X: A * C / 32, con su signo
 	and a			;8516
 	call nz,niega_de		;8517   ; niega_de: DE = -DE
 	ld (0e303h),de		;851a
-	ld a,(0e308h)		;851e
+	ld a,(0e308h)		;851e   ; la velocidad Y: A * la parte Y / 32, con su signo
 	ld e,a			;8521
 	call escala_velocidad		;8522   ; escala_velocidad: DE = H * E / 32 (p02:858C)
 	ld a,(0e307h)		;8525
 	and a			;8528
 	call nz,niega_de		;8529   ; niega_de: DE = -DE
-	ld hl,(0e303h)		;852c
+	ld hl,(0e303h)		;852c   ; HL = la velocidad X, DE = la Y
 	ret			;852f
 distancia_al_personaje:		; diferencias de Y y X con el personaje y sus signos (0xE306)
 	ld hl,0e306h		;8530
 	ld (hl),000h		;8533
-	ld a,(0c244h)		;8535   ; lee la Y del personaje
+	ld a,(0c244h)		;8535   ; la Y del personaje - 0x10 - la del actor...
 	sub 010h		;8538
 	sub e			;853a
 	jr nc,L_8540		;853b
-	neg		;853d
+	neg		;853d   ; ...en valor absoluto; el signo en 0xE306
 	inc (hl)			;853f
 L_8540:
 	inc hl			;8540   ; el signo de la diferencia de X en 0xE307
@@ -769,7 +769,7 @@ L_8551:
 	rra			;8554
 	rra			;8555
 	and 007h		;8556
-	add a,e			;8558
+	add a,e			;8558   ; + la fila
 	ld hl,0bd96h		;8559   ; p15:BD96[fila * 8 + columna]: el angulo hacia el personaje
 	call 04083h		;855c   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;855f
@@ -794,14 +794,14 @@ escala_velocidad:		; DE = H * E / 32 (p02:858C)
 	ld a,(0e302h)		;857a   ; A * E (p02:858C) y / 32 en DE
 	ld h,a			;857d
 	call multiplica		;857e   ; multiplica: HL = H * E (8 x 8 bits)
-	xor a			;8581
+	xor a			;8581   ; * 8 en A:HL (tres desplazamientos)...
 	add hl,hl			;8582
 	adc a,a			;8583
 	add hl,hl			;8584
 	adc a,a			;8585
 	add hl,hl			;8586
 	adc a,a			;8587
-	ld l,h			;8588
+	ld l,h			;8588   ; ...y el byte alto: / 32
 	ld h,a			;8589
 	ex de,hl			;858a
 	ret			;858b
@@ -810,24 +810,24 @@ multiplica:		; HL = H * E (8 x 8 bits)
 	ld l,000h		;858e
 	ld d,l			;8590
 L_8591:
-	add hl,hl			;8591
+	add hl,hl			;8591   ; 8 vueltas, bit a bit
 	jr nc,L_8595		;8592
 	add hl,de			;8594
 L_8595:
 	djnz L_8591		;8595
 	ret			;8597
-cuadro_de_jefe:		; si no muere el personaje y hay jefe (p02:85B1): sus cuentas y dibujos
+cuadro_de_las_esperas:		; si no muere el personaje y hay pocos actores (p02:85B1): las cuentas que sueltan los actores de 0xCC40
 	ld a,(0c24bh)		;8598   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;859b
-	ret z			;859d
-	call busca_jefe		;859e   ; busca_jefe: acarreo si hay un actor de tipo 2 o 0x17 en 0xC400
-	ret nc			;85a1
+	ret z			;859d   ; muriendo, nada
+	call pocos_actores		;859e   ; pocos_actores: acarreo si los actores que cuentan (el tipo 2, el 0x17 y los de clase distinta de 1 por debajo de 0x14) son menos que p02:85EF[ruina]
+	ret nc			;85a1   ; con bastantes actores, nada
 	call 054afh		;85a2   ; banco_9_en_a000: pone el banco 9 en 0xA000
 	call cuenta_cc3b		;85a5   ; cuenta_cc3b: cada 4 cuadros, 0xCC3B - 1; a cero, 0x20 o 0x40 y 0xCC3C cambia
 	call cuenta_cc36		;85a8   ; cuenta_cc36: 0xCC3D = 3, 0xCC36 - 1 y el siguiente de 0xCC37 (0-3)
 	call cuenta_cc39		;85ab   ; cuenta_cc39: 0xCC3D = 2 y 0xCC39 - 1
 	jp 05464h		;85ae   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-busca_jefe:		; acarreo si hay un actor de tipo 2 o 0x17 en 0xC400
+pocos_actores:		; acarreo si los actores que cuentan (el tipo 2, el 0x17 y los de clase distinta de 1 por debajo de 0x14) son menos que p02:85EF[ruina]
 	ld hl,0c400h		;85b1   ; apunta a los 8 actores (0x80 bytes cada uno)
 	ld b,008h		;85b4
 	ld c,000h		;85b6
@@ -835,19 +835,19 @@ L_85B8:
 	ld a,(hl)			;85b8   ; cuenta los actores de tipo 2 (C); el 0x17 o un tipo por debajo de 0x14 bastan
 	or a			;85b9
 	jr z,L_85DD		;85ba
-	cp 017h		;85bc
+	cp 017h		;85bc   ; el 0x17 cuenta siempre
 	jr z,L_85C9		;85be
-	cp 014h		;85c0
+	cp 014h		;85c0   ; del 0x14 en adelante no cuentan
 	jr nc,L_85DD		;85c2
 	cp 002h		;85c4
-	jr nz,L_85C9		;85c6
+	jr nz,L_85C9		;85c6   ; el tipo 2 cuenta...
 	inc c			;85c8
 L_85C9:
 	push af			;85c9
 	call 054afh		;85ca   ; banco_9_en_a000: pone el banco 9 en 0xA000
 	pop af			;85cd
 	push hl			;85ce
-	call lee_b70d		;85cf   ; lee_b70d: A = p09:B70D[A - 1]
+	call lee_b70d		;85cf   ; ...y los de clase distinta de 1 (p09:B70D)
 	pop hl			;85d2
 	push af			;85d3
 	call 05464h		;85d4   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -859,7 +859,7 @@ L_85DD:
 	ld de,00080h		;85dd
 	add hl,de			;85e0
 	djnz L_85B8		;85e1
-	ld a,(0c21dh)		;85e3   ; lee la ruina (0-4)
+	ld a,(0c21dh)		;85e3   ; menos que p02:85EF[ruina]: acarreo
 	ld hl,085efh		;85e6
 	call 04083h		;85e9   ; hl_mas_a: HL = HL + A
 	ld a,c			;85ec
@@ -1128,19 +1128,19 @@ pon_pieza:		; el byte D en la pieza E del actor 0xDE83
 	ld (hl),d			;879e
 	pop hl			;879f
 	ret			;87a0
-prepara_la_pantalla:		; borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p02:87B6)
+prepara_la_pantalla:		; borra 0xCC40-0xCC4F y prepara los actores de la pantalla (p02:87B6)
 	ld hl,0cc40h		;87a1   ; apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 	ld bc,0000fh		;87a4
 	call 05f08h		;87a7   ; borra: pone a cero BC + 1 bytes desde HL
 	call 054afh		;87aa   ; banco_9_en_a000: pone el banco 9 en 0xA000
-	call prepara_jefe		;87ad   ; prepara_jefe: pone a cero las cuentas del jefe y busca el de la pantalla (p02:9195)
+	call prepara_los_actores		;87ad   ; prepara_los_actores: pone a cero las cuentas y recorre la lista de la pantalla (p02:9195): la clase 1 se crea ya, las 2 y 3 esperan en 0xCC40
 	call 05464h		;87b0   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jp recorre_cc40		;87b3   ; recorre_cc40: los 4 registros de 0xCC40
-prepara_jefe:		; pone a cero las cuentas del jefe y busca el de la pantalla (p02:9195)
-	xor a			;87b6   ; todas las cuentas del jefe a su valor inicial
+prepara_los_actores:		; pone a cero las cuentas y recorre la lista de la pantalla (p02:9195): la clase 1 se crea ya, las 2 y 3 esperan en 0xCC40
+	xor a			;87b6   ; todas las cuentas de las esperas a su valor inicial
 	ld (0c312h),a		;87b7
 	ld (0cc35h),a		;87ba   ; guarda el registro de 0xCC40 en curso
-	ld (0cc37h),a		;87bd   ; guarda el registro del jefe en la lista de la pantalla
+	ld (0cc37h),a		;87bd   ; guarda el registro en curso de la lista de la pantalla
 	ld (0cc3ch),a		;87c0
 	inc a			;87c3
 	ld (0cc38h),a		;87c4
@@ -1371,14 +1371,14 @@ cuenta_cc36:		; 0xCC3D = 3, 0xCC36 - 1 y el siguiente de 0xCC37 (0-3)
 	ret nz			;890c
 L_890D:
 	call espera_cc3c		;890d   ; espera_cc3c: (HL) = 0x30 o 0x60 segun 0xCC3C
-	ld a,(0cc37h)		;8910   ; lee el registro del jefe en la lista de la pantalla
+	ld a,(0cc37h)		;8910   ; lee el registro en curso de la lista de la pantalla
 	cp 004h		;8913
 	jr c,L_891B		;8915
 	xor a			;8917
-	ld (0cc37h),a		;8918   ; guarda el registro del jefe en la lista de la pantalla
+	ld (0cc37h),a		;8918   ; guarda el registro en curso de la lista de la pantalla
 L_891B:
 	ld (0cc35h),a		;891b   ; guarda el registro de 0xCC40 en curso
-	ld hl,0cc37h		;891e   ; apunta a el registro del jefe en la lista de la pantalla
+	ld hl,0cc37h		;891e   ; apunta a el registro en curso de la lista de la pantalla
 	inc (hl)			;8921
 	ld hl,0cc40h		;8922   ; apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 	add a,a			;8925
@@ -1418,11 +1418,11 @@ L_891B:
 	jp 054afh		;8962   ; banco_9_en_a000: pone el banco 9 en 0xA000
 L_8965:
 	ld a,(0cc35h)		;8965   ; lee el registro de 0xCC40 en curso
-	ld (0cc37h),a		;8968   ; guarda el registro del jefe en la lista de la pantalla
+	ld (0cc37h),a		;8968   ; guarda el registro en curso de la lista de la pantalla
 	ret			;896b
 L_896C:
 	xor a			;896c
-	ld (0cc37h),a		;896d   ; guarda el registro del jefe en la lista de la pantalla
+	ld (0cc37h),a		;896d   ; guarda el registro en curso de la lista de la pantalla
 	ret			;8970
 L_8971:
 	ld a,080h		;8971
@@ -1510,7 +1510,7 @@ L_89E3:
 	ld a,001h		;8a00
 	ld (hl),a			;8a02
 	ld a,(0cc35h)		;8a03   ; lee el registro de 0xCC40 en curso
-	ld (0cc37h),a		;8a06   ; guarda el registro del jefe en la lista de la pantalla
+	ld (0cc37h),a		;8a06   ; guarda el registro en curso de la lista de la pantalla
 dibujo_cc35_doble:		; p02:89CD y dos piezas mas de (0x80, 0x38) y (0x98, 0x38)
 	call dibujo_cc35		;8a09   ; dibujo_cc35: copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
 	push de			;8a0c
@@ -1940,7 +1940,7 @@ copia_84_y_c310:		; copia 0x10 x 0x20 de (0x84, 0) a (0xA4, 0) y sigue segun 0xC
 	pop af			;8c96
 	cp 006h		;8c97
 	call nc,copia_8078		;8c99   ; copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
-	ld a,(0c21ch)		;8c9c   ; lee el jefe vencido (no queda ningun 0x19)
+	ld a,(0c21ch)		;8c9c   ; lee no queda ningun 0x19 (la sala 5, acabada)
 	and a			;8c9f
 	ret z			;8ca0
 	ld hl,0f0a4h		;8ca1
@@ -2143,13 +2143,13 @@ L_8DEA:
 	add hl,de			;8dee
 	djnz L_8DEA		;8def
 	ld a,001h		;8df1
-	ld (0c21ch),a		;8df3   ; guarda el jefe vencido (no queda ningun 0x19)
+	ld (0c21ch),a		;8df3   ; guarda no queda ningun 0x19 (la sala 5, acabada)
 	ld a,042h		;8df6
 	jp 056e3h		;8df8   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 L_8DFB:
 	call sin_tipo_19		;8dfb   ; sin_tipo_19: si no queda ningun actor de tipo 0x19: 0xC21C = 1 y el sonido 0x42
 	call color_12_parpadea		;8dfe   ; color_12_parpadea: el color 12 de la paleta de p02:8E26 segun la cuenta de cuadros
-	ld a,(0c21ch)		;8e01   ; lee el jefe vencido (no queda ningun 0x19)
+	ld a,(0c21ch)		;8e01   ; lee no queda ningun 0x19 (la sala 5, acabada)
 	and a			;8e04
 	ret z			;8e05
 	call borra_todos_los_actores		;8e06   ; borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
@@ -2335,7 +2335,7 @@ sala_del_final_de_fase:		; en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), 
 	xor a			;8f35
 	ld (0c310h),a		;8f36   ; guarda el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	ld (0c314h),a		;8f39   ; guarda la cuenta de la sala del final de fase o de la sala 5
-	ld (0c21ch),a		;8f3c   ; guarda el jefe vencido (no queda ningun 0x19)
+	ld (0c21ch),a		;8f3c   ; guarda no queda ningun 0x19 (la sala 5, acabada)
 	inc a			;8f3f
 	ld (0c316h),a		;8f40   ; guarda en la sala del final de fase
 	call 05a56h		;8f43   ; paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
@@ -2437,7 +2437,7 @@ L_8FD5:
 	inc (hl)			;8fd8
 	call 054afh		;8fd9   ; banco_9_en_a000: pone el banco 9 en 0xA000
 	ld a,(0c31bh)		;8fdc
-	call paleta_de_jefe		;8fdf   ; paleta_de_jefe: con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+	call paleta_del_tipo		;8fdf   ; paleta_del_tipo: con 9: la paleta del tipo A, p09:B781[p09:B74A[A - 1] - 1], si tiene
 	call 05464h		;8fe2   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld c,022h		;8fe5
 	ld a,(0c319h)		;8fe7   ; lee los 3 bytes de la fase de p09:BED3
@@ -2717,7 +2717,7 @@ busca_de_la_pantalla:		; con 9: el registro de p09:B12B[0xC211 - 1] de la pantal
 	ret z			;91a2
 	call registro_de_la_pantalla		;91a3   ; registro_de_la_pantalla: avanza de 4 en 4 hasta el de la pantalla 0xC212; acarreo en el 0xFF
 	ret c			;91a6
-	ld a,(0cc37h)		;91a7   ; lee el registro del jefe en la lista de la pantalla
+	ld a,(0cc37h)		;91a7   ; lee el registro en curso de la lista de la pantalla
 	add a,a			;91aa
 	add a,a			;91ab
 	call 04083h		;91ac   ; hl_mas_a: HL = HL + A

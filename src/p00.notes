@@ -1109,14 +1109,14 @@ C 0x44C5 pinta_la_antesala: la fuente, los graficos, la paleta, el mapa y los me
 C 0x44C8 bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
 C 0x44CB prepara_la_captura: sentido y cuentas de la antesala a cero, 0xCC18 = 0x78; con 0xC31C distinto de 3, los colores de la antesala
 C 0x44CE bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-C 0x44D2 guarda el jefe vencido (no queda ningun 0x19)
+C 0x44D2 guarda no queda ningun 0x19 (la sala 5, acabada)
 C 0x44DA sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x44DD siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 C 0x44E1 lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 C 0x44E7 anda_en_la_antesala_1: con 6: el cuadro de andar de la antesala, los sprites y el marcador de vidas
 C 0x44EF guarda el texto a maquina ya ha salido
 C 0x44F2 guarda la pantalla de la antesala (0-2)
-C 0x44F5 guarda el jefe vencido (no queda ningun 0x19)
+C 0x44F5 guarda no queda ningun 0x19 (la sala 5, acabada)
 C 0x44F8 apunta a la ruina (0-4)
 C 0x44FD estados_de_la_ruina: el estado de los dos personajes al entrar en la ruina (p00:4575)
 C 0x4503 apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
@@ -1856,9 +1856,9 @@ C 0x5EAA objetos_sin_coger: los 8 objetos de 0xCB00 de esta pantalla que no se h
 C 0x5EAD bloque_de_pantalla: el bloque de 0xD180 de esta pantalla, si lo hay
 C 0x5EB0 crea_enemigos_de_pantalla: fuera de la sala 5: el bloque 0x0D y los enemigos de p15:A4F9[fase][pantalla] en 0xCD00
 C 0x5EB3 paleta_vacia: fuera de la sala 5: la paleta p06:B35B (vacia)
-C 0x5EB6 entra_jefe_y_vuelve: p02:823C y vuelve con 1-2-3
+C 0x5EB6 juegos_de_la_pantalla_y_vuelve: p02:823C y vuelve con 1-2-3
 C 0x5EB9 borra_actores: pone a cero 0xC400-0xC7FF y 0xCC60-0xCC63
-C 0x5EBC prepara_la_pantalla: borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p02:87B6)
+C 0x5EBC prepara_la_pantalla: borra 0xCC40-0xCC4F y prepara los actores de la pantalla (p02:87B6)
 C 0x5EBF marcas_y_vuelve: con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
 C 0x5EC2 prepara_la_sala_5: 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo suyo
 C 0x5EC5 sala_del_final_de_fase: en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), cuentas a cero, 0xC316 = 1, juegos 0x27 y 0x30, p09:BED3 y el actor 0x23

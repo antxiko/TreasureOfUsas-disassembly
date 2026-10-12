@@ -114,8 +114,72 @@ def hoja(ruta, escala=3):
     img.resize((ancho * escala, alto * escala), Image.NEAREST).save(ruta)
 
 
+# LA ANIMACION. p00:5B3A guarda los 7 fotogramas del estado en la pagina 1,
+# dos lineas de 0x80 bytes cada uno: primero volteado (p00:5B4E) y luego tal
+# cual (p00:5B54). p01:6835 copia la linea 0xD0 + 0xC253 a los patrones, asi
+# que el cuadro 2k + 1 es el fotograma k y el 2k su espejo (0xC250, el sentido,
+# es el bit 0). Lo que pone cada accion (0xC24B, despacho p01:699E):
+#   0 y 6 andar (p01:69B0): 0, 2, 4, 6 + sentido; avanza cuando 0xC252 llega a
+#         p01:69E6[(ix+1)] (p01:69C7), y 0xC252 sube una vez por cuadro al
+#         moverse (p01:6416)
+#   1 y 2 en el aire (p01:69EB): 8 + sentido
+#   5 escalera (p01:6AAB): sin direccion 10 y 11 alternos al mismo ritmo
+#         (p01:6AB1); con 0xC254 = 1 o 2, el 12 o el 13 (p01:6AD2)
+# El nivel de velocidad con el que se empieza es el byte 1 de la ficha
+# inicial (p06:BF6C): 0 Wit y 2 Cles.
+NIVEL_INICIAL = {0: 0, 1: 2}
+RITMO = 0x69E6          # p01:69E6, cuadros por paso segun el nivel
+
+
+def ritmo(personaje):
+    from rom import T123
+    return leer(T123, RITMO + NIVEL_INICIAL[personaje])
+
+
+def dibujo(px, volteado):
+    return [list(reversed(f)) for f in px] if volteado else px
+
+
+def anima(ruta, escala=3):
+    """Un GIF: Wit arriba y Cles abajo, los estados 0-3 en filas; columnas:
+    andar, en el aire, escalera y escalera con direccion. Un cuadro del GIF
+    son 2 cuadros del juego (60 Hz)."""
+    from PIL import Image
+    import fases
+    v = fases.vram_de_ruina(0)
+    colores = {1: v.rgb(COLOR_0), 2: v.rgb(COLOR_1), 3: v.rgb(COLOR_0 | COLOR_1)}
+    px = {(pj, est): [pixeles(compone(f)) for f in fotogramas(pj, est)]
+          for pj in range(2) for est in range(4)}
+    # cuadros del juego por cuadro de GIF y cuantos cuadros de GIF: un ciclo
+    # de 4 pasos del mas lento
+    paso_gif = 2
+    lento = max(ritmo(0), ritmo(1))
+    n_gif = 4 * lento // paso_gif
+    imgs = []
+    for g in range(n_gif):
+        t = g * paso_gif
+        img = Image.new("RGB", (4 * 22 + 6, 8 * 36 + 6), (24, 24, 24))
+        for pj in range(2):
+            paso = (t // ritmo(pj)) % 4
+            for est in range(4):
+                f = px[(pj, est)]
+                oy = 4 + (pj * 4 + est) * 36
+                columnas = (dibujo(f[paso], False), dibujo(f[4], False),
+                            dibujo(f[5], paso % 2 == 1), dibujo(f[6], False))
+                for c, d in enumerate(columnas):
+                    for y in range(32):
+                        for x in range(16):
+                            if d[y][x]:
+                                img.putpixel((4 + c * 22 + x, oy + y), colores[d[y][x]])
+        imgs.append(img.resize((img.width * escala, img.height * escala), Image.NEAREST))
+    imgs[0].save(ruta, save_all=True, append_images=imgs[1:],
+                 duration=round(paso_gif * 1000 / 60), loop=0)
+
+
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "hoja":
         hoja(sys.argv[2])
+    elif len(sys.argv) >= 3 and sys.argv[1] == "anima":
+        anima(sys.argv[2])
     else:
-        sys.exit("uso: personajes.py hoja <png>")
+        sys.exit("uso: personajes.py hoja <png> | anima <gif>")

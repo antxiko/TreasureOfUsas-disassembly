@@ -21,6 +21,12 @@ from vram import VRAM                                       # noqa: E402
 
 def vram_de_escena(n):
     v = VRAM()
+    if n == 8:
+        # La lista de la 8 no carga ninguna de las 39 fichas de su mapa: las
+        # deja la 7, que la precede (ruina 5: p04:71F8 da la 7 y luego inc
+        # 0xC220), y pinta_escena solo borra la pagina 0.
+        v.lista(T789, 0x61C1, 0x6064)
+        v.lista(T456, 0x799C, 0x798A)
     if n < 2 or n == 7:
         v.lista(T789, 0x61C1, 0x6064)
         v.lista(T456, 0x799C, 0x798A)
@@ -76,11 +82,6 @@ def imagen(n, escala=2):
 if __name__ == "__main__":
     if len(sys.argv) >= 3 and sys.argv[1] == "todas":
         for k in range(12):
-            if k == 8:
-                # Su mapa usa fichas que su lista no carga: las deja la escena
-                # anterior (con las de la 7 sale la mitad). Sin medir: fuera.
-                print("escena 8 sin dibujar: le faltan fichas de las escenas anteriores")
-                continue
             im = imagen(k)
             if im:
                 im.save(os.path.join(sys.argv[2], "escena_%02d.png" % k))

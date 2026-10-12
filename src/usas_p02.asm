@@ -2343,7 +2343,7 @@ sala_del_final_de_fase:		; en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), 
 	call 055f0h		;8f48   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 	ld a,030h		;8f4b
 	call 055f0h		;8f4d   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
-	call lee_c319		;8f50   ; lee_c319: con 9: 3 bytes de p09:BED3 + 3 * (0xC211 - 1) a 0xC319
+	call lee_jefe_de_fase		;8f50   ; lee_jefe_de_fase: con 9: el jefe de la fase, [X][Y][tipo] de p09:BED3 + 3 * (0xC211 - 1), a 0xC319
 crea_tipo_23:		; si vive algun personaje y 0xC270 es la fase: crea el actor 0x23 en (0x34, 0x80)
 	ld a,(0c2b0h)		;8f53   ; lee la ficha del personaje 0 (14 bytes)
 	ld b,a			;8f56
@@ -2440,7 +2440,7 @@ L_8FD5:
 	call paleta_del_tipo		;8fdf   ; paleta_del_tipo: con 9: la paleta del tipo A, p09:B781[p09:B74A[A - 1] - 1], si tiene
 	call 05464h		;8fe2   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld c,022h		;8fe5
-	ld a,(0c319h)		;8fe7   ; lee los 3 bytes de la fase de p09:BED3
+	ld a,(0c319h)		;8fe7   ; lee el jefe de la fase: X, Y y tipo (p09:BED3)
 	ld d,a			;8fea
 	ld e,020h		;8feb
 	push ix		;8fed
@@ -2518,7 +2518,7 @@ DATA_resto_903D:
 ; ======================================================================
 
 
-lee_c319:		; con 9: 3 bytes de p09:BED3 + 3 * (0xC211 - 1) a 0xC319
+lee_jefe_de_fase:		; con 9: el jefe de la fase, [X][Y][tipo] de p09:BED3 + 3 * (0xC211 - 1), a 0xC319
 	ld a,(0c211h)		;9049   ; lee la fase (1-25: ruina * 5 + puerta)
 	dec a			;904c
 	ld a,a			;904d
@@ -2530,7 +2530,7 @@ lee_c319:		; con 9: 3 bytes de p09:BED3 + 3 * (0xC211 - 1) a 0xC319
 	pop af			;9055
 	ld hl,0bed3h		;9056
 	call 04083h		;9059   ; hl_mas_a: HL = HL + A
-	ld de,0c319h		;905c   ; apunta a los 3 bytes de la fase de p09:BED3
+	ld de,0c319h		;905c   ; apunta a el jefe de la fase: X, Y y tipo (p09:BED3)
 	ld bc,00003h		;905f
 	ldir		;9062
 	jp 05464h		;9064   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3

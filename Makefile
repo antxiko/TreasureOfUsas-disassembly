@@ -177,6 +177,8 @@ imagenes: $(ROM)
 	$(PYIMG) tools/actores.py anima $(IMG)/enemigos.gif
 	$(PYIMG) tools/actores.py jefes $(IMG)/jefes_de_fase.gif
 	$(PYIMG) tools/estatua.py $(IMG)/sala5_estatua.png
+	$(PYIMG) tools/exterior.py $(IMG)/exterior.png $(IMG)/exterior.gif
+	@for f in 1 2 3 4 6 7 8 9 11 12 13 14 16 17 18 19 21 22 23 24; do 	  $(PYIMG) tools/habitantes.py $$f $(IMG)/fase_`printf %02d $$f`_habitada.png || exit 1; done
 	$(PYIMG) tools/retratos.py hoja $(IMG)/retratos.png
 	$(PYIMG) tools/retratos.py habla $(IMG)/retratos_hablan.gif
 

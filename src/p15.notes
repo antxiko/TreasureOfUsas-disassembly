@@ -525,10 +525,25 @@ F 0xBF16 16
 # --- A MANO: comentarios, nombres y bloques ---
 C 0xBEC7 el metabloque: sus 16 fichas en 0xE400 + n * 16
 C 0xBED5 B = 0x1C: de una fila de 4 a la siguiente del mapa (32 - 4)
-C 0xBED9 las 4 filas de 4 fichas al mapa de 0xD200
 C 0xBF03 el siguiente metabloque, 4 casillas a la derecha
 C 0xBF0B la siguiente fila de metabloques: 0x60 mas (3 filas de 32)
 C 0xBF10 6 filas
+C 0xBEC2 6 filas de metabloques
+C 0xBEC5 de 8
+C 0xBEC8 DE: el sitio en el mapa
+C 0xBECD HL = n * 16...
+C 0xBED4 ...+ 0xE400
+C 0xBED9 fila 0
+C 0xBEE1 la fila siguiente del mapa: + 0x1C
+C 0xBEE4 fila 1
+C 0xBEEF fila 2
+C 0xBEFA fila 3
+C 0xBF04 4 a la derecha en el mapa
+C 0xBF08 el metabloque siguiente
+C 0xBF0A DE: el principio de la fila...
+C 0xBF0F ...0x80 mas alla en total (4 filas de 32)
+C 0xBF15 6 x 8 metabloques: 32 x 24 fichas
+C 0xBEC4 guarda las filas que quedan
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0xBEBF fichas_de_la_pantalla las 32 x 24 fichas de la pantalla a 0xD200, 6 filas de metabloques de 8

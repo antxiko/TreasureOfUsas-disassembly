@@ -810,8 +810,10 @@ def banco9():
     declara(T, 0xBCE0, 0xBED3, "demo_por_ruina", "las teclas de la demo de cada "
             "ruina (p09:BCD6): pares [teclas][cuadros] que p01:6017 va leyendo; "
             "0xFF acaba la demo", "p01:603E", F=2)
-    declara(T, 0xBED3, 0xBF1D, "registros_p9056", "74 bytes: p02:9056 copia 3 "
-            "desde p09:BED3 + A a 0xC319", "p02:9050", F=3)
+    declara(T, 0xBED3, 0xBF1D, "jefe_de_cada_fase", "[X][Y][tipo] del jefe de "
+            "cada fase, 3 bytes por fase (cero en las salas 5): los tipos "
+            "0x1E-0x21 en el mismo orden en las cinco ruinas; p02:9056 los copia "
+            "a 0xC319 y p03:A9C0 crea el jefe", "p02:9050", F=3)
     declara(T, 0xBF1D, 0xBF37, "por_fase_bf1d", "un byte por fase (p00:5F2C, "
             "p01:7DF3: p09:BF1D[0xC211]): Y en el nibble alto y el lado en el bajo",
             "p00:5F26", F=16)

@@ -1344,19 +1344,19 @@ L_A9A6:
 	push ix		;a9b9
 	call 08e2eh		;a9bb   ; borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
 	pop ix		;a9be
-	ld a,(0c31bh)		;a9c0
+	ld a,(0c31bh)		;a9c0   ; acabada la vuelta del 0x22: el jefe de la fase (p09:BED3), si lo hay...
 	or a			;a9c3
 	jr z,L_A9DD		;a9c4
-	ld hl,0c319h		;a9c6   ; apunta a los 3 bytes de la fase de p09:BED3
+	ld hl,0c319h		;a9c6   ; apunta a el jefe de la fase: X, Y y tipo (p09:BED3)
 	ld d,(hl)			;a9c9
 	inc hl			;a9ca
 	ld e,(hl)			;a9cb
 	inc hl			;a9cc
-	ld c,(hl)			;a9cd
+	ld c,(hl)			;a9cd   ; ...su tipo, 0x1E-0x21, y el registro a cero para no crearlo otra vez
 	ld (hl),000h		;a9ce
 	push bc			;a9d0
 	push ix		;a9d1
-	call 08613h		;a9d3   ; crea_actor_0: p02:8615 con B = 0
+	call 08613h		;a9d3   ; crea el jefe en su X e Y (vida_por_ruina, p03:AD28, le suma ruina * 16)
 	pop ix		;a9d6
 	pop bc			;a9d8
 	ld a,c			;a9d9
@@ -2797,7 +2797,7 @@ L_B495:
 	ret nc			;b4a5
 	inc (ix+001h)		;b4a6   ; sube el paso del actor
 	call 08b7eh		;b4a9   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
-	ld a,(0c319h)		;b4ac   ; lee los 3 bytes de la fase de p09:BED3
+	ld a,(0c319h)		;b4ac   ; lee el jefe de la fase: X, Y y tipo (p09:BED3)
 	ld d,a			;b4af
 	ld a,(0c31ah)		;b4b0
 	ld e,a			;b4b3
@@ -3321,12 +3321,12 @@ L_B834:
 L_B83D:
 	ld (ix+01bh),000h		;b83d
 	ld a,(ix+003h)		;b841   ; lee la Y del actor
-	sub 00ch		;b844
+	sub 00ch		;b844   ; la Y - 0x0C - la del personaje...
 	sub e			;b846
-	cp 008h		;b847
+	cp 008h		;b847   ; ...por debajo de 8...
 	ret nc			;b849
 	ld a,(ix+005h)		;b84a   ; lee la X del actor
-	add a,00ah		;b84d
+	add a,00ah		;b84d   ; ...y la X + 0x0A - la del personaje, por debajo de 0x14
 	sub d			;b84f
 	cp 014h		;b850
 	ret nc			;b852
@@ -3335,36 +3335,36 @@ L_B83D:
 L_B858:
 	ld (ix+01bh),000h		;b858
 	ld a,(ix+003h)		;b85c   ; lee la Y del actor
-	sub e			;b85f
+	sub e			;b85f   ; la distancia en Y...
 	jr nc,L_B864		;b860
 	neg		;b862
 L_B864:
-	cp 004h		;b864
+	cp 004h		;b864   ; ...por debajo de 4...
 	ret nc			;b866
-	ld a,d			;b867
+	ld a,d			;b867   ; ...y en X, de -6 a 0x45
 	sub (ix+005h)		;b868   ; le resta la X del actor
 	add a,006h		;b86b
 	cp 04ch		;b86d
 	ret nc			;b86f
 	call alinea_y_del_personaje		;b870   ; alinea_y_del_personaje: la Y del personaje a su fila de 8 (+ 3)
-	ld (ix+01bh),001h		;b873
-	ld hl,0c246h		;b877   ; apunta a la X del personaje
+	ld (ix+01bh),001h		;b873   ; encima: 0x1B = 1...
+	ld hl,0c246h		;b877   ; ...y el personaje se mueve con el, 1 por cuadro, segun 0x17
 	ld c,001h		;b87a
 	ld a,(ix+017h)		;b87c
 	and a			;b87f
 	jp nz,L_B834		;b880
 	jp L_B82B		;b883
 L_B886:
-	ld a,e			;b886
+	ld a,e			;b886   ; el personaje hasta 0x20 por debajo...
 	sub (ix+003h)		;b887   ; le resta la Y del actor
 	cp 020h		;b88a
 	ret nc			;b88c
-	ld a,d			;b88d
+	ld a,d			;b88d   ; ...y de -4 a 0x13 en X
 	add a,004h		;b88e
 	sub (ix+005h)		;b890   ; le resta la X del actor
 	cp 018h		;b893
 	ret nc			;b895
-	ld hl,0ccb4h		;b896
+	ld hl,0ccb4h		;b896   ; 0xCCB4 si esta a la izquierda, 0xCCB5 si a la derecha...
 	ld a,(ix+005h)		;b899   ; lee la X del actor
 	add a,008h		;b89c
 	sub d			;b89e
@@ -3372,16 +3372,16 @@ L_B886:
 	inc hl			;b8a1
 L_B8A2:
 	ld (hl),001h		;b8a2
-	ld (ix+01fh),001h		;b8a4
+	ld (ix+01fh),001h		;b8a4   ; ...y 0x1F = 1
 	ret			;b8a8
 L_B8A9:
 	ld a,(ix+003h)		;b8a9   ; lee la Y del actor
 	sub e			;b8ac
-	cp 004h		;b8ad
+	cp 004h		;b8ad   ; a menos de 4 en Y...
 	ret nc			;b8af
 	ld a,d			;b8b0
 	sub (ix+005h)		;b8b1   ; le resta la X del actor
-	cp 020h		;b8b4
+	cp 020h		;b8b4   ; ...y de 0 a 0x1F en X: 0x12 = 1
 	ret nc			;b8b6
 	ld (ix+012h),001h		;b8b7   ; la vida del actor (p01:721A) = 0x01
 	ret			;b8bb
@@ -3394,7 +3394,7 @@ alinea_y_del_personaje:		; la Y del personaje a su fila de 8 (+ 3)
 	ret			;b8c5
 plataformas:		; los tipos de p03:B9F7 (7 de 3 bytes) sobre los que se puede estar
 	ld c,(ix+000h)		;b8c6   ; lee el tipo del actor
-	ld hl,0b9f7h		;b8c9
+	ld hl,0b9f7h		;b8c9   ; [tipo] y 2 bytes de caja
 	ld b,007h		;b8cc
 L_B8CE:
 	ld a,(hl)			;b8ce
@@ -3402,7 +3402,7 @@ L_B8CE:
 	push hl			;b8d0
 	push bc			;b8d1
 	jr nz,L_B8DD		;b8d2
-	inc hl			;b8d4
+	inc hl			;b8d4   ; la caja del tipo
 	push hl			;b8d5
 	call encima_de		;b8d6   ; encima_de: acarreo si el personaje esta encima del actor
 	pop hl			;b8d9
@@ -3417,79 +3417,79 @@ L_B8DD:
 	ret			;b8e4
 encima_de:		; acarreo si el personaje esta encima del actor
 	ld a,(ix+003h)		;b8e5   ; lee la Y del actor
-	sub (hl)			;b8e8
-	ld b,a			;b8e9
+	sub (hl)			;b8e8   ; - el primer byte de HL
+	ld b,a			;b8e9   ; B = la Y de arriba del actor
 	push bc			;b8ea
 	push de			;b8eb
 	push hl			;b8ec
 	call 073fdh		;b8ed   ; caja_del_personaje: la caja del personaje segun 0xC253 y 0xC240 (p01:7429)
 	exx			;b8f0
-	ld a,e			;b8f1
+	ld a,e			;b8f1   ; la altura de la caja (E' * 2)...
 	add a,a			;b8f2
 	exx			;b8f3
 	pop hl			;b8f4
 	pop de			;b8f5
 	pop bc			;b8f6
-	add a,(hl)			;b8f7
+	add a,(hl)			;b8f7   ; ...+ (HL) - 4
 	sub 004h		;b8f8
 	ld c,a			;b8fa
-	ld a,e			;b8fb
+	ld a,e			;b8fb   ; E - 4 - B...
 	sub 004h		;b8fc
 	sub b			;b8fe
-	cp c			;b8ff
+	cp c			;b8ff   ; ...por encima del limite: no esta encima
 	jr nc,L_B912		;b900
 	inc hl			;b902
-	ld a,(hl)			;b903
+	ld a,(hl)			;b903   ; el segundo byte + 8: el ancho
 	add a,008h		;b904
 	ld c,a			;b906
-	ld a,d			;b907
+	ld a,d			;b907   ; la distancia en X...
 	sub (ix+005h)		;b908   ; le resta la X del actor
 	jr nc,L_B90F		;b90b
 	neg		;b90d
 L_B90F:
-	cp c			;b90f
+	cp c			;b90f   ; ...dentro del ancho?
 	jr c,L_B91A		;b910
 L_B912:
-	xor a			;b912
+	xor a			;b912   ; no: los campos 0x1C y 0x1D a cero
 	ld (ix+01ch),a		;b913
 	ld (ix+01dh),a		;b916
 	ret			;b919
 L_B91A:
 	call 08b48h		;b91a   ; compara_x: compara la X del personaje con la del actor
-	jr c,L_B924		;b91d
+	jr c,L_B924		;b91d   ; a un lado (0x1C = 1)...
 	ld (ix+01ch),001h		;b91f
 	ret			;b923
 L_B924:
-	ld (ix+01dh),001h		;b924
+	ld (ix+01dh),001h		;b924   ; ...o al otro (0x1D = 1)
 	ret			;b928
 cae_encima:		; si cae (accion 1), lo deja encima del actor
 	ld a,(0c24bh)		;b929   ; lee la accion del personaje (4 muere, 5 escalera)
-	dec a			;b92c
+	dec a			;b92c   ; solo en la accion 1 (cayendo)
 	ret nz			;b92d
 	push de			;b92e
 	push hl			;b92f
 	call 073fdh		;b930   ; caja_del_personaje: la caja del personaje segun 0xC253 y 0xC240 (p01:7429)
 	exx			;b933
-	ld a,e			;b934
+	ld a,e			;b934   ; la altura de la caja (E' * 2)
 	add a,a			;b935
 	exx			;b936
 	pop hl			;b937
 	pop de			;b938
 	ld b,a			;b939
-	ld a,e			;b93a
+	ld a,e			;b93a   ; la Y de los pies...
 	sub b			;b93b
 	sub (ix+003h)		;b93c   ; le resta la Y del actor
-	neg		;b93f
-	cp 010h		;b941
+	neg		;b93f   ; ...- la del actor
+	cp 010h		;b941   ; a 16 o mas: 0x1E = 0
 	ld a,000h		;b943
 	jr nc,L_B956		;b945
 	inc hl			;b947
-	ld a,d			;b948
+	ld a,d			;b948   ; la distancia en X...
 	sub (ix+005h)		;b949   ; le resta la X del actor
 	jr nc,L_B950		;b94c
 	neg		;b94e
 L_B950:
-	cp (hl)			;b950
+	cp (hl)			;b950   ; ...dentro de (HL + 1): 0x1E = 1
 	ld a,001h		;b951
 	jr c,L_B956		;b953
 	xor a			;b955
@@ -3499,20 +3499,20 @@ L_B956:
 golpe_al_personaje:		; segun el tipo (1, 3, 7) si toca la caja del personaje
 	ld a,(ix+013h)		;b95a   ; lee las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
 	and a			;b95d
-	ret z			;b95e
+	ret z			;b95e   ; sin choques: nada
 	ld a,(ix+000h)		;b95f   ; lee el tipo del actor
-	cp 003h		;b962
+	cp 003h		;b962   ; el tipo 3...
 	call z,toca_caja		;b964   ; toca_caja: acarreo si el actor toca la caja del personaje
 	ld a,(ix+000h)		;b967   ; lee el tipo del actor
-	cp 001h		;b96a
+	cp 001h		;b96a   ; ...y el 1: el choque de la caja
 	call z,toca_caja		;b96c   ; toca_caja: acarreo si el actor toca la caja del personaje
 	ld a,(ix+000h)		;b96f   ; lee el tipo del actor
-	cp 007h		;b972
+	cp 007h		;b972   ; el tipo 7: el alcance crece con su fotograma
 	ret nz			;b974
 	ld a,(ix+010h)		;b975   ; lee el fotograma del actor (p02:8A42)
 	and a			;b978
-	ret z			;b979
-	add a,a			;b97a
+	ret z			;b979   ; fotograma 0: nada
+	add a,a			;b97a   ; * 16
 	add a,a			;b97b
 	add a,a			;b97c
 	add a,a			;b97d
@@ -3521,67 +3521,67 @@ golpe_al_personaje:		; segun el tipo (1, 3, 7) si toca la caja del personaje
 	push bc			;b980
 	call 073fdh		;b981   ; caja_del_personaje: la caja del personaje segun 0xC253 y 0xC240 (p01:7429)
 	exx			;b984
-	ld a,e			;b985
+	ld a,e			;b985   ; la altura de la caja (E' * 2)...
 	add a,a			;b986
 	exx			;b987
 	pop bc			;b988
-	add a,c			;b989
+	add a,c			;b989   ; ...+ el fotograma * 16
 	ld b,a			;b98a
 	pop de			;b98b
 	ld a,e			;b98c
-	sub (ix+003h)		;b98d   ; le resta la Y del actor
-	cp b			;b990
+	sub (ix+003h)		;b98d   ; la distancia en Y...
+	cp b			;b990   ; ...fuera: nada
 	ret nc			;b991
 	ld a,d			;b992
-	sub (ix+005h)		;b993   ; le resta la X del actor
+	sub (ix+005h)		;b993   ; la distancia en X, por debajo de 16
 	jr nc,L_B99A		;b996
 	neg		;b998
 L_B99A:
 	cp 010h		;b99a
 	ret nc			;b99c
-	ld hl,0ccb7h		;b99d
+	ld hl,0ccb7h		;b99d   ; 0xCCB7 en marcha: no dana
 	ld a,(hl)			;b9a0
 	and a			;b9a1
 	ret nz			;b9a2
-	ld (hl),00ah		;b9a3
+	ld (hl),00ah		;b9a3   ; 10 cuadros sin otro golpe
 	call 047ebh		;b9a5   ; byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
-	ld b,004h		;b9a8
+	ld b,004h		;b9a8   ; 4 de vida menos
 	jp L_B9EA		;b9aa
 toca_caja:		; acarreo si el actor toca la caja del personaje
 	push de			;b9ad
 	call 073fdh		;b9ae   ; caja_del_personaje: la caja del personaje segun 0xC253 y 0xC240 (p01:7429)
 	exx			;b9b1
-	ld a,e			;b9b2
+	ld a,e			;b9b2   ; la altura de la caja (E' * 2)...
 	add a,a			;b9b3
 	exx			;b9b4
-	add a,006h		;b9b5
+	add a,006h		;b9b5   ; ...+ 6
 	ld b,a			;b9b7
 	pop de			;b9b8
 	ld a,(ix+003h)		;b9b9   ; lee la Y del actor
-	sub 006h		;b9bc
+	sub 006h		;b9bc   ; la distancia en Y (- 6)...
 	sub e			;b9be
 	neg		;b9bf
-	cp b			;b9c1
+	cp b			;b9c1   ; ...fuera: sin acarreo
 	ret nc			;b9c2
 	ld a,(ix+005h)		;b9c3   ; lee la X del actor
-	sub d			;b9c6
+	sub d			;b9c6   ; la distancia en X...
 	jr nc,L_B9CB		;b9c7
 	neg		;b9c9
 L_B9CB:
-	cp 00ch		;b9cb
+	cp 00ch		;b9cb   ; ...por debajo de 12
 	ret nc			;b9cd
 	ld a,(0c256h)		;b9ce   ; lee invencible
-	and a			;b9d1
+	and a			;b9d1   ; invencible: nada
 	ret nz			;b9d2
 	ld (ix+012h),001h		;b9d3   ; la vida del actor (p01:721A) = 0x01
 	ld (ix+013h),000h		;b9d7   ; las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
-	call 047ebh		;b9db   ; byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
+	call 047ebh		;b9db   ; HL = la vida (byte 5)
 	ld a,(0c205h)		;b9de   ; lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
-	rra			;b9e1
+	rra			;b9e1   ; con el cartucho 07 50 (bit 1)...
 	rra			;b9e2
-	ld a,008h		;b9e3
+	ld a,008h		;b9e3   ; ...8 de vida menos...
 	jr nc,L_B9E9		;b9e5
-	ld a,004h		;b9e7
+	ld a,004h		;b9e7   ; ...o 4
 L_B9E9:
 	ld b,a			;b9e9
 L_B9EA:
@@ -3609,53 +3609,53 @@ DATA_resto_B9F7:
 
 pisa_actor:		; en accion 0 o 2, los tipos 2 y 4 junto al personaje
 	ld a,(0c24bh)		;ba0c   ; lee la accion del personaje (4 muere, 5 escalera)
-	and a			;ba0f
+	and a			;ba0f   ; en la accion 0 o 2...
 	jr z,L_BA15		;ba10
 	cp 002h		;ba12
 	ret nz			;ba14
 L_BA15:
 	ld a,(ix+000h)		;ba15   ; lee el tipo del actor
-	cp 002h		;ba18
+	cp 002h		;ba18   ; el tipo 2 (p03:BA5A)...
 	jr z,L_BA5A		;ba1a
-	cp 004h		;ba1c
+	cp 004h		;ba1c   ; ...o el 4
 	ret nz			;ba1e
-	ld a,(ix+005h)		;ba1f   ; lee la X del actor
+	ld a,(ix+005h)		;ba1f   ; la distancia en X...
 	sub d			;ba22
 	jr nc,L_BA27		;ba23
 	neg		;ba25
 L_BA27:
-	cp 00ch		;ba27
+	cp 00ch		;ba27   ; ...por debajo de 12
 	ret nc			;ba29
 	push de			;ba2a
 	call 073fdh		;ba2b   ; caja_del_personaje: la caja del personaje segun 0xC253 y 0xC240 (p01:7429)
 	pop de			;ba2e
 	exx			;ba2f
-	ld a,e			;ba30
+	ld a,e			;ba30   ; la altura de la caja (E' * 2)
 	add a,a			;ba31
 	exx			;ba32
 	ld l,a			;ba33
 	ld a,(ix+01bh)		;ba34
-	and a			;ba37
+	and a			;ba37   ; con 0x1B, mira la ficha (p03:BA49)
 	jr nz,L_BA49		;ba38
 	ld a,(ix+008h)		;ba3a   ; lee la velocidad Y del actor (alta)
-	rla			;ba3d
+	rla			;ba3d   ; subiendo: nada
 	ret c			;ba3e
-	ld a,e			;ba3f
+	ld a,e			;ba3f   ; la Y de arriba del personaje...
 	sub l			;ba40
-	sub (ix+003h)		;ba41   ; le resta la Y del actor
-	cp 0f0h		;ba44
+	sub (ix+003h)		;ba41   ; ...- la del actor...
+	cp 0f0h		;ba44   ; ...la cabeza de 1 a 16 por encima de la Y del actor: aplastado
 	ret c			;ba46
 	jr L_BA52		;ba47
 L_BA49:
-	ld a,e			;ba49
+	ld a,e			;ba49   ; la ficha de encima de la cabeza (+ 8)...
 	sub l			;ba4a
 	add a,008h		;ba4b
 	ld e,a			;ba4d
 	call 0704ch		;ba4e   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
-	ret nc			;ba51
+	ret nc			;ba51   ; ...solida: aplastado
 L_BA52:
 	call 047ebh		;ba52   ; byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
-	ld (hl),000h		;ba55
+	ld (hl),000h		;ba55   ; la vida a cero
 	jp 04752h		;ba57   ; barra_de_vida: la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
 L_BA5A:
 	ld a,(ix+005h)		;ba5a   ; lee la X del actor
@@ -3663,7 +3663,7 @@ L_BA5A:
 	jr nc,L_BA62		;ba5e
 	neg		;ba60
 L_BA62:
-	cp 018h		;ba62
+	cp 018h		;ba62   ; el tipo 2: a menos de 0x18 en X...
 	ret nc			;ba64
 	push de			;ba65
 	call 073fdh		;ba66   ; caja_del_personaje: la caja del personaje segun 0xC253 y 0xC240 (p01:7429)
@@ -3672,7 +3672,7 @@ L_BA62:
 	ld a,e			;ba6b
 	add a,a			;ba6c
 	exx			;ba6d
-	ld l,a			;ba6e
+	ld l,a			;ba6e   ; ...y la cabeza de 1 a 4 por encima de la Y del actor: aplastado
 	ld a,e			;ba6f
 	sub l			;ba70
 	sub (ix+003h)		;ba71   ; le resta la Y del actor
@@ -3682,47 +3682,47 @@ L_BA62:
 pared_al_empujar:		; las casillas a 6 puntos del personaje al empujarlo
 	ld a,(ix+01bh)		;ba79
 	and a			;ba7c
-	ret z			;ba7d
+	ret z			;ba7d   ; sin 0x1B, nada
 L_BA7E:
 	ld a,(ix+00ah)		;ba7e   ; lee la velocidad X del actor (alta)
-	rla			;ba81
+	rla			;ba81   ; el sentido de la velocidad X
 L_BA82:
-	ld c,006h		;ba82
+	ld c,006h		;ba82   ; + 6 a la derecha...
 	jr nc,L_BA88		;ba84
-	ld c,0fah		;ba86
+	ld c,0fah		;ba86   ; ...- 6 a la izquierda
 L_BA88:
 	ld a,(0c246h)		;ba88   ; lee la X del personaje
 	add a,c			;ba8b
 	ld d,a			;ba8c
-	ld a,(0c244h)		;ba8d   ; lee la Y del personaje
+	ld a,(0c244h)		;ba8d   ; a la altura del personaje - 8...
 	sub 008h		;ba90
 	ld e,a			;ba92
 	push de			;ba93
 	call 0704ch		;ba94   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	pop de			;ba97
-	ret c			;ba98
-	ld a,e			;ba99
+	ret c			;ba98   ; ...con pared, acarreo
+	ld a,e			;ba99   ; y 16 mas arriba
 	sub 010h		;ba9a
 	ld e,a			;ba9c
 	jp 0704ch		;ba9d   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 tipo_2_o_negativo:		; segun el tipo, p03:BA7E o p03:BA82
 	ld a,(ix+000h)		;baa0   ; lee el tipo del actor
 	cp 002h		;baa3
-	jr z,L_BA7E		;baa5
-	rla			;baa7
+	jr z,L_BA7E		;baa5   ; el tipo 2: segun su velocidad
+	rla			;baa7   ; los demas: segun el signo del tipo, al reves
 	ccf			;baa8
 	jr L_BA82		;baa9
 L_BAAB:
-	djnz L_BAB6		;baab
+	djnz L_BAB6		;baab   ; paso 1: la espera...
 	dec (ix+016h)		;baad
 	ret nz			;bab0
-	ld hl,00108h		;bab1
+	ld hl,00108h		;bab1   ; ...el fotograma 1 y 8 cuadros
 	jr L_BB30		;bab4
 L_BAB6:
-	djnz L_BAD0		;bab6
+	djnz L_BAD0		;bab6   ; paso 2: la espera...
 	dec (ix+016h)		;bab8
 	ret nz			;babb
-	call 08b7eh		;babc   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
+	call 08b7eh		;babc   ; ...y cae: la velocidad Y = L, la aceleracion 0x40
 	xor a			;babf
 	ld (ix+00dh),a		;bac0   ; guarda la aceleracion Y del actor (alta)
 	ld (ix+00ch),040h		;bac3   ; la aceleracion Y del actor = 0x40
@@ -3731,27 +3731,27 @@ L_BAB6:
 	ld (ix+00bh),a		;bacb   ; guarda si el actor acelera (p02:8393)
 	jr L_BAEB		;bace
 L_BAD0:
-	djnz L_BAF2		;bad0
+	djnz L_BAF2		;bad0   ; paso 3: cae hasta la Y 0xD0...
 	ld d,(ix+005h)		;bad2   ; lee la X del actor
 	ld a,(ix+003h)		;bad5   ; lee la Y del actor
 	cp 0d0h		;bad8
 	jr nc,L_BAF8		;bada
-	add a,004h		;badc
+	add a,004h		;badc   ; ...o hasta una ficha solida debajo
 	ld e,a			;bade
 	call 0704ch		;badf   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	ret nc			;bae2
-	ld (ix+016h),008h		;bae3
+	ld (ix+016h),008h		;bae3   ; 8 cuadros parado
 	ld (ix+006h),000h		;bae7   ; si el actor se mueve (p02:8367) = 0x00
 L_BAEB:
-	inc (ix+010h)		;baeb   ; sube el fotograma del actor (p02:8A42)
+	inc (ix+010h)		;baeb   ; el fotograma y el paso siguientes
 	inc (ix+001h)		;baee   ; sube el paso del actor
 	ret			;baf1
 L_BAF2:
-	djnz L_BB0E		;baf2
+	djnz L_BB0E		;baf2   ; paso 4: la espera...
 	dec (ix+016h)		;baf4
 	ret nz			;baf7
 L_BAF8:
-	xor a			;baf8
+	xor a			;baf8   ; ...escondido (Y 0xF0), parado, paso 5 y la espera de 0x11
 	ld (ix+003h),0f0h		;baf9   ; la Y del actor = 0xF0
 	ld (ix+006h),a		;bafd   ; guarda si el actor se mueve (p02:8367)
 	ld (ix+001h),005h		;bb00   ; el paso del actor = 0x05
@@ -3760,32 +3760,32 @@ L_BAF8:
 	ld (ix+016h),a		;bb0a
 	ret			;bb0d
 L_BB0E:
-	djnz L_BB1F		;bb0e
+	djnz L_BB1F		;bb0e   ; paso 5: la espera...
 	dec (ix+016h)		;bb10
 	ret nz			;bb13
-	ld a,(ix+018h)		;bb14
+	ld a,(ix+018h)		;bb14   ; ...vuelve a su Y (0x18) y al paso 0
 	ld (ix+003h),a		;bb17   ; guarda la Y del actor
 	ld (ix+001h),000h		;bb1a   ; el paso del actor = 0x00
 	ret			;bb1e
 L_BB1F:
-	ld a,(ix+003h)		;bb1f   ; lee la Y del actor
+	ld a,(ix+003h)		;bb1f   ; paso 0: guarda su Y en 0x18...
 	ld (ix+018h),a		;bb22
 	xor a			;bb25
 	ld (ix+008h),a		;bb26   ; guarda la velocidad Y del actor (alta)
-	inc a			;bb29
+	inc a			;bb29   ; ...el choque con el personaje (bit 0)...
 	ld (ix+013h),a		;bb2a   ; guarda las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
-	ld hl,00008h		;bb2d
+	ld hl,00008h		;bb2d   ; ...el fotograma 0 y 8 cuadros
 L_BB30:
-	ld (ix+010h),h		;bb30   ; guarda el fotograma del actor (p02:8A42)
+	ld (ix+010h),h		;bb30   ; H: el fotograma; L: la espera
 	ld (ix+016h),l		;bb33
 	inc (ix+001h)		;bb36   ; sube el paso del actor
 	ret			;bb39
 L_BB3A:
-	djnz L_BBB5		;bb3a
+	djnz L_BBB5		;bb3a   ; paso 1: cada 4 cuadros...
 	ld a,(0c00dh)		;bb3c   ; lee la cuenta de cuadros del juego
 	and 003h		;bb3f
 	jr nz,L_BB55		;bb41
-	ld a,(ix+00ah)		;bb43   ; lee la velocidad X del actor (alta)
+	ld a,(ix+00ah)		;bb43   ; ...el fotograma + 1 a la derecha o - 1 a la izquierda (de 0 a 3): rueda
 	rla			;bb46
 	ld a,001h		;bb47
 	jr nc,L_BB4D		;bb49
@@ -3795,11 +3795,11 @@ L_BB4D:
 	and 003h		;bb50
 	ld (ix+010h),a		;bb52   ; guarda el fotograma del actor (p02:8A42)
 L_BB55:
-	ld a,(ix+005h)		;bb55   ; lee la X del actor
+	ld a,(ix+005h)		;bb55   ; en los bordes (X 0xF0-0x0F), se borra
 	sub 0f0h		;bb58
 	cp 020h		;bb5a
 	jp c,L_BC0D		;bb5c
-	ld a,(ix+005h)		;bb5f   ; lee la X del actor
+	ld a,(ix+005h)		;bb5f   ; el suelo: la ficha de (X - 0x10, Y)...
 	sub 010h		;bb62
 	ld d,a			;bb64
 	ld e,(ix+003h)		;bb65   ; lee la Y del actor
@@ -3807,20 +3807,20 @@ L_BB55:
 	call 0704ch		;bb69   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	pop de			;bb6c
 	jr c,L_BB87		;bb6d
-	ld a,d			;bb6f
+	ld a,d			;bb6f   ; ...o la de (X + 0x0F, Y)
 	add a,01fh		;bb70
 	ld d,a			;bb72
 	call 0704ch		;bb73   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	jr c,L_BB87		;bb76
 L_BB78:
-	xor a			;bb78
+	xor a			;bb78   ; sin suelo: parado en X, cae (velocidad Y 2) y el paso 2
 	ld (ix+00ah),a		;bb79   ; guarda la velocidad X del actor (alta)
 	ld (ix+016h),a		;bb7c
 	ld (ix+008h),002h		;bb7f   ; la velocidad Y del actor (alta) = 0x02
 	inc (ix+001h)		;bb83   ; sube el paso del actor
 	ret			;bb86
 L_BB87:
-	ld a,(ix+00ah)		;bb87   ; lee la velocidad X del actor (alta)
+	ld a,(ix+00ah)		;bb87   ; la pared: 0x10 por delante...
 	rla			;bb8a
 	ld a,010h		;bb8b
 	jr nc,L_BB91		;bb8d
@@ -3828,61 +3828,61 @@ L_BB87:
 L_BB91:
 	add a,(ix+005h)		;bb91   ; le suma la X del actor
 	ld d,a			;bb94
-	ld a,(ix+003h)		;bb95   ; lee la Y del actor
+	ld a,(ix+003h)		;bb95   ; ...a la Y - 0x18...
 	sub 018h		;bb98
 	ld e,a			;bb9a
 	push de			;bb9b
 	call 0704ch		;bb9c   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	pop de			;bb9f
 	jr c,L_BBAA		;bba0
-	ld a,e			;bba2
+	ld a,e			;bba2   ; ...o a la Y - 8
 	add a,010h		;bba3
 	ld e,a			;bba5
 	call 0704ch		;bba6   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	ret nc			;bba9
 L_BBAA:
-	call 08b03h		;bbaa   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
+	call 08b03h		;bbaa   ; con pared, da la vuelta (0x16 + 1)...
 	inc (ix+016h)		;bbad
 L_BBB0:
-	ld a,01fh		;bbb0
+	ld a,01fh		;bbb0   ; ...con el sonido 0x1F
 	jp 056e3h		;bbb2   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 L_BBB5:
-	djnz L_BBE0		;bbb5
+	djnz L_BBE0		;bbb5   ; paso 2: cae; desde la X 0xE0, se borra
 	ld a,(ix+005h)		;bbb7   ; lee la X del actor
 	cp 0e0h		;bbba
 	jr nc,L_BC0D		;bbbc
-	ld e,(ix+003h)		;bbbe   ; lee la Y del actor
+	ld e,(ix+003h)		;bbbe   ; con suelo en (X, Y)...
 	ld d,(ix+005h)		;bbc1   ; lee la X del actor
 	call 0704ch		;bbc4   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	ret nc			;bbc7
-	ld (ix+008h),000h		;bbc8   ; la velocidad Y del actor (alta) = 0x00
-	ld a,(0c246h)		;bbcc   ; lee la X del personaje
+	ld (ix+008h),000h		;bbc8   ; ...deja de caer...
+	ld a,(0c246h)		;bbcc   ; ...y rueda hacia el personaje, 2 por cuadro...
 	sub (ix+005h)		;bbcf   ; le resta la X del actor
 	ld a,002h		;bbd2
 	jr nc,L_BBD8		;bbd4
 	ld a,0feh		;bbd6
 L_BBD8:
 	ld (ix+00ah),a		;bbd8   ; guarda la velocidad X del actor (alta)
-	dec (ix+001h)		;bbdb   ; baja el paso del actor
+	dec (ix+001h)		;bbdb   ; ...en el paso 1
 	jr L_BBB0		;bbde
 L_BBE0:
-	ld a,(0c246h)		;bbe0   ; lee la X del personaje
+	ld a,(0c246h)		;bbe0   ; paso 0: entra por el lado contrario al personaje...
 	cp 080h		;bbe3
-	ld hl,02002h		;bbe5
-	call c,08b31h		;bbe8   ; niega_hl: HL = -HL
+	ld hl,02002h		;bbe5   ; ...en la X 0x20 a la derecha (2)...
+	call c,08b31h		;bbe8   ; ...o en la 0xDF a la izquierda (-2) si el personaje esta en la mitad izquierda
 	ld (ix+005h),h		;bbeb   ; guarda la X del actor
-	ld (ix+003h),020h		;bbee   ; la Y del actor = 0x20
+	ld (ix+003h),020h		;bbee   ; en la Y 0x20
 	ld (ix+00ah),l		;bbf2   ; guarda la velocidad X del actor (alta)
 	ld (ix+006h),001h		;bbf5   ; si el actor se mueve (p02:8367) = 0x01
 	ld (ix+013h),001h		;bbf9   ; las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x01
 	inc (ix+001h)		;bbfd   ; sube el paso del actor
-	ld d,(ix+005h)		;bc00   ; lee la X del actor
+	ld d,(ix+005h)		;bc00   ; con suelo, rueda; si no, cae
 	ld e,(ix+003h)		;bc03   ; lee la Y del actor
 	call 0704ch		;bc06   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	ret c			;bc09
 	jp L_BB78		;bc0a
 L_BC0D:
-	push ix		;bc0d
+	push ix		;bc0d   ; borrado: los 0x1F bytes que siguen al tipo a cero
 	pop hl			;bc0f
 	inc hl			;bc10
 	ld b,01fh		;bc11
@@ -3892,21 +3892,21 @@ L_BC13:
 	djnz L_BC13		;bc16
 	ret			;bc18
 L_BC19:
-	djnz L_BC41		;bc19
+	djnz L_BC41		;bc19   ; paso 1: con 0x12 a cero...
 	ld a,(ix+012h)		;bc1b   ; lee la vida del actor (p01:721A)
 	and a			;bc1e
 	jr nz,L_BC2F		;bc1f
-	dec (ix+011h)		;bc21   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
+	dec (ix+011h)		;bc21   ; ...cada 0x48 cuadros da la vuelta (X e Y)
 	ret nz			;bc24
 	ld (ix+011h),048h		;bc25   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x48
 	call 08b03h		;bc29   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	jp 08affh		;bc2c   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 L_BC2F:
-	ld (ix+011h),01eh		;bc2f   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x1E
+	ld (ix+011h),01eh		;bc2f   ; con 0x12: 0x1E cuadros, el paso 2...
 	inc (ix+001h)		;bc33   ; sube el paso del actor
-	call 08b7eh		;bc36   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
+	call 08b7eh		;bc36   ; ...las velocidades = L...
 	call 08b89h		;bc39   ; velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
-	ld a,01eh		;bc3c
+	ld a,01eh		;bc3c   ; ...y el sonido 0x1E
 	jp 056e3h		;bc3e   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 L_BC41:
 	djnz L_BC57		;bc41   ; cada 8 cuadros de (ix+0x11), 1 o 2
@@ -3917,33 +3917,33 @@ L_BC41:
 	inc a			;bc4c
 L_BC4D:
 	ld (ix+010h),a		;bc4d   ; guarda el fotograma del actor (p02:8A42)
-	dec (ix+011h)		;bc50   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
+	dec (ix+011h)		;bc50   ; al acabar la cuenta, desaparece
 	ret nz			;bc53
 	jp 076dah		;bc54   ; libera_piezas: libera en 0xCC80 las piezas (ix+0x20) del actor
 L_BC57:
-	inc (ix+001h)		;bc57   ; sube el paso del actor
+	inc (ix+001h)		;bc57   ; paso 0: en marcha, 0x48 cuadros, el choque con el personaje...
 	inc (ix+006h)		;bc5a   ; sube si el actor se mueve (p02:8367)
 	ld (ix+011h),048h		;bc5d   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x48
 	ld (ix+013h),001h		;bc61   ; las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x01
-	ld a,(ix+017h)		;bc65
+	ld a,(ix+017h)		;bc65   ; ...y la direccion de 0x17: 1 arriba...
 	dec a			;bc68
 	ld hl,0ff80h		;bc69
 	jp z,08b82h		;bc6c   ; pon_velocidad_y: (ix+7, 8) = HL
-	dec a			;bc6f
+	dec a			;bc6f   ; ...2 abajo...
 	ld hl,00080h		;bc70
 	jp z,08b82h		;bc73   ; pon_velocidad_y: (ix+7, 8) = HL
-	dec a			;bc76
+	dec a			;bc76   ; ...3 izquierda...
 	ld hl,0ff80h		;bc77
 	jp z,08b8dh		;bc7a   ; pon_velocidad_x: (ix+9, 0x0A) = HL
-	dec a			;bc7d
+	dec a			;bc7d   ; ...4 derecha (medio punto por cuadro)
 	ld hl,00080h		;bc7e
 	jp 08b8dh		;bc81   ; pon_velocidad_x: (ix+9, 0x0A) = HL
 L_BC84:
-	djnz L_BC9C		;bc84
+	djnz L_BC9C		;bc84   ; paso 1: la cuenta...
 	dec (ix+011h)		;bc86   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;bc89
-	call 08b03h		;bc8a   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
-	ld a,(ix+017h)		;bc8d
+	call 08b03h		;bc8a   ; ...da la vuelta...
+	ld a,(ix+017h)		;bc8d   ; ...0x17 cambia de lado...
 	xor 001h		;bc90
 	ld (ix+017h),a		;bc92
 espera_de_15:		; (ix+0x11) = (ix+0x15)
@@ -3951,10 +3951,10 @@ espera_de_15:		; (ix+0x11) = (ix+0x15)
 	ld (ix+011h),a		;bc98   ; guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret			;bc9b
 L_BC9C:
-	inc (ix+001h)		;bc9c   ; sube el paso del actor
+	inc (ix+001h)		;bc9c   ; paso 0: en marcha, la cuenta de 0x15...
 	inc (ix+006h)		;bc9f   ; sube si el actor se mueve (p02:8367)
 	call espera_de_15		;bca2   ; espera_de_15: (ix+0x11) = (ix+0x15)
-	ld a,(ix+017h)		;bca5
+	ld a,(ix+017h)		;bca5   ; ...y la velocidad X: 1 a la derecha, o -1 con 0x17
 	ld de,00100h		;bca8
 	and a			;bcab
 	call nz,08b39h		;bcac   ; niega_de: DE = -DE
@@ -3962,30 +3962,30 @@ L_BC9C:
 	ld (ix+009h),e		;bcb2   ; guarda la velocidad X del actor
 	ret			;bcb5
 L_BCB6:
-	djnz L_BCE1		;bcb6
+	djnz L_BCE1		;bcb6   ; paso 1: bajando...
 	ld a,(ix+008h)		;bcb8   ; lee la velocidad Y del actor (alta)
 	rla			;bcbb
 	jr c,L_BCD0		;bcbc
-	ld a,(ix+003h)		;bcbe   ; lee la Y del actor
+	ld a,(ix+003h)		;bcbe   ; ...hasta la Y 0x19...
 	cp (ix+019h)		;bcc1
 	ret c			;bcc4
-	ld hl,0ff00h		;bcc5
+	ld hl,0ff00h		;bcc5   ; ...luego sube a 1 por cuadro, sin aceleracion
 	call 08b82h		;bcc8   ; pon_velocidad_y: (ix+7, 8) = HL
 	ld (ix+00bh),000h		;bccb   ; si el actor acelera (p02:8393) = 0x00
 	ret			;bccf
 L_BCD0:
-	ld a,(ix+003h)		;bcd0   ; lee la Y del actor
+	ld a,(ix+003h)		;bcd0   ; subiendo, hasta la Y 0x18...
 	cp (ix+018h)		;bcd3
 	ret nc			;bcd6
-	ld (ix+00bh),001h		;bcd7   ; si el actor acelera (p02:8393) = 0x01
+	ld (ix+00bh),001h		;bcd7   ; ...luego baja a 1 por cuadro, acelerando
 	ld hl,00100h		;bcdb
 	jp 08b82h		;bcde   ; pon_velocidad_y: (ix+7, 8) = HL
 L_BCE1:
-	inc (ix+001h)		;bce1   ; sube el paso del actor
+	inc (ix+001h)		;bce1   ; paso 0: en marcha, la cuenta de 0x15...
 	inc (ix+006h)		;bce4   ; sube si el actor se mueve (p02:8367)
 	ld a,(ix+015h)		;bce7
 	ld (ix+011h),a		;bcea   ; guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
-	ld a,(ix+017h)		;bced
+	ld a,(ix+017h)		;bced   ; ...con 0x17, baja (1) acelerando; sin el, sube (-1)
 	ld hl,00100h		;bcf0
 	ld b,001h		;bcf3
 	and a			;bcf5
@@ -3995,10 +3995,10 @@ L_BCE1:
 L_BCFC:
 	call 08b82h		;bcfc   ; pon_velocidad_y: (ix+7, 8) = HL
 	ld (ix+00bh),b		;bcff   ; guarda si el actor acelera (p02:8393)
-	ld bc,00020h		;bd02
+	ld bc,00020h		;bd02   ; la aceleracion 0x20
 	ld (ix+00dh),b		;bd05   ; guarda la aceleracion Y del actor (alta)
 	ld (ix+00ch),c		;bd08   ; guarda la aceleracion Y del actor
-	ld a,(ix+017h)		;bd0b
+	ld a,(ix+017h)		;bd0b   ; los limites: con 0x17, de la Y a la Y + 0x15...
 	and a			;bd0e
 	ld a,(ix+003h)		;bd0f   ; lee la Y del actor
 	jr z,L_BD1E		;bd12
@@ -4007,32 +4007,32 @@ L_BCFC:
 	ld (ix+019h),a		;bd1a
 	ret			;bd1d
 L_BD1E:
-	ld (ix+019h),a		;bd1e
+	ld (ix+019h),a		;bd1e   ; ...sin el, de la Y - 0x15 a la Y
 	sub (ix+015h)		;bd21
 	ld (ix+018h),a		;bd24
 	ret			;bd27
 L_BD28:
-	djnz L_BD3B		;bd28
+	djnz L_BD3B		;bd28   ; paso 1: hasta que se pone 0x1B...
 	ld b,010h		;bd2a
 	ld a,(ix+01bh)		;bd2c
 	and a			;bd2f
 	ret z			;bd30
-	inc (ix+001h)		;bd31   ; sube el paso del actor
+	inc (ix+001h)		;bd31   ; ...en marcha y acelerando
 	inc (ix+006h)		;bd34   ; sube si el actor se mueve (p02:8367)
 	inc (ix+00bh)		;bd37   ; sube si el actor acelera (p02:8393)
 	ret			;bd3a
 L_BD3B:
-	djnz L_BD3E		;bd3b
+	djnz L_BD3E		;bd3b   ; paso 2: nada
 	ret			;bd3d
 L_BD3E:
-	inc (ix+001h)		;bd3e   ; sube el paso del actor
+	inc (ix+001h)		;bd3e   ; paso 0: la velocidad Y = L y la aceleracion 0x40
 	call 08b7eh		;bd41   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
 	ld de,00040h		;bd44
 	ld (ix+00dh),d		;bd47   ; guarda la aceleracion Y del actor (alta)
 	ld (ix+00ch),e		;bd4a   ; guarda la aceleracion Y del actor
 	ret			;bd4d
 L_BD4E:
-	ld a,(0c00dh)		;bd4e   ; lee la cuenta de cuadros del juego
+	ld a,(0c00dh)		;bd4e   ; C = el bit 1 de la cuenta de cuadros
 	and 002h		;bd51
 	ld c,000h		;bd53
 	jr z,L_BD58		;bd55
@@ -4041,41 +4041,41 @@ L_BD58:
 	push bc			;bd58
 	call 05421h		;bd59   ; con_13_14_15_segun_c: con 13-14-15: p15:B411 o la otra tabla segun C
 	pop bc			;bd5c
-	djnz L_BD6C		;bd5d
+	djnz L_BD6C		;bd5d   ; paso 1: la espera...
 	dec (ix+016h)		;bd5f
 	ret nz			;bd62
-	inc (ix+013h)		;bd63   ; sube las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
+	inc (ix+013h)		;bd63   ; ...el choque y 2 cuadros
 	ld (ix+016h),002h		;bd66
 	jr L_BD99		;bd6a
 L_BD6C:
-	djnz L_BD93		;bd6c
+	djnz L_BD93		;bd6c   ; paso 2: el fotograma siguiente tras la espera...
 	dec (ix+016h)		;bd6e
 	ret nz			;bd71
 	inc (ix+010h)		;bd72   ; sube el fotograma del actor (p02:8A42)
 	ld a,(ix+010h)		;bd75   ; lee el fotograma del actor (p02:8A42)
-	cp 004h		;bd78
+	cp 004h		;bd78   ; ...en el 4, 0x3C cuadros...
 	ld c,03ch		;bd7a
 	jr z,L_BD84		;bd7c
-	cp 008h		;bd7e
+	cp 008h		;bd7e   ; ...hasta el 8, 2 cada uno...
 	jr nc,L_BD88		;bd80
 	ld c,002h		;bd82
 L_BD84:
 	ld (ix+016h),c		;bd84
 	ret			;bd87
 L_BD88:
-	xor a			;bd88
+	xor a			;bd88   ; ...en el 8, todo a cero: paso 0, sin choque
 	ld (ix+001h),a		;bd89   ; guarda el paso del actor
 	ld (ix+010h),a		;bd8c   ; guarda el fotograma del actor (p02:8A42)
 	ld (ix+013h),a		;bd8f   ; guarda las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
 	ret			;bd92
 L_BD93:
-	ld a,(ix+011h)		;bd93   ; lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
+	ld a,(ix+011h)		;bd93   ; paso 0: la espera de 0x11 y el paso 1
 	ld (ix+016h),a		;bd96
 L_BD99:
 	inc (ix+001h)		;bd99   ; sube el paso del actor
 	ret			;bd9c
 L_BD9D:
-	djnz L_BDDF		;bd9d
+	djnz L_BDDF		;bd9d   ; paso 1: cada 8 cuadros, 0x16 + 2 y el dibujo
 	ld a,(0c00dh)		;bd9f   ; lee la cuenta de cuadros del juego
 	and 007h		;bda2
 	ret nz			;bda4
@@ -4085,12 +4085,12 @@ L_BDAB:
 	ld d,(ix+005h)		;bdab   ; lee la X del actor
 	ld e,(ix+003h)		;bdae   ; lee la Y del actor
 	push de			;bdb1
-	ld a,(ix+016h)		;bdb2
+	ld a,(ix+016h)		;bdb2   ; la X + (0x16 and 7)
 	and 007h		;bdb5
 	add a,d			;bdb7
 	ld d,a			;bdb8
-	ld b,007h		;bdb9
-	ld hl,0a858h		;bdbb
+	ld b,007h		;bdb9   ; 7 trozos de 8 x 8...
+	ld hl,0a858h		;bdbb   ; ...de (0xA8, 0x58) de la pagina 1
 L_BDBE:
 	push hl			;bdbe
 	push de			;bdbf
@@ -4100,46 +4100,46 @@ L_BDBE:
 	pop bc			;bdc7
 	pop de			;bdc8
 	pop hl			;bdc9
-	ld a,d			;bdca
+	ld a,d			;bdca   ; 8 a la derecha
 	add a,008h		;bdcb
 	ld d,a			;bdcd
 	djnz L_BDBE		;bdce
 	pop de			;bdd0
-	ld a,094h		;bdd1
+	ld a,094h		;bdd1   ; el caracter 0x94 en (X, Y)...
 	call 04d86h		;bdd3   ; caracter_de_la_fuente: el caracter A de la fuente de la pagina 1 a (D, E) (HMMM)
-	ld a,d			;bdd6
+	ld a,d			;bdd6   ; ...y el 0x96 en (X + 0x38, Y)
 	add a,038h		;bdd7
 	ld d,a			;bdd9
 	ld a,096h		;bdda
 	jp 04d86h		;bddc   ; caracter_de_la_fuente: el caracter A de la fuente de la pagina 1 a (D, E) (HMMM)
 L_BDDF:
-	djnz L_BDEC		;bddf
+	djnz L_BDEC		;bddf   ; paso 2: cada 8 cuadros, 0x16 - 1 y el dibujo
 	ld a,(0c00dh)		;bde1   ; lee la cuenta de cuadros del juego
 	and 007h		;bde4
 	ret nz			;bde6
 	dec (ix+016h)		;bde7
 	jr L_BDAB		;bdea
 L_BDEC:
-	ld a,(ix+017h)		;bdec
+	ld a,(ix+017h)		;bdec   ; paso 0: sin 0x17, paso 1 con 0x16 = 0xFF...
 	and a			;bdef
 	ld bc,001ffh		;bdf0
 	jr z,L_BDF8		;bdf3
-	ld bc,00208h		;bdf5
+	ld bc,00208h		;bdf5   ; ...con 0x17, paso 2 con 0x16 = 8
 L_BDF8:
 	ld (ix+001h),b		;bdf8   ; guarda el paso del actor
 	ld (ix+016h),c		;bdfb
 	ret			;bdfe
 L_BDFF:
-	dec b			;bdff
+	dec b			;bdff   ; paso 1 en p03:BE27
 	jr z,L_BE27		;be00
-	ld a,(ix+01fh)		;be02
+	ld a,(ix+01fh)		;be02   ; paso 0: espera a que se ponga 0x1F...
 	and a			;be05
 	ret z			;be06
-	call copia_hueco_enemigo		;be07   ; copia_hueco_enemigo: copia 16 x 24 del hueco del enemigo (p01:780D) a su posicion
+	call copia_hueco_enemigo		;be07   ; ...el fondo y el dibujo de (0x88, 0)...
 	call dibujo_8800		;be0a   ; dibujo_8800: copia 16 x 16 de (0x88, 0) a la posicion del actor con TIMP
-	ld (ix+011h),008h		;be0d   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x08
+	ld (ix+011h),008h		;be0d   ; ...8 cuadros y el paso 1...
 	inc (ix+001h)		;be11   ; sube el paso del actor
-	ld hl,0cca3h		;be14
+	ld hl,0cca3h		;be14   ; ...con el sonido 0x1A o 0x1B, alternando (0xCCA3)
 	ld a,(hl)			;be17
 	and a			;be18
 	ld a,01ah		;be19
@@ -4152,89 +4152,89 @@ L_BE1F:
 	ld (hl),a			;be25
 	ret			;be26
 L_BE27:
-	dec (ix+011h)		;be27   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
+	dec (ix+011h)		;be27   ; paso 1: tras 8 cuadros...
 	ret nz			;be2a
-	call copia_hueco_enemigo		;be2b   ; copia_hueco_enemigo: copia 16 x 24 del hueco del enemigo (p01:780D) a su posicion
+	call copia_hueco_enemigo		;be2b   ; ...el fondo y el dibujo de (0x78, 0)...
 	call 077f9h		;be2e   ; dibujo_del_actor_78: copia 16 x 16 de (0x78, 0) con TIMP a la X e Y del actor
-	xor a			;be31
+	xor a			;be31   ; ...paso 0 y 0x1F a cero
 	ld (ix+001h),a		;be32   ; guarda el paso del actor
 	ld (ix+01fh),a		;be35
 	ret			;be38
 copia_hueco_enemigo:		; copia 16 x 24 del hueco del enemigo (p01:780D) a su posicion
 	call 0780dh		;be39   ; hueco_del_enemigo: DE = la posicion del dibujo del enemigo segun su numero en 0xCD00
-	ex de,hl			;be3c
-	ld d,(ix+005h)		;be3d   ; lee la X del actor
+	ex de,hl			;be3c   ; HL = el hueco
+	ld d,(ix+005h)		;be3d   ; a (X, Y - 8)...
 	ld a,(ix+003h)		;be40   ; lee la Y del actor
 	sub 008h		;be43
 	ld e,a			;be45
-	ld bc,01018h		;be46
+	ld bc,01018h		;be46   ; ...16 x 24
 	jp 04841h		;be49   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 dibujo_8800:		; copia 16 x 16 de (0x88, 0) a la posicion del actor con TIMP
 	ld hl,00088h		;be4c
-	ld d,(ix+005h)		;be4f   ; lee la X del actor
+	ld d,(ix+005h)		;be4f   ; a (X, Y - 8)...
 	ld a,(ix+003h)		;be52   ; lee la Y del actor
 	sub 008h		;be55
 	ld e,a			;be57
-	ld bc,01010h		;be58
+	ld bc,01010h		;be58   ; ...16 x 16 con TIMP
 	ld a,048h		;be5b
 	jp 04c73h		;be5d   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 L_BE60:
 	ld a,(ix+012h)		;be60   ; lee la vida del actor (p01:721A)
 	and a			;be63
-	ret z			;be64
-	djnz L_BECE		;be65
+	ret z			;be64   ; sin vida: nada
+	djnz L_BECE		;be65   ; paso 1: se abre, una linea de cada lado por cuadro
 	ld b,(ix+016h)		;be67
 	ld l,(ix+003h)		;be6a   ; lee la Y del actor
-	ld a,(ix+005h)		;be6d   ; lee la X del actor
+	ld a,(ix+005h)		;be6d   ; la linea izquierda en X + 0x0F - 0x16...
 	add a,00fh		;be70
 	sub b			;be72
 	ld h,a			;be73
 	push hl			;be74
-	ld bc,0100fh		;be75
+	ld bc,0100fh		;be75   ; ...de 16 puntos, color 0x0F
 	call 04b0ch		;be78   ; linea_vertical: LINE (0x70) vertical (ARG = 1) de B puntos en (H, L), color C
 	pop hl			;be7b
-	ld a,(ix+016h)		;be7c
+	ld a,(ix+016h)		;be7c   ; la derecha en X + 0x0F + 0x16 + 1
 	add a,a			;be7f
 	inc a			;be80
 	add a,h			;be81
 	ld h,a			;be82
 	ld bc,0100fh		;be83
 	call 04b0ch		;be86   ; linea_vertical: LINE (0x70) vertical (ARG = 1) de B puntos en (H, L), color C
-	inc (ix+016h)		;be89
+	inc (ix+016h)		;be89   ; 0x16 + 1
 	ld a,(ix+016h)		;be8c
-	cp 008h		;be8f
+	cp 008h		;be8f   ; en 8, 2 fichas del mapa a cero
 	jr z,L_BE9E		;be91
-	cp 010h		;be93
+	cp 010h		;be93   ; en 16, 4 fichas y el paso 2
 	ret c			;be95
 	inc (ix+001h)		;be96   ; sube el paso del actor
-	ld bc,00400h		;be99
+	ld bc,00400h		;be99   ; 4 fichas desde la columna 0
 	jr L_BEA1		;be9c
 L_BE9E:
-	ld bc,00201h		;be9e
+	ld bc,00201h		;be9e   ; 2 fichas desde la columna 1
 L_BEA1:
-	ld a,(ix+003h)		;bea1   ; lee la Y del actor
+	ld a,(ix+003h)		;bea1   ; la fila de (Y - 0x14) / 8...
 	sub 014h		;bea4
 	and 0f8h		;bea6
 	ld h,000h		;bea8
 	ld l,a			;beaa
-	add hl,hl			;beab
+	add hl,hl			;beab   ; ...* 32...
 	add hl,hl			;beac
-	ld a,(ix+005h)		;bead   ; lee la X del actor
+	ld a,(ix+005h)		;bead   ; ...+ X / 8...
 	and 0f8h		;beb0
 	rrca			;beb2
 	rrca			;beb3
 	rrca			;beb4
 	call 04083h		;beb5   ; hl_mas_a: HL = HL + A
-	ld a,l			;beb8
+	ld a,l			;beb8   ; ...+ C
 	add a,c			;beb9
 	ld l,a			;beba
 	ld de,0d200h		;bebb   ; apunta a el mapa de 32 x 24 fichas de la pantalla
 	add hl,de			;bebe
-	ld d,h			;bebf
+	ld d,h			;bebf   ; y la fila de debajo (+ 0x20)
 	ld e,l			;bec0
 	ld a,020h		;bec1
 	call 04088h		;bec3   ; de_mas_a: DE = DE + A
-	xor a			;bec6
+	xor a			;bec6   ; a cero: se puede pasar
 L_BEC7:
 	ld (hl),a			;bec7   ; B bytes de A en HL y en DE
 	ld (de),a			;bec8
@@ -4243,102 +4243,102 @@ L_BEC7:
 	djnz L_BEC7		;becb
 	ret			;becd
 L_BECE:
-	djnz L_BED1		;bece
+	djnz L_BED1		;bece   ; paso 2: nada
 	ret			;bed0
 L_BED1:
-	ld (ix+016h),000h		;bed1
+	ld (ix+016h),000h		;bed1   ; paso 0: 0x16 = 0, paso 1 y el sonido 0x19
 	inc (ix+001h)		;bed5   ; sube el paso del actor
 	ld a,019h		;bed8
 	jp 056e3h		;beda   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 L_BEDD:
-	ld a,(ix+017h)		;bedd
+	ld a,(ix+017h)		;bedd   ; con el bit 7 de 0x17, el otro recorrido (p03:BF4F)
 	rla			;bee0
 	jr c,L_BF4F		;bee1
-	djnz L_BEF1		;bee3
+	djnz L_BEF1		;bee3   ; paso 1: a la derecha hasta la X 0x19 + 0x15...
 	ld a,(ix+019h)		;bee5
 	add a,(ix+015h)		;bee8
 	cp (ix+005h)		;beeb   ; compara con la X del actor
 	ret nc			;beee
-	jr L_BF33		;beef
+	jr L_BF33		;beef   ; ...luego abajo
 L_BEF1:
-	djnz L_BEFF		;bef1
+	djnz L_BEFF		;bef1   ; paso 2: abajo hasta la Y 0x18 + 0x14...
 	ld a,(ix+018h)		;bef3
 	add a,(ix+014h)		;bef6
 	cp (ix+003h)		;bef9   ; compara con la Y del actor
 	ret nc			;befc
-	jr L_BF41		;befd
+	jr L_BF41		;befd   ; ...luego a la izquierda
 L_BEFF:
-	djnz L_BF0A		;beff
+	djnz L_BF0A		;beff   ; paso 3: a la izquierda hasta la X 0x19...
 	ld a,(ix+019h)		;bf01
 	cp (ix+005h)		;bf04   ; compara con la X del actor
 	ret c			;bf07
-	jr L_BF2C		;bf08
+	jr L_BF2C		;bf08   ; ...luego arriba
 L_BF0A:
-	djnz L_BF15		;bf0a
+	djnz L_BF15		;bf0a   ; paso 4: arriba hasta la Y 0x18...
 	ld a,(ix+018h)		;bf0c
 	cp (ix+003h)		;bf0f   ; compara con la Y del actor
 	ret c			;bf12
-	jr L_BF26		;bf13
+	jr L_BF26		;bf13   ; ...luego a la derecha
 L_BF15:
-	ld (ix+006h),001h		;bf15   ; si el actor se mueve (p02:8367) = 0x01
+	ld (ix+006h),001h		;bf15   ; paso 0: en marcha, y segun 0x17...
 	ld a,(ix+017h)		;bf19
 	and 07fh		;bf1c
-	jr z,L_BF2C		;bf1e
-	dec a			;bf20
+	jr z,L_BF2C		;bf1e   ; ...0: arriba...
+	dec a			;bf20   ; ...1: abajo...
 	jr z,L_BF33		;bf21
-	dec a			;bf23
+	dec a			;bf23   ; ...2: a la izquierda; si no, a la derecha
 	jr z,L_BF41		;bf24
 L_BF26:
-	ld hl,00100h		;bf26
+	ld hl,00100h		;bf26   ; a la derecha (1 por cuadro): paso 1
 	ld a,h			;bf29
 	jr L_BF46		;bf2a
 L_BF2C:
-	ld hl,0ff00h		;bf2c
+	ld hl,0ff00h		;bf2c   ; arriba: paso 4
 	ld a,004h		;bf2f
 	jr L_BF38		;bf31
 L_BF33:
-	ld hl,00100h		;bf33
+	ld hl,00100h		;bf33   ; abajo: paso 2
 	ld a,002h		;bf36
 L_BF38:
-	ld (ix+001h),a		;bf38   ; guarda el paso del actor
+	ld (ix+001h),a		;bf38   ; la velocidad Y = HL y la X a cero
 	call 08b82h		;bf3b   ; pon_velocidad_y: (ix+7, 8) = HL
 	jp 08b89h		;bf3e   ; velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
 L_BF41:
-	ld hl,0ff00h		;bf41
+	ld hl,0ff00h		;bf41   ; a la izquierda: paso 3
 	ld a,003h		;bf44
 L_BF46:
-	ld (ix+001h),a		;bf46   ; guarda el paso del actor
+	ld (ix+001h),a		;bf46   ; la velocidad X = HL y la Y a cero
 	call 08b8dh		;bf49   ; pon_velocidad_x: (ix+9, 0x0A) = HL
 	jp 08b7eh		;bf4c   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
 L_BF4F:
-	djnz L_BF5A		;bf4f
+	djnz L_BF5A		;bf4f   ; con el bit 7: paso 1, hasta la X 0x19, luego abajo
 	ld a,(ix+019h)		;bf51
 	cp (ix+005h)		;bf54   ; compara con la X del actor
 	ret c			;bf57
 	jr L_BF33		;bf58
 L_BF5A:
-	djnz L_BF68		;bf5a
+	djnz L_BF68		;bf5a   ; paso 2: hasta la Y 0x18 + 0x14, luego a la derecha
 	ld a,(ix+018h)		;bf5c
 	add a,(ix+014h)		;bf5f
 	cp (ix+003h)		;bf62   ; compara con la Y del actor
 	ret nc			;bf65
 	jr L_BF92		;bf66
 L_BF68:
-	djnz L_BF76		;bf68
+	djnz L_BF76		;bf68   ; paso 3: hasta la X 0x19 + 0x15, luego arriba
 	ld a,(ix+019h)		;bf6a
 	add a,(ix+015h)		;bf6d
 	cp (ix+005h)		;bf70   ; compara con la X del actor
 	ret nc			;bf73
 	jr L_BF2C		;bf74
 L_BF76:
-	djnz L_BF81		;bf76
+	djnz L_BF81		;bf76   ; paso 4: hasta la Y 0x18, luego a la izquierda
 	ld a,(ix+018h)		;bf78
 	cp (ix+003h)		;bf7b   ; compara con la Y del actor
 	ret c			;bf7e
 	jr L_BF99		;bf7f
 L_BF81:
 	ld (ix+006h),001h		;bf81   ; si el actor se mueve (p02:8367) = 0x01
-	ld a,(ix+017h)		;bf85
+	ld a,(ix+017h)		;bf85   ; paso 0: segun 0x17, 0 arriba, 1 abajo, 2 a la izquierda; si no, a la derecha
 	and 07fh		;bf88
 	jr z,L_BF2C		;bf8a
 	dec a			;bf8c
@@ -4346,28 +4346,28 @@ L_BF81:
 	dec a			;bf8f
 	jr z,L_BF99		;bf90
 L_BF92:
-	ld hl,00100h		;bf92
+	ld hl,00100h		;bf92   ; a la derecha: paso 3
 	ld a,003h		;bf95
 	jr L_BF46		;bf97
 L_BF99:
-	ld hl,0ff00h		;bf99
+	ld hl,0ff00h		;bf99   ; a la izquierda: paso 1
 	ld a,001h		;bf9c
 	jr L_BF46		;bf9e
 L_BFA0:
 	ld d,(ix+005h)		;bfa0   ; lee la X del actor
 	ld e,(ix+003h)		;bfa3   ; lee la Y del actor
 	call 0704ch		;bfa6   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
-	jr nc,L_BFB0		;bfa9
+	jr nc,L_BFB0		;bfa9   ; con suelo debajo, parado
 	ld (ix+006h),000h		;bfab   ; si el actor se mueve (p02:8367) = 0x00
 	ret			;bfaf
 L_BFB0:
-	call tabla_por_estado		;bfb0   ; tabla_por_estado: HL = p03:BFF1[byte 6 del personaje]
+	call tabla_por_estado		;bfb0   ; baja segun el animo del personaje (p03:BFF1)...
 	call 08b82h		;bfb3   ; pon_velocidad_y: (ix+7, 8) = HL
-	ld a,(ix+01bh)		;bfb6
+	ld a,(ix+01bh)		;bfb6   ; ...solo con 0x1B
 	ld (ix+006h),a		;bfb9   ; guarda si el actor se mueve (p02:8367)
 	and a			;bfbc
 	ret z			;bfbd
-	push ix		;bfbe
+	push ix		;bfbe   ; el otro actor de la pareja (0x80 bytes mas alla o mas aca)...
 	pop hl			;bfc0
 	ld a,l			;bfc1
 	rla			;bfc2
@@ -4377,14 +4377,14 @@ L_BFB0:
 L_BFC8:
 	add a,002h		;bfc8
 	ld l,a			;bfca
-	ld e,(hl)			;bfcb
+	ld e,(hl)			;bfcb   ; ...su Y...
 	inc l			;bfcc
 	ld d,(hl)			;bfcd
-	ld a,(hl)			;bfce
+	ld a,(hl)			;bfce   ; ...desde 0x44...
 	cp 044h		;bfcf
 	ret c			;bfd1
 	push hl			;bfd2
-	call tabla_por_estado		;bfd3   ; tabla_por_estado: HL = p03:BFF1[byte 6 del personaje]
+	call tabla_por_estado		;bfd3   ; ...sube lo mismo que baja este
 	call 08b31h		;bfd6   ; niega_hl: HL = -HL
 	add hl,de			;bfd9
 	ex de,hl			;bfda
@@ -4394,9 +4394,9 @@ L_BFC8:
 	ld (hl),e			;bfde
 	ret			;bfdf
 tabla_por_estado:		; HL = p03:BFF1[byte 6 del personaje]
-	ld b,006h		;bfe0
+	ld b,006h		;bfe0   ; el byte 6: el animo
 	call 047edh		;bfe2   ; byte_del_personaje: A = el byte B de la ficha del personaje que se lleva (0xC2B0 + 0xC240 * 32)
-	add a,a			;bfe5
+	add a,a			;bfe5   ; 2 bytes: feliz 2, tranquilo 1, triste 0,5, enfadado 2
 	ld hl,0bff1h		;bfe6
 	call 04083h		;bfe9   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;bfec

@@ -2537,40 +2537,40 @@ puerta_grande:		; en la pantalla 2 de la antesala, la puerta grande (p06:B998)
 puertas_de_la_pantalla:		; las dos puertas de la pantalla 0xCC10 (p06:B97B)
 	ld a,(0cc10h)		;b95f   ; lee la pantalla de la antesala (0-2)
 	push af			;b962
-	add a,a			;b963
+	add a,a			;b963   ; * 16: dos puertas de 8 bytes por pantalla
 	add a,a			;b964
 	add a,a			;b965
 	add a,a			;b966
 	ld hl,0e328h		;b967   ; apunta a las puertas de la antesala (8 bytes cada una)
 	call 04083h		;b96a   ; hl_mas_a: HL = HL + A
 	push hl			;b96d
-	call puerta		;b96e   ; puerta: el marco y, si esta cerrada, la hoja
+	call puerta		;b96e   ; la primera
 	pop hl			;b971
 	pop af			;b972
-	cp 002h		;b973
+	cp 002h		;b973   ; en la pantalla 2 (el templo), solo una
 	ret z			;b975
-	ld a,008h		;b976
+	ld a,008h		;b976   ; la segunda, 8 bytes mas alla
 	call 04083h		;b978   ; hl_mas_a: HL = HL + A
 puerta:		; el marco y, si esta cerrada, la hoja
 	call marco_de_puerta		;b97b   ; el marco; si la puerta esta abierta, nada mas
-	ld a,(hl)			;b97e
+	ld a,(hl)			;b97e   ; el byte 0: abierta?
 	and a			;b97f
 	ret nz			;b980
 	ld e,0a3h		;b981   ; la hoja cerrada en (X + 8 o + 0x0C, 0xA3)
 	inc l			;b983
 	inc l			;b984
-	ld d,(hl)			;b985
+	ld d,(hl)			;b985   ; D = la X (byte 2)
 	dec l			;b986
-	ld a,(hl)			;b987
+	ld a,(hl)			;b987   ; el byte 1: grande o pequena
 	and a			;b988
-	ld c,008h		;b989
+	ld c,008h		;b989   ; + 8 en la pequena...
 	jr z,L_B98F		;b98b
-	ld c,00ch		;b98d
+	ld c,00ch		;b98d   ; ...+ 0x0C en la grande
 L_B98F:
 	ld a,d			;b98f
 	add a,c			;b990
 	ld d,a			;b991
-	ld hl,04068h		;b992
+	ld hl,04068h		;b992   ; la hoja: 0x18 x 0x20 de (0x40, 0x68) de la pagina 1
 	ld bc,01820h		;b995
 copia_timp:		; p00:4C73 con TIMP (0x48)
 	ld a,048h		;b998
@@ -2584,19 +2584,19 @@ marco_de_puerta:		; el marco pequeno (0x28 x 0x28) o grande (0x30 x 0x38)
 	dec l			;b9a3
 	ld a,(hl)			;b9a4
 	and a			;b9a5
-	ld bc,02828h		;b9a6
+	ld bc,02828h		;b9a6   ; el pequeno: 0x28 x 0x28
 	jr z,L_B9B0		;b9a9
 	ld bc,03038h		;b9ab   ; el grande: 0x30 x 0x38 en Y 0x8B
 	ld e,08bh		;b9ae
 L_B9B0:
-	ld hl,01068h		;b9b0
+	ld hl,01068h		;b9b0   ; de (0x10, 0x68) de la pagina 1
 	call copia_timp		;b9b3   ; copia_timp: p00:4C73 con TIMP (0x48)
 	pop hl			;b9b6
-	ld a,(hl)			;b9b7
+	ld a,(hl)			;b9b7   ; cerrada: nada mas
 	and a			;b9b8
 	ret z			;b9b9
 	push hl			;b9ba
-	ld a,(0cc10h)		;b9bb   ; lee la pantalla de la antesala (0-2)
+	ld a,(0cc10h)		;b9bb   ; en el templo, + 8; en las demas, + 4
 	cp 002h		;b9be
 	ld c,004h		;b9c0
 	jr nz,L_B9C6		;b9c2
@@ -2615,33 +2615,33 @@ L_B9C6:
 	ret			;b9d7
 compone_puertas:		; compone en la pagina 1 los marcos y hojas de las puertas
 	ld a,001h		;b9d8
-	ld (0c20bh),a		;b9da   ; guarda las fichas van a la pagina 1
+	ld (0c20bh),a		;b9da   ; las fichas a la pagina 1
 	ld a,(0cc10h)		;b9dd   ; lee la pantalla de la antesala (0-2)
-	cp 002h		;b9e0
+	cp 002h		;b9e0   ; en el templo, otras
 	jr z,L_B9FB		;b9e2
-	ld hl,0bd80h		;b9e4
+	ld hl,0bd80h		;b9e4   ; el marco pequeno: 5 x 5 fichas de p06:BD80 en (0x10, 0x68)
 	ld bc,00505h		;b9e7
 	call bloque_en_1068		;b9ea   ; bloque_en_1068: p06:BA24 en (0x10, 0x68)
-	ld hl,0bd99h		;b9ed
+	ld hl,0bd99h		;b9ed   ; la hoja: 4 filas de 3 de p06:BD99 en (0x40, 0x68)
 	ld bc,00403h		;b9f0
 	ld de,04068h		;b9f3
 	call bloque_de_fichas		;b9f6   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 	jr L_BA10		;b9f9
 L_B9FB:
-	ld hl,0bda5h		;b9fb
+	ld hl,0bda5h		;b9fb   ; el marco grande: 7 filas de 6 de p06:BDA5
 	ld bc,00706h		;b9fe
 	call bloque_en_1068		;ba01   ; bloque_en_1068: p06:BA24 en (0x10, 0x68)
-	ld hl,0bdcfh		;ba04
+	ld hl,0bdcfh		;ba04   ; la hoja: 4 x 3 de p06:BDCF en (0x40, 0x68)
 	ld bc,00403h		;ba07
 	ld de,04068h		;ba0a
 	call bloque_de_fichas		;ba0d   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 L_BA10:
-	ld hl,0bddbh		;ba10
+	ld hl,0bddbh		;ba10   ; la puerta abierta: 2 filas de 4 de p06:BDDB en (0x40, 0x88)
 	ld bc,00204h		;ba13
 	ld de,04088h		;ba16
 	call bloque_de_fichas		;ba19   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 L_BA1C:
-	xor a			;ba1c
+	xor a			;ba1c   ; las fichas, otra vez a la pagina 0
 	ld (0c20bh),a		;ba1d   ; guarda las fichas van a la pagina 1
 	ret			;ba20
 bloque_en_1068:		; p06:BA24 en (0x10, 0x68)
@@ -2649,12 +2649,12 @@ bloque_en_1068:		; p06:BA24 en (0x10, 0x68)
 bloque_de_fichas:		; B filas de C fichas de HL en (D, E)
 	push bc			;ba24
 	push de			;ba25
-	ld b,c			;ba26
+	ld b,c			;ba26   ; B = C fichas por fila
 L_BA27:
 	ld a,(hl)			;ba27   ; una fila de C fichas
 	call 04db4h		;ba28   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 	inc hl			;ba2b
-	ld a,d			;ba2c
+	ld a,d			;ba2c   ; 8 a la derecha
 	add a,008h		;ba2d
 	ld d,a			;ba2f
 	djnz L_BA27		;ba30
@@ -2669,13 +2669,13 @@ puertas_de_la_ruina:		; en la pagina 1, los dibujos de p06:BDE3[ruina] desde (0x
 	ld a,001h		;ba3b
 	ld (0c20bh),a		;ba3d   ; guarda las fichas van a la pagina 1
 	ld a,(0c21dh)		;ba40   ; lee la ruina (0-4)
-	ld hl,0bde3h		;ba43
+	ld hl,0bde3h		;ba43   ; la palabra de la ruina en p06:BDE3
 	call 0543ah		;ba46   ; palabra_a: HL = la palabra A de la tabla HL
-	ld de,000a0h		;ba49
-	ld b,004h		;ba4c
+	ld de,000a0h		;ba49   ; en (0xA0, 0)...
+	ld b,004h		;ba4c   ; ...4 filas...
 L_BA4E:
 	push bc			;ba4e
-	ld b,004h		;ba4f
+	ld b,004h		;ba4f   ; ...de 4 fichas
 	push de			;ba51
 L_BA52:
 	ld a,(hl)			;ba52   ; una fila de 4 fichas del dibujo de la ruina
@@ -2697,26 +2697,26 @@ abre_puertas:		; 0x18 veces, la puerta de la fase de la ruina (p00:5346) en 0xE3
 L_BA6A:
 	push bc			;ba6a
 	call 05346h		;ba6b   ; fase_de_la_ruina: A = 0xC211 - (ruina * 5 + 1): la fase dentro de la ruina
-	add a,a			;ba6e
+	add a,a			;ba6e   ; * 8: la puerta en 0xE328
 	add a,a			;ba6f
 	add a,a			;ba70
 	ld hl,0e328h		;ba71   ; apunta a las puertas de la antesala (8 bytes cada una)
 	call 04083h		;ba74   ; hl_mas_a: HL = HL + A
-	call marco_de_puerta		;ba77   ; marco_de_puerta: el marco pequeno (0x28 x 0x28) o grande (0x30 x 0x38)
+	call marco_de_puerta		;ba77   ; el marco...
 	pop bc			;ba7a
 	push bc			;ba7b
-	ld e,0a3h		;ba7c
+	ld e,0a3h		;ba7c   ; ...y la hoja, en la Y 0xA3...
 	inc l			;ba7e
 	inc l			;ba7f
 	ld d,(hl)			;ba80
 	dec l			;ba81
-	ld a,(hl)			;ba82
+	ld a,(hl)			;ba82   ; ...+ 8 o + 0x0C segun el tamano...
 	and a			;ba83
 	ld c,008h		;ba84
 	jr z,L_BA8A		;ba86
 	ld c,00ch		;ba88
 L_BA8A:
-	ld a,b			;ba8a
+	ld a,b			;ba8a   ; ...+ 0x18 - B: un punto mas a la derecha en cada vuelta
 	sub 018h		;ba8b
 	neg		;ba8d
 	add a,c			;ba8f
@@ -2725,7 +2725,7 @@ L_BA8A:
 	ld hl,04068h		;ba92
 	ld bc,01820h		;ba95
 	call copia_timp		;ba98   ; copia_timp: p00:4C73 con TIMP (0x48)
-	ld b,080h		;ba9b
+	ld b,080h		;ba9b   ; 0x80 x 256 vueltas de espera
 L_BA9D:
 	push bc			;ba9d
 	ld b,000h		;ba9e
@@ -2734,29 +2734,29 @@ L_BAA0:
 	pop bc			;baa2
 	djnz L_BA9D		;baa3
 	pop bc			;baa5
-	djnz L_BA6A		;baa6
-	scf			;baa8
+	djnz L_BA6A		;baa6   ; la vuelta siguiente
+	scf			;baa8   ; acarreo: abierta
 	ret			;baa9
 sprites_de_la_antesala:		; los sprites de los personajes en la antesala (p06:BE2D)
 	ld hl,0c2b0h		;baaa   ; apunta a la ficha del personaje 0 (14 bytes)
 	ld bc,00200h		;baad
 L_BAB0:
-	ld a,(hl)			;bab0
+	ld a,(hl)			;bab0   ; el byte 0: si no ha caido...
 	and a			;bab1
 	jr nz,L_BAB5		;bab2
-	inc c			;bab4
+	inc c			;bab4   ; ...uno mas
 L_BAB5:
 	ld de,00020h		;bab5   ; C = cuantos personajes viven
-	add hl,de			;bab8
+	add hl,de			;bab8   ; la ficha siguiente (0x20 bytes)
 	djnz L_BAB0		;bab9
 	ld de,0de00h		;babb   ; los sprites de los personajes: 4 por cada uno
 	ld hl,0be2dh		;babe
-	ld a,c			;bac1
+	ld a,c			;bac1   ; 4 sprites por personaje
 	add a,a			;bac2
 	add a,a			;bac3
 	ld b,a			;bac4
 	exx			;bac5
-	ld hl,0cc20h		;bac6
+	ld hl,0cc20h		;bac6   ; los patrones de 0xCC20
 	exx			;bac9
 L_BACA:
 	ld a,(0cc12h)		;baca   ; la X: 0xCC12 + dx
@@ -2785,8 +2785,8 @@ L_BAE8:
 	add a,(hl)			;bae9
 	inc hl			;baea
 	exx			;baeb
-	ld (de),a			;baec
-	inc e			;baed
+	ld (de),a			;baec   ; el patron
+	inc e			;baed   ; el color no se toca
 	inc e			;baee
 	djnz L_BACA		;baef
 	ret			;baf1
@@ -2795,20 +2795,20 @@ sale_de_la_fase:		; sentido 0 en la antesala, los sprites de los personajes y el
 	ld (0cc16h),a		;baf3   ; guarda el sentido en la antesala
 	call sprites_de_la_antesala		;baf6   ; sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
 	call 05690h		;baf9   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
-	ld de,0e0a3h		;bafc
-	ld hl,020a0h		;baff
-	ld b,h			;bb02
+	ld de,0e0a3h		;bafc   ; a (0xE0, 0xA3)...
+	ld hl,020a0h		;baff   ; ...de (0x20, 0xA0) de la pagina 1...
+	ld b,h			;bb02   ; ...0x20 lineas
 L_BB03:
 	push bc			;bb03
 	push hl			;bb04
 	push de			;bb05
-	ld bc,02001h		;bb06
+	ld bc,02001h		;bb06   ; una linea de 0x20 x 1
 	call 04841h		;bb09   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 	pop de			;bb0c
 	pop hl			;bb0d
-	inc e			;bb0e
+	inc e			;bb0e   ; la siguiente
 	inc l			;bb0f
-	ld b,080h		;bb10
+	ld b,080h		;bb10   ; 0x80 x 256 vueltas de espera
 L_BB12:
 	push bc			;bb12
 	ld b,000h		;bb13

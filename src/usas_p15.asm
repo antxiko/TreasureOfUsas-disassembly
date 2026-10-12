@@ -2665,64 +2665,64 @@ DATA_resto_BD96:
 
 fichas_de_la_pantalla:		; las 32 x 24 fichas de la pantalla a 0xD200, 6 filas de metabloques de 8
 	ld de,0d200h		;bebf   ; apunta a el mapa de 32 x 24 fichas de la pantalla
-	ld a,006h		;bec2
+	ld a,006h		;bec2   ; 6 filas de metabloques
 L_BEC4:
-	ex af,af'			;bec4
-	ld b,008h		;bec5
+	ex af,af'			;bec4   ; guarda las filas que quedan
+	ld b,008h		;bec5   ; de 8
 L_BEC7:
 	ld a,(hl)			;bec7   ; el metabloque: sus 16 fichas en 0xE400 + n * 16
-	push de			;bec8
+	push de			;bec8   ; DE: el sitio en el mapa
 	exx			;bec9
 	ld bc,0e400h		;beca   ; apunta a los metabloques (16 fichas cada uno)
-	ld h,000h		;becd
+	ld h,000h		;becd   ; HL = n * 16...
 	ld l,a			;becf
 	add hl,hl			;bed0
 	add hl,hl			;bed1
 	add hl,hl			;bed2
 	add hl,hl			;bed3
-	add hl,bc			;bed4
+	add hl,bc			;bed4   ; ...+ 0xE400
 	ld bc,01cffh		;bed5   ; B = 0x1C: de una fila de 4 a la siguiente del mapa (32 - 4)
 	pop de			;bed8
-	ldi		;bed9   ; las 4 filas de 4 fichas al mapa de 0xD200
+	ldi		;bed9   ; fila 0
 	ldi		;bedb
 	ldi		;bedd
 	ldi		;bedf
-	ld a,b			;bee1
+	ld a,b			;bee1   ; la fila siguiente del mapa: + 0x1C
 	add a,e			;bee2
 	ld e,a			;bee3
-	ldi		;bee4
+	ldi		;bee4   ; fila 1
 	ldi		;bee6
 	ldi		;bee8
 	ldi		;beea
 	ld a,b			;beec
 	add a,e			;beed
 	ld e,a			;beee
-	ldi		;beef
+	ldi		;beef   ; fila 2
 	ldi		;bef1
 	ldi		;bef3
 	ldi		;bef5
 	ld a,b			;bef7
 	add a,e			;bef8
 	ld e,a			;bef9
-	ldi		;befa
+	ldi		;befa   ; fila 3
 	ldi		;befc
 	ldi		;befe
 	ldi		;bf00
 	exx			;bf02
 	inc hl			;bf03   ; el siguiente metabloque, 4 casillas a la derecha
-	inc e			;bf04
+	inc e			;bf04   ; 4 a la derecha en el mapa
 	inc e			;bf05
 	inc e			;bf06
 	inc de			;bf07
-	djnz L_BEC7		;bf08
-	ex de,hl			;bf0a
+	djnz L_BEC7		;bf08   ; el metabloque siguiente
+	ex de,hl			;bf0a   ; DE: el principio de la fila...
 	ld bc,00060h		;bf0b   ; la siguiente fila de metabloques: 0x60 mas (3 filas de 32)
 	add hl,bc			;bf0e
-	ex de,hl			;bf0f
+	ex de,hl			;bf0f   ; ...0x80 mas alla en total (4 filas de 32)
 	ex af,af'			;bf10   ; 6 filas
 	dec a			;bf11
 	jp nz,L_BEC4		;bf12
-	ret			;bf15
+	ret			;bf15   ; 6 x 8 metabloques: 32 x 24 fichas
 
 ; ----------------------------------------------------------------------
 ; DATOS relleno_ff: 234 bytes a 0xFF hasta el final del banco: relleno; lo

@@ -59,8 +59,9 @@ ANIMACION = {
     13: ((0, 1), 8, "p02:9BAB: alterna_fotograma con 0"),
     14: ((0x27, 0x28), 8, "p02:9B06: alterna_fotograma con 0x27"),
     15: ((0x79, 0x7A), 4, "p03:A0A5: alterna_79_7b, cada 4 cuadros"),
-    # los jefes del final de las fases (en la ruina 0, la ultima pantalla de
-    # las fases 1-4; vida_por_ruina, p03:AB36, les suma ruina * 16)
+    # los jefes del final de las fases: los mismos cuatro en las cinco ruinas,
+    # uno por fase, de p09:BED3 [X][Y][tipo] (los crea p03:A9C0 en la sala de
+    # p15:BE8E[fase]); vida_por_ruina, p03:AB36, les suma ruina * 16
     30: ((0x45, 0x46), 8, "p03:ABF5: fotograma_45_46, 0x45 o 0x46 segun 0xC00D & 8"),
     31: ((0x47, 0x48), 8, "p03:AE4F: 0x47 o 0x48 segun 0xC00D & 8"),
     32: ((0x49,), 1, "p03:AED8: 0x49 (0x4B al saltar, p03:AFB9)"),

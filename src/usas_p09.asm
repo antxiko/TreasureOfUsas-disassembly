@@ -1341,26 +1341,26 @@ DATA_registro_b7c9_20:
 pantalla_vecina:		; 0xC212 = la vecina del lado 0xC215 (0xC218-0xC21B)
 	ld a,(0c215h)		;b8cc   ; lee el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ld hl,0c218h		;b8cf   ; apunta a la vecina de arriba
-	dec a			;b8d2
+	dec a			;b8d2   ; + lado - 1: la vecina de ese lado
 	add a,l			;b8d3
 	ld l,a			;b8d4
 	jr nc,L_B8D8		;b8d5
 	inc h			;b8d7
 L_B8D8:
 	ld a,(hl)			;b8d8
-	cp 0ffh		;b8d9
+	cp 0ffh		;b8d9   ; 0xFF: sin vecina, nada
 	ret z			;b8db
-	and a			;b8dc
+	and a			;b8dc   ; 0: el lado lleva fuera de la fase
 	jr z,L_B8E3		;b8dd
-	ld (0c212h),a		;b8df   ; guarda la pantalla de la fase (desde 1)
+	ld (0c212h),a		;b8df   ; la vecina es la pantalla nueva
 	ret			;b8e2
 L_B8E3:
-	ld a,001h		;b8e3
+	ld a,001h		;b8e3   ; 0xC226 = 1: se sale de la fase
 	ld (0c226h),a		;b8e5   ; guarda se sale de la fase
 	ret			;b8e8
 vecinas_de_la_pantalla:		; las cuatro vecinas de la pantalla de p09:B921[0xC211] a 0xC218-0xC21B
 	ld a,(0c211h)		;b8e9   ; lee la fase (1-25: ruina * 5 + puerta)
-	add a,a			;b8ec
+	add a,a			;b8ec   ; 2 bytes por fase en p09:B921
 	ld hl,L_B920+1		;b8ed
 	add a,l			;b8f0
 	ld l,a			;b8f1
@@ -1370,34 +1370,34 @@ L_B8F5:
 	ld e,(hl)			;b8f5   ; la tabla de la fase; 2 bytes por pantalla (0xC212 - 1)
 	inc hl			;b8f6
 	ld d,(hl)			;b8f7
-	ex de,hl			;b8f8
-	ld a,(0c212h)		;b8f9   ; lee la pantalla de la fase (desde 1)
+	ex de,hl			;b8f8   ; HL = la tabla de la fase
+	ld a,(0c212h)		;b8f9   ; la pantalla - 1...
 	dec a			;b8fc
-	add a,a			;b8fd
+	add a,a			;b8fd   ; ...* 2 bytes
 	add a,l			;b8fe
 	ld l,a			;b8ff
 	jr nc,L_B903		;b900
 	inc h			;b902
 L_B903:
 	ld de,0c218h		;b903   ; apunta a la vecina de arriba
-	ld b,004h		;b906
+	ld b,004h		;b906   ; 4 vecinas: arriba, abajo, izquierda y derecha
 L_B908:
 	ld a,(hl)			;b908   ; los nibbles de cada byte: primero el alto
-	bit 0,b		;b909
+	bit 0,b		;b909   ; con B par (4 y 2), el nibble alto
 	jr nz,L_B911		;b90b
 	rrca			;b90d
 	rrca			;b90e
 	rrca			;b90f
 	rrca			;b910
 L_B911:
-	and 00fh		;b911
-	cp 00fh		;b913
+	and 00fh		;b911   ; el nibble
+	cp 00fh		;b913   ; 0x0F: sin vecina (0xFF)
 	jr nz,L_B919		;b915
 	ld a,0ffh		;b917
 L_B919:
-	ld (de),a			;b919
+	ld (de),a			;b919   ; a 0xC218 + lado
 	inc de			;b91a
-	bit 0,b		;b91b
+	bit 0,b		;b91b   ; tras el nibble bajo, el byte siguiente
 	jr z,L_B920		;b91d
 	inc hl			;b91f
 L_B920:
@@ -2196,10 +2196,12 @@ DATA_demo_por_ruina:
 	defb 0ffh	; bed2
 
 ; ----------------------------------------------------------------------
-; DATOS registros_p9056: 74 bytes: p02:9056 copia 3 desde p09:BED3 + A a
-;   0xC319; lo leen p02:9050 (74 bytes)
+; DATOS jefe_de_cada_fase: [X][Y][tipo] del jefe de cada fase, 3 bytes por
+;   fase (cero en las salas 5): los tipos 0x1E-0x21 en el mismo orden en las
+;   cinco ruinas; p02:9056 los copia a 0xC319 y p03:A9C0 crea el jefe; lo leen
+;   p02:9050 (74 bytes)
 ;   0xbed3..0xbf1d  (74 bytes)
-DATA_registros_p9056:
+DATA_jefe_de_cada_fase:
 	defb 080h,0c4h,01eh	; bed3
 	defb 080h,064h,01fh	; bed6
 	defb 078h,0c4h,020h	; bed9

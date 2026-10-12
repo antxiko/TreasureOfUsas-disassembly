@@ -3,7 +3,8 @@
 compone el cartucho.
 
 DONDE SALEN: p15:A4F9[fase][pantalla - 1] (p01:774B): [n] y n x [tipo][Y][X]
-(el tipo 2 sin Y ni X, p01:7784).
+y los bytes que lee el manejador del tipo (p01:779D, EXTRA); el tipo 2 va
+sin Y ni X (p01:7784).
 
 LOS PATRONES (p01:7779 -> p00:538C): p15:ADDA[tipo] apunta a [direccion de
 VRAM] y un RLE (p00:4926): 0 acaba, n < 0x80 repite el siguiente, 0x80 trae
@@ -36,6 +37,23 @@ PATRONES = 0xADDA
 FOTOGRAMAS = 0xB57E
 TIPOS = range(1, 14)
 SIN_PATRONES = (8, 9, 10)
+# los bytes de la lista detras de [tipo][Y][X], segun el manejador de
+# p01:779D: 77BE lee 1 (0x11), 77B8 1 (0x17), 77C4 2 (0x17, 0x15), 77CD 5,
+# 782F 1 (0x17); 77BD y 77E3 ninguno. El 2 no lleva ni Y ni X.
+EXTRA = {1: 1, 2: -2, 3: 1, 4: 2, 5: 2, 6: 0, 7: 1, 8: 0, 9: 1, 10: 0, 11: 5, 12: 0}
+
+
+def registros(lista):
+    """[(tipo, Y, X)] de una lista de p15:A4F9 (el tipo 2 con Y y X None)."""
+    out, a = [], lista + 1
+    for _ in range(leer(T, lista)):
+        tipo = leer(T, a)
+        if tipo == 2:
+            out.append((2, None, None))
+        else:
+            out.append((tipo, leer(T, a + 1), leer(T, a + 2)))
+        a += 3 + EXTRA[tipo]
+    return out
 ESCALA = 3
 
 
@@ -137,13 +155,8 @@ def ruina_de(tipo):
             lista = palabra(T, t + 2 * pant)
             if not (0xA000 <= lista < 0xC000):
                 break
-            n = leer(T, lista)
-            a = lista + 1
-            for _ in range(n):
-                tt = leer(T, a)
-                if tt == tipo:
-                    return (fase - 1) // 5
-                a += 1 if tt == 2 else 3
+            if any(r[0] == tipo for r in registros(lista)):
+                return (fase - 1) // 5
     return 0
 
 

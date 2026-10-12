@@ -885,98 +885,98 @@ L_6682:
 	call colores_de_escena		;6695   ; colores_de_escena: los colores de sprite de 0xDC00 por tramos
 L_6698:
 	ld hl,0c21fh		;6698   ; apunta a el paso de la escena
-	inc (hl)			;669b
-	or a			;669c
+	inc (hl)			;669b   ; el paso siguiente...
+	or a			;669c   ; ...sin acarreo: sigue
 	ret			;669d
 L_669E:
-	djnz L_66AA		;669e
+	djnz L_66AA		;669e   ; paso 9: los sprites avanzan...
 	call anima_7_0f		;66a0   ; anima_7_0f: p04:67C8 con B = 7 y D = 0x0F
-	cp 040h		;66a3
+	cp 040h		;66a3   ; ...hasta la X 0x40
 	jp nc,L_6698		;66a5
 	or a			;66a8
 	ret			;66a9
 L_66AA:
 	djnz L_66D6		;66aa   ; el paso con p04:67C4: segun la Y del sprite (0x50, 0x4A, 0x46, 0x41), otra cosa
 	call anima_7_0f		;66ac   ; anima_7_0f: p04:67C8 con B = 7 y D = 0x0F
-	ld hl,068ddh		;66af
-	cp 050h		;66b2
+	ld hl,068ddh		;66af   ; paso 10: el color 1 de la paleta de p04:68DD, que se apaga
+	cp 050h		;66b2   ; en la X 0x50, el paso siguiente
 	jr z,L_6698		;66b4
-	cp 04ah		;66b6
+	cp 04ah		;66b6   ; en la 0x4A, el tercer color (p04:68E3)
 	jr z,L_66D2		;66b8
-	cp 046h		;66ba
+	cp 046h		;66ba   ; en la 0x46, el segundo (p04:68E1)
 	jr z,L_66CE		;66bc
-	cp 041h		;66be
+	cp 041h		;66be   ; en la 0x41, el primero (p04:68DF)
 	jr z,L_66C4		;66c0
 	or a			;66c2
 	ret			;66c3
 L_66C4:
-	ld a,002h		;66c4
+	ld a,002h		;66c4   ; + 2: p04:68DF
 L_66C6:
 	call 04083h		;66c6   ; hl_mas_a: HL = HL + A
 L_66C9:
-	ld a,001h		;66c9
+	ld a,001h		;66c9   ; el color 1 = (D, E) de HL
 	jp L_6B7A		;66cb
 L_66CE:
-	ld a,004h		;66ce
+	ld a,004h		;66ce   ; + 4: p04:68E1
 	jr L_66C6		;66d0
 L_66D2:
-	ld a,006h		;66d2
+	ld a,006h		;66d2   ; + 6: p04:68E3
 	jr L_66C6		;66d4
 L_66D6:
-	djnz L_66F7		;66d6
+	djnz L_66F7		;66d6   ; paso 11: el grupo con la Y 0x4A; los sprites avanzan cada 3 cuadros...
 	call busca_4a		;66d8   ; busca_4a: busca el sprite 0x4A en 0xDE3C (de 16 en 16)
 	ld b,003h		;66db
 	ld d,007h		;66dd
 	call anima_de01_d		;66df   ; anima_de01_d: avanza 0xDE01 y el parpadeo de 0xDE02 cada D cuadros
-	cp 064h		;66e2
+	cp 064h		;66e2   ; ...en la X 0x64, el patron 0x7C...
 	jp z,patron_7c		;66e4   ; patron_7c: 16 sprites con el patron 0x7C
-	cp 073h		;66e7
+	cp 073h		;66e7   ; ...desde 0x73, el 0x80 y el paso siguiente
 	jp c,L_6746		;66e9
 	call patron_80		;66ec   ; patron_80: 16 sprites con el patron 0x80
 L_66EF:
-	ld a,080h		;66ef
+	ld a,080h		;66ef   ; la cuenta a 0x80 y el paso siguiente
 	ld (0c221h),a		;66f1   ; guarda la cuenta de la escena
 	jp L_6698		;66f4
 L_66F7:
-	djnz L_6707		;66f7
+	djnz L_6707		;66f7   ; paso 12: la cuenta...
 	dec (hl)			;66f9
 	jp z,L_66EF		;66fa
 	ld hl,0de02h		;66fd   ; apunta a el patron del sprite 0 en RAM
-	ld (hl),0c0h		;6700
+	ld (hl),0c0h		;6700   ; ...el sprite 0 con el patron 0xC0
 	call busca_4a		;6702   ; busca_4a: busca el sprite 0x4A en 0xDE3C (de 16 en 16)
 	or a			;6705
 	ret			;6706
 L_6707:
-	djnz L_671D		;6707
+	djnz L_671D		;6707   ; paso 13: la cuenta...
 	dec (hl)			;6709
 	ld a,(hl)			;670a
 	jp z,L_66EF		;670b
-	cp 040h		;670e
+	cp 040h		;670e   ; ...en 0x40, el patron 0x78...
 	call z,patron_78		;6710   ; patron_78: 16 sprites de 0xDE3E con el patron 0x78
-	cp 07fh		;6713
+	cp 07fh		;6713   ; ...en 0x7F, el 0x7C
 	call z,patron_7c		;6715   ; patron_7c: 16 sprites con el patron 0x7C
 	call busca_4a		;6718   ; busca_4a: busca el sprite 0x4A en 0xDE3C (de 16 en 16)
 	or a			;671b
 	ret			;671c
 L_671D:
-	djnz L_6729		;671d
+	djnz L_6729		;671d   ; paso 14: la cuenta de 2 en 2...
 	dec (hl)			;671f
 	dec (hl)			;6720
 	jp z,L_66EF		;6721
-	call baja_sprites_de3c		;6724   ; baja_sprites_de3c: 16 sprites de 0xDE3C hacia abajo hasta 0x74
+	call baja_sprites_de3c		;6724   ; ...y los 16 sprites bajan
 	or a			;6727
 	ret			;6728
 L_6729:
 	djnz L_6748		;6729   ; la cuenta: a cero, p04:6698; en 0x28, 0x50 y 0x7F cambia el dibujo
-	dec (hl)			;672b
+	dec (hl)			;672b   ; paso 15: la cuenta...
 	jp z,L_6698		;672c
 	ld a,(hl)			;672f
-	ld hl,068ddh		;6730
-	cp 028h		;6733
+	ld hl,068ddh		;6730   ; ...la paleta de p04:68DD otra vez, encendiendose
+	cp 028h		;6733   ; en 0x28, el color de p04:68DD
 	jp z,L_66C9		;6735
-	cp 050h		;6738
+	cp 050h		;6738   ; en 0x50, el de p04:68DF
 	jp z,L_66C4		;673a
-	cp 07fh		;673d
+	cp 07fh		;673d   ; en 0x7F, el de p04:68E1
 	jp z,L_66CE		;673f
 	xor a			;6742   ; si no, 0xDE02 a cero
 	ld (0de02h),a		;6743   ; guarda el patron del sprite 0 en RAM
@@ -984,15 +984,15 @@ L_6746:
 	or a			;6746
 	ret			;6747
 L_6748:
-	djnz L_6753		;6748
+	djnz L_6753		;6748   ; paso 16: los sprites avanzan...
 	call anima_7_0f		;674a   ; anima_7_0f: p04:67C8 con B = 7 y D = 0x0F
-	cp 0b6h		;674d
+	cp 0b6h		;674d   ; ...hasta la X 0xB6
 	jr c,L_6746		;674f
-	scf			;6751
+	scf			;6751   ; acarreo: acabada
 	ret			;6752
 L_6753:
-	ld (hl),078h		;6753
-	ld hl,0675eh		;6755
+	ld (hl),078h		;6753   ; paso 0: la cuenta a 0x78...
+	ld hl,0675eh		;6755   ; ...el texto p04:675E en (0x74, 0xA0)
 	call 04d4ah		;6758   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	jp L_6698		;675b
 
@@ -1010,89 +1010,89 @@ DATA_resto_675E:
 
 
 sprites_68e5:		; 12 bytes de p04:68E5 a 0xDE00 y los de p04:68F2/68EE
-	ld hl,068e5h		;6764
+	ld hl,068e5h		;6764   ; los sprites 0-2: Y 0x64, X 0x34 y 0x3B, color 0x0F
 	ld bc,0000ch		;6767
 	call copia_a_de00		;676a   ; copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
 	ld hl,0de0ch		;676d   ; apunta a la Y del sprite 3 en RAM
-	ld de,068f2h		;6770
-	ld c,004h		;6773
+	ld de,068f2h		;6770   ; las Y de los sprites 3-18, 4 de cada (0x3A, 0x74, 0x74, 0x3A)
+	ld c,004h		;6773   ; 4 tramos
 L_6775:
-	ld b,004h		;6775
-	ld a,(de)			;6777
+	ld b,004h		;6775   ; 4 sprites
+	ld a,(de)			;6777   ; la Y del tramo
 	call pon_en_sprites		;6778   ; pon_en_sprites: A en B sprites de HL (de 4 en 4)
-	inc de			;677b
+	inc de			;677b   ; el tramo siguiente
 	dec c			;677c
 	jr nz,L_6775		;677d
 	ld hl,0de0dh		;677f   ; apunta a la X del sprite 3 en RAM
-	ld de,068eeh		;6782
-	ld c,004h		;6785
+	ld de,068eeh		;6782   ; las X: 4 columnas (0x38, 0x48, 0xA8, 0xB8)...
+	ld c,004h		;6785   ; 4 columnas
 L_6787:
-	ld b,007h		;6787
+	ld b,007h		;6787   ; ...de 7 sprites, uno de cada 4
 	push hl			;6789
 L_678A:
-	ld a,(de)			;678a
+	ld a,(de)			;678a   ; la X de la columna
 	ld (hl),a			;678b
-	ld a,010h		;678c
+	ld a,010h		;678c   ; el sprite 4 mas alla (16 bytes)
 	call 04083h		;678e   ; hl_mas_a: HL = HL + A
 	djnz L_678A		;6791
 	pop hl			;6793
-	ld a,004h		;6794
+	ld a,004h		;6794   ; la columna siguiente: un sprite mas alla
 	call 04083h		;6796   ; hl_mas_a: HL = HL + A
 	inc de			;6799
 	dec c			;679a
 	jr nz,L_6787		;679b
 colores_de_escena:		; los colores de sprite de 0xDC00 por tramos
-	ld bc,0300dh		;679d
+	ld bc,0300dh		;679d   ; 0x30 lineas con el color 0x0D...
 	call llena_dc00		;67a0   ; llena_dc00: B bytes de 0xDC00 con C
-	ld bc,0400fh		;67a3
+	ld bc,0400fh		;67a3   ; ...0x40 con 0x0F...
 	call llena_hl		;67a6   ; llena_hl: B bytes de HL con C
-	ld bc,08000h		;67a9
+	ld bc,08000h		;67a9   ; ...0x80 con 0...
 	call llena_hl		;67ac   ; llena_hl: B bytes de HL con C
-	ld bc,0800dh		;67af
+	ld bc,0800dh		;67af   ; ...0x80 con 0x0D...
 	call llena_hl		;67b2   ; llena_hl: B bytes de HL con C
-	ld b,080h		;67b5
+	ld b,080h		;67b5   ; ...y otras 0x80 con 0x0D
 	call llena_hl		;67b7   ; llena_hl: B bytes de HL con C
-	ld b,004h		;67ba
+	ld b,004h		;67ba   ; los sprites 3-6 con el patron 0xFC
 	ld hl,0de0eh		;67bc   ; apunta a el patron del sprite 3 en RAM
 	ld a,0fch		;67bf
 	jp pon_en_sprites		;67c1   ; pon_en_sprites: A en B sprites de HL (de 4 en 4)
 anima_7_0f:		; p04:67C8 con B = 7 y D = 0x0F
-	ld b,007h		;67c4
-	ld d,00fh		;67c6
+	ld b,007h		;67c4   ; cada 7 cuadros
+	ld d,00fh		;67c6   ; parpadeo cada 16
 anima_de01_d:		; avanza 0xDE01 y el parpadeo de 0xDE02 cada D cuadros
 	ld hl,0de01h		;67c8   ; apunta a la X del sprite 0 en RAM
-	call avanza_sprites		;67cb   ; avanza_sprites: cada B cuadros, + 1 a 3 sprites de HL (de 4 en 4)
+	call avanza_sprites		;67cb   ; los 3 sprites 1 a la derecha
 	ld hl,0de02h		;67ce   ; apunta a el patron del sprite 0 en RAM
-	ld c,000h		;67d1
+	ld c,000h		;67d1   ; alterna el patron con 0
 	call parpadeo_cada_d		;67d3   ; parpadeo_cada_d: cada D cuadros, p04:6257 con B = 2
-	ld a,(0de01h)		;67d6   ; lee la X del sprite 0 en RAM
+	ld a,(0de01h)		;67d6   ; A = la X del sprite 0
 	ret			;67d9
 parpadeo_cada_d:		; cada D cuadros, p04:6257 con B = 2
 	ld b,002h		;67da
-	ld a,(0c003h)		;67dc   ; lee la cuenta de cuadros
-	and d			;67df
+	ld a,(0c003h)		;67dc   ; la cuenta de cuadros...
+	and d			;67df   ; ...con la mascara D
 	ret nz			;67e0
 	jp L_6257		;67e1
 busca_4a:		; busca el sprite 0x4A en 0xDE3C (de 16 en 16)
-	ld b,003h		;67e4
-	ld hl,0de3ch		;67e6   ; apunta a la Y del sprite 15 en RAM
+	ld b,003h		;67e4   ; 4 grupos de 4 sprites desde el 15
+	ld hl,0de3ch		;67e6   ; la Y del sprite 15...
 L_67E9:
 	ld a,(hl)			;67e9
-	cp 04ah		;67ea
+	cp 04ah		;67ea   ; ...con la Y 0x4A?
 	jr z,L_67FF		;67ec
-	ld a,010h		;67ee
+	ld a,010h		;67ee   ; el grupo siguiente
 	call 04083h		;67f0   ; hl_mas_a: HL = HL + A
 	djnz L_67E9		;67f3
-	ld a,(hl)			;67f5
+	ld a,(hl)			;67f5   ; el ultimo tambien
 	cp 04ah		;67f6
-	jr nz,baja_sprites_de3c		;67f8
-	ld hl,0de3ch		;67fa   ; apunta a la Y del sprite 15 en RAM
+	jr nz,baja_sprites_de3c		;67f8   ; ninguna: solo bajan
+	ld hl,0de3ch		;67fa   ; el ultimo: el siguiente es el primero
 	jr L_6804		;67fd
 L_67FF:
-	ld a,010h		;67ff
+	ld a,010h		;67ff   ; el grupo siguiente
 	call 04083h		;6801   ; hl_mas_a: HL = HL + A
 L_6804:
-	ld b,004h		;6804
+	ld b,004h		;6804   ; sus 4 sprites a la Y 0x3A
 	ld a,03ah		;6806
 	call pon_en_sprites		;6808   ; pon_en_sprites: A en B sprites de HL (de 4 en 4)
 baja_sprites_de3c:		; 16 sprites de 0xDE3C hacia abajo hasta 0x74
@@ -1100,11 +1100,11 @@ baja_sprites_de3c:		; 16 sprites de 0xDE3C hacia abajo hasta 0x74
 	ld b,010h		;680e
 L_6810:
 	ld a,(hl)			;6810   ; baja los sprites de 1 en 1 hasta 0x74; los escondidos (0xE0) no
-	cp 0e0h		;6811
+	cp 0e0h		;6811   ; escondido: nada
 	jr z,L_681C		;6813
-	cp 074h		;6815
+	cp 074h		;6815   ; de 0x74 en adelante, se esconde
 	jr nc,L_6823		;6817
-	add a,001h		;6819
+	add a,001h		;6819   ; + 1
 	ld (hl),a			;681b
 L_681C:
 	inc hl			;681c   ; 4 bytes por sprite
@@ -1114,35 +1114,35 @@ L_681C:
 	djnz L_6810		;6820
 	ret			;6822
 L_6823:
-	ld (hl),0e0h		;6823
+	ld (hl),0e0h		;6823   ; Y 0xE0: escondido
 	jr L_681C		;6825
 patron_78:		; 16 sprites de 0xDE3E con el patron 0x78
-	ld a,078h		;6827
+	ld a,078h		;6827   ; el patron 0x78
 L_6829:
 	ld hl,0de3eh		;6829   ; apunta a el patron del sprite 15 en RAM
-	ld b,010h		;682c
+	ld b,010h		;682c   ; 16 sprites
 	jr pon_en_sprites		;682e
 patron_7c:		; 16 sprites con el patron 0x7C
-	ld a,07ch		;6830
+	ld a,07ch		;6830   ; el 0x7C
 	jr L_6829		;6832
 patron_80:		; 16 sprites con el patron 0x80
-	ld a,080h		;6834
+	ld a,080h		;6834   ; el 0x80
 	jr L_6829		;6836
 pon_en_sprites:		; A en B sprites de HL (de 4 en 4)
 	ld (hl),a			;6838   ; A en B sprites (de 4 en 4)
-	inc hl			;6839
+	inc hl			;6839   ; 4 bytes por sprite
 	inc hl			;683a
 	inc hl			;683b
 	inc hl			;683c
 	djnz pon_en_sprites		;683d
 	ret			;683f
 copia_6850_a_d20d:		; 10 bytes de p04:6850 a 0xD20D y p04:71FE
-	ld hl,06850h		;6840
-	ld de,0d20dh		;6843
+	ld hl,06850h		;6840   ; p04:6850: 10 bytes...
+	ld de,0d20dh		;6843   ; ...a 0xD20D, en el mapa de la escena
 	ld bc,0000ah		;6846
 	ldir		;6849
 L_684B:
-	call dibujo_de_escena		;684b   ; dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
+	call dibujo_de_escena		;684b   ; y el dibujo
 	or a			;684e
 	ret			;684f
 
@@ -1160,8 +1160,8 @@ DATA_resto_6850:
 
 
 mapa_y_vuelve:		; p04:7296 y vuelve atras
-	call mapa_de_escena		;685a   ; mapa_de_escena: el RLE de la escena (p04:72AE) a 0xD200
-	jr $-18		;685d
+	call mapa_de_escena		;685a   ; el mapa de la escena (p04:72AE)
+	jr $-18		;685d   ; y vuelve a p04:684B, el dibujo
 cursor_parpadea:		; cada 8 cuadros, sin texto en marcha, el cursor 0x1F / 0x20
 	ld a,(0c8a6h)		;685f   ; lee el texto a maquina ha acabado
 	or a			;6862
@@ -1169,58 +1169,58 @@ cursor_parpadea:		; cada 8 cuadros, sin texto en marcha, el cursor 0x1F / 0x20
 	ld a,(0c003h)		;6864   ; lee la cuenta de cuadros
 	and 007h		;6867
 	ret nz			;6869
-	ld a,(0c8f0h)		;686a
-	cp 01fh		;686d
+	ld a,(0c8f0h)		;686a   ; el cursor 0x1F...
+	cp 01fh		;686d   ; ...pasa a 0x27 / 0x28...
 	jr z,L_6889		;686f
-	ld hl,0201fh		;6871
+	ld hl,0201fh		;6871   ; ...o vuelve a 0x1F / 0x20
 	ld (0c8f0h),hl		;6874
 L_6877:
-	ld de,07888h		;6877
+	ld de,07888h		;6877   ; la ficha de 0xC8F0 en (0x78, 0x88)...
 	ld a,(0c8f0h)		;687a
 	call 04db4h		;687d   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
-	ld de,08088h		;6880
+	ld de,08088h		;6880   ; ...y la de 0xC8F1 en (0x80, 0x88)
 	ld a,(0c8f1h)		;6883
 	jp 04db4h		;6886   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 L_6889:
-	ld hl,02827h		;6889
+	ld hl,02827h		;6889   ; 0x27 / 0x28
 	ld (0c8f0h),hl		;688c
 	jr L_6877		;688f
 L_6891:
-	xor a			;6891
+	xor a			;6891   ; el texto 0...
 L_6892:
-	ld de,03c28h		;6892
+	ld de,03c28h		;6892   ; ...en (0x3C, 0x28)
 	call empieza_texto_a_maquina		;6895   ; empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
-	ld a,(0002bh)		;6898
+	ld a,(0002bh)		;6898   ; con la BIOS japonesa (0x002B, el idioma = 0)...
 	and 00fh		;689b
 	jr nz,L_68A2		;689d
-	call borra_recuadro_2c20		;689f   ; borra_recuadro_2c20: borra 0xA8 x 0x30 en (0x2C, 0x20)
+	call borra_recuadro_2c20		;689f   ; ...el recuadro
 L_68A2:
-	jp L_6698		;68a2
+	jp L_6698		;68a2   ; y el paso siguiente
 L_68A5:
-	ld a,001h		;68a5
+	ld a,001h		;68a5   ; el texto 1
 	jr L_6892		;68a7
 borra_recuadro_2c20:		; borra 0xA8 x 0x30 en (0x2C, 0x20)
-	ld hl,02c20h		;68a9
-	ld bc,0a830h		;68ac
+	ld hl,02c20h		;68a9   ; en (0x2C, 0x20)...
+	ld bc,0a830h		;68ac   ; ...0xA8 x 0x30
 borra_y_marco:		; borra el rectangulo y p06:A494
 	push hl			;68af
 	push bc			;68b0
 	call 05e2fh		;68b1   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
-	pop de			;68b4
-	pop hl			;68b5
+	pop de			;68b4   ; DE = las medidas
+	pop hl			;68b5   ; HL = la posicion
 	jp 0a494h		;68b6   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 borra_recuadro_2773:		; borra 0xB2 x 0x32 en (0x27, 0x73) (BIOS japonesa)
-	ld hl,02773h		;68b9
-	ld bc,0b232h		;68bc
+	ld hl,02773h		;68b9   ; en (0x27, 0x73)...
+	ld bc,0b232h		;68bc   ; ...0xB2 x 0x32
 	jr borra_y_marco		;68bf
 borra_de_70:		; borra 0xFF x 0x48 desde (0, 0x70)
-	ld hl,00070h		;68c1
-	ld bc,0ff48h		;68c4
+	ld hl,00070h		;68c1   ; desde (0, 0x70)...
+	ld bc,0ff48h		;68c4   ; ...0xFF x 0x48
 	jp 05e2fh		;68c7   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 texto_68d6:		; el texto p04:68D6 y p00:4785
-	ld hl,068d6h		;68ca
+	ld hl,068d6h		;68ca   ; COIN en (0x58, 0x40)...
 	call 04d4ah		;68cd   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
-	ld bc,0883bh		;68d0
+	ld bc,0883bh		;68d0   ; ...y las monedas en (0x88, 0x3B)
 	jp 04785h		;68d3   ; cifras_dobles_en: las cifras dobles de 0xC25A y 0xC259 en BC (p00:47FE)
 
 ; ----------------------------------------------------------------------
@@ -1240,127 +1240,127 @@ DATA_resto_68D6:
 
 
 L_68F6:
-	call cuenta_c8e4		;68f6   ; cuenta_c8e4: cada 8 cuadros, 0xC8E4 de 0 a 2 y el patron de 0xDE12
+	call cuenta_c8e4		;68f6   ; la escena de la ruina 4: el patron del sprite 4 cada 8 cuadros
 	ld a,(0c21fh)		;68f9   ; lee el paso de la escena
-	ld b,a			;68fc
+	ld b,a			;68fc   ; paso 1: los sprites 0-3 a la izquierda, 1 cada 8 cuadros...
 	djnz L_693B		;68fd
 	ld hl,0de01h		;68ff   ; apunta a la X del sprite 0 en RAM
 	ld bc,004ffh		;6902
 	call mueve_sprites		;6905   ; mueve_sprites: cada 8 cuadros, + C a B sprites de HL
-	ld a,(0de01h)		;6908   ; lee la X del sprite 0 en RAM
+	ld a,(0de01h)		;6908   ; ...por debajo de la X 0x98, el sprite 0 parpadea...
 	cp 098h		;690b
 	push af			;690d
 	call c,parpadeo_de02_8		;690e   ; parpadeo_de02_8: cada 8 cuadros, 0xDE02 xor 0xC0 y el patron 0x5C
 	pop af			;6911
-	cp 078h		;6912
+	cp 078h		;6912   ; ...y por debajo de 0x78...
 	jp nc,L_69E1		;6914
-	ld hl,06a51h		;6917
+	ld hl,06a51h		;6917   ; ...los 4 sprites de p04:6A51...
 	ld bc,00010h		;691a
 	call copia_a_de00		;691d   ; copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
-	xor a			;6920
+	xor a			;6920   ; ...0xC8E5 a cero y el paso siguiente
 	ld (0c8e5h),a		;6921
 	jp L_6698		;6924
 parpadeo_de02_8:		; cada 8 cuadros, 0xDE02 xor 0xC0 y el patron 0x5C
 	ld a,(0c003h)		;6927   ; lee la cuenta de cuadros
-	and 007h		;692a
+	and 007h		;692a   ; cada 8 cuadros
 	ret nz			;692c
 	ld hl,0de02h		;692d   ; apunta a el patron del sprite 0 en RAM
-	ld a,0c0h		;6930
+	ld a,0c0h		;6930   ; el patron 0xC0 alterna...
 	xor (hl)			;6932
-	ld b,001h		;6933
+	ld b,001h		;6933   ; ...en el sprite 0...
 	call pon_en_sprites		;6935   ; pon_en_sprites: A en B sprites de HL (de 4 en 4)
-	ld (hl),05ch		;6938
+	ld (hl),05ch		;6938   ; ...y el 1 con el patron 0x5C
 	ret			;693a
 L_693B:
-	djnz L_699A		;693b
+	djnz L_699A		;693b   ; paso 2: cada 16 cuadros...
 	ld a,(0c003h)		;693d   ; lee la cuenta de cuadros
 	and 00fh		;6940
 	jp nz,L_69E1		;6942
-	ld a,(0de08h)		;6945   ; lee la Y del sprite 2 en RAM
+	ld a,(0de08h)		;6945   ; ...los sprites 2 y 3 bajan de 6 en 6 hasta la Y 0x6A...
 	push af			;6948
 	cp 06ah		;6949
 	call c,mueve_de08		;694b   ; mueve_de08: p04:69E9 con 0xDE08, 2 sprites, paso 6
 	pop af			;694e
-	cp 06ah		;694f
+	cp 06ah		;694f   ; ...luego los patrones 0x3C y 0x40
 	call nc,sprites_de0a		;6951   ; sprites_de0a: 2 sprites de 0xDE0A desde 0x3C de 4 en 4 y 0xDE0C = 0x6A
-	ld hl,0de01h		;6954   ; apunta a la X del sprite 0 en RAM
+	ld hl,0de01h		;6954   ; los 4 sprites 3 a la izquierda...
 	ld bc,004fdh		;6957
 	call mueve_sprites		;695a   ; mueve_sprites: cada 8 cuadros, + C a B sprites de HL
-	ld hl,0de05h		;695d   ; apunta a la X del sprite 1 en RAM
+	ld hl,0de05h		;695d   ; ...y el 1, 2 a la derecha
 	ld bc,00102h		;6960
 	call mueve_sprites		;6963   ; mueve_sprites: cada 8 cuadros, + C a B sprites de HL
-	ld hl,0de02h		;6966   ; apunta a el patron del sprite 0 en RAM
+	ld hl,0de02h		;6966   ; el sprite 0 parpadea con 0x60
 	ld c,060h		;6969
 	ld d,00fh		;696b
 	call parpadeo_cada_d		;696d   ; parpadeo_cada_d: cada D cuadros, p04:6257 con B = 2
-	call paso_c8e5		;6970   ; paso_c8e5: el paso 0xC8E5 (hasta 12) con los desplazamientos de p04:6A60
-	ld hl,0de04h		;6973   ; apunta a la Y del sprite 1 en RAM
+	call paso_c8e5		;6970   ; el salto del sprite 0 y del 1 (p04:6A60)
+	ld hl,0de04h		;6973   ; hasta que el sprite 1 llega a la Y 0x67...
 	ld a,(hl)			;6976
 	cp 067h		;6977
 	jp c,L_69E1		;6979
-	ld (hl),0e0h		;697c
+	ld (hl),0e0h		;697c   ; ...y se esconde
 	or a			;697e
 	ret			;697f
 sprites_de0a:		; 2 sprites de 0xDE0A desde 0x3C de 4 en 4 y 0xDE0C = 0x6A
-	ld hl,0de0ah		;6980   ; apunta a el patron del sprite 2 en RAM
-	ld a,03ch		;6983
+	ld hl,0de0ah		;6980   ; los sprites 2-3...
+	ld a,03ch		;6983   ; ...con los patrones 0x3C y 0x40
 	ld bc,00204h		;6985
 	call sprites_en_fila		;6988   ; sprites_en_fila: B sprites de HL con A, A + C...
 	ld hl,0de0ch		;698b   ; apunta a la Y del sprite 3 en RAM
-	ld (hl),06ah		;698e
+	ld (hl),06ah		;698e   ; la Y 0x6A al sprite 3
 	ret			;6990
 mueve_de08:		; p04:69E9 con 0xDE08, 2 sprites, paso 6
-	ld hl,0de08h		;6991   ; apunta a la Y del sprite 2 en RAM
-	ld bc,00206h		;6994
+	ld hl,0de08h		;6991   ; las Y de los sprites 2 y 3...
+	ld bc,00206h		;6994   ; ...+ 6
 	jp L_69E9		;6997
 L_699A:
-	djnz L_69CF		;699a
+	djnz L_69CF		;699a   ; paso 3: los 4 sprites a la izquierda...
 	ld hl,0de01h		;699c   ; apunta a la X del sprite 0 en RAM
 	ld bc,004ffh		;699f
 	call mueve_sprites		;69a2   ; mueve_sprites: cada 8 cuadros, + C a B sprites de HL
 	ld hl,0de01h		;69a5   ; apunta a la X del sprite 0 en RAM
 	ld a,(hl)			;69a8
-	cp 040h		;69a9
+	cp 040h		;69a9   ; ...por debajo de la X 0x40, el sprite 0 con el patron 0xC0...
 	call c,pon_c0		;69ab   ; pon_c0: (HL + 1) = 0xC0
-	cp 042h		;69ae
+	cp 042h		;69ae   ; ...por debajo de 0x42, los colores de 0xDC18 a cero...
 	push af			;69b0
 	call c,colores_dc18		;69b1   ; colores_dc18: 8 colores de 0xDC18 y los patrones 0x71 y 0x5C
 	pop af			;69b4
-	cp 030h		;69b5
+	cp 030h		;69b5   ; ...y por debajo de 0x30, acarreo: acabada
 	ret			;69b7
 pon_c0:		; (HL + 1) = 0xC0
 	inc hl			;69b8
 	ld (hl),0c0h		;69b9
 	ret			;69bb
 colores_dc18:		; 8 colores de 0xDC18 y los patrones 0x71 y 0x5C
-	ld hl,0dc18h		;69bc
+	ld hl,0dc18h		;69bc   ; 8 bytes de 0xDC18 a cero
 	ld bc,00007h		;69bf
 	call 05f08h		;69c2   ; borra: pone a cero BC + 1 bytes desde HL
 	ld hl,0de04h		;69c5   ; apunta a la Y del sprite 1 en RAM
-	ld (hl),071h		;69c8
+	ld (hl),071h		;69c8   ; el sprite 1 a la Y 0x71...
 	inc hl			;69ca
 	inc hl			;69cb
-	ld (hl),05ch		;69cc
+	ld (hl),05ch		;69cc   ; ...con el patron 0x5C
 	ret			;69ce
 L_69CF:
-	ld hl,06a3eh		;69cf
+	ld hl,06a3eh		;69cf   ; paso 0: los 5 sprites de p04:6A3E...
 	ld bc,00014h		;69d2
 	call copia_a_de00		;69d5   ; copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
-	ld bc,0500dh		;69d8
+	ld bc,0500dh		;69d8   ; ...el color 0x0D en 0x50 lineas
 	call llena_dc00		;69db   ; llena_dc00: B bytes de 0xDC00 con C
-	jp L_6698		;69de
+	jp L_6698		;69de   ; y el paso siguiente
 L_69E1:
 	or a			;69e1
 	ret			;69e2
 mueve_sprites:		; cada 8 cuadros, + C a B sprites de HL
 	ld a,(0c003h)		;69e3   ; lee la cuenta de cuadros
-	and 007h		;69e6
+	and 007h		;69e6   ; cada 8 cuadros
 	ret nz			;69e8
 L_69E9:
 	ld a,c			;69e9   ; + C a B sprites (de 4 en 4)
 	add a,(hl)			;69ea
 	ld (hl),a			;69eb
-	inc hl			;69ec
+	inc hl			;69ec   ; 4 bytes por sprite
 	inc hl			;69ed
 	inc hl			;69ee
 	inc hl			;69ef
@@ -1370,23 +1370,23 @@ cuenta_c8e4:		; cada 8 cuadros, 0xC8E4 de 0 a 2 y el patron de 0xDE12
 	ld a,(0c003h)		;69f3   ; lee la cuenta de cuadros
 	and 007h		;69f6
 	ret nz			;69f8
-	ld hl,0c8e4h		;69f9
+	ld hl,0c8e4h		;69f9   ; 0xC8E4 + 1...
 	inc (hl)			;69fc
 	ld a,(hl)			;69fd
-	cp 003h		;69fe
+	cp 003h		;69fe   ; ...de 0 a 2
 	jr c,L_6A04		;6a00
 	xor a			;6a02
 	ld (hl),a			;6a03
 L_6A04:
-	rla			;6a04
+	rla			;6a04   ; * 4...
 	rla			;6a05
-	add a,084h		;6a06
+	add a,084h		;6a06   ; ...+ 0x84: el patron 0x84, 0x88 o 0x8C
 	ld (0de12h),a		;6a08   ; guarda el patron del sprite 4 en RAM
 	ret			;6a0b
 sprites_en_fila:		; B sprites de HL con A, A + C...
 	ld (hl),a			;6a0c   ; B sprites con A, A + C, A + 2C...
-	add a,c			;6a0d
-	inc hl			;6a0e
+	add a,c			;6a0d   ; + C
+	inc hl			;6a0e   ; 4 bytes por sprite
 	inc hl			;6a0f
 	inc hl			;6a10
 	inc hl			;6a11
@@ -1394,30 +1394,30 @@ sprites_en_fila:		; B sprites de HL con A, A + C...
 	ret			;6a14
 paso_c8e5:		; el paso 0xC8E5 (hasta 12) con los desplazamientos de p04:6A60
 	ld hl,0c8e5h		;6a15
-	ld a,(hl)			;6a18
+	ld a,(hl)			;6a18   ; a 12, acabado
 	cp 00ch		;6a19
 	jp z,L_6A36		;6a1b
-	inc (hl)			;6a1e
-	ld hl,06a60h		;6a1f
+	inc (hl)			;6a1e   ; el paso siguiente
+	ld hl,06a60h		;6a1f   ; la palabra del paso en p04:6A60
 	call 0543ah		;6a22   ; palabra_a: HL = la palabra A de la tabla HL
-	ex de,hl			;6a25
-	ld hl,0de00h		;6a26   ; apunta a los atributos de los sprites en RAM
+	ex de,hl			;6a25   ; E al sprite 0, D al 1
+	ld hl,0de00h		;6a26   ; las Y del sprite 0...
 	ld c,e			;6a29
 	call suma_a_sprite		;6a2a   ; suma_a_sprite: (HL) + C y HL + 4
-	ld c,d			;6a2d
+	ld c,d			;6a2d   ; ...y del 1
 suma_a_sprite:		; (HL) + C y HL + 4
 	ld a,c			;6a2e   ; + C a un sprite y HL al siguiente
 	add a,(hl)			;6a2f
 	ld (hl),a			;6a30
-	inc hl			;6a31
+	inc hl			;6a31   ; 4 bytes por sprite
 	inc hl			;6a32
 	inc hl			;6a33
 	inc hl			;6a34
 	ret			;6a35
 L_6A36:
-	ld hl,0de02h		;6a36   ; apunta a el patron del sprite 0 en RAM
+	ld hl,0de02h		;6a36   ; el patron 0x54 al sprite 0...
 	ld (hl),054h		;6a39
-	jp L_6698		;6a3b
+	jp L_6698		;6a3b   ; ...y el paso siguiente
 
 ; ----------------------------------------------------------------------
 ; DATOS resto_6A3E: tablas cortas que apuntan p04:69CF (0x6A3E), p04:6917
@@ -1441,14 +1441,14 @@ L_6A78:
 	ld b,(hl)			;6a7b
 	inc l			;6a7c
 	inc l			;6a7d
-	djnz $+44		;6a7e
+	djnz $+44		;6a7e   ; la escena de la ruina 5 (el final): paso 1, la cuenta...
 	dec (hl)			;6a80
-	jr z,L_6A9C		;6a81
+	jr z,L_6A9C		;6a81   ; ...a cero, el texto 9
 	call colores_142		;6a83   ; colores_142: p04:7029 con B = 4 y DE = 0x0142
-	ld hl,07088h		;6a86
+	ld hl,07088h		;6a86   ; mientras: los 8 sprites de p04:7088...
 	ld bc,00020h		;6a89
 	call copia_a_de00		;6a8c   ; copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
-	ld hl,06aa6h		;6a8f
+	ld hl,06aa6h		;6a8f   ; ...y las 4 cuentas de p04:6AA6 (3, 0x15, 9, 0x0F) a 0xC8EC
 	ld de,0c8ech		;6a92
 	ld bc,00004h		;6a95
 	ldir		;6a98
@@ -1457,7 +1457,7 @@ L_6A78:
 L_6A9C:
 	ld a,009h		;6a9c
 	call texto_a_maquina		;6a9e   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
-	ld a,0f1h		;6aa1
+	ld a,0f1h		;6aa1   ; 0xF1 cuadros y el paso siguiente
 	jp L_622B		;6aa3
 
 ; ----------------------------------------------------------------------
@@ -1474,11 +1474,11 @@ DATA_resto_6AA6:
 
 
 L_6AAA:
-	djnz L_6AC7		;6aaa
+	djnz L_6AC7		;6aaa   ; paso 2: la cuenta...
 	dec (hl)			;6aac
 	jp z,L_6698		;6aad
-	call texto_si_toca		;6ab0   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
-	ld a,(0c003h)		;6ab3   ; lee la cuenta de cuadros
+	call texto_si_toca		;6ab0   ; ...las letras...
+	ld a,(0c003h)		;6ab3   ; ...y cada 2 cuadros las 4 cuentas de 0xC8EC
 	and 001h		;6ab6
 	jr z,L_6ABD		;6ab8
 	call cuatro_cuentas		;6aba   ; cuatro_cuentas: las cuentas de 0xC8EC (hasta 0x18) y los sprites de p04:6FF4
@@ -1486,53 +1486,53 @@ L_6ABD:
 	or a			;6abd
 	ret			;6abe
 texto_si_toca:		; p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
-	ld a,(0c8a6h)		;6abf   ; lee el texto a maquina ha acabado
+	ld a,(0c8a6h)		;6abf   ; solo si no ha acabado
 	or a			;6ac2
 	jp z,letra_a_maquina		;6ac3   ; letra_a_maquina: cada 0xC8A5 cuadros, el siguiente caracter del texto
 	ret			;6ac6
 L_6AC7:
-	djnz L_6AFD		;6ac7
+	djnz L_6AFD		;6ac7   ; paso 3: las letras; cada 2 cuadros...
 	call texto_si_toca		;6ac9   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
 	ld a,(0c003h)		;6acc   ; lee la cuenta de cuadros
 	and 001h		;6acf
 	jp nz,L_6ABD		;6ad1
-	ld a,(0de00h)		;6ad4   ; lee los atributos de los sprites en RAM
+	ld a,(0de00h)		;6ad4   ; ...hasta la Y 0x38 del sprite 0...
 	cp 038h		;6ad7
 	jr nc,L_6AF4		;6ad9
-	ld hl,0de00h		;6adb   ; apunta a los atributos de los sprites en RAM
+	ld hl,0de00h		;6adb   ; ...las Y de 4 pares de sprites + p04:7080 (2, 2, -2, -2)...
 	ld de,07080h		;6ade
 	call cuatro_pares		;6ae1   ; cuatro_pares: 4 pares de sprites (p04:6FB6) desde (DE) + C
-	ld hl,0de01h		;6ae4   ; apunta a la X del sprite 0 en RAM
+	ld hl,0de01h		;6ae4   ; ...y sus X + p04:7084 (2, -2, 2, -2)
 cuatro_pares:		; 4 pares de sprites (p04:6FB6) desde (DE) + C
 	ld b,004h		;6ae7
 L_6AE9:
-	ld a,(de)			;6ae9
-	ld c,(hl)			;6aea
+	ld a,(de)			;6ae9   ; el desplazamiento...
+	ld c,(hl)			;6aea   ; ...+ el valor del primer sprite del par...
 	add a,c			;6aeb
-	call dos_sprites		;6aec   ; dos_sprites: A en 2 sprites de HL
+	call dos_sprites		;6aec   ; ...en los dos
 	inc de			;6aef
 	djnz L_6AE9		;6af0
 	or a			;6af2
 	ret			;6af3
 L_6AF4:
-	xor a			;6af4
+	xor a			;6af4   ; 0xC8EA = 0 (el gris de p04:6B1F)...
 	ld (0c8eah),a		;6af5
 L_6AF8:
-	ld a,0a0h		;6af8
+	ld a,0a0h		;6af8   ; ...0xA0 cuadros y el paso siguiente
 	jp L_622B		;6afa
 L_6AFD:
-	djnz $+50		;6afd
+	djnz $+50		;6afd   ; paso 4: las letras; cada 4 cuadros...
 	call texto_si_toca		;6aff   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
 	ld a,(0c003h)		;6b02   ; lee la cuenta de cuadros
 	and 003h		;6b05
 	ret nz			;6b07
-	ld hl,0c8eah		;6b08
+	ld hl,0c8eah		;6b08   ; ...0xC8EA + 2 hasta 0x10 (p04:703D)...
 	ld a,(hl)			;6b0b
 	cp 010h		;6b0c
 	jp z,L_703D		;6b0e
 	inc (hl)			;6b11
 	inc (hl)			;6b12
-	ld c,004h		;6b13
+	ld c,004h		;6b13   ; ...los colores 4 a 1 con el gris de p04:6B1F: se encienden
 L_6B15:
 	push bc			;6b15
 	call color_de_6b1f		;6b16   ; color_de_6b1f: el color C de la paleta con p04:6B1F[A]
@@ -1556,18 +1556,18 @@ DATA_resto_6B1F:
 
 
 L_6B2F:
-	djnz $+44		;6b2f
+	djnz $+44		;6b2f   ; paso 5: las letras y la cuenta...
 	push hl			;6b31
 	call texto_si_toca		;6b32   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
 	pop hl			;6b35
 	dec (hl)			;6b36
 	jp nz,L_6ABD		;6b37
-	ld hl,070a7h		;6b3a
+	ld hl,070a7h		;6b3a   ; ...a cero, los 6 sprites de p04:70A7...
 	ld bc,00018h		;6b3d
 	call copia_a_de00		;6b40   ; copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
-	ld hl,06b51h		;6b43
+	ld hl,06b51h		;6b43   ; ...los colores 1-3 de p04:6B51...
 	call 04a9dh		;6b46   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
-	ld a,00eh		;6b49
+	ld a,00eh		;6b49   ; ...0xC8EA = 0x0E y el paso siguiente
 	ld (0c8eah),a		;6b4b
 	jp L_6698		;6b4e
 
@@ -1585,7 +1585,7 @@ DATA_resto_6B51:
 
 
 L_6B5B:
-	djnz L_6B87		;6b5b
+	djnz L_6B87		;6b5b   ; paso 6: las letras, y los 4 colores se apagan
 	call texto_si_toca		;6b5d   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
 	ld c,004h		;6b60
 baja_c8ea:		; cada 4 cuadros, 0xC8EA - 2 hasta 0xFE
@@ -1594,18 +1594,18 @@ baja_c8ea:		; cada 4 cuadros, 0xC8EA - 2 hasta 0xFE
 	ret nz			;6b67
 	ld hl,0c8eah		;6b68
 	ld a,(hl)			;6b6b
-	cp 0feh		;6b6c
+	cp 0feh		;6b6c   ; hasta 0xFE: 0xC8EA a cero y p04:6DE1
 	jp z,L_6B82		;6b6e
-	dec (hl)			;6b71
+	dec (hl)			;6b71   ; - 2
 	dec (hl)			;6b72
 color_de_6b1f:		; el color C de la paleta con p04:6B1F[A]
 	ld hl,06b1fh		;6b73
-	call 04083h		;6b76   ; hl_mas_a: HL = HL + A
+	call 04083h		;6b76   ; + A (de 2 en 2: los grises 0-7)
 	ld a,c			;6b79
 L_6B7A:
-	ld d,(hl)			;6b7a
+	ld d,(hl)			;6b7a   ; D = 0RRR0BBB...
 	inc hl			;6b7b
-	ld e,(hl)			;6b7c
+	ld e,(hl)			;6b7c   ; ...E = 00000GGG
 	call 04a73h		;6b7d   ; pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 	or a			;6b80
 	ret			;6b81
@@ -1614,12 +1614,12 @@ L_6B82:
 	ld (hl),a			;6b83
 	jp L_6DE1		;6b84
 L_6B87:
-	djnz $+66		;6b87
+	djnz $+66		;6b87   ; paso 7: las letras; cada 16 cuadros...
 	call texto_si_toca		;6b89   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
 	ld a,(0c003h)		;6b8c   ; lee la cuenta de cuadros
 	and 00fh		;6b8f
 	ret nz			;6b91
-	ld hl,0c8eah		;6b92
+	ld hl,0c8eah		;6b92   ; ...0xC8EA + 10 hasta 0x1E...
 	ld a,(hl)			;6b95
 	cp 01eh		;6b96
 	jp z,L_6698		;6b98
@@ -1627,7 +1627,7 @@ L_6B87:
 	add a,00ah		;6b9c
 	ld (hl),a			;6b9e
 	ld a,c			;6b9f
-	ld hl,06babh		;6ba0
+	ld hl,06babh		;6ba0   ; ...la paleta de p04:6BAB + 0xC8EA
 	call 04083h		;6ba3   ; hl_mas_a: HL = HL + A
 	call 04a9dh		;6ba6   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
 	or a			;6ba9
@@ -1648,34 +1648,34 @@ DATA_resto_6BAB:
 
 
 L_6BC9:
-	djnz L_6BD7		;6bc9
+	djnz L_6BD7		;6bc9   ; paso 8: hasta que acaba el texto...
 	call texto_si_toca		;6bcb   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
 	ld a,(0c8a6h)		;6bce   ; lee el texto a maquina ha acabado
 	or a			;6bd1
-	jp nz,L_66EF		;6bd2
+	jp nz,L_66EF		;6bd2   ; ...la cuenta a 0x80 y el paso siguiente
 	or a			;6bd5
 	ret			;6bd6
 L_6BD7:
-	djnz L_6BDC		;6bd7
+	djnz L_6BDC		;6bd7   ; paso 9: p04:6E4F
 	jp L_6E4F		;6bd9
 L_6BDC:
-	djnz L_6C04		;6bdc
+	djnz L_6C04		;6bdc   ; paso 10: la escena siguiente...
 	ld hl,0c220h		;6bde   ; apunta a la escena (0-11)
 	inc (hl)			;6be1
 	call pinta_escena		;6be2   ; pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC220
-	ld hl,070beh		;6be5
+	ld hl,070beh		;6be5   ; ...los 5 sprites de p04:70BE...
 	ld bc,00014h		;6be8
 	call copia_a_de00		;6beb   ; copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
-	ld b,001h		;6bee
+	ld b,001h		;6bee   ; ...colores 0x0E y 0x49, 0x40 lineas con 0x0D...
 	ld de,00e49h		;6bf0
 	call colores_dc00		;6bf3   ; colores_dc00: p04:702C desde 0xDC00
 	ld bc,0400dh		;6bf6
 	call llena_hl		;6bf9   ; llena_hl: B bytes de HL con C
-	ld a,00ah		;6bfc
+	ld a,00ah		;6bfc   ; ...y el texto 0x0A
 	call texto_a_maquina		;6bfe   ; texto_a_maquina: p04:73D2 en (0x30, 0x7C), borrando antes con la BIOS japonesa
 	jp L_6698		;6c01
 L_6C04:
-	djnz L_6C28		;6c04
+	djnz L_6C28		;6c04   ; paso 11: el sprite 2 a la derecha hasta la X 0x60, con las letras...
 	ld a,(0de09h)		;6c06   ; lee la X del sprite 2 en RAM
 	cp 060h		;6c09
 	jr nc,L_6C1A		;6c0b
@@ -1686,13 +1686,13 @@ L_6C04:
 	or a			;6c18
 	ret			;6c19
 L_6C1A:
-	ld de,0de10h		;6c1a   ; apunta a la Y del sprite 4 en RAM
+	ld de,0de10h		;6c1a   ; ...luego los sprites 4-5 de p04:70D1 y el paso siguiente
 	ld hl,070d1h		;6c1d
 	ld bc,00008h		;6c20
 	ldir		;6c23
 	jp L_6698		;6c25
 L_6C28:
-	djnz L_6C54		;6c28
+	djnz L_6C54		;6c28   ; paso 12: las letras; el sprite 4 a la derecha hasta la X 0x94...
 	call texto_si_toca		;6c2a   ; texto_si_toca: p04:73FD si el texto a maquina sigue (0xC8A6 a cero)
 	ld a,(0de11h)		;6c2d   ; lee la X del sprite 4 en RAM
 	cp 094h		;6c30

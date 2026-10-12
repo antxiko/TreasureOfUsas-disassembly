@@ -532,6 +532,55 @@ C 0xBD60 ...4 por cuadro, sentido 1
 C 0xBB1E el fondo del recuadro: 0x94 x 0x1C de (0x36, 0x42) a (0x60, 0x78) de la pagina 1
 C 0xBB49 el recuadro: (0x38, 0x44) de 0x90 x 0x18...
 C 0xBB78 devuelve el fondo: de (0x60, 0x78) de la pagina 1 a (0x36, 0x42)
+C 0xB963 * 16: dos puertas de 8 bytes por pantalla
+C 0xB96E la primera
+C 0xB973 en la pantalla 2 (el templo), solo una
+C 0xB976 la segunda, 8 bytes mas alla
+C 0xB97E el byte 0: abierta?
+C 0xB985 D = la X (byte 2)
+C 0xB987 el byte 1: grande o pequena
+C 0xB989 + 8 en la pequena...
+C 0xB98D ...+ 0x0C en la grande
+C 0xB992 la hoja: 0x18 x 0x20 de (0x40, 0x68) de la pagina 1
+C 0xB9A6 el pequeno: 0x28 x 0x28
+C 0xB9B0 de (0x10, 0x68) de la pagina 1
+C 0xB9B7 cerrada: nada mas
+C 0xB9BB en el templo, + 8; en las demas, + 4
+C 0xB9DA las fichas a la pagina 1
+C 0xB9E0 en el templo, otras
+C 0xB9E4 el marco pequeno: 5 x 5 fichas de p06:BD80 en (0x10, 0x68)
+C 0xB9ED la hoja: 4 filas de 3 de p06:BD99 en (0x40, 0x68)
+C 0xB9FB el marco grande: 7 filas de 6 de p06:BDA5
+C 0xBA04 la hoja: 4 x 3 de p06:BDCF en (0x40, 0x68)
+C 0xBA10 la puerta abierta: 2 filas de 4 de p06:BDDB en (0x40, 0x88)
+C 0xBA1C las fichas, otra vez a la pagina 0
+C 0xBA26 B = C fichas por fila
+C 0xBA2C 8 a la derecha
+C 0xBA43 la palabra de la ruina en p06:BDE3
+C 0xBA49 en (0xA0, 0)...
+C 0xBA4C ...4 filas...
+C 0xBA4F ...de 4 fichas
+C 0xBA6E * 8: la puerta en 0xE328
+C 0xBA77 el marco...
+C 0xBA7C ...y la hoja, en la Y 0xA3...
+C 0xBA82 ...+ 8 o + 0x0C segun el tamano...
+C 0xBA8A ...+ 0x18 - B: un punto mas a la derecha en cada vuelta
+C 0xBA9B 0x80 x 256 vueltas de espera
+C 0xBAA6 la vuelta siguiente
+C 0xBAA8 acarreo: abierta
+C 0xBAB0 el byte 0: si no ha caido...
+C 0xBAB4 ...uno mas
+C 0xBAB8 la ficha siguiente (0x20 bytes)
+C 0xBAC1 4 sprites por personaje
+C 0xBAC6 los patrones de 0xCC20
+C 0xBAEC el patron
+C 0xBAED el color no se toca
+C 0xBAFC a (0xE0, 0xA3)...
+C 0xBAFF ...de (0x20, 0xA0) de la pagina 1...
+C 0xBB02 ...0x20 lineas
+C 0xBB06 una linea de 0x20 x 1
+C 0xBB0E la siguiente
+C 0xBB10 0x80 x 256 vueltas de espera
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0xA049 mando_de_informacion las teclas de INFORMATION: la mejora (0xC228, 0-2) y el personaje (0xC229)
@@ -816,13 +865,10 @@ C 0xB953 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina ori
 C 0xB95F lee la pantalla de la antesala (0-2)
 C 0xB967 apunta a las puertas de la antesala (8 bytes cada una)
 C 0xB96A hl_mas_a: HL = HL + A
-C 0xB96E puerta: el marco y, si esta cerrada, la hoja
 C 0xB978 hl_mas_a: HL = HL + A
 C 0xB99A copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 C 0xB9B3 copia_timp: p00:4C73 con TIMP (0x48)
-C 0xB9BB lee la pantalla de la antesala (0-2)
 C 0xB9D3 copia_timp: p00:4C73 con TIMP (0x48)
-C 0xB9DA guarda las fichas van a la pagina 1
 C 0xB9DD lee la pantalla de la antesala (0-2)
 C 0xB9EA bloque_en_1068: p06:BA24 en (0x10, 0x68)
 C 0xB9F6 bloque_de_fichas: B filas de C fichas de HL en (D, E)
@@ -838,7 +884,6 @@ C 0xBA53 ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 
 C 0xBA6B fase_de_la_ruina: A = 0xC211 - (ruina * 5 + 1): la fase dentro de la ruina
 C 0xBA71 apunta a las puertas de la antesala (8 bytes cada una)
 C 0xBA74 hl_mas_a: HL = HL + A
-C 0xBA77 marco_de_puerta: el marco pequeno (0x28 x 0x28) o grande (0x30 x 0x38)
 C 0xBA98 copia_timp: p00:4C73 con TIMP (0x48)
 C 0xBAAA apunta a la ficha del personaje 0 (14 bytes)
 C 0xBADF lee el sentido en la antesala

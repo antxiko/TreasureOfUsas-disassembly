@@ -14,34 +14,34 @@
 ; ======================================================================
 
 
-L_6000:
-	ld a,(0c10fh)		;6000
+motor_de_sonido:		; un cuadro de sonido: el mezclador y los cuatro canales (0xC010-0xC016)
+	ld a,(0c10fh)		;6000   ; lee el mezclador del PSG (registro 7)
 	ld e,a			;6003
 	ld a,007h		;6004
 	call 00093h		;6006   ; BIOS WRTPSG - Writes data to PSG-register
-	ld a,(0c110h)		;6009
+	ld a,(0c110h)		;6009   ; lee las banderas del sonido especial
 	bit 0,a		;600c
 	jp nz,L_6096		;600e
 	bit 1,a		;6011
 	jp nz,L_60B1		;6013
-	ld a,(0c11bh)		;6016
+	ld a,(0c11bh)		;6016   ; lee la cuenta de bajada de volumen
 	dec a			;6019
 	jp m,L_604B		;601a
 	jr nz,L_6048		;601d
-	ld a,(0c11ch)		;601f
+	ld a,(0c11ch)		;601f   ; lee el volumen general
 	dec a			;6022
-	ld (0c11ch),a		;6023
+	ld (0c11ch),a		;6023   ; guarda el volumen general
 	cp 0f0h		;6026
 	jr nz,L_603C		;6028
-	ld hl,L_6074		;602a
-	ld (0c010h),hl		;602d
-	ld (0c012h),hl		;6030
-	ld (0c014h),hl		;6033
+	ld hl,canal_libre		;602a
+	ld (0c010h),hl		;602d   ; guarda el puntero del canal 1 y el byte siguiente (16 bits)
+	ld (0c012h),hl		;6030   ; guarda el puntero del canal 2 y el byte siguiente (16 bits)
+	ld (0c014h),hl		;6033   ; guarda el puntero del canal 3 y el byte siguiente (16 bits)
 	xor a			;6036
-	ld (0c11dh),a		;6037
+	ld (0c11dh),a		;6037   ; guarda los canales que suenan
 	jr L_6048		;603a
 L_603C:
-	ld a,(0c12ah)		;603c
+	ld a,(0c12ah)		;603c   ; lee el sonido de 0xC11F es el 0x89
 	or a			;603f
 	jr nz,L_6046		;6040
 	ld a,03ah		;6042
@@ -49,44 +49,44 @@ L_603C:
 L_6046:
 	ld a,010h		;6046
 L_6048:
-	ld (0c11bh),a		;6048
+	ld (0c11bh),a		;6048   ; guarda la cuenta de bajada de volumen
 L_604B:
 	xor a			;604b
 	ld b,a			;604c
-	ld hl,(0c010h)		;604d
-	call L_606C		;6050
+	ld hl,(0c010h)		;604d   ; lee el puntero del canal 1 y el byte siguiente (16 bits)
+	call salta_al_canal		;6050   ; salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
 	ld a,001h		;6053
 	ld b,a			;6055
-	ld hl,(0c012h)		;6056
-	call L_606C		;6059
+	ld hl,(0c012h)		;6056   ; lee el puntero del canal 2 y el byte siguiente (16 bits)
+	call salta_al_canal		;6059   ; salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
 	ld a,002h		;605c
 	ld b,a			;605e
-	ld hl,(0c014h)		;605f
-	call L_606C		;6062
+	ld hl,(0c014h)		;605f   ; lee el puntero del canal 3 y el byte siguiente (16 bits)
+	call salta_al_canal		;6062   ; salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
 	ld a,002h		;6065
 	ld b,003h		;6067
-	ld hl,(0c016h)		;6069
-L_606C:
-	ld (0c10ch),a		;606c
+	ld hl,(0c016h)		;6069   ; lee el puntero del canal 4 y el byte siguiente (16 bits)
+salta_al_canal:		; 0xC10C = A, 0xC10D = B y salta a HL
+	ld (0c10ch),a		;606c   ; guarda el canal de sonido en curso
 	ld a,b			;606f
-	ld (0c10dh),a		;6070
+	ld (0c10dh),a		;6070   ; guarda el numero del canal (0-3)
 	jp (hl)			;6073
-L_6074:
-	ld a,(0c10dh)		;6074
+canal_libre:		; el canal ha acabado: lo apunta a p13:6095 (`ret`)
+	ld a,(0c10dh)		;6074   ; lee el numero del canal (0-3)
 	cp 003h		;6077
 	jr nz,L_6082		;6079
 	xor a			;607b
-	ld (0c10eh),a		;607c
-	ld a,(0c10dh)		;607f
+	ld (0c10eh),a		;607c   ; guarda la prioridad del efecto que suena
+	ld a,(0c10dh)		;607f   ; lee el numero del canal (0-3)
 L_6082:
 	rlca			;6082
-	ld hl,0c010h		;6083
+	ld hl,0c010h		;6083   ; apunta a el puntero del canal 1
 	add a,l			;6086
 	ld l,a			;6087
 	jr nc,L_608B		;6088
 	inc h			;608a
 L_608B:
-	ld de,L_6095		;608b
+	ld de,L_6095		;608b   ; el canal acabado apunta a p13:6095 (un ret)
 	ld (hl),e			;608e
 	inc hl			;608f
 	ld (hl),d			;6090
@@ -97,30 +97,30 @@ L_6095:
 L_6096:
 	xor a			;6096
 	ld b,004h		;6097
-	ld hl,(0c018h)		;6099
-	call L_606C		;609c
+	ld hl,(0c018h)		;6099   ; lee el puntero del canal especial 1 y el byte siguiente (16 bits)
+	call salta_al_canal		;609c   ; salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
 	ld a,001h		;609f
 	ld b,005h		;60a1
-	ld hl,(0c01ah)		;60a3
-	call L_606C		;60a6
-	ld a,(0c110h)		;60a9
+	ld hl,(0c01ah)		;60a3   ; lee el puntero del canal especial 2 y el byte siguiente (16 bits)
+	call salta_al_canal		;60a6   ; salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
+	ld a,(0c110h)		;60a9   ; lee las banderas del sonido especial
 	bit 1,a		;60ac
 	jr nz,L_60B1		;60ae
 	ret			;60b0
 L_60B1:
 	xor a			;60b1
 	ld b,004h		;60b2
-	ld hl,(0c127h)		;60b4
-	jr L_606C		;60b7
-L_60B9:
-	ld a,(0c10ch)		;60b9
+	ld hl,(0c127h)		;60b4   ; lee el puntero del canal de los sonidos 0x70-0x7F y el byte siguiente (16 bits)
+	jr salta_al_canal		;60b7
+pon_periodo:		; el periodo DE en los registros del canal 0xC10C
+	ld a,(0c10ch)		;60b9   ; lee el canal de sonido en curso
 	rlca			;60bc
 	call 00093h		;60bd   ; BIOS WRTPSG - Writes data to PSG-register
 	inc a			;60c0
 	ld e,d			;60c1
 	jp 00093h		;60c2   ; BIOS WRTPSG - Writes data to PSG-register
-L_60C5:
-	ld a,(0c10ch)		;60c5
+pon_registro_canal:		; E en el registro del PSG del canal
+	ld a,(0c10ch)		;60c5   ; lee el canal de sonido en curso
 	rlca			;60c8
 	jp 00093h		;60c9   ; BIOS WRTPSG - Writes data to PSG-register
 
@@ -136,38 +136,38 @@ DATA_resto_60CC:
 ; ======================================================================
 
 
-L_60D4:
-	ld a,(0c10ch)		;60d4
+pon_volumen:		; E en el volumen del canal (registro 8 + 0xC10C)
+	ld a,(0c10ch)		;60d4   ; lee el canal de sonido en curso
 	add a,008h		;60d7
 	jp 00093h		;60d9   ; BIOS WRTPSG - Writes data to PSG-register
-L_60DC:
+mezcla_6120:		; el mezclador del canal con p13:6120
 	push hl			;60dc
 	ld hl,06120h		;60dd
 	jp L_60F5		;60e0
-L_60E3:
+mezcla_611a:		; el mezclador del canal con p13:611A
 	push hl			;60e3
 	ld hl,0611ah		;60e4
 	jp L_60F5		;60e7
-L_60EA:
+mezcla_6114:		; el mezclador del canal con p13:6114
 	push hl			;60ea
 	ld hl,06114h		;60eb
 	jp L_60F5		;60ee
-L_60F1:
+mezcla_610e:		; el mezclador del canal con p13:610E
 	push hl			;60f1
 	ld hl,0610eh		;60f2
 L_60F5:
-	ld a,(0c10ch)		;60f5
+	ld a,(0c10ch)		;60f5   ; lee el canal de sonido en curso
 	rlca			;60f8
 	add a,l			;60f9
 	ld l,a			;60fa
 	jr nc,L_60FE		;60fb
 	inc h			;60fd
 L_60FE:
-	ld a,(0c10fh)		;60fe
+	ld a,(0c10fh)		;60fe   ; lee el mezclador del PSG (registro 7)
 	and (hl)			;6101
 	inc hl			;6102
 	or (hl)			;6103
-	ld (0c10fh),a		;6104
+	ld (0c10fh),a		;6104   ; guarda el mezclador del PSG (registro 7)
 	pop hl			;6107
 	ld e,a			;6108
 	ld a,007h		;6109
@@ -190,51 +190,51 @@ DATA_mascaras_de_canal:
 
 
 L_6126:
-	ld ix,0c0bch		;6126
-	jp L_6146		;612a
+	ld ix,0c0bch		;6126   ; apunta a la ficha del canal especial 1
+	jp canal_de_musica		;612a   ; canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
 L_612D:
-	ld ix,0c0e4h		;612d
-	jp L_6146		;6131
-L_6134:
-	ld ix,0c01ch		;6134
-	jp L_6146		;6138
-L_613B:
-	ld ix,0c044h		;613b
-	jp L_6146		;613f
-L_6142:
-	ld ix,0c06ch		;6142
-L_6146:
-	ld a,(0c10dh)		;6146
+	ld ix,0c0e4h		;612d   ; apunta a la ficha del canal especial 2
+	jp canal_de_musica		;6131   ; canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
+canal_musica_1:		; IX = 0xC01C y p13:6146
+	ld ix,0c01ch		;6134   ; apunta a la ficha del canal de musica 1
+	jp canal_de_musica		;6138   ; canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
+canal_musica_2:		; IX = 0xC044 y p13:6146
+	ld ix,0c044h		;613b   ; apunta a la ficha del canal de musica 2
+	jp canal_de_musica		;613f   ; canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
+canal_musica_3:		; IX = 0xC06C y p13:6146
+	ld ix,0c06ch		;6142   ; apunta a la ficha del canal de musica 3
+canal_de_musica:		; un cuadro de un canal de musica: cuenta la nota y lee la pista
+	ld a,(0c10dh)		;6146   ; lee el numero del canal (0-3)
 	cp 002h		;6149
 	jp nz,L_6158		;614b
-	ld a,(0c10eh)		;614e
+	ld a,(0c10eh)		;614e   ; lee la prioridad del efecto que suena
 	or a			;6151
 	jr z,L_6158		;6152
-	set 5,(ix+002h)		;6154
+	set 5,(ix+002h)		;6154   ; pone a uno el bit 5 de las banderas del canal
 L_6158:
-	dec (ix+009h)		;6158
+	dec (ix+009h)		;6158   ; baja la cuenta de la nota
 	jp z,L_61FD		;615b
-	bit 0,(ix+002h)		;615e
+	bit 0,(ix+002h)		;615e   ; mira el bit 0 de las banderas del canal
 	jp z,L_61E6		;6162
 	bit 2,(ix+014h)		;6165
-	call nz,L_6188		;6169
-	ld a,(ix+009h)		;616c
+	call nz,vibrato		;6169   ; vibrato: el vibrato del canal ((ix+0x14), (ix+0x15))
+	ld a,(ix+009h)		;616c   ; lee la cuenta de la nota
 	cp (ix+00bh)		;616f
 	jr nc,L_6178		;6172
 	cp (ix+006h)		;6174
 	ret nc			;6177
 L_6178:
-	ld e,(ix+00ah)		;6178
+	ld e,(ix+00ah)		;6178   ; lee el volumen en curso
 	dec e			;617b
 	ret m			;617c
-	ld (ix+00ah),e		;617d
-	bit 5,(ix+002h)		;6180
+	ld (ix+00ah),e		;617d   ; guarda el volumen en curso
+	bit 5,(ix+002h)		;6180   ; mira el bit 5 de las banderas del canal
 	ret nz			;6184
-	jp L_60D4		;6185
-L_6188:
-	bit 0,(ix+014h)		;6188
+	jp pon_volumen		;6185   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+vibrato:		; el vibrato del canal ((ix+0x14), (ix+0x15))
+	bit 0,(ix+014h)		;6188   ; (ix+0x14) bit 0: el vibrato ya ha empezado
 	jr nz,L_619C		;618c
-	ld a,(ix+015h)		;618e
+	ld a,(ix+015h)		;618e   ; si no, espera 10 cuadros (ix+0x15)
 	inc a			;6191
 	cp 00ah		;6192
 	jr c,L_61DA		;6194
@@ -242,7 +242,7 @@ L_6188:
 	xor a			;6199
 	jr L_61DA		;619a
 L_619C:
-	ld a,(ix+019h)		;619c
+	ld a,(ix+019h)		;619c   ; el periodo del vibrato: el nibble alto de (ix+0x19)
 	and 0f0h		;619f
 	rrca			;61a1
 	rrca			;61a2
@@ -253,12 +253,12 @@ L_619C:
 	inc a			;61a9
 	cp e			;61aa
 	jr c,L_61DA		;61ab
-	ld e,(ix+017h)		;61ad
+	ld e,(ix+017h)		;61ad   ; el periodo de la nota (ix+0x17/0x18) mas o menos el nibble bajo
 	ld d,(ix+018h)		;61b0
 	ld a,(ix+019h)		;61b3
 	and 00fh		;61b6
 	ld b,a			;61b8
-	ld a,(ix+016h)		;61b9
+	ld a,(ix+016h)		;61b9   ; (ix+0x16) cambia de signo cada vez
 	cpl			;61bc
 	ld (ix+016h),a		;61bd
 	and a			;61c0
@@ -277,42 +277,42 @@ L_61CB:
 L_61D0:
 	ld (ix+017h),e		;61d0
 	ld (ix+018h),d		;61d3
-	call L_61DE		;61d6
+	call periodo_si_suena		;61d6   ; periodo_si_suena: p13:60B9 si el canal no esta tapado (bit 5)
 	xor a			;61d9
 L_61DA:
 	ld (ix+015h),a		;61da
 	ret			;61dd
-L_61DE:
-	bit 5,(ix+002h)		;61de
+periodo_si_suena:		; p13:60B9 si el canal no esta tapado (bit 5)
+	bit 5,(ix+002h)		;61de   ; mira el bit 5 de las banderas del canal
 	ret nz			;61e2
-	jp L_60B9		;61e3
+	jp pon_periodo		;61e3   ; pon_periodo: el periodo DE en los registros del canal 0xC10C
 L_61E6:
-	bit 5,(ix+002h)		;61e6
+	bit 5,(ix+002h)		;61e6   ; mira el bit 5 de las banderas del canal
 	ret nz			;61ea
-	bit 7,(ix+002h)		;61eb
+	bit 7,(ix+002h)		;61eb   ; mira el bit 7 de las banderas del canal
 	ret nz			;61ef
-	call L_64F4		;61f0
+	call lee_envolvente		;61f0   ; lee_envolvente: un paso de la envolvente o del efecto de (ix+0x0C)
 	ret nc			;61f3
-	set 7,(ix+002h)		;61f4
+	set 7,(ix+002h)		;61f4   ; pone a uno el bit 7 de las banderas del canal
 	ld e,000h		;61f8
-	jp L_60D4		;61fa
+	jp pon_volumen		;61fa   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
 L_61FD:
-	ld l,(ix+000h)		;61fd
-	ld h,(ix+001h)		;6200
-L_6203:
+	ld l,(ix+000h)		;61fd   ; lee el puntero de la pista (bajo)
+	ld h,(ix+001h)		;6200   ; lee el puntero de la pista (alto)
+lee_pista:		; el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 	ld a,(hl)			;6203
 	inc hl			;6204
 	ld c,a			;6205
 	cp 0d0h		;6206
-	jp nc,L_636B		;6208
-	ld (ix+000h),l		;620b
-	ld (ix+001h),h		;620e
+	jp nc,orden_de_pista		;6208   ; orden_de_pista: las ordenes 0xD0-0xFF de la pista
+	ld (ix+000h),l		;620b   ; guarda el puntero de la pista (bajo)
+	ld (ix+001h),h		;620e   ; guarda el puntero de la pista (alto)
 	cp 0c0h		;6211
 	jp nc,L_6345		;6213
 	and 00fh		;6216
 	inc a			;6218
 	ld b,a			;6219
-	ld e,(ix+003h)		;621a
+	ld e,(ix+003h)		;621a   ; lee el tempo del canal
 	xor a			;621d
 	ld (ix+015h),a		;621e
 	ld (ix+016h),a		;6221
@@ -320,26 +320,26 @@ L_6203:
 L_6228:
 	add a,e			;6228
 	djnz L_6228		;6229
-	ld (ix+009h),a		;622b
-	ld a,(0c10dh)		;622e
+	ld (ix+009h),a		;622b   ; guarda la cuenta de la nota
+	ld a,(0c10dh)		;622e   ; lee el numero del canal (0-3)
 	cp 002h		;6231
 	jr nz,L_623F		;6233
-	ld a,(0c10eh)		;6235
+	ld a,(0c10eh)		;6235   ; lee la prioridad del efecto que suena
 	or a			;6238
 	jr nz,L_623F		;6239
-	res 5,(ix+002h)		;623b
+	res 5,(ix+002h)		;623b   ; pone a cero el bit 5 de las banderas del canal
 L_623F:
-	bit 0,(ix+002h)		;623f
+	bit 0,(ix+002h)		;623f   ; mira el bit 0 de las banderas del canal
 	jp z,L_62CC		;6243
-	ld a,(ix+009h)		;6246
+	ld a,(ix+009h)		;6246   ; lee la cuenta de la nota
 	sub (ix+005h)		;6249
 	ld (ix+00bh),a		;624c
-	bit 5,(ix+002h)		;624f
+	bit 5,(ix+002h)		;624f   ; mira el bit 5 de las banderas del canal
 	ret nz			;6253
-	ld a,(0c121h)		;6254
+	ld a,(0c121h)		;6254   ; lee la musica de fase en marcha
 	or a			;6257
 	jr z,L_6281		;6258
-	ld a,(0c122h)		;625a
+	ld a,(0c122h)		;625a   ; lee la altura de la musica de fase (p15:BE7A)
 	bit 7,a		;625d
 	jr nz,L_627C		;625f
 	bit 6,a		;6261
@@ -362,7 +362,7 @@ L_627C:
 L_6281:
 	ld hl,06329h		;6281
 L_6284:
-	ld a,c			;6284
+	ld a,c			;6284   ; la nota (C >> 4) * 2: su periodo en la tabla de HL
 	and 0f0h		;6285
 	rrca			;6287
 	rrca			;6288
@@ -375,14 +375,14 @@ L_628F:
 	ld e,(hl)			;628f
 	inc hl			;6290
 	ld d,(hl)			;6291
-	ld b,(ix+007h)		;6292
+	ld b,(ix+007h)		;6292   ; lee la octava del canal
 L_6295:
-	srl d		;6295
+	srl d		;6295   ; >> la octava (ix+7) veces
 	rr e		;6297
 	djnz L_6295		;6299
 	ld (ix+017h),e		;629b
 	ld (ix+018h),d		;629e
-	bit 6,(ix+002h)		;62a1
+	bit 6,(ix+002h)		;62a1   ; bit 6: con el desafinado de (ix+0x1A)
 	jr z,L_62AF		;62a5
 	ld a,(ix+01ah)		;62a7
 	add a,e			;62aa
@@ -392,18 +392,18 @@ L_6295:
 L_62AF:
 	ld (ix+017h),e		;62af
 	ld (ix+018h),d		;62b2
-	call L_60B9		;62b5
-	ld a,(0c11ch)		;62b8
-	add a,(ix+004h)		;62bb
+	call pon_periodo		;62b5   ; pon_periodo: el periodo DE en los registros del canal 0xC10C
+	ld a,(0c11ch)		;62b8   ; lee el volumen general
+	add a,(ix+004h)		;62bb   ; le suma el volumen del canal
 	jp p,L_62C2		;62be
 	xor a			;62c1
 L_62C2:
-	ld (ix+00ah),a		;62c2
+	ld (ix+00ah),a		;62c2   ; guarda el volumen en curso
 	ld e,a			;62c5
-	call L_60D4		;62c6
-	jp L_60F1		;62c9
+	call pon_volumen		;62c6   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+	jp mezcla_610e		;62c9   ; mezcla_610e: el mezclador del canal con p13:610E
 L_62CC:
-	ld a,(ix+008h)		;62cc
+	ld a,(ix+008h)		;62cc   ; lee el instrumento del canal
 	rlca			;62cf
 	ld e,a			;62d0
 	ld d,000h		;62d1
@@ -413,10 +413,10 @@ L_62CC:
 	inc hl			;62d8
 	ld d,(hl)			;62d9
 	ex de,hl			;62da
-	ld a,(ix+008h)		;62db
+	ld a,(ix+008h)		;62db   ; lee el instrumento del canal
 	cp 002h		;62de
 	jr c,L_6308		;62e0
-	ld a,(0c122h)		;62e2
+	ld a,(0c122h)		;62e2   ; lee la altura de la musica de fase (p15:BE7A)
 	bit 7,a		;62e5
 	jr nz,L_6304		;62e7
 	bit 6,a		;62e9
@@ -447,13 +447,13 @@ L_6308:
 	ld d,000h		;630f
 	add hl,de			;6311
 	ld a,(hl)			;6312
-	ld (ix+00ch),a		;6313
+	ld (ix+00ch),a		;6313   ; guarda el puntero de la envolvente (bajo)
 	inc hl			;6316
 	ld a,(hl)			;6317
-	ld (ix+00dh),a		;6318
-	res 7,(ix+002h)		;631b
+	ld (ix+00dh),a		;6318   ; guarda el puntero de la envolvente (alto)
+	res 7,(ix+002h)		;631b   ; pone a cero el bit 7 de las banderas del canal
 	ld a,001h		;631f
-	ld (ix+00eh),a		;6321
+	ld (ix+00eh),a		;6321   ; guarda la cuenta de la envolvente
 	ret			;6324
 
 ; ----------------------------------------------------------------------
@@ -488,23 +488,23 @@ L_6345:
 	and 00fh		;6345
 	inc a			;6347
 	ld b,a			;6348
-	ld e,(ix+003h)		;6349
+	ld e,(ix+003h)		;6349   ; lee el tempo del canal
 	xor a			;634c
 L_634D:
 	add a,e			;634d
 	djnz L_634D		;634e
-	ld (ix+009h),a		;6350
+	ld (ix+009h),a		;6350   ; guarda la cuenta de la nota
 	res 0,(ix+014h)		;6353
 	xor a			;6357
 	ld (ix+015h),a		;6358
 	ld (ix+016h),a		;635b
-	bit 5,(ix+002h)		;635e
+	bit 5,(ix+002h)		;635e   ; mira el bit 5 de las banderas del canal
 	ret nz			;6362
 	ld e,000h		;6363
-	ld (ix+00ah),e		;6365
-	jp L_60D4		;6368
-L_636B:
-	and 0f0h		;636b
+	ld (ix+00ah),e		;6365   ; guarda el volumen en curso
+	jp pon_volumen		;6368   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+orden_de_pista:		; las ordenes 0xD0-0xFF de la pista
+	and 0f0h		;636b   ; 0xF0-0xFF, 0xD0-0xDF o 0xE0-0xEF
 	cp 0f0h		;636d
 	jr z,L_637A		;636f
 	cp 0d0h		;6371
@@ -512,14 +512,14 @@ L_636B:
 	cp 0e0h		;6375
 	jp z,L_6412		;6377
 L_637A:
-	ld a,c			;637a
+	ld a,c			;637a   ; 0xFF: el canal acaba
 	and 00fh		;637b
 	cp 00fh		;637d
 	jp z,L_64BC		;637f
-	cp 00dh		;6382
+	cp 00dh		;6382   ; 0xF0-0xFC: volumen; 0xFD y 0xFE: bucles
 	jr c,L_63BD		;6384
 	jr z,L_639E		;6386
-	ld a,(ix+010h)		;6388
+	ld a,(ix+010h)		;6388   ; 0xFE: (ix+0x10) cuenta las vueltas
 	dec a			;638b
 	jr z,L_6399		;638c
 	jp p,L_6393		;638e
@@ -533,7 +533,7 @@ L_6399:
 	ld (ix+010h),a		;6399
 	jr L_63B7		;639c
 L_639E:
-	ld a,(ix+01fh)		;639e
+	ld a,(ix+01fh)		;639e   ; 0xFD: (ix+0x1F) cuenta las vueltas
 	dec a			;63a1
 	jr z,L_63B4		;63a2
 	jp p,L_63A9		;63a4
@@ -547,16 +547,16 @@ L_63AD:
 	inc hl			;63ae
 	ld h,(hl)			;63af
 	ld l,a			;63b0
-	jp L_6203		;63b1
+	jp lee_pista		;63b1   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_63B4:
 	ld (ix+01fh),a		;63b4
 L_63B7:
 	inc hl			;63b7
 	inc hl			;63b8
 	inc hl			;63b9
-	jp L_6203		;63ba
+	jp lee_pista		;63ba   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_63BD:
-	ld c,a			;63bd
+	ld c,a			;63bd   ; con 0xC124 el volumen va a cero
 	ld a,(0c124h)		;63be
 	or a			;63c1
 	jr z,L_63C8		;63c2
@@ -568,7 +568,7 @@ L_63C8:
 	inc a			;63ca
 	inc a			;63cb
 L_63CC:
-	ld (ix+004h),a		;63cc
+	ld (ix+004h),a		;63cc   ; guarda el volumen del canal
 	ld a,(hl)			;63cf
 	rrca			;63d0
 	rrca			;63d1
@@ -581,22 +581,22 @@ L_63CC:
 	and 00fh		;63db
 	inc a			;63dd
 	ld (ix+006h),a		;63de
-	jp L_6203		;63e1
+	jp lee_pista		;63e1   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_63E4:
 	ld a,c			;63e4
 	and 00fh		;63e5
 	jr z,L_63EF		;63e7
-	ld (ix+003h),a		;63e9
-	jp L_6203		;63ec
+	ld (ix+003h),a		;63e9   ; guarda el tempo del canal
+	jp lee_pista		;63ec   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_63EF:
-	ld a,(ix+01fh)		;63ef
+	ld a,(ix+01fh)		;63ef   ; 0xD0: (ix+0x1F) cuenta las vueltas
 	dec a			;63f2
 	jr z,L_6409		;63f3
 	jp p,L_63FA		;63f5
 	ld a,(hl)			;63f8
 	dec a			;63f9
 L_63FA:
-	ld (ix+01fh),a		;63fa
+	ld (ix+01fh),a		;63fa   ; [veces][atras]: salta atras
 	inc hl			;63fd
 	ld a,(hl)			;63fe
 	ld e,a			;63ff
@@ -606,14 +606,14 @@ L_63FA:
 	jr nc,L_6406		;6403
 	dec h			;6405
 L_6406:
-	jp L_6203		;6406
+	jp lee_pista		;6406   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6409:
 	inc hl			;6409
 	inc hl			;640a
 	ld (ix+01fh),000h		;640b
-	jp L_6203		;640f
+	jp lee_pista		;640f   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6412:
-	ld a,c			;6412
+	ld a,c			;6412   ; las ordenes 0xE0-0xEF
 	and 00fh		;6413
 	cp 006h		;6415
 	jr c,L_6443		;6417
@@ -632,33 +632,33 @@ L_6412:
 	jr z,L_64A5		;6431
 	cp 00fh		;6433
 	jr z,L_64AE		;6435
-	set 6,(ix+002h)		;6437
+	set 6,(ix+002h)		;6437   ; 0xE7 y 0xEB: el desafinado (ix+0x1A) y el bit 6
 	ld a,(hl)			;643b
 	inc hl			;643c
 	ld (ix+01ah),a		;643d
-	jp L_6203		;6440
+	jp lee_pista		;6440   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6443:
 	neg		;6443
 	add a,006h		;6445
-	ld (ix+007h),a		;6447
-	jp L_6203		;644a
+	ld (ix+007h),a		;6447   ; guarda la octava del canal
+	jp lee_pista		;644a   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_644D:
-	ld l,(ix+01bh)		;644d
-	ld h,(ix+01ch)		;6450
-	jp L_6203		;6453
+	ld l,(ix+01bh)		;644d   ; lee la vuelta de EF (bajo)
+	ld h,(ix+01ch)		;6450   ; lee la vuelta de EF (alto)
+	jp lee_pista		;6453   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6456:
 	ld a,(hl)			;6456
 	bit 7,a		;6457
 	jr nz,L_6468		;6459
-	res 0,(ix+002h)		;645b
+	res 0,(ix+002h)		;645b   ; pone a cero el bit 0 de las banderas del canal
 	inc hl			;645f
 	and 07fh		;6460
-	ld (ix+008h),a		;6462
-	jp L_6203		;6465
+	ld (ix+008h),a		;6462   ; guarda el instrumento del canal
+	jp lee_pista		;6465   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6468:
-	set 0,(ix+002h)		;6468
+	set 0,(ix+002h)		;6468   ; pone a uno el bit 0 de las banderas del canal
 	inc hl			;646c
-	jp L_6203		;646d
+	jp lee_pista		;646d   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6470:
 	ld a,(hl)			;6470
 	or a			;6471
@@ -669,44 +669,44 @@ L_6478:
 	xor a			;6478
 	inc hl			;6479
 	ld (0c11eh),a		;647a
-	jp L_6203		;647d
+	jp lee_pista		;647d   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6480:
 	ld a,(hl)			;6480
 	inc hl			;6481
 	ld h,(hl)			;6482
 	ld l,a			;6483
-	jp L_6203		;6484
+	jp lee_pista		;6484   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6487:
-	res 4,(ix+002h)		;6487
+	res 4,(ix+002h)		;6487   ; pone a cero el bit 4 de las banderas del canal
 	set 2,(ix+014h)		;648b
 	ld a,(hl)			;648f
 	inc hl			;6490
 	ld (ix+019h),a		;6491
-	jp L_6203		;6494
+	jp lee_pista		;6494   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_6497:
 	ld e,(hl)			;6497
 	inc hl			;6498
 	ld d,(hl)			;6499
 	inc hl			;649a
-	ld (ix+012h),l		;649b
-	ld (ix+013h),h		;649e
+	ld (ix+012h),l		;649b   ; guarda la vuelta de ED (bajo)
+	ld (ix+013h),h		;649e   ; guarda la vuelta de ED (alto)
 	ex de,hl			;64a1
-	jp L_6203		;64a2
+	jp lee_pista		;64a2   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_64A5:
-	ld l,(ix+012h)		;64a5
-	ld h,(ix+013h)		;64a8
-	jp L_6203		;64ab
+	ld l,(ix+012h)		;64a5   ; lee la vuelta de ED (bajo)
+	ld h,(ix+013h)		;64a8   ; lee la vuelta de ED (alto)
+	jp lee_pista		;64ab   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_64AE:
 	ld e,(hl)			;64ae
 	inc hl			;64af
 	ld d,(hl)			;64b0
 	inc hl			;64b1
-	ld (ix+01bh),l		;64b2
-	ld (ix+01ch),h		;64b5
+	ld (ix+01bh),l		;64b2   ; guarda la vuelta de EF (bajo)
+	ld (ix+01ch),h		;64b5   ; guarda la vuelta de EF (alto)
 	ex de,hl			;64b8
-	jp L_6203		;64b9
+	jp lee_pista		;64b9   ; lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
 L_64BC:
-	ld a,(0c10dh)		;64bc
+	ld a,(0c10dh)		;64bc   ; lee el numero del canal (0-3)
 	inc a			;64bf
 	ld b,a			;64c0
 	ld a,07fh		;64c1
@@ -714,44 +714,44 @@ L_64C3:
 	rlca			;64c3
 	djnz L_64C3		;64c4
 	ld b,a			;64c6
-	ld a,(0c11dh)		;64c7
+	ld a,(0c11dh)		;64c7   ; lee los canales que suenan
 	and b			;64ca
-	ld (0c11dh),a		;64cb
-	jp L_6074		;64ce
+	ld (0c11dh),a		;64cb   ; guarda los canales que suenan
+	jp canal_libre		;64ce   ; canal_libre: el canal ha acabado: lo apunta a p13:6095 (`ret`)
 L_64D1:
-	ld ix,0c0bch		;64d1
+	ld ix,0c0bch		;64d1   ; apunta a la ficha del canal especial 1
 	jr L_64ED		;64d5
-L_64D7:
-	ld ix,0c01ch		;64d7
+canal_40_1:		; IX = 0xC01C y p13:64ED
+	ld ix,0c01ch		;64d7   ; apunta a la ficha del canal de musica 1
 	jr L_64ED		;64db
-L_64DD:
-	ld ix,0c044h		;64dd
+canal_40_2:		; IX = 0xC044 y p13:64ED
+	ld ix,0c044h		;64dd   ; apunta a la ficha del canal de musica 2
 	jr L_64ED		;64e1
-L_64E3:
-	ld ix,0c06ch		;64e3
+canal_40_3:		; IX = 0xC06C y p13:64ED
+	ld ix,0c06ch		;64e3   ; apunta a la ficha del canal de musica 3
 	jr L_64ED		;64e7
-L_64E9:
-	ld ix,0c094h		;64e9
+canal_de_efectos:		; IX = 0xC094 y p13:64ED
+	ld ix,0c094h		;64e9   ; apunta a la ficha del canal de efectos
 L_64ED:
-	call L_64F4		;64ed
+	call lee_envolvente		;64ed   ; lee_envolvente: un paso de la envolvente o del efecto de (ix+0x0C)
 	ret nc			;64f0
-	jp L_6074		;64f1
-L_64F4:
-	dec (ix+00eh)		;64f4
+	jp canal_libre		;64f1   ; canal_libre: el canal ha acabado: lo apunta a p13:6095 (`ret`)
+lee_envolvente:		; un paso de la envolvente o del efecto de (ix+0x0C)
+	dec (ix+00eh)		;64f4   ; baja la cuenta de la envolvente
 	jp nz,L_66C0		;64f7
-	ld a,(ix+00fh)		;64fa
-	ld (ix+00eh),a		;64fd
-	ld l,(ix+00ch)		;6500
-	ld h,(ix+00dh)		;6503
+	ld a,(ix+00fh)		;64fa   ; lee el paso de la envolvente
+	ld (ix+00eh),a		;64fd   ; guarda la cuenta de la envolvente
+	ld l,(ix+00ch)		;6500   ; lee el puntero de la envolvente (bajo)
+	ld h,(ix+00dh)		;6503   ; lee el puntero de la envolvente (alto)
 L_6506:
-	ld a,(hl)			;6506
+	ld a,(hl)			;6506   ; la envolvente: 0xFF acaba
 	ld c,a			;6507
 	cp 0ffh		;6508
 	jp z,L_66C2		;650a
-	bit 1,(ix+002h)		;650d
+	bit 1,(ix+002h)		;650d   ; en modo crudo (bit 1), cada byte va tal cual
 	jr nz,L_6558		;6511
 	inc hl			;6513
-	cp 0feh		;6514
+	cp 0feh		;6514   ; FE, FD, 28, 27, 26, 25, 24 y 2C son ordenes
 	jp z,L_65CE		;6516
 	cp 0fdh		;6519
 	jp z,L_65E4		;651b
@@ -767,12 +767,12 @@ L_6506:
 	jp z,L_6603		;6534
 	cp 02ch		;6537
 	jp z,L_6656		;6539
-	and 0f0h		;653c
+	and 0f0h		;653c   ; 0x2x: cuadros y mezclador; 0x1x: ruido
 	cp 020h		;653e
 	jp z,L_665F		;6540
 	cp 010h		;6543
 	jr nz,L_656E		;6545
-	ld a,c			;6547
+	ld a,c			;6547   ; 0x1x: el periodo de ruido (PSG 6) = (x & 15) * 2 y la nota siguiente
 	and 00fh		;6548
 	rlca			;654a
 	ld e,a			;654b
@@ -787,15 +787,15 @@ L_6558:
 	ld a,c			;6558
 	ld e,a			;6559
 	inc hl			;655a
-	ld (ix+00ch),l		;655b
-	ld (ix+00dh),h		;655e
+	ld (ix+00ch),l		;655b   ; guarda el puntero de la envolvente (bajo)
+	ld (ix+00dh),h		;655e   ; guarda el puntero de la envolvente (alto)
 	ld a,(hl)			;6561
 	cp 027h		;6562
-	jp nz,L_60C5		;6564
-	res 1,(ix+002h)		;6567
-	jp L_60C5		;656b
+	jp nz,pon_registro_canal		;6564   ; pon_registro_canal: E en el registro del PSG del canal
+	res 1,(ix+002h)		;6567   ; pone a cero el bit 1 de las banderas del canal
+	jp pon_registro_canal		;656b   ; pon_registro_canal: E en el registro del PSG del canal
 L_656E:
-	rrca			;656e
+	rrca			;656e   ; el nibble alto: el volumen, menos (ix+0x1E)
 	rrca			;656f
 	rrca			;6570
 	rrca			;6571
@@ -809,10 +809,10 @@ L_6578:
 	ld d,a			;657e
 	ld e,(hl)			;657f
 	inc hl			;6580
-	ld (ix+00ch),l		;6581
-	ld (ix+00dh),h		;6584
-	call L_60B9		;6587
-	bit 0,(ix+002h)		;658a
+	ld (ix+00ch),l		;6581   ; guarda el puntero de la envolvente (bajo)
+	ld (ix+00dh),h		;6584   ; guarda el puntero de la envolvente (alto)
+	call pon_periodo		;6587   ; pon_periodo: el periodo DE en los registros del canal 0xC10C
+	bit 0,(ix+002h)		;658a   ; mira el bit 0 de las banderas del canal
 	jr nz,L_659B		;658e
 	ld a,(0c124h)		;6590
 	or a			;6593
@@ -820,35 +820,35 @@ L_6578:
 L_6596:
 	ld e,000h		;6596
 L_6598:
-	jp L_60D4		;6598
+	jp pon_volumen		;6598   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
 L_659B:
-	bit 4,(ix+00ah)		;659b
+	bit 4,(ix+00ah)		;659b   ; mira el bit 4 de el volumen en curso
 	ld a,(0c126h)		;659f
 	ld e,a			;65a2
 	jr nz,L_65B8		;65a3
-	ld a,(0c10dh)		;65a5
+	ld a,(0c10dh)		;65a5   ; lee el numero del canal (0-3)
 	cp 003h		;65a8
 	jr nc,L_6598		;65aa
-	ld a,(0c11ch)		;65ac
+	ld a,(0c11ch)		;65ac   ; lee el volumen general
 	ld d,a			;65af
 	ld a,e			;65b0
 	sub d			;65b1
 	jr c,L_6596		;65b2
 	ld e,a			;65b4
-	jp L_60D4		;65b5
+	jp pon_volumen		;65b5   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
 L_65B8:
-	ld a,(0c11bh)		;65b8
+	ld a,(0c11bh)		;65b8   ; lee la cuenta de bajada de volumen
 	or a			;65bb
 	jr nz,L_65C9		;65bc
-	bit 4,(ix+002h)		;65be
+	bit 4,(ix+002h)		;65be   ; mira el bit 4 de las banderas del canal
 	jr nz,L_65C9		;65c2
 	ld a,00dh		;65c4
 	jp 00093h		;65c6   ; BIOS WRTPSG - Writes data to PSG-register
 L_65C9:
 	ld e,010h		;65c9
-	jp L_60D4		;65cb
+	jp pon_volumen		;65cb   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
 L_65CE:
-	ld a,(ix+011h)		;65ce
+	ld a,(ix+011h)		;65ce   ; 0xFE: (ix+0x11) cuenta las vueltas
 	dec a			;65d1
 	jr z,L_65DF		;65d2
 	jp p,L_65D9		;65d4
@@ -862,7 +862,7 @@ L_65DF:
 	ld (ix+011h),a		;65df
 	jr L_65FD		;65e2
 L_65E4:
-	ld a,(ix+01dh)		;65e4
+	ld a,(ix+01dh)		;65e4   ; 0xFD: (ix+0x1D) cuenta las vueltas
 	dec a			;65e7
 	jr z,L_65FA		;65e8
 	jp p,L_65EF		;65ea
@@ -885,7 +885,7 @@ L_65FD:
 	inc hl			;65ff
 	jp L_6506		;6600
 L_6603:
-	ld e,(hl)			;6603
+	ld e,(hl)			;6603   ; 0x24 [lo][hi]: llama; la vuelta en (ix+0x20/0x21)
 	inc hl			;6604
 	ld d,(hl)			;6605
 	inc hl			;6606
@@ -894,30 +894,30 @@ L_6603:
 	ex de,hl			;660d
 	jp L_6506		;660e
 L_6611:
-	set 1,(ix+002h)		;6611
+	set 1,(ix+002h)		;6611   ; pone a uno el bit 1 de las banderas del canal
 	jp L_6506		;6615
 L_6618:
-	set 3,(ix+002h)		;6618
+	set 3,(ix+002h)		;6618   ; pone a uno el bit 3 de las banderas del canal
 	ld a,(hl)			;661c
 	ld (ix+01eh),a		;661d
 	inc hl			;6620
 	jp L_6506		;6621
 L_6624:
-	ld a,(ix+002h)		;6624
+	ld a,(ix+002h)		;6624   ; lee las banderas del canal
 	and 0f5h		;6627
-	ld (ix+002h),a		;6629
+	ld (ix+002h),a		;6629   ; guarda las banderas del canal
 	xor a			;662c
 	ld (ix+01eh),a		;662d
 	jp L_6506		;6630
 L_6633:
-	ld a,(ix+01dh)		;6633
+	ld a,(ix+01dh)		;6633   ; 0x28: (ix+0x1D) cuenta las vueltas
 	dec a			;6636
 	jr z,L_664D		;6637
 	jp p,L_663E		;6639
 	ld a,(hl)			;663c
 	dec a			;663d
 L_663E:
-	ld (ix+01dh),a		;663e
+	ld (ix+01dh),a		;663e   ; [veces][atras]: salta atras
 	inc hl			;6641
 	ld a,(hl)			;6642
 	ld e,a			;6643
@@ -942,29 +942,29 @@ L_665F:
 	jr nz,L_6671		;6661
 	bit 1,c		;6663
 	jr nz,L_666C		;6665
-	call L_60DC		;6667
+	call mezcla_6120		;6667   ; mezcla_6120: el mezclador del canal con p13:6120
 	jr L_667D		;666a
 L_666C:
-	call L_60F1		;666c
+	call mezcla_610e		;666c   ; mezcla_610e: el mezclador del canal con p13:610E
 	jr L_667D		;666f
 L_6671:
 	bit 1,c		;6671
 	jr nz,L_667A		;6673
-	call L_60EA		;6675
+	call mezcla_6114		;6675   ; mezcla_6114: el mezclador del canal con p13:6114
 	jr L_667D		;6678
 L_667A:
-	call L_60E3		;667a
+	call mezcla_611a		;667a   ; mezcla_611a: el mezclador del canal con p13:611A
 L_667D:
 	ld a,c			;667d
 	rlca			;667e
 	and 010h		;667f
-	ld (ix+00ah),a		;6681
+	ld (ix+00ah),a		;6681   ; guarda el volumen en curso
 	ld e,a			;6684
-	call L_60D4		;6685
+	call pon_volumen		;6685   ; pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
 	ld a,(hl)			;6688
 	inc hl			;6689
-	ld (ix+00eh),a		;668a
-	ld (ix+00fh),a		;668d
+	ld (ix+00eh),a		;668a   ; guarda la cuenta de la envolvente
+	ld (ix+00fh),a		;668d   ; guarda el paso de la envolvente
 	ld a,c			;6690
 	cp 020h		;6691
 	jr z,L_66BA		;6693
@@ -972,10 +972,10 @@ L_667D:
 	jp c,L_6506		;6697
 	bit 2,c		;669a
 	jr z,L_66A5		;669c
-	set 4,(ix+002h)		;669e
+	set 4,(ix+002h)		;669e   ; pone a uno el bit 4 de las banderas del canal
 	jp L_6506		;66a2
 L_66A5:
-	res 4,(ix+002h)		;66a5
+	res 4,(ix+002h)		;66a5   ; pone a cero el bit 4 de las banderas del canal
 	ld e,(hl)			;66a9
 	inc hl			;66aa
 	ld a,00ch		;66ab
@@ -986,8 +986,8 @@ L_66A5:
 	call 00093h		;66b4   ; BIOS WRTPSG - Writes data to PSG-register
 	jp L_6506		;66b7
 L_66BA:
-	ld (ix+00ch),l		;66ba
-	ld (ix+00dh),h		;66bd
+	ld (ix+00ch),l		;66ba   ; guarda el puntero de la envolvente (bajo)
+	ld (ix+00dh),h		;66bd   ; guarda el puntero de la envolvente (alto)
 L_66C0:
 	or a			;66c0
 	ret			;66c1

@@ -233,7 +233,7 @@ D 0xBCB6 0xBCD6 fichas_c240_1_f1  2 fichas de 8x8 a 2 bit(s) por punto (16 bytes
 F 0xBCB6 16
 D 0xBCD6 0xBCE0 por_ruina_bcd6  5 palabras: la tabla de cada ruina (p01:6044); lo leen p01:603E (10 bytes)
 F 0xBCD6 2
-D 0xBCE0 0xBED3 pares_por_ruina  las 5 tablas de p09:BCD6: p01:604C lee el par 2 x C ([A][C]) de la de la ruina; lo leen p01:603E (499 bytes)
+D 0xBCE0 0xBED3 demo_por_ruina  las teclas de la demo de cada ruina (p09:BCD6): pares [teclas][cuadros] que p01:6017 va leyendo; 0xFF acaba la demo; lo leen p01:603E (499 bytes)
 F 0xBCE0 2
 D 0xBED3 0xBF1D registros_p9056  74 bytes: p02:9056 copia 3 desde p09:BED3 + A a 0xC319; lo leen p02:9050 (74 bytes)
 F 0xBED3 3
@@ -242,3 +242,18 @@ F 0xBF1D 16
 D 0xBF69 0xC000 relleno_ff  151 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (151 bytes)
 F 0xBF69 16
 # --- fin de los bloques de bloques.py ---
+
+
+# --- A MANO: comentarios, nombres y bloques ---
+C 0xB8F5 la tabla de la fase; 2 bytes por pantalla (0xC212 - 1)
+C 0xB908 los nibbles de cada byte: primero el alto
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0xB8CC lee el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xB8CF apunta a la vecina de arriba
+C 0xB8DF guarda la pantalla de la fase (desde 1)
+C 0xB8E5 guarda se sale de la fase
+C 0xB8E9 lee la fase (1-25: ruina * 5 + puerta)
+C 0xB8F9 lee la pantalla de la fase (desde 1)
+C 0xB903 apunta a la vecina de arriba
+# --- fin de las anotaciones de anota.py ---

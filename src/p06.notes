@@ -3,9 +3,9 @@
 # --- BLOQUES QUE LEE EL CODIGO (seccion que reescribe tools/bloques.py; no editar a mano) ---
 D 0xA173 0xA200 texto_p9EF2  texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba; lo leen p05:9EF2 (141 bytes)
 F 0xA173 16
-D 0xA200 0xA21F lineas_p9F82  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p05:9F82 (31 bytes)
+D 0xA200 0xA21F lineas_p9F82  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p05:9F82 (31 bytes)
 F 0xA200 3
-D 0xA21F 0xA226 lineas_p9F7C  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p05:9F7C (7 bytes)
+D 0xA21F 0xA226 lineas_p9F7C  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p05:9F7C (7 bytes)
 F 0xA21F 3
 D 0xA226 0xA249 patrones_p9EEC  [direccion de VRAM] y RLE de patrones de sprite (p00:4926); lo leen p05:9EEC (35 bytes)
 F 0xA226 16
@@ -51,17 +51,17 @@ D 0xA774 0xA794 caritas_A774  2 fases (0xC8AC) x 4 estados (0xC2B6) x 2x2 fichas
 F 0xA774 4
 D 0xA794 0xA7B4 caritas_A794  2 fases (0xC8AC) x 4 estados (0xC2D6) x 2x2 fichas que p02:81F1 pinta con p06:BA24; lo leen p02:81E7 (32 bytes)
 F 0xA794 4
-D 0xA7B4 0xA7BB lineas_A7B4  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p06:A47C (7 bytes)
+D 0xA7B4 0xA7BB lineas_A7B4  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p06:A47C (7 bytes)
 F 0xA7B4 3
-D 0xA7BB 0xA7C8 lineas_A7BB  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p06:A482 (13 bytes)
+D 0xA7BB 0xA7C8 lineas_A7BB  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p06:A482 (13 bytes)
 F 0xA7BB 3
-D 0xA7C8 0xA7CF lineas_A7C8  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80E4 (7 bytes)
+D 0xA7C8 0xA7CF lineas_A7C8  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80E4 (7 bytes)
 F 0xA7C8 3
-D 0xA7CF 0xA7D6 lineas_A7CF  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80F3 (7 bytes)
+D 0xA7CF 0xA7D6 lineas_A7CF  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80F3 (7 bytes)
 F 0xA7CF 3
-D 0xA7D6 0xA7DD lineas_A7D6  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80E9 (7 bytes)
+D 0xA7D6 0xA7DD lineas_A7D6  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80E9 (7 bytes)
 F 0xA7D6 3
-D 0xA7DD 0xA7E4 lineas_A7DD  lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80F8 (7 bytes)
+D 0xA7DD 0xA7E4 lineas_A7DD  lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80F8 (7 bytes)
 F 0xA7DD 3
 D 0xA7E4 0xA7EA fichas_pA45C_colores  tabla de colores de la lista fichas_pA45C (L_529C indexa con c >> 4); lo leen p06:A45C (6 bytes)
 F 0xA7E4 2
@@ -270,3 +270,395 @@ F 0xBF88 16
 D 0xBFE3 0xC000 relleno_ff  29 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (29 bytes)
 F 0xBFE3 16
 # --- fin de los bloques de bloques.py ---
+
+
+# --- A MANO: comentarios, nombres y bloques ---
+C 0xA07C la opcion siguiente de 0 a 2
+C 0xA11F el byte B de la ficha: si ya llega a C, nada
+C 0xA125 uno mas; el byte 5 (la vida) sube de 4 en 4
+C 0xA132 el precio DE se dobla en BCD (add a,a / daa) y se guarda en 0xDE81
+C 0xA32A lo tecleado (p06:A392): si no hay tecla nueva, nada
+C 0xA333 la tecla al final de lo escrito en 0xE360 (0xE378 cuenta las letras) y 0xFF detras
+C 0xA344 lo escrito en (0xB8, 0x48)
+C 0xA351 con la tecla 0xFF (p06:A35B), se compara; si no, una letra mas hasta 0x0E
+C 0xA37B 4 - B + 1: la ruina cuyo nombre coincide, a 0xE379
+C 0xA388 compara byte a byte hasta el 0xFF
+C 0xA396 cada fila de la matriz (SNSMAT): la primera con alguna tecla
+C 0xA3A1 ninguna: 0xC20E y 0xC20F a cero
+C 0xA3BB la tecla nueva: la de ahora y no la de antes, en 0xC20F
+C 0xA4FB una fila de 6 fichas del retrato
+C 0xA508 la siguiente fila
+C 0xA52D 12 de separacion entre numeros
+C 0xA530 el primer valor + 1
+C 0xA53D el segundo valor + 1
+C 0xA545 3 bytes mas alla, el siguiente
+C 0xA554 los bytes 0 y 1 de la ficha llevan 5 marcas; los demas 3
+C 0xA563 la marca llena (0x0000) o vacia
+C 0xA56E 8 x 8 de la pagina 1 y la siguiente marca
+C 0xB7D8 el byte HL de la ranura C (RDSLT)
+C 0xB7E1 contra (DE): si no coincide, sin acarreo
+C 0xB82E 8 bytes por puerta; C cuenta las cerradas
+C 0xB88D [puerta]: 0xFF acaba
+C 0xB891 al registro: 0 (cerrada), el bit 0 (grande) y la X
+C 0xB89E 8 bytes por registro (6 + los 2 de antes)
+C 0xB8E4 un color del personaje (HL') a 16 bytes de 0xDC00
+C 0xB8EB 16 bytes de A
+C 0xB97B el marco; si la puerta esta abierta, nada mas
+C 0xB981 la hoja cerrada en (X + 8 o + 0x0C, 0xA3)
+C 0xB99D el marco: pequeno (0x28 x 0x28 en Y 0x9B) o grande (0x30 x 0x38 en Y 0x8B)
+C 0xB9C6 la puerta abierta: 0x20 x 0x10 de (0x88, 0x40) en (X + C, 0xB3)
+C 0xBA27 una fila de C fichas
+C 0xBA32 la siguiente fila
+C 0xBA52 una fila de 4 fichas del dibujo de la ruina
+C 0xBA5D la siguiente fila
+C 0xBAA0 espera
+C 0xBAB5 C = cuantos personajes viven
+C 0xBABB los sprites de los personajes: 4 por cada uno
+C 0xBACA la X: 0xCC12 + dx
+C 0xBAD1 la Y: 0xCC13 - dy; si se pasa, escondido (0xE0)
+C 0xBAE8 el patron de 0xCC20 mas 0x10 si va a la izquierda (0xCC16)
+C 0xBB15 espera
+C 0xBC8C el sprite: escondido (0xE8) o en 0xC3 + (HL)
+C 0xBC98 4 sprites
+C 0xBD05 Y, X y patron
+C 0xBD1F 16 bytes con A
+C 0xBD4E X + 4 y sentido 0
+C 0xBD67 0xCC15 cuenta; el cuadro de andar (0xCC14) sale de sus bits 2 y 3
+C 0xA133 E * 2 en BCD (daa)
+C 0xA137 D * 2 con el acarreo, en BCD
+C 0xA13B el nuevo precio a (0xDE81)
+C 0xA3BE C = las teclas de antes; (0xC20E) = las de ahora
+C 0xA3C3 las nuevas a 0xC20F
+C 0xB99E la Y del marco pequeno: 0x9B
+C 0xB9A2 D = la X de la puerta; (HL + 1): grande o pequena
+C 0xB9AB el grande: 0x30 x 0x38 en Y 0x8B
+C 0xBD6C el bit 2: cuadro 1
+C 0xBD72 si no, el bit 3: cuadro 0 o 2
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0xA049 mando_del_final las teclas del final: cambia de personaje (0xC228/0xC229)
+L 0xA09B cursor_del_final los sprites del cursor segun 0xC228
+L 0xA0DD estado_11 en el estado 0x0B, 0xC229 = el personaje que se lleva
+L 0xA0EA compra con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
+L 0xA163 byte_de_ficha HL = la ficha del personaje 0xC229 + B
+L 0xA385 compara_con_e360 compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
+L 0xA392 lee_teclado las 9 filas de la matriz (SNSMAT); la primera tecla pulsada, por p06:A3C8
+L 0xA45C lista_a7f8 la lista de fichas p06:A7F8
+L 0xA465 paleta_b351 la paleta p06:B351
+L 0xA46B recuadros_del_final los recuadros y lineas de p06:A7B4/A7BB
+L 0xA488 recuadros_2 dos recuadros de 0x32 x 0x32
+L 0xA494 rectangulo_guardando p00:4B74 con el color 0x0D sin tocar registros
+L 0xA4A0 recuadro_parpadea el recuadro del personaje que se lleva, 0x0D o 0x0A cada 16 cuadros
+L 0xA4BD retratos los retratos de los dos personajes segun su estado (p06:A644/A64C)
+L 0xA4F5 retrato 6 x 6 fichas de HL en (D, E)
+L 0xA50F numeros_de_las_fichas los numeros de las fichas de los dos personajes
+L 0xA52D doce_numeros los valores de (HL) en columnas de 12
+L 0xA54A numero un numero (p06:A554)
+L 0xA59D cambia_de_personaje con las teclas, 0xC240 cambia si el otro vive
+L 0xB776 busca_en_subranuras las 4 subranuras de la ranura C (p06:B78D)
+L 0xB78D busca_cartucho 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
+L 0xB7D8 compara_en_ranura acarreo si los B bytes de la ranura C (RDSLT) son los de DE
+L 0xB81D cuenta_e328 cuantas puertas de 0xE328 hay abiertas
+L 0xB8A5 colores_de_la_antesala los colores de sprite de los dos personajes (p06:B8F3/B8F7)
+L 0xB8DF colores_de_personaje 4 x 16 colores de HL' en DE si el personaje vive
+L 0xB940 puerta_grande en la pantalla 2 de la antesala, la puerta grande (p06:B998)
+L 0xB95F puertas_de_la_pantalla las dos puertas de la pantalla 0xCC10 (p06:B97B)
+L 0xB97B puerta el marco y, si esta cerrada, la hoja
+L 0xB998 copia_timp p00:4C73 con TIMP (0x48)
+L 0xB99D marco_de_puerta el marco pequeno (0x28 x 0x28) o grande (0x30 x 0x38)
+L 0xB9D8 compone_puertas compone en la pagina 1 los marcos y hojas de las puertas
+L 0xBA21 bloque_en_1068 p06:BA24 en (0x10, 0x68)
+L 0xBA24 bloque_de_fichas B filas de C fichas de HL en (D, E)
+L 0xBAAA sprites_de_la_antesala los sprites de los personajes en la antesala (p06:BE2D)
+L 0xBB49 recuadro_del_mensaje borra y enmarca el recuadro de mensajes
+L 0xBB78 copia_6078 copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+L 0xBC36 vuelve_un_personaje la ficha inicial (p06:BF6C) del personaje que no vive
+L 0xBCA0 sprites_be35 los sprites del personaje 1 con p06:BE35
+L 0xBCD3 cuadro_de_la_tienda los colores (p06:BD0B) y los sprites de 0xDE20
+L 0xBCD8 sprites_de20 los sprites de 0xDE20 junto a 0xCC13
+L 0xBD05 pon_atributo (HL) = E, D, C
+L 0xBD0B colores_dc80 4 x 16 colores 0x0D/0x0A en 0xDC80
+L 0xBD1F llena_16_a 16 bytes de HL con A
+C 0xA002 mando_del_final: las teclas del final: cambia de personaje (0xC228/0xC229)
+C 0xA005 cursor_del_final: los sprites del cursor segun 0xC228
+C 0xA008 compra: con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
+C 0xA00B lee variable de trabajo del banco 0
+C 0xA00F atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0xA012 cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
+C 0xA018 marcadores_del_final: los numeros de las fichas de los dos personajes
+C 0xA01B atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0xA020 apunta a la ficha del personaje 0 (14 bytes)
+C 0xA029 hl_mas_a: HL = HL + A
+C 0xA035 hl_mas_a: HL = HL + A
+C 0xA03D guarda las monedas (16 bits) y el byte siguiente (16 bits)
+C 0xA040 cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
+C 0xA046 marcadores_del_final: los numeros de las fichas de los dos personajes
+C 0xA049 apunta a la opcion del final
+C 0xA04C apunta a el personaje del final
+C 0xA04F lee las teclas nuevas
+C 0xA05D lee la ficha del personaje 0 (14 bytes)
+C 0xA061 lee la ficha del personaje 1 (14 bytes)
+C 0xA074 lee el estado del juego
+C 0xA08D lee el estado del juego
+C 0xA09B lee la opcion del final
+C 0xA09E apunta a los atributos de los sprites en RAM
+C 0xA0A1 apunta a la Y del sprite 1 en RAM
+C 0xA0B2 estado_11: en el estado 0x0B, 0xC229 = el personaje que se lleva
+C 0xA0B5 lee el personaje del final
+C 0xA0CA apunta a los colores de los sprites en RAM (16 por sprite)
+C 0xA0D9 guarda la Y del sprite 2 en RAM
+C 0xA0DD lee el estado del juego
+C 0xA0E3 lee el personaje que se lleva (0 o 1)
+C 0xA0E6 guarda el personaje del final
+C 0xA0EB guarda variable de trabajo del banco 0
+C 0xA0EE lee las teclas nuevas
+C 0xA0F4 lee la opcion del final
+C 0xA0FB byte_de_ficha: HL = la ficha del personaje 0xC229 + B
+C 0xA104 lee las monedas (16 bits) y el byte siguiente (16 bits)
+C 0xA10B lee la opcion del final
+C 0xA142 lee las monedas (16 bits) y el byte siguiente (16 bits)
+C 0xA14D guarda las monedas (16 bits) y el byte siguiente (16 bits)
+C 0xA152 guarda variable de trabajo del banco 0
+C 0xA155 lee el estado del juego
+C 0xA163 lee el personaje del final
+C 0xA167 apunta a la ficha del personaje 0 (14 bytes)
+C 0xA16C apunta a la ficha del personaje 1 (14 bytes)
+C 0xA170 hl_mas_a: HL = HL + A
+C 0xA24C lee la ruina (0-4)
+C 0xA24F palabra_a: HL = la palabra A de la tabla HL
+C 0xA255 guarda el principio de la linea del texto a maquina y el byte siguiente (16 bits)
+C 0xA259 guarda la posicion del texto a maquina y el byte siguiente (16 bits)
+C 0xA25E guarda el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0xA263 guarda la espera hasta la siguiente letra
+C 0xA267 guarda el texto a maquina ha acabado
+C 0xA26D texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xA28A lee el texto a maquina ha acabado
+C 0xA28F apunta a la espera hasta la siguiente letra
+C 0xA294 lee el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0xA299 guarda el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0xA2A1 lee la posicion del texto a maquina y el byte siguiente (16 bits)
+C 0xA2A5 caracter_de_la_fuente: el caracter A de la fuente de la pagina 1 a (D, E) (HMMM)
+C 0xA2A8 avanza_ocho: D + 8, y E + 8 si D da la vuelta
+C 0xA2AB guarda la posicion del texto a maquina y el byte siguiente (16 bits)
+C 0xA2B1 guarda la espera hasta la siguiente letra
+C 0xA2B7 guarda el texto a maquina ha acabado
+C 0xA302 borra: pone a cero BC + 1 bytes desde HL
+C 0xA30F rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
+C 0xA31A rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
+C 0xA327 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xA33A hl_mas_a: HL = HL + A
+C 0xA365 palabra_a: HL = la palabra A de la tabla HL
+C 0xA36A compara_con_e360: compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
+C 0xA3B1 hl_mas_a: HL = HL + A
+C 0xA410 lee la X en la antesala
+C 0xA420 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0xA429 borra_rectangulo: HMMV con 0xFF en la pagina 0
+C 0xA42C lista_a7f8: la lista de fichas p06:A7F8
+C 0xA435 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0xA43D rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0xA440 recuadros_del_final: los recuadros y lineas de p06:A7B4/A7BB
+C 0xA446 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xA44D guarda el texto a maquina en marcha
+C 0xA450 paleta_b351: la paleta p06:B351
+C 0xA453 retratos: los retratos de los dos personajes segun su estado (p06:A644/A64C)
+C 0xA456 numeros_de_las_fichas: los numeros de las fichas de los dos personajes
+C 0xA462 lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
+C 0xA468 pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
+C 0xA46B recuadros_2: dos recuadros de 0x32 x 0x32
+C 0xA474 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0xA479 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0xA47F lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
+C 0xA485 lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
+C 0xA48E rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0xA499 rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
+C 0xA4A0 lee el personaje que se lleva (0 o 1)
+C 0xA4AA lee la cuenta de cuadros
+C 0xA4BA rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
+C 0xA4BE guarda variable de trabajo del banco 0
+C 0xA4C1 lee el estado del personaje 0
+C 0xA4C7 palabra_a: HL = la palabra A de la tabla HL
+C 0xA4CA lee variable de trabajo del banco 0
+C 0xA4D5 lee la ficha del personaje 0 (14 bytes)
+C 0xA4D9 retrato: 6 x 6 fichas de HL en (D, E)
+C 0xA4DC lee el estado del personaje 1
+C 0xA4E2 palabra_a: HL = la palabra A de la tabla HL
+C 0xA4E5 lee variable de trabajo del banco 0
+C 0xA4F0 lee la ficha del personaje 1 (14 bytes)
+C 0xA4FC ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
+C 0xA515 doce_numeros: los valores de (HL) en columnas de 12
+C 0xA524 doce_numeros: los valores de (HL) en columnas de 12
+C 0xA534 numero: un numero (p06:A554)
+C 0xA541 numero: un numero (p06:A554)
+C 0xA573 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0xA584 cambia_de_personaje: con las teclas, 0xC240 cambia si el otro vive
+C 0xA587 recuadro_parpadea: el recuadro del personaje que se lleva, 0x0D o 0x0A cada 16 cuadros
+C 0xA58C byte_del_personaje: A = el byte B de la ficha del personaje que se lleva (0xC2B0 + 0xC240 * 32)
+C 0xA591 lee las teclas nuevas
+C 0xA59D apunta a el personaje que se lleva (0 o 1)
+C 0xA5A0 lee las teclas nuevas
+C 0xA5AE lee la ficha del personaje 0 (14 bytes)
+C 0xA5B2 lee la ficha del personaje 1 (14 bytes)
+C 0xA5BF guarda el personaje que se lleva (0 o 1)
+C 0xA5C2 recuadros_2: dos recuadros de 0x32 x 0x32
+C 0xA5CD lee la X en la antesala
+C 0xA5DB copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0xA5DE lee el personaje que se lleva (0 o 1)
+C 0xA5E4 lee la ficha del personaje 0 (14 bytes)
+C 0xA5E8 lee la ficha del personaje 1 (14 bytes)
+C 0xA5F6 lee la X en la antesala
+C 0xA607 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0xB66A lee la accion del personaje (4 muere, 5 escalera)
+C 0xB670 apunta a el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0xB673 apunta a la X del personaje
+C 0xB685 lee la vecina de la izquierda
+C 0xB697 lee la vecina de la derecha
+C 0xB6A3 byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
+C 0xB6AB apunta a la Y del personaje
+C 0xB6B6 lee la vecina de abajo
+C 0xB6C7 lee la accion del personaje (4 muere, 5 escalera)
+C 0xB752 guarda los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
+C 0xB762 busca_cartucho: 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
+C 0xB767 lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
+C 0xB771 busca_en_subranuras: las 4 subranuras de la ranura C (p06:B78D)
+C 0xB77D busca_cartucho: 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
+C 0xB781 lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
+C 0xB795 compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
+C 0xB79A apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
+C 0xB7A8 compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
+C 0xB7AD apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
+C 0xB7BB compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
+C 0xB7C0 apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
+C 0xB7CE compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
+C 0xB7D2 apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
+C 0xB7F5 apunta a las puertas abiertas de la antesala
+C 0xB7FA lee la pantalla de la antesala (0-2)
+C 0xB801 apunta a las puertas de la antesala (8 bytes cada una)
+C 0xB804 hl_mas_a: HL = HL + A
+C 0xB80A cuenta_e328: cuantas puertas de 0xE328 hay abiertas
+C 0xB80F lee la pantalla de la antesala (0-2)
+C 0xB817 hl_mas_a: HL = HL + A
+C 0xB826 apunta a las puertas de la antesala (8 bytes cada una)
+C 0xB837 lee la pantalla de la antesala (0-2)
+C 0xB849 lee la ficha del personaje 0 (14 bytes)
+C 0xB84D lee la ficha del personaje 1 (14 bytes)
+C 0xB857 lee la X en la antesala
+C 0xB85D lee las teclas que hay
+C 0xB86C guarda la X en la antesala
+C 0xB870 apunta a las puertas de la antesala (8 bytes cada una)
+C 0xB87D apunta a las puertas de la antesala (8 bytes cada una)
+C 0xB883 lee la ruina (0-4)
+C 0xB88A hl_mas_a: HL = HL + A
+C 0xB8A0 de_mas_a: DE = DE + A
+C 0xB8A8 lee la ficha del personaje 1 (14 bytes)
+C 0xB8B6 lee la ficha del personaje 0 (14 bytes)
+C 0xB8C5 apunta a los colores de los sprites en RAM (16 por sprite)
+C 0xB8C8 apunta a la ficha del personaje 1 (14 bytes)
+C 0xB8CC lee la ficha del personaje 1 (14 bytes)
+C 0xB8D9 colores_de_personaje: 4 x 16 colores de HL' en DE si el personaje vive
+C 0xB8DC apunta a la ficha del personaje 0 (14 bytes)
+C 0xB8FB apunta a la pantalla de la antesala (0-2)
+C 0xB8FE apunta a la X en la antesala
+C 0xB913 pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
+C 0xB916 esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
+C 0xB919 lee la pantalla de la antesala (0-2)
+C 0xB927 apunta a el mapa de la fase (48 bytes por pantalla)
+C 0xB92E pinta_d200: las 32 x 24 fichas de 0xD200 desde la linea 20 (p00:4DB4)
+C 0xB931 compone_puertas: compone en la pagina 1 los marcos y hojas de las puertas
+C 0xB934 puertas_de_la_pantalla: las dos puertas de la pantalla 0xCC10 (p06:B97B)
+C 0xB937 puerta_grande: en la pantalla 2 de la antesala, la puerta grande (p06:B998)
+C 0xB93D pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
+C 0xB940 lee la pantalla de la antesala (0-2)
+C 0xB953 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0xB95F lee la pantalla de la antesala (0-2)
+C 0xB967 apunta a las puertas de la antesala (8 bytes cada una)
+C 0xB96A hl_mas_a: HL = HL + A
+C 0xB96E puerta: el marco y, si esta cerrada, la hoja
+C 0xB978 hl_mas_a: HL = HL + A
+C 0xB99A copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0xB9B3 copia_timp: p00:4C73 con TIMP (0x48)
+C 0xB9BB lee la pantalla de la antesala (0-2)
+C 0xB9D3 copia_timp: p00:4C73 con TIMP (0x48)
+C 0xB9DA guarda las fichas van a la pagina 1
+C 0xB9DD lee la pantalla de la antesala (0-2)
+C 0xB9EA bloque_en_1068: p06:BA24 en (0x10, 0x68)
+C 0xB9F6 bloque_de_fichas: B filas de C fichas de HL en (D, E)
+C 0xBA01 bloque_en_1068: p06:BA24 en (0x10, 0x68)
+C 0xBA0D bloque_de_fichas: B filas de C fichas de HL en (D, E)
+C 0xBA19 bloque_de_fichas: B filas de C fichas de HL en (D, E)
+C 0xBA1D guarda las fichas van a la pagina 1
+C 0xBA28 ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
+C 0xBA3D guarda las fichas van a la pagina 1
+C 0xBA40 lee la ruina (0-4)
+C 0xBA46 palabra_a: HL = la palabra A de la tabla HL
+C 0xBA53 ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
+C 0xBA6B fase_de_la_ruina: A = 0xC211 - (ruina * 5 + 1): la fase dentro de la ruina
+C 0xBA71 apunta a las puertas de la antesala (8 bytes cada una)
+C 0xBA74 hl_mas_a: HL = HL + A
+C 0xBA77 marco_de_puerta: el marco pequeno (0x28 x 0x28) o grande (0x30 x 0x38)
+C 0xBA98 copia_timp: p00:4C73 con TIMP (0x48)
+C 0xBAAA apunta a la ficha del personaje 0 (14 bytes)
+C 0xBADF lee el sentido en la antesala
+C 0xBAF3 guarda el sentido en la antesala
+C 0xBAF6 sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+C 0xBAF9 atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0xBB09 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0xBB29 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0xBB2C recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
+C 0xBB39 lee la pantalla de la antesala (0-2)
+C 0xBB46 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xBB4F borra_rectangulo: HMMV con 0xFF en la pagina 0
+C 0xBB58 rectangulo_color_d: p00:4B74 con el color 0x0D
+C 0xBB61 rectangulo_color_d: p00:4B74 con el color 0x0D
+C 0xBB69 lee las teclas nuevas
+C 0xBB81 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0xBB84 recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
+C 0xBB87 lee la pantalla de la antesala (0-2)
+C 0xBB93 lee el paso del estado
+C 0xBBAE texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xBBB1 lee las puertas abiertas de la antesala
+C 0xBBC1 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xBBC4 lee las puertas abiertas de la antesala
+C 0xBBCA cifra: la cifra A & 15 (0x21 + A) en (D, E), o espacio si es cero y C
+C 0xBBDD copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0xBBE0 recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
+C 0xBBF0 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xBBF8 colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
+C 0xBBFB sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+C 0xBBFE atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0xBC07 copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
+C 0xBC0D guarda el sentido en la antesala
+C 0xBC20 colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
+C 0xBC23 lee la ficha del personaje 1 (14 bytes)
+C 0xBC2A vuelve_un_personaje: la ficha inicial (p06:BF6C) del personaje que no vive
+C 0xBC2D colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
+C 0xBC33 rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
+C 0xBC36 lee la ficha del personaje 0 (14 bytes)
+C 0xBC3D apunta a la ficha del personaje 0 (14 bytes)
+C 0xBC45 apunta a la ficha del personaje 1 (14 bytes)
+C 0xBC53 atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0xBC62 sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+C 0xBC70 apunta a el patron del sprite 0 en RAM
+C 0xBC7D sprites_be35: los sprites del personaje 1 con p06:BE35
+C 0xBC80 apunta a los atributos de los sprites en RAM
+C 0xBCA0 lee la ficha del personaje 1 (14 bytes)
+C 0xBCA6 apunta a la Y del sprite 4 en RAM
+C 0xBCBA cuadro_de_la_tienda: los colores (p06:BD0B) y los sprites de 0xDE20
+C 0xBCC9 sprites_de20: los sprites de 0xDE20 junto a 0xCC13
+C 0xBCD0 sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+C 0xBCD3 colores_dc80: 4 x 16 colores 0x0D/0x0A en 0xDC80
+C 0xBCE2 apunta a la Y del sprite 8 en RAM
+C 0xBCE5 lee la X en la antesala
+C 0xBCEC pon_atributo: (HL) = E, D, C
+C 0xBCF3 pon_atributo: (HL) = E, D, C
+C 0xBCFE pon_atributo: (HL) = E, D, C
+C 0xBD10 llena_16_a: 16 bytes de HL con A
+C 0xBD15 llena_16_a: 16 bytes de HL con A
+C 0xBD1A llena_16_a: 16 bytes de HL con A
+C 0xBD29 apunta a la X en la antesala
+C 0xBD2C apunta a el sentido en la antesala
+C 0xBD2F lee las teclas que hay
+C 0xBD3F guarda el cuadro del personaje en la antesala
+C 0xBD48 lee la pantalla de la antesala (0-2)
+C 0xBD5B lee la pantalla de la antesala (0-2)
+C 0xBD7A guarda el cuadro del personaje en la antesala
+# --- fin de las anotaciones de anota.py ---

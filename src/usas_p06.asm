@@ -16,42 +16,42 @@
 
 L_A000:
 	jr c,L_A01E		;a000
-	call L_A049		;a002
-	call L_A09B		;a005
-	call L_A0EA		;a008
-	ld a,(0de80h)		;a00b
+	call mando_del_final		;a002   ; mando_del_final: las teclas del final: cambia de personaje (0xC228/0xC229)
+	call cursor_del_final		;a005   ; cursor_del_final: los sprites del cursor segun 0xC228
+	call compra		;a008   ; compra: con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
+	ld a,(0de80h)		;a00b   ; lee variable de trabajo del banco 0
 	and a			;a00e
-	jp z,05690h		;a00f
-	call 09f88h		;a012
+	jp z,05690h		;a00f   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+	call 09f88h		;a012   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 	call 04797h		;a015
-	call 09fbch		;a018
-	jp 05690h		;a01b
+	call 09fbch		;a018   ; marcadores_del_final: los numeros de las fichas de los dos personajes
+	jp 05690h		;a01b   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 L_A01E:
 	ld b,002h		;a01e
-	ld hl,0c2b0h		;a020
+	ld hl,0c2b0h		;a020   ; apunta a la ficha del personaje 0 (14 bytes)
 L_A023:
 	push hl			;a023
 	push bc			;a024
 	ld d,h			;a025
 	ld e,l			;a026
 	ld a,010h		;a027
-	call 04083h		;a029
+	call 04083h		;a029   ; hl_mas_a: HL = HL + A
 	ld bc,00010h		;a02c
 	ldir		;a02f
 	pop bc			;a031
 	pop hl			;a032
 	ld a,020h		;a033
-	call 04083h		;a035
+	call 04083h		;a035   ; hl_mas_a: HL = HL + A
 	djnz L_A023		;a038
 	ld hl,(0c22bh)		;a03a
-	ld (0c259h),hl		;a03d
-	call 09f88h		;a040
+	ld (0c259h),hl		;a03d   ; guarda las monedas (16 bits) y el byte siguiente (16 bits)
+	call 09f88h		;a040   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 	call 04797h		;a043
-	jp 09fbch		;a046
-L_A049:
-	ld hl,0c228h		;a049
-	ld de,0c229h		;a04c
-	ld a,(0c006h)		;a04f
+	jp 09fbch		;a046   ; marcadores_del_final: los numeros de las fichas de los dos personajes
+mando_del_final:		; las teclas del final: cambia de personaje (0xC228/0xC229)
+	ld hl,0c228h		;a049   ; apunta a la opcion del final
+	ld de,0c229h		;a04c   ; apunta a el personaje del final
+	ld a,(0c006h)		;a04f   ; lee las teclas nuevas
 	rra			;a052
 	jr c,L_A086		;a053
 	rra			;a055
@@ -61,9 +61,9 @@ L_A049:
 	rra			;a05b
 	ret nc			;a05c
 L_A05D:
-	ld a,(0c2b0h)		;a05d
+	ld a,(0c2b0h)		;a05d   ; lee la ficha del personaje 0 (14 bytes)
 	ld b,a			;a060
-	ld a,(0c2d0h)		;a061
+	ld a,(0c2d0h)		;a061   ; lee la ficha del personaje 1 (14 bytes)
 	or b			;a064
 	jr z,L_A070		;a065
 	ld a,b			;a067
@@ -78,12 +78,12 @@ L_A070:
 	ld a,(de)			;a070
 	xor 001h		;a071
 	ld (de),a			;a073
-	ld a,(0c000h)		;a074
+	ld a,(0c000h)		;a074   ; lee el estado del juego
 	cp 00bh		;a077
 	jr nz,L_A08D		;a079
 	ret			;a07b
 L_A07C:
-	inc (hl)			;a07c
+	inc (hl)			;a07c   ; la opcion siguiente de 0 a 2
 	ld a,(hl)			;a07d
 	cp 003h		;a07e
 	jr c,L_A08D		;a080
@@ -96,17 +96,17 @@ L_A086:
 	jr nc,L_A08D		;a089
 	ld (hl),002h		;a08b
 L_A08D:
-	ld a,(0c000h)		;a08d
+	ld a,(0c000h)		;a08d   ; lee el estado del juego
 	cp 00bh		;a090
 	ld a,001h		;a092
 	jr nz,L_A098		;a094
 	ld a,070h		;a096
 L_A098:
 	jp 05451h		;a098
-L_A09B:
-	ld a,(0c228h)		;a09b
-	ld hl,0de00h		;a09e
-	ld de,0de04h		;a0a1
+cursor_del_final:		; los sprites del cursor segun 0xC228
+	ld a,(0c228h)		;a09b   ; lee la opcion del final
+	ld hl,0de00h		;a09e   ; apunta a los atributos de los sprites en RAM
+	ld de,0de04h		;a0a1   ; apunta a la Y del sprite 1 en RAM
 	ld c,a			;a0a4
 	add a,a			;a0a5
 	add a,a			;a0a6
@@ -120,8 +120,8 @@ L_A09B:
 	ld (de),a			;a0af
 	inc l			;a0b0
 	inc e			;a0b1
-	call L_A0DD		;a0b2
-	ld a,(0c229h)		;a0b5
+	call estado_11		;a0b2   ; estado_11: en el estado 0x0B, 0xC229 = el personaje que se lleva
+	ld a,(0c229h)		;a0b5   ; lee el personaje del final
 	and a			;a0b8
 	ld a,043h		;a0b9
 	jr z,L_A0BF		;a0bb
@@ -135,40 +135,40 @@ L_A0BF:
 	ld (hl),000h		;a0c5
 	ex de,hl			;a0c7
 	ld (hl),004h		;a0c8
-	ld hl,0dc00h		;a0ca
+	ld hl,0dc00h		;a0ca   ; apunta a los colores de los sprites en RAM (16 por sprite)
 	ld de,0dc01h		;a0cd
 	ld bc,0001fh		;a0d0
 	ld (hl),00ah		;a0d3
 	ldir		;a0d5
 	ld a,0d8h		;a0d7
-	ld (0de08h),a		;a0d9
+	ld (0de08h),a		;a0d9   ; guarda la Y del sprite 2 en RAM
 	ret			;a0dc
-L_A0DD:
-	ld a,(0c000h)		;a0dd
+estado_11:		; en el estado 0x0B, 0xC229 = el personaje que se lleva
+	ld a,(0c000h)		;a0dd   ; lee el estado del juego
 	cp 00bh		;a0e0
 	ret nz			;a0e2
-	ld a,(0c240h)		;a0e3
-	ld (0c229h),a		;a0e6
+	ld a,(0c240h)		;a0e3   ; lee el personaje que se lleva (0 o 1)
+	ld (0c229h),a		;a0e6   ; guarda el personaje del final
 	ret			;a0e9
-L_A0EA:
+compra:		; con la tecla 0x10: compara el precio con 0xC259 (DCOMPR)
 	xor a			;a0ea
-	ld (0de80h),a		;a0eb
-	ld a,(0c006h)		;a0ee
+	ld (0de80h),a		;a0eb   ; guarda variable de trabajo del banco 0
+	ld a,(0c006h)		;a0ee   ; lee las teclas nuevas
 	and 010h		;a0f1
 	ret z			;a0f3
-	ld a,(0c228h)		;a0f4
+	ld a,(0c228h)		;a0f4   ; lee la opcion del final
 	add a,a			;a0f7
 	add a,008h		;a0f8
 	ld b,a			;a0fa
-	call L_A163		;a0fb
+	call byte_de_ficha		;a0fb   ; byte_de_ficha: HL = la ficha del personaje 0xC229 + B
 	ld (0de81h),hl		;a0fe
 	ld e,(hl)			;a101
 	inc l			;a102
 	ld d,(hl)			;a103
-	ld hl,(0c259h)		;a104
+	ld hl,(0c259h)		;a104   ; lee las monedas (16 bits) y el byte siguiente (16 bits)
 	call 00020h		;a107   ; BIOS DCOMPR - Compares HL with DE
 	ret c			;a10a
-	ld a,(0c228h)		;a10b
+	ld a,(0c228h)		;a10b   ; lee la opcion del final
 	ld bc,00104h		;a10e
 	dec a			;a111
 	jr z,L_A11F		;a112
@@ -181,11 +181,11 @@ L_A0EA:
 	inc b			;a11c
 	ld c,03fh		;a11d
 L_A11F:
-	call L_A163		;a11f
+	call byte_de_ficha		;a11f   ; el byte B de la ficha: si ya llega a C, nada
 	ld a,(hl)			;a122
 	cp c			;a123
 	ret nc			;a124
-	inc (hl)			;a125
+	inc (hl)			;a125   ; uno mas; el byte 5 (la vida) sube de 4 en 4
 	ld a,l			;a126
 	and 00fh		;a127
 	cp 005h		;a129
@@ -195,22 +195,22 @@ L_A11F:
 	inc (hl)			;a12f
 	jr L_A142		;a130
 L_A132:
-	push de			;a132
-	ld a,e			;a133
+	push de			;a132   ; el precio DE se dobla en BCD (add a,a / daa) y se guarda en 0xDE81
+	ld a,e			;a133   ; E * 2 en BCD (daa)
 	add a,a			;a134
 	daa			;a135
 	ld e,a			;a136
-	ld a,d			;a137
+	ld a,d			;a137   ; D * 2 con el acarreo, en BCD
 	adc a,a			;a138
 	daa			;a139
 	ld d,a			;a13a
-	ld hl,(0de81h)		;a13b
+	ld hl,(0de81h)		;a13b   ; el nuevo precio a (0xDE81)
 	ld (hl),e			;a13e
 	inc l			;a13f
 	ld (hl),d			;a140
 	pop de			;a141
 L_A142:
-	ld hl,(0c259h)		;a142
+	ld hl,(0c259h)		;a142   ; lee las monedas (16 bits) y el byte siguiente (16 bits)
 	ld a,l			;a145
 	sub e			;a146
 	daa			;a147
@@ -219,25 +219,25 @@ L_A142:
 	sbc a,d			;a14a
 	daa			;a14b
 	ld h,a			;a14c
-	ld (0c259h),hl		;a14d
+	ld (0c259h),hl		;a14d   ; guarda las monedas (16 bits) y el byte siguiente (16 bits)
 	ld a,001h		;a150
-	ld (0de80h),a		;a152
-	ld a,(0c000h)		;a155
+	ld (0de80h),a		;a152   ; guarda variable de trabajo del banco 0
+	ld a,(0c000h)		;a155   ; lee el estado del juego
 	cp 00bh		;a158
 	ld a,002h		;a15a
 	jr nz,L_A160		;a15c
 	ld a,071h		;a15e
 L_A160:
 	jp 05451h		;a160
-L_A163:
-	ld a,(0c229h)		;a163
+byte_de_ficha:		; HL = la ficha del personaje 0xC229 + B
+	ld a,(0c229h)		;a163   ; lee el personaje del final
 	and a			;a166
-	ld hl,0c2b0h		;a167
+	ld hl,0c2b0h		;a167   ; apunta a la ficha del personaje 0 (14 bytes)
 	jr z,L_A16F		;a16a
-	ld hl,0c2d0h		;a16c
+	ld hl,0c2d0h		;a16c   ; apunta a la ficha del personaje 1 (14 bytes)
 L_A16F:
 	ld a,b			;a16f
-	jp 04083h		;a170
+	jp 04083h		;a170   ; hl_mas_a: HL = HL + A
 
 ; ----------------------------------------------------------------------
 ; DATOS texto_p9EF2: texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion,
@@ -255,8 +255,8 @@ DATA_texto_p9EF2:
 	defb 023h,020h,07dh,07dh,07dh,020h,02dh,02bh,038h,02dh,02fh,036h,0ffh	; a1f3  # }}} -+8-/6.
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_p9F82: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p05:9F82 (31 bytes)
+; DATOS lineas_p9F82: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p05:9F82 (31 bytes)
 ;   0xa200..0xa21f  (31 bytes)
 DATA_lineas_p9F82:
 	defb 007h,072h,072h	; a200
@@ -272,8 +272,8 @@ DATA_lineas_p9F82:
 	defb 0ffh	; a21e
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_p9F7C: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p05:9F7C (7 bytes)
+; DATOS lineas_p9F7C: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p05:9F7C (7 bytes)
 ;   0xa21f..0xa226  (7 bytes)
 DATA_lineas_p9F7C:
 	defb 02fh,063h,04ch	; a21f
@@ -296,20 +296,20 @@ DATA_patrones_p9EEC:
 
 L_A249:
 	ld hl,0a2b9h		;a249
-	ld a,(0c21dh)		;a24c
-	call 0543ah		;a24f
+	ld a,(0c21dh)		;a24c   ; lee la ruina (0-4)
+	call 0543ah		;a24f   ; palabra_a: HL = la palabra A de la tabla HL
 	ld d,(hl)			;a252
 	ld e,0b0h		;a253
-	ld (0c8a7h),de		;a255
-	ld (0c8a3h),de		;a259
+	ld (0c8a7h),de		;a255   ; guarda el principio de la linea del texto a maquina y el byte siguiente (16 bits)
+	ld (0c8a3h),de		;a259   ; guarda la posicion del texto a maquina y el byte siguiente (16 bits)
 	inc hl			;a25d
-	ld (0c8a1h),hl		;a25e
+	ld (0c8a1h),hl		;a25e   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
 	ld a,03ch		;a261
-	ld (0c8a5h),a		;a263
+	ld (0c8a5h),a		;a263   ; guarda la espera hasta la siguiente letra
 	xor a			;a266
-	ld (0c8a6h),a		;a267
+	ld (0c8a6h),a		;a267   ; guarda el texto a maquina ha acabado
 	ld hl,0a270h		;a26a
-	jp 04d4ah		;a26d
+	jp 04d4ah		;a26d   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 
 ; ----------------------------------------------------------------------
 ; DATOS texto_pA26A: texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion,
@@ -331,30 +331,30 @@ DATA_texto_pA324:
 
 
 L_A28A:
-	ld a,(0c8a6h)		;a28a
+	ld a,(0c8a6h)		;a28a   ; lee el texto a maquina ha acabado
 	and a			;a28d
 	ret nz			;a28e
-	ld hl,0c8a5h		;a28f
+	ld hl,0c8a5h		;a28f   ; apunta a la espera hasta la siguiente letra
 	dec (hl)			;a292
 	ret nz			;a293
-	ld hl,(0c8a1h)		;a294
+	ld hl,(0c8a1h)		;a294   ; lee el puntero del texto a maquina y el byte siguiente (16 bits)
 	ld a,(hl)			;a297
 	inc hl			;a298
-	ld (0c8a1h),hl		;a299
+	ld (0c8a1h),hl		;a299   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
 	ld b,a			;a29c
 	inc a			;a29d
 	jr z,L_A2B5		;a29e
 	ld a,b			;a2a0
-	ld de,(0c8a3h)		;a2a1
-	call 04d86h		;a2a5
-	call 04e3fh		;a2a8
-	ld (0c8a3h),de		;a2ab
+	ld de,(0c8a3h)		;a2a1   ; lee la posicion del texto a maquina y el byte siguiente (16 bits)
+	call 04d86h		;a2a5   ; caracter_de_la_fuente: el caracter A de la fuente de la pagina 1 a (D, E) (HMMM)
+	call 04e3fh		;a2a8   ; avanza_ocho: D + 8, y E + 8 si D da la vuelta
+	ld (0c8a3h),de		;a2ab   ; guarda la posicion del texto a maquina y el byte siguiente (16 bits)
 	ld a,008h		;a2af
-	ld (0c8a5h),a		;a2b1
+	ld (0c8a5h),a		;a2b1   ; guarda la espera hasta la siguiente letra
 	ret			;a2b4
 L_A2B5:
 	ld a,001h		;a2b5
-	ld (0c8a6h),a		;a2b7
+	ld (0c8a6h),a		;a2b7   ; guarda el texto a maquina ha acabado
 	ret			;a2ba
 
 ; ----------------------------------------------------------------------
@@ -403,44 +403,44 @@ DATA_nombre_ruina_4:
 L_A2FC:
 	ld hl,0e360h		;a2fc
 	ld bc,0001fh		;a2ff
-	call 05f08h		;a302
+	call 05f08h		;a302   ; borra: pone a cero BC + 1 bytes desde HL
 	ld hl,040a0h		;a305
 	ld bc,08040h		;a308
 	ld a,066h		;a30b
 	ld d,000h		;a30d
-	call 04ba2h		;a30f
+	call 04ba2h		;a30f   ; rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
 	ld hl,03ca0h		;a312
 	ld de,08828h		;a315
 	ld c,00dh		;a318
-	call 04b74h		;a31a
+	call 04b74h		;a31a   ; rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
 	xor a			;a31d
 	ld (0c20eh),a		;a31e
 	ld (0c20fh),a		;a321
 	ld hl,0a27ah		;a324
-	jp 04d4ah		;a327
+	jp 04d4ah		;a327   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 L_A32A:
-	call L_A392		;a32a
+	call lee_teclado		;a32a   ; lo tecleado (p06:A392): si no hay tecla nueva, nada
 	ld a,(0c20fh)		;a32d
 	and a			;a330
 	ret z			;a331
 	ld b,a			;a332
-	ld de,0e378h		;a333
+	ld de,0e378h		;a333   ; la tecla al final de lo escrito en 0xE360 (0xE378 cuenta las letras) y 0xFF detras
 	ld a,(de)			;a336
 	ld hl,0e360h		;a337
-	call 04083h		;a33a
+	call 04083h		;a33a   ; hl_mas_a: HL = HL + A
 	ld a,b			;a33d
 	ld (hl),a			;a33e
 	inc l			;a33f
 	ld (hl),0ffh		;a340
 	push de			;a342
 	push bc			;a343
-	ld hl,0e360h		;a344
+	ld hl,0e360h		;a344   ; lo escrito en (0xB8, 0x48)
 	ld de,048b8h		;a347
 	ld c,0ffh		;a34a
 	call 04d54h		;a34c
 	pop bc			;a34f
 	pop de			;a350
-	inc b			;a351
+	inc b			;a351   ; con la tecla 0xFF (p06:A35B), se compara; si no, una letra mas hasta 0x0E
 	jr z,L_A35B		;a352
 	ex de,hl			;a354
 	ld a,(hl)			;a355
@@ -455,10 +455,10 @@ L_A35D:
 	ld a,b			;a360
 	sub 004h		;a361
 	neg		;a363
-	call 0543ah		;a365
+	call 0543ah		;a365   ; palabra_a: HL = la palabra A de la tabla HL
 	inc hl			;a368
 	push bc			;a369
-	call L_A385		;a36a
+	call compara_con_e360		;a36a   ; compara_con_e360: compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
 	pop bc			;a36d
 	jr z,L_A37B		;a36e
 	djnz L_A35D		;a370
@@ -467,16 +467,16 @@ L_A35D:
 	ld (0e379h),a		;a377
 	ret			;a37a
 L_A37B:
-	ld a,b			;a37b
+	ld a,b			;a37b   ; 4 - B + 1: la ruina cuyo nombre coincide, a 0xE379
 	sub 004h		;a37c
 	neg		;a37e
 	inc a			;a380
 	ld (0e379h),a		;a381
 	ret			;a384
-L_A385:
+compara_con_e360:		; compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
 	ld de,0e360h		;a385
 L_A388:
-	ld a,(de)			;a388
+	ld a,(de)			;a388   ; compara byte a byte hasta el 0xFF
 	cp (hl)			;a389
 	ret nz			;a38a
 	ld a,(hl)			;a38b
@@ -485,18 +485,18 @@ L_A388:
 	inc hl			;a38e
 	inc de			;a38f
 	jr L_A388		;a390
-L_A392:
+lee_teclado:		; las 9 filas de la matriz (SNSMAT); la primera tecla pulsada, por p06:A3C8
 	ld b,009h		;a392
 	ld e,000h		;a394
 L_A396:
-	ld a,e			;a396
+	ld a,e			;a396   ; cada fila de la matriz (SNSMAT): la primera con alguna tecla
 	call 00141h		;a397   ; BIOS SNSMAT - Returns the value of the specified line from the keyboard matrix
 	cpl			;a39a
 	and a			;a39b
 	jr nz,L_A3A9		;a39c
 	inc e			;a39e
 	djnz L_A396		;a39f
-	xor a			;a3a1
+	xor a			;a3a1   ; ninguna: 0xC20E y 0xC20F a cero
 	ld hl,0c20eh		;a3a2
 	ld (hl),a			;a3a5
 	inc hl			;a3a6
@@ -509,7 +509,7 @@ L_A3A9:
 	add a,a			;a3ae
 	add a,a			;a3af
 	add a,a			;a3b0
-	call 04083h		;a3b1
+	call 04083h		;a3b1   ; hl_mas_a: HL = HL + A
 	ld a,b			;a3b4
 L_A3B5:
 	rra			;a3b5
@@ -517,13 +517,13 @@ L_A3B5:
 	inc hl			;a3b8
 	jr L_A3B5		;a3b9
 L_A3BB:
-	ld a,(hl)			;a3bb
+	ld a,(hl)			;a3bb   ; la tecla nueva: la de ahora y no la de antes, en 0xC20F
 	and a			;a3bc
 	ret z			;a3bd
-	ld hl,0c20eh		;a3be
+	ld hl,0c20eh		;a3be   ; C = las teclas de antes; (0xC20E) = las de ahora
 	ld c,(hl)			;a3c1
 	ld (hl),a			;a3c2
-	xor c			;a3c3
+	xor c			;a3c3   ; las nuevas a 0xC20F
 	and (hl)			;a3c4
 	inc hl			;a3c5
 	ld (hl),a			;a3c6
@@ -550,76 +550,76 @@ DATA_teclado:
 
 
 L_A410:
-	ld a,(0cc13h)		;a410
+	ld a,(0cc13h)		;a410   ; lee la X en la antesala
 	sub 018h		;a413
 	ld h,a			;a415
 	ld l,093h		;a416
 	ld de,06078h		;a418
 	ld bc,02008h		;a41b
 	ld a,004h		;a41e
-	call 04bdeh		;a420
+	call 04bdeh		;a420   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 	ld hl,0101ch		;a423
 	ld bc,0e06eh		;a426
-	call 05e2fh		;a429
-	call L_A45C		;a42c
+	call 05e2fh		;a429   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
+	call lista_a7f8		;a42c   ; lista_a7f8: la lista de fichas p06:A7F8
 	ld hl,00e1ah		;a42f
 	ld de,0e472h		;a432
-	call L_A494		;a435
+	call rectangulo_guardando		;a435   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	inc h			;a438
 	inc l			;a439
 	ld de,0e270h		;a43a
-	call L_A494		;a43d
-	call L_A46B		;a440
+	call rectangulo_guardando		;a43d   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+	call recuadros_del_final		;a440   ; recuadros_del_final: los recuadros y lineas de p06:A7B4/A7BB
 	ld hl,0a60ah		;a443
-	call 04d4ah		;a446
+	call 04d4ah		;a446   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	xor a			;a449
 	ld (0c23bh),a		;a44a
-	ld (0c8a0h),a		;a44d
-	call L_A465		;a450
-	call L_A4BD		;a453
-	call L_A50F		;a456
+	ld (0c8a0h),a		;a44d   ; guarda el texto a maquina en marcha
+	call paleta_b351		;a450   ; paleta_b351: la paleta p06:B351
+	call retratos		;a453   ; retratos: los retratos de los dos personajes segun su estado (p06:A644/A64C)
+	call numeros_de_las_fichas		;a456   ; numeros_de_las_fichas: los numeros de las fichas de los dos personajes
 	jp L_A5CD		;a459
-L_A45C:
+lista_a7f8:		; la lista de fichas p06:A7F8
 	ld hl,0a7f8h		;a45c
 	ld de,0a7e4h		;a45f
-	jp 0529ch		;a462
-L_A465:
+	jp 0529ch		;a462   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
+paleta_b351:		; la paleta p06:B351
 	ld hl,0b351h		;a465
-	jp 04a9dh		;a468
-L_A46B:
-	call L_A488		;a46b
+	jp 04a9dh		;a468   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
+recuadros_del_final:		; los recuadros y lineas de p06:A7B4/A7BB
+	call recuadros_2		;a46b   ; recuadros_2: dos recuadros de 0x32 x 0x32
 	ld hl,01460h		;a46e
 	ld de,06825h		;a471
-	call L_A494		;a474
+	call rectangulo_guardando		;a474   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	ld h,084h		;a477
-	call L_A494		;a479
+	call rectangulo_guardando		;a479   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	ld hl,0a7b4h		;a47c
-	call 055ceh		;a47f
+	call 055ceh		;a47f   ; lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
 	ld hl,0a7bbh		;a482
-	jp 055d1h		;a485
-L_A488:
+	jp 055d1h		;a485   ; lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
+recuadros_2:		; dos recuadros de 0x32 x 0x32
 	ld hl,0172bh		;a488
 	ld de,03232h		;a48b
-	call L_A494		;a48e
+	call rectangulo_guardando		;a48e   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	ld hl,0b72bh		;a491
-L_A494:
+rectangulo_guardando:		; p00:4B74 con el color 0x0D sin tocar registros
 	push hl			;a494
 	push de			;a495
 	push bc			;a496
 	ld c,00dh		;a497
-	call 04b74h		;a499
+	call 04b74h		;a499   ; rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
 	pop bc			;a49c
 	pop de			;a49d
 	pop hl			;a49e
 	ret			;a49f
-L_A4A0:
-	ld a,(0c240h)		;a4a0
+recuadro_parpadea:		; el recuadro del personaje que se lleva, 0x0D o 0x0A cada 16 cuadros
+	ld a,(0c240h)		;a4a0   ; lee el personaje que se lleva (0 o 1)
 	and a			;a4a3
 	ld h,017h		;a4a4
 	jr z,L_A4AA		;a4a6
 	ld h,0b7h		;a4a8
 L_A4AA:
-	ld a,(0c003h)		;a4aa
+	ld a,(0c003h)		;a4aa   ; lee la cuenta de cuadros
 	and 010h		;a4ad
 	ld c,00dh		;a4af
 	jr z,L_A4B5		;a4b1
@@ -627,44 +627,44 @@ L_A4AA:
 L_A4B5:
 	ld l,02bh		;a4b5
 	ld de,03232h		;a4b7
-	jp 04b74h		;a4ba
-L_A4BD:
+	jp 04b74h		;a4ba   ; rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
+retratos:		; los retratos de los dos personajes segun su estado (p06:A644/A64C)
 	xor a			;a4bd
 L_A4BE:
-	ld (0de80h),a		;a4be
-	ld a,(0c2b6h)		;a4c1
+	ld (0de80h),a		;a4be   ; guarda variable de trabajo del banco 0
+	ld a,(0c2b6h)		;a4c1   ; lee el estado del personaje 0
 	ld hl,0a644h		;a4c4
-	call 0543ah		;a4c7
-	ld a,(0de80h)		;a4ca
+	call 0543ah		;a4c7   ; palabra_a: HL = la palabra A de la tabla HL
+	ld a,(0de80h)		;a4ca   ; lee variable de trabajo del banco 0
 	and a			;a4cd
 	ld de,0182ch		;a4ce
 	jr z,L_A4D5		;a4d1
 	ld d,028h		;a4d3
 L_A4D5:
-	ld a,(0c2b0h)		;a4d5
+	ld a,(0c2b0h)		;a4d5   ; lee la ficha del personaje 0 (14 bytes)
 	and a			;a4d8
-	call z,L_A4F5		;a4d9
-	ld a,(0c2d6h)		;a4dc
+	call z,retrato		;a4d9   ; retrato: 6 x 6 fichas de HL en (D, E)
+	ld a,(0c2d6h)		;a4dc   ; lee el estado del personaje 1
 	ld hl,0a64ch		;a4df
-	call 0543ah		;a4e2
-	ld a,(0de80h)		;a4e5
+	call 0543ah		;a4e2   ; palabra_a: HL = la palabra A de la tabla HL
+	ld a,(0de80h)		;a4e5   ; lee variable de trabajo del banco 0
 	and a			;a4e8
 	ld de,0b82ch		;a4e9
 	jr z,L_A4F0		;a4ec
 	ld d,0a8h		;a4ee
 L_A4F0:
-	ld a,(0c2d0h)		;a4f0
+	ld a,(0c2d0h)		;a4f0   ; lee la ficha del personaje 1 (14 bytes)
 	and a			;a4f3
 	ret nz			;a4f4
-L_A4F5:
+retrato:		; 6 x 6 fichas de HL en (D, E)
 	ld b,006h		;a4f5
 L_A4F7:
 	push bc			;a4f7
 	push de			;a4f8
 	ld b,006h		;a4f9
 L_A4FB:
-	ld a,(hl)			;a4fb
-	call 04db4h		;a4fc
+	ld a,(hl)			;a4fb   ; una fila de 6 fichas del retrato
+	call 04db4h		;a4fc   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 	ld a,d			;a4ff
 	add a,008h		;a500
 	ld d,a			;a502
@@ -672,48 +672,48 @@ L_A4FB:
 	djnz L_A4FB		;a504
 	pop de			;a506
 	pop bc			;a507
-	ld a,e			;a508
+	ld a,e			;a508   ; la siguiente fila
 	add a,008h		;a509
 	ld e,a			;a50b
 	djnz L_A4F7		;a50c
 	ret			;a50e
-L_A50F:
+numeros_de_las_fichas:		; los numeros de las fichas de los dos personajes
 	ld hl,0c2b1h		;a50f
 	ld de,03c6eh		;a512
-	call L_A52D		;a515
+	call doce_numeros		;a515   ; doce_numeros: los valores de (HL) en columnas de 12
 	ld de,03863h		;a518
 	call 04758h		;a51b
 	ld hl,0c2d1h		;a51e
 	ld de,0ac6eh		;a521
-	call L_A52D		;a524
+	call doce_numeros		;a524   ; doce_numeros: los valores de (HL) en columnas de 12
 	ld de,0a863h		;a527
 	jp 04758h		;a52a
-L_A52D:
-	ld c,00ch		;a52d
+doce_numeros:		; los valores de (HL) en columnas de 12
+	ld c,00ch		;a52d   ; 12 de separacion entre numeros
 	push bc			;a52f
-	ld a,(hl)			;a530
+	ld a,(hl)			;a530   ; el primer valor + 1
 	inc a			;a531
 	push hl			;a532
 	push de			;a533
-	call L_A54A		;a534
+	call numero		;a534   ; numero: un numero (p06:A554)
 	pop de			;a537
 	pop hl			;a538
 	pop bc			;a539
 	ld a,e			;a53a
 	add a,c			;a53b
 	ld e,a			;a53c
-	inc l			;a53d
+	inc l			;a53d   ; el segundo valor + 1
 	ld a,(hl)			;a53e
 	inc a			;a53f
 	push hl			;a540
-	call L_A54A		;a541
+	call numero		;a541   ; numero: un numero (p06:A554)
 	pop hl			;a544
-	inc l			;a545
+	inc l			;a545   ; 3 bytes mas alla, el siguiente
 	inc l			;a546
 	inc l			;a547
 	ld a,(hl)			;a548
 	ret			;a549
-L_A54A:
+numero:		; un numero (p06:A554)
 	exx			;a54a
 	ld b,00ch		;a54b
 	exx			;a54d
@@ -723,7 +723,7 @@ L_A550:
 	ld b,008h		;a551
 	exx			;a553
 L_A554:
-	ld c,a			;a554
+	ld c,a			;a554   ; los bytes 0 y 1 de la ficha llevan 5 marcas; los demas 3
 	ld a,l			;a555
 	and 00fh		;a556
 	cp 002h		;a558
@@ -733,7 +733,7 @@ L_A554:
 L_A560:
 	ld hl,06058h		;a560
 L_A563:
-	push hl			;a563
+	push hl			;a563   ; la marca llena (0x0000) o vacia
 	ld a,c			;a564
 	and a			;a565
 	jr nz,L_A56D		;a566
@@ -742,10 +742,10 @@ L_A563:
 L_A56D:
 	dec c			;a56d
 L_A56E:
-	push de			;a56e
+	push de			;a56e   ; 8 x 8 de la pagina 1 y la siguiente marca
 	push bc			;a56f
 	ld bc,00808h		;a570
-	call 04841h		;a573
+	call 04841h		;a573   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 	pop bc			;a576
 	pop de			;a577
 	pop hl			;a578
@@ -758,21 +758,21 @@ L_A56E:
 	ret			;a580
 L_A581:
 	call 05456h		;a581
-	call L_A59D		;a584
-	call L_A4A0		;a587
+	call cambia_de_personaje		;a584   ; cambia_de_personaje: con las teclas, 0xC240 cambia si el otro vive
+	call recuadro_parpadea		;a587   ; recuadro_parpadea: el recuadro del personaje que se lleva, 0x0D o 0x0A cada 16 cuadros
 	ld b,000h		;a58a
-	call 047edh		;a58c
+	call 047edh		;a58c   ; byte_del_personaje: A = el byte B de la ficha del personaje que se lleva (0xC2B0 + 0xC240 * 32)
 	and a			;a58f
 	ret nz			;a590
-	ld a,(0c006h)		;a591
+	ld a,(0c006h)		;a591   ; lee las teclas nuevas
 	and 010h		;a594
 	ret z			;a596
 	ld a,001h		;a597
 	ld (0c23bh),a		;a599
 	ret			;a59c
-L_A59D:
-	ld hl,0c240h		;a59d
-	ld a,(0c006h)		;a5a0
+cambia_de_personaje:		; con las teclas, 0xC240 cambia si el otro vive
+	ld hl,0c240h		;a59d   ; apunta a el personaje que se lleva (0 o 1)
+	ld a,(0c006h)		;a5a0   ; lee las teclas nuevas
 	rra			;a5a3
 	rra			;a5a4
 	rra			;a5a5
@@ -783,9 +783,9 @@ L_A5AA:
 	ld a,(hl)			;a5aa
 	xor 001h		;a5ab
 	ld (hl),a			;a5ad
-	ld a,(0c2b0h)		;a5ae
+	ld a,(0c2b0h)		;a5ae   ; lee la ficha del personaje 0 (14 bytes)
 	ld b,a			;a5b1
-	ld a,(0c2d0h)		;a5b2
+	ld a,(0c2d0h)		;a5b2   ; lee la ficha del personaje 1 (14 bytes)
 	or b			;a5b5
 	jr z,L_A5C2		;a5b6
 	ld a,b			;a5b8
@@ -794,26 +794,26 @@ L_A5AA:
 	jr nz,L_A5BF		;a5bc
 	xor a			;a5be
 L_A5BF:
-	ld (0c240h),a		;a5bf
+	ld (0c240h),a		;a5bf   ; guarda el personaje que se lleva (0 o 1)
 L_A5C2:
-	call L_A488		;a5c2
+	call recuadros_2		;a5c2   ; recuadros_2: dos recuadros de 0x32 x 0x32
 	ld a,001h		;a5c5
 	call 05451h		;a5c7
 	jp L_A5CD		;a5ca
 L_A5CD:
-	ld a,(0cc13h)		;a5cd
+	ld a,(0cc13h)		;a5cd   ; lee la X en la antesala
 	sub 018h		;a5d0
 	ld d,a			;a5d2
 	ld e,093h		;a5d3
 	ld hl,06078h		;a5d5
 	ld bc,02008h		;a5d8
-	call 04841h		;a5db
-	ld a,(0c240h)		;a5de
+	call 04841h		;a5db   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+	ld a,(0c240h)		;a5de   ; lee el personaje que se lleva (0 o 1)
 	xor 001h		;a5e1
 	ld c,a			;a5e3
-	ld a,(0c2b0h)		;a5e4
+	ld a,(0c2b0h)		;a5e4   ; lee la ficha del personaje 0 (14 bytes)
 	ld b,a			;a5e7
-	ld a,(0c2d0h)		;a5e8
+	ld a,(0c2d0h)		;a5e8   ; lee la ficha del personaje 1 (14 bytes)
 	or b			;a5eb
 	jr z,L_A5F0		;a5ec
 	ld c,000h		;a5ee
@@ -824,7 +824,7 @@ L_A5F0:
 	add a,a			;a5f3
 	add a,a			;a5f4
 	ld c,a			;a5f5
-	ld a,(0cc13h)		;a5f6
+	ld a,(0cc13h)		;a5f6   ; lee la X en la antesala
 	sub c			;a5f9
 	sub 004h		;a5fa
 	ld d,a			;a5fc
@@ -832,7 +832,7 @@ L_A5F0:
 	ld hl,05858h		;a5ff
 	ld bc,00808h		;a602
 	ld a,048h		;a605
-	jp 04c73h		;a607
+	jp 04c73h		;a607   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 
 ; ----------------------------------------------------------------------
 ; DATOS texto_pA443: texto (L_4D4A): [X][Y], caracteres, 0xFE otra posicion,
@@ -989,8 +989,8 @@ DATA_caritas_A794:
 	defb 012h,026h,013h,027h	; a7b0
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_A7B4: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p06:A47C (7 bytes)
+; DATOS lineas_A7B4: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p06:A47C (7 bytes)
 ;   0xa7b4..0xa7bb  (7 bytes)
 DATA_lineas_A7B4:
 	defb 033h,060h,025h	; a7b4
@@ -998,8 +998,8 @@ DATA_lineas_A7B4:
 	defb 0ffh	; a7ba
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_A7BB: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p06:A482 (13 bytes)
+; DATOS lineas_A7BB: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p06:A482 (13 bytes)
 ;   0xa7bb..0xa7c8  (13 bytes)
 DATA_lineas_A7BB:
 	defb 014h,06ch,068h	; a7bb
@@ -1009,8 +1009,8 @@ DATA_lineas_A7BB:
 	defb 0ffh	; a7c7
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_A7C8: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80E4 (7 bytes)
+; DATOS lineas_A7C8: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80E4 (7 bytes)
 ;   0xa7c8..0xa7cf  (7 bytes)
 DATA_lineas_A7C8:
 	defb 053h,033h,022h	; a7c8
@@ -1018,8 +1018,8 @@ DATA_lineas_A7C8:
 	defb 0ffh	; a7ce
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_A7CF: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80F3 (7 bytes)
+; DATOS lineas_A7CF: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80F3 (7 bytes)
 ;   0xa7cf..0xa7d6  (7 bytes)
 DATA_lineas_A7CF:
 	defb 04ah,02bh,062h	; a7cf
@@ -1027,8 +1027,8 @@ DATA_lineas_A7CF:
 	defb 0ffh	; a7d5
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_A7D6: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80E9 (7 bytes)
+; DATOS lineas_A7D6: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80E9 (7 bytes)
 ;   0xa7d6..0xa7dd  (7 bytes)
 DATA_lineas_A7D6:
 	defb 053h,02bh,02ah	; a7d6
@@ -1036,8 +1036,8 @@ DATA_lineas_A7D6:
 	defb 0ffh	; a7dc
 
 ; ----------------------------------------------------------------------
-; DATOS lineas_A7DD: lineas [X][Y][largo] hasta 0xFF (p00:55CE horizontales
-;   con L_4B0C, p00:55D1 verticales con L_4AD4); lo leen p02:80F8 (7 bytes)
+; DATOS lineas_A7DD: lineas [X][Y][largo] hasta 0xFF (p00:55CE verticales con
+;   L_4B0C, p00:55D1 horizontales con L_4AD4); lo leen p02:80F8 (7 bytes)
 ;   0xa7dd..0xa7e4  (7 bytes)
 DATA_lineas_A7DD:
 	defb 053h,02bh,05ah	; a7dd
@@ -2050,11 +2050,11 @@ DATA_por_tipo_ix20_64:
 
 
 L_B66A:
-	ld a,(0c24bh)		;b66a
+	ld a,(0c24bh)		;b66a   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;b66d
 	ret z			;b66f
-	ld hl,0c215h		;b670
-	ld de,0c246h		;b673
+	ld hl,0c215h		;b670   ; apunta a el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+	ld de,0c246h		;b673   ; apunta a la X del personaje
 	ld a,(de)			;b676
 	cp 0f2h		;b677
 	jr nc,L_B691		;b679
@@ -2063,7 +2063,7 @@ L_B66A:
 	ld a,(0ccb1h)		;b67f
 	and a			;b682
 	jr z,L_B68B		;b683
-	ld a,(0c21ah)		;b685
+	ld a,(0c21ah)		;b685   ; lee la vecina de la izquierda
 	inc a			;b688
 	jr z,L_B6A3		;b689
 L_B68B:
@@ -2075,7 +2075,7 @@ L_B691:
 	ld a,(0ccb2h)		;b691
 	and a			;b694
 	jr z,L_B69D		;b695
-	ld a,(0c21bh)		;b697
+	ld a,(0c21bh)		;b697   ; lee la vecina de la derecha
 	inc a			;b69a
 	jr z,L_B6A3		;b69b
 L_B69D:
@@ -2084,17 +2084,17 @@ L_B69D:
 	ld (de),a			;b6a1
 	ret			;b6a2
 L_B6A3:
-	call 047ebh		;b6a3
+	call 047ebh		;b6a3   ; byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
 	ld (hl),000h		;b6a6
 	jp 04752h		;b6a8
 L_B6AB:
-	ld de,0c244h		;b6ab
+	ld de,0c244h		;b6ab   ; apunta a la Y del personaje
 	ld a,(de)			;b6ae
 	cp 020h		;b6af
 	jr c,L_B6C1		;b6b1
 	cp 0d4h		;b6b3
 	ret c			;b6b5
-	ld a,(0c219h)		;b6b6
+	ld a,(0c219h)		;b6b6   ; lee la vecina de abajo
 	inc a			;b6b9
 	ret z			;b6ba
 	ld (hl),002h		;b6bb
@@ -2105,7 +2105,7 @@ L_B6C1:
 	ld a,(0c268h)		;b6c1
 	or a			;b6c4
 	jr nz,L_B6CD		;b6c5
-	ld a,(0c24bh)		;b6c7
+	ld a,(0c24bh)		;b6c7   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 005h		;b6ca
 	ret nz			;b6cc
 L_B6CD:
@@ -2190,7 +2190,7 @@ DATA_medidas_por_tipo:
 
 L_B751:
 	xor a			;b751
-	ld (0c205h),a		;b752
+	ld (0c205h),a		;b752   ; guarda los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	ld bc,00400h		;b755
 	ld hl,0fcc1h		;b758
 L_B75B:
@@ -2199,11 +2199,11 @@ L_B75B:
 	ld a,(hl)			;b75d
 	bit 7,a		;b75e
 	jr nz,L_B771		;b760
-	call L_B78D		;b762
+	call busca_cartucho		;b762   ; busca_cartucho: 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
 L_B765:
 	pop hl			;b765
 	pop bc			;b766
-	ld a,(0c205h)		;b767
+	ld a,(0c205h)		;b767   ; lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	and a			;b76a
 	ret nz			;b76b
 	inc hl			;b76c
@@ -2211,18 +2211,18 @@ L_B765:
 	djnz L_B75B		;b76e
 	ret			;b770
 L_B771:
-	call L_B776		;b771
+	call busca_en_subranuras		;b771   ; busca_en_subranuras: las 4 subranuras de la ranura C (p06:B78D)
 	jr L_B765		;b774
-L_B776:
+busca_en_subranuras:		; las 4 subranuras de la ranura C (p06:B78D)
 	and 080h		;b776
 	or c			;b778
 	ld c,a			;b779
 	ld b,004h		;b77a
 L_B77C:
 	push bc			;b77c
-	call L_B78D		;b77d
+	call busca_cartucho		;b77d   ; busca_cartucho: 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
 	pop bc			;b780
-	ld a,(0c205h)		;b781
+	ld a,(0c205h)		;b781   ; lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	and a			;b784
 	ret nz			;b785
 	ld a,c			;b786
@@ -2230,56 +2230,56 @@ L_B77C:
 	ld c,a			;b789
 	djnz L_B77C		;b78a
 	ret			;b78c
-L_B78D:
+busca_cartucho:		; 07 49, 50, 51 o 52 en 0x4012 de la ranura C: bits 0-3 de 0xC205
 	ld de,0b7edh		;b78d
 	ld hl,04012h		;b790
 	ld b,002h		;b793
-	call L_B7D8		;b795
+	call compara_en_ranura		;b795   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
 	jr nc,L_B7A0		;b798
-	ld hl,0c205h		;b79a
+	ld hl,0c205h		;b79a   ; apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	set 0,(hl)		;b79d
 	ret			;b79f
 L_B7A0:
 	ld de,0b7efh		;b7a0
 	ld hl,04012h		;b7a3
 	ld b,002h		;b7a6
-	call L_B7D8		;b7a8
+	call compara_en_ranura		;b7a8   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
 	jr nc,L_B7B3		;b7ab
-	ld hl,0c205h		;b7ad
+	ld hl,0c205h		;b7ad   ; apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	set 1,(hl)		;b7b0
 	ret			;b7b2
 L_B7B3:
 	ld de,0b7f1h		;b7b3
 	ld hl,04012h		;b7b6
 	ld b,002h		;b7b9
-	call L_B7D8		;b7bb
+	call compara_en_ranura		;b7bb   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
 	jr nc,L_B7C6		;b7be
-	ld hl,0c205h		;b7c0
+	ld hl,0c205h		;b7c0   ; apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	set 2,(hl)		;b7c3
 	ret			;b7c5
 L_B7C6:
 	ld de,0b7f3h		;b7c6
 	ld hl,04012h		;b7c9
 	ld b,002h		;b7cc
-	call L_B7D8		;b7ce
+	call compara_en_ranura		;b7ce   ; compara_en_ranura: acarreo si los B bytes de la ranura C (RDSLT) son los de DE
 	ret nc			;b7d1
-	ld hl,0c205h		;b7d2
+	ld hl,0c205h		;b7d2   ; apunta a los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 	set 3,(hl)		;b7d5
 	ret			;b7d7
-L_B7D8:
-	push bc			;b7d8
+compara_en_ranura:		; acarreo si los B bytes de la ranura C (RDSLT) son los de DE
+	push bc			;b7d8   ; el byte HL de la ranura C (RDSLT)
 	push de			;b7d9
 	ld a,c			;b7da
 	call 0000ch		;b7db   ; BIOS RDSLT - Reads the value of an address in another slot
 	pop de			;b7de
 	pop bc			;b7df
 	ex de,hl			;b7e0
-	cp (hl)			;b7e1
+	cp (hl)			;b7e1   ; contra (DE): si no coincide, sin acarreo
 	ex de,hl			;b7e2
 	jr nz,L_B7EB		;b7e3
 	inc hl			;b7e5
 	inc de			;b7e6
-	djnz L_B7D8		;b7e7
+	djnz compara_en_ranura		;b7e7
 	scf			;b7e9
 	ret			;b7ea
 L_B7EB:
@@ -2303,45 +2303,45 @@ DATA_otros_cartuchos:
 
 
 L_B7F5:
-	ld de,0e322h		;b7f5
+	ld de,0e322h		;b7f5   ; apunta a las puertas abiertas de la antesala
 	xor a			;b7f8
 	ld (de),a			;b7f9
-	ld a,(0cc10h)		;b7fa
+	ld a,(0cc10h)		;b7fa   ; lee la pantalla de la antesala (0-2)
 	add a,a			;b7fd
 	add a,a			;b7fe
 	add a,a			;b7ff
 	add a,a			;b800
-	ld hl,0e328h		;b801
-	call 04083h		;b804
+	ld hl,0e328h		;b801   ; apunta a las puertas de la antesala (8 bytes cada una)
+	call 04083h		;b804   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;b807
 	and a			;b808
 	push hl			;b809
-	call z,L_B81D		;b80a
+	call z,cuenta_e328		;b80a   ; cuenta_e328: cuantas puertas de 0xE328 hay abiertas
 	pop hl			;b80d
 	ret c			;b80e
-	ld a,(0cc10h)		;b80f
+	ld a,(0cc10h)		;b80f   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;b812
 	ret z			;b814
 	ld a,008h		;b815
-	call 04083h		;b817
+	call 04083h		;b817   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;b81a
 	and a			;b81b
 	ret nz			;b81c
-L_B81D:
+cuenta_e328:		; cuantas puertas de 0xE328 hay abiertas
 	inc l			;b81d
 	ld a,(hl)			;b81e
 	and a			;b81f
 	jr z,L_B837		;b820
 	exx			;b822
 	ld bc,00400h		;b823
-	ld hl,0e328h		;b826
+	ld hl,0e328h		;b826   ; apunta a las puertas de la antesala (8 bytes cada una)
 L_B829:
 	ld a,(hl)			;b829
 	and a			;b82a
 	jr nz,L_B82E		;b82b
 	inc c			;b82d
 L_B82E:
-	ld a,l			;b82e
+	ld a,l			;b82e   ; 8 bytes por puerta; C cuenta las cerradas
 	add a,008h		;b82f
 	ld l,a			;b831
 	djnz L_B829		;b832
@@ -2349,7 +2349,7 @@ L_B82E:
 	exx			;b835
 	ld (de),a			;b836
 L_B837:
-	ld a,(0cc10h)		;b837
+	ld a,(0cc10h)		;b837   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;b83a
 	ld b,00ch		;b83c
 	jr c,L_B842		;b83e
@@ -2360,19 +2360,19 @@ L_B842:
 	ld a,(hl)			;b846
 	add a,b			;b847
 	ld b,a			;b848
-	ld a,(0c2b0h)		;b849
+	ld a,(0c2b0h)		;b849   ; lee la ficha del personaje 0 (14 bytes)
 	ld c,a			;b84c
-	ld a,(0c2d0h)		;b84d
+	ld a,(0c2d0h)		;b84d   ; lee la ficha del personaje 1 (14 bytes)
 	or c			;b850
 	ld c,010h		;b851
 	jr nz,L_B857		;b853
 	ld c,020h		;b855
 L_B857:
-	ld a,(0cc13h)		;b857
+	ld a,(0cc13h)		;b857   ; lee la X en la antesala
 	sub b			;b85a
 	cp c			;b85b
 	ret nc			;b85c
-	ld a,(0c007h)		;b85d
+	ld a,(0c007h)		;b85d   ; lee las teclas que hay
 	and 00ch		;b860
 	ret nz			;b862
 	scf			;b863
@@ -2381,10 +2381,10 @@ L_B865:
 	ld a,0c3h		;b865
 	ld (0cc12h),a		;b867
 	ld a,030h		;b86a
-	ld (0cc13h),a		;b86c
+	ld (0cc13h),a		;b86c   ; guarda la X en la antesala
 	ret			;b86f
 L_B870:
-	ld hl,0e328h		;b870
+	ld hl,0e328h		;b870   ; apunta a las puertas de la antesala (8 bytes cada una)
 	ld b,005h		;b873
 L_B875:
 	ld (hl),0ffh		;b875
@@ -2392,20 +2392,20 @@ L_B875:
 	add a,008h		;b878
 	ld l,a			;b87a
 	djnz L_B875		;b87b
-	ld de,0e328h		;b87d
+	ld de,0e328h		;b87d   ; apunta a las puertas de la antesala (8 bytes cada una)
 	ld hl,0be3dh		;b880
-	ld a,(0c21dh)		;b883
+	ld a,(0c21dh)		;b883   ; lee la ruina (0-4)
 	add a,a			;b886
 	ld b,a			;b887
 	add a,a			;b888
 	add a,b			;b889
-	call 04083h		;b88a
+	call 04083h		;b88a   ; hl_mas_a: HL = HL + A
 L_B88D:
-	ld a,(hl)			;b88d
+	ld a,(hl)			;b88d   ; [puerta]: 0xFF acaba
 	ld c,a			;b88e
 	inc a			;b88f
 	ret z			;b890
-	xor a			;b891
+	xor a			;b891   ; al registro: 0 (cerrada), el bit 0 (grande) y la X
 	ld (de),a			;b892
 	inc e			;b893
 	ld a,c			;b894
@@ -2416,51 +2416,51 @@ L_B88D:
 	and 0feh		;b89a
 	ld (de),a			;b89c
 	inc hl			;b89d
-	ld a,006h		;b89e
-	call 04088h		;b8a0
+	ld a,006h		;b89e   ; 8 bytes por registro (6 + los 2 de antes)
+	call 04088h		;b8a0   ; de_mas_a: DE = DE + A
 	jr L_B88D		;b8a3
-L_B8A5:
+colores_de_la_antesala:		; los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 	ld de,0cc20h		;b8a5
-	ld a,(0c2d0h)		;b8a8
+	ld a,(0c2d0h)		;b8a8   ; lee la ficha del personaje 1 (14 bytes)
 	and a			;b8ab
 	jr nz,L_B8B6		;b8ac
 	ld hl,0b8f7h		;b8ae
 	ld bc,00004h		;b8b1
 	ldir		;b8b4
 L_B8B6:
-	ld a,(0c2b0h)		;b8b6
+	ld a,(0c2b0h)		;b8b6   ; lee la ficha del personaje 0 (14 bytes)
 	and a			;b8b9
 	jp nz,L_B8C5		;b8ba
 	ld hl,0b8f3h		;b8bd
 	ld bc,00004h		;b8c0
 	ldir		;b8c3
 L_B8C5:
-	ld de,0dc00h		;b8c5
-	ld hl,0c2d0h		;b8c8
+	ld de,0dc00h		;b8c5   ; apunta a los colores de los sprites en RAM (16 por sprite)
+	ld hl,0c2d0h		;b8c8   ; apunta a la ficha del personaje 1 (14 bytes)
 	exx			;b8cb
-	ld a,(0c2d0h)		;b8cc
+	ld a,(0c2d0h)		;b8cc   ; lee la ficha del personaje 1 (14 bytes)
 	and a			;b8cf
 	ld hl,0bf64h		;b8d0
 	jr z,L_B8D8		;b8d3
 	ld hl,0bf68h		;b8d5
 L_B8D8:
 	exx			;b8d8
-	call L_B8DF		;b8d9
-	ld hl,0c2b0h		;b8dc
-L_B8DF:
+	call colores_de_personaje		;b8d9   ; colores_de_personaje: 4 x 16 colores de HL' en DE si el personaje vive
+	ld hl,0c2b0h		;b8dc   ; apunta a la ficha del personaje 0 (14 bytes)
+colores_de_personaje:		; 4 x 16 colores de HL' en DE si el personaje vive
 	ld a,(hl)			;b8df
 	and a			;b8e0
 	ret nz			;b8e1
 	ld b,004h		;b8e2
 L_B8E4:
-	exx			;b8e4
+	exx			;b8e4   ; un color del personaje (HL') a 16 bytes de 0xDC00
 	ld a,(hl)			;b8e5
 	inc hl			;b8e6
 	exx			;b8e7
 	push bc			;b8e8
 	ld b,010h		;b8e9
 L_B8EB:
-	ld (de),a			;b8eb
+	ld (de),a			;b8eb   ; 16 bytes de A
 	inc de			;b8ec
 	djnz L_B8EB		;b8ed
 	pop bc			;b8ef
@@ -2481,8 +2481,8 @@ DATA_tablas_pB8A5:
 
 
 L_B8FB:
-	ld hl,0cc10h		;b8fb
-	ld de,0cc13h		;b8fe
+	ld hl,0cc10h		;b8fb   ; apunta a la pantalla de la antesala (0-2)
+	ld de,0cc13h		;b8fe   ; apunta a la X en la antesala
 	ld a,(de)			;b901
 	cp 008h		;b902
 	jr c,L_B90F		;b904
@@ -2497,9 +2497,9 @@ L_B90F:
 	ld a,0f6h		;b910
 	ld (de),a			;b912
 L_B913:
-	call 04a1fh		;b913
-	call 04a44h		;b916
-	ld a,(0cc10h)		;b919
+	call 04a1fh		;b913   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
+	call 04a44h		;b916   ; esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
+	ld a,(0cc10h)		;b919   ; lee la pantalla de la antesala (0-2)
 	add a,a			;b91c
 	add a,a			;b91d
 	ld h,000h		;b91e
@@ -2510,17 +2510,17 @@ L_B913:
 	ld e,l			;b924
 	add hl,hl			;b925
 	add hl,de			;b926
-	ld de,0ec00h		;b927
+	ld de,0ec00h		;b927   ; apunta a el mapa de la fase (48 bytes por pantalla)
 	add hl,de			;b92a
 	call 05a11h		;b92b
-	call 05a1ah		;b92e
-	call L_B9D8		;b931
-	call L_B95F		;b934
-	call L_B940		;b937
+	call 05a1ah		;b92e   ; pinta_d200: las 32 x 24 fichas de 0xD200 desde la linea 20 (p00:4DB4)
+	call compone_puertas		;b931   ; compone_puertas: compone en la pagina 1 los marcos y hojas de las puertas
+	call puertas_de_la_pantalla		;b934   ; puertas_de_la_pantalla: las dos puertas de la pantalla 0xCC10 (p06:B97B)
+	call puerta_grande		;b937   ; puerta_grande: en la pantalla 2 de la antesala, la puerta grande (p06:B998)
 	call 04713h		;b93a
-	jp 04a12h		;b93d
-L_B940:
-	ld a,(0cc10h)		;b940
+	jp 04a12h		;b93d   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
+puerta_grande:		; en la pantalla 2 de la antesala, la puerta grande (p06:B998)
+	ld a,(0cc10h)		;b940   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;b943
 	ret nz			;b945
 	ld de,0e0a3h		;b946
@@ -2529,34 +2529,34 @@ L_B940:
 	ld de,020a0h		;b94b
 	ld bc,02020h		;b94e
 	ld a,004h		;b951
-	call 04bdeh		;b953
+	call 04bdeh		;b953   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 	pop de			;b956
 	ld hl,000a0h		;b957
 	ld bc,02020h		;b95a
-	jr L_B998		;b95d
-L_B95F:
-	ld a,(0cc10h)		;b95f
+	jr copia_timp		;b95d
+puertas_de_la_pantalla:		; las dos puertas de la pantalla 0xCC10 (p06:B97B)
+	ld a,(0cc10h)		;b95f   ; lee la pantalla de la antesala (0-2)
 	push af			;b962
 	add a,a			;b963
 	add a,a			;b964
 	add a,a			;b965
 	add a,a			;b966
-	ld hl,0e328h		;b967
-	call 04083h		;b96a
+	ld hl,0e328h		;b967   ; apunta a las puertas de la antesala (8 bytes cada una)
+	call 04083h		;b96a   ; hl_mas_a: HL = HL + A
 	push hl			;b96d
-	call L_B97B		;b96e
+	call puerta		;b96e   ; puerta: el marco y, si esta cerrada, la hoja
 	pop hl			;b971
 	pop af			;b972
 	cp 002h		;b973
 	ret z			;b975
 	ld a,008h		;b976
-	call 04083h		;b978
-L_B97B:
-	call L_B99D		;b97b
+	call 04083h		;b978   ; hl_mas_a: HL = HL + A
+puerta:		; el marco y, si esta cerrada, la hoja
+	call marco_de_puerta		;b97b   ; el marco; si la puerta esta abierta, nada mas
 	ld a,(hl)			;b97e
 	and a			;b97f
 	ret nz			;b980
-	ld e,0a3h		;b981
+	ld e,0a3h		;b981   ; la hoja cerrada en (X + 8 o + 0x0C, 0xA3)
 	inc l			;b983
 	inc l			;b984
 	ld d,(hl)			;b985
@@ -2572,37 +2572,37 @@ L_B98F:
 	ld d,a			;b991
 	ld hl,04068h		;b992
 	ld bc,01820h		;b995
-L_B998:
+copia_timp:		; p00:4C73 con TIMP (0x48)
 	ld a,048h		;b998
-	jp 04c73h		;b99a
-L_B99D:
-	push hl			;b99d
-	ld e,09bh		;b99e
+	jp 04c73h		;b99a   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+marco_de_puerta:		; el marco pequeno (0x28 x 0x28) o grande (0x30 x 0x38)
+	push hl			;b99d   ; el marco: pequeno (0x28 x 0x28 en Y 0x9B) o grande (0x30 x 0x38 en Y 0x8B)
+	ld e,09bh		;b99e   ; la Y del marco pequeno: 0x9B
 	inc l			;b9a0
 	inc l			;b9a1
-	ld d,(hl)			;b9a2
+	ld d,(hl)			;b9a2   ; D = la X de la puerta; (HL + 1): grande o pequena
 	dec l			;b9a3
 	ld a,(hl)			;b9a4
 	and a			;b9a5
 	ld bc,02828h		;b9a6
 	jr z,L_B9B0		;b9a9
-	ld bc,03038h		;b9ab
+	ld bc,03038h		;b9ab   ; el grande: 0x30 x 0x38 en Y 0x8B
 	ld e,08bh		;b9ae
 L_B9B0:
 	ld hl,01068h		;b9b0
-	call L_B998		;b9b3
+	call copia_timp		;b9b3   ; copia_timp: p00:4C73 con TIMP (0x48)
 	pop hl			;b9b6
 	ld a,(hl)			;b9b7
 	and a			;b9b8
 	ret z			;b9b9
 	push hl			;b9ba
-	ld a,(0cc10h)		;b9bb
+	ld a,(0cc10h)		;b9bb   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;b9be
 	ld c,004h		;b9c0
 	jr nz,L_B9C6		;b9c2
 	ld c,008h		;b9c4
 L_B9C6:
-	inc l			;b9c6
+	inc l			;b9c6   ; la puerta abierta: 0x20 x 0x10 de (0x88, 0x40) en (X + C, 0xB3)
 	inc l			;b9c7
 	ld a,(hl)			;b9c8
 	add a,c			;b9c9
@@ -2610,67 +2610,67 @@ L_B9C6:
 	ld e,0b3h		;b9cb
 	ld hl,04088h		;b9cd
 	ld bc,02010h		;b9d0
-	call L_B998		;b9d3
+	call copia_timp		;b9d3   ; copia_timp: p00:4C73 con TIMP (0x48)
 	pop hl			;b9d6
 	ret			;b9d7
-L_B9D8:
+compone_puertas:		; compone en la pagina 1 los marcos y hojas de las puertas
 	ld a,001h		;b9d8
-	ld (0c20bh),a		;b9da
-	ld a,(0cc10h)		;b9dd
+	ld (0c20bh),a		;b9da   ; guarda las fichas van a la pagina 1
+	ld a,(0cc10h)		;b9dd   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;b9e0
 	jr z,L_B9FB		;b9e2
 	ld hl,0bd80h		;b9e4
 	ld bc,00505h		;b9e7
-	call L_BA21		;b9ea
+	call bloque_en_1068		;b9ea   ; bloque_en_1068: p06:BA24 en (0x10, 0x68)
 	ld hl,0bd99h		;b9ed
 	ld bc,00403h		;b9f0
 	ld de,04068h		;b9f3
-	call L_BA24		;b9f6
+	call bloque_de_fichas		;b9f6   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 	jr L_BA10		;b9f9
 L_B9FB:
 	ld hl,0bda5h		;b9fb
 	ld bc,00706h		;b9fe
-	call L_BA21		;ba01
+	call bloque_en_1068		;ba01   ; bloque_en_1068: p06:BA24 en (0x10, 0x68)
 	ld hl,0bdcfh		;ba04
 	ld bc,00403h		;ba07
 	ld de,04068h		;ba0a
-	call L_BA24		;ba0d
+	call bloque_de_fichas		;ba0d   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 L_BA10:
 	ld hl,0bddbh		;ba10
 	ld bc,00204h		;ba13
 	ld de,04088h		;ba16
-	call L_BA24		;ba19
+	call bloque_de_fichas		;ba19   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 L_BA1C:
 	xor a			;ba1c
-	ld (0c20bh),a		;ba1d
+	ld (0c20bh),a		;ba1d   ; guarda las fichas van a la pagina 1
 	ret			;ba20
-L_BA21:
+bloque_en_1068:		; p06:BA24 en (0x10, 0x68)
 	ld de,01068h		;ba21
-L_BA24:
+bloque_de_fichas:		; B filas de C fichas de HL en (D, E)
 	push bc			;ba24
 	push de			;ba25
 	ld b,c			;ba26
 L_BA27:
-	ld a,(hl)			;ba27
-	call 04db4h		;ba28
+	ld a,(hl)			;ba27   ; una fila de C fichas
+	call 04db4h		;ba28   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 	inc hl			;ba2b
 	ld a,d			;ba2c
 	add a,008h		;ba2d
 	ld d,a			;ba2f
 	djnz L_BA27		;ba30
-	pop de			;ba32
+	pop de			;ba32   ; la siguiente fila
 	ld a,e			;ba33
 	add a,008h		;ba34
 	ld e,a			;ba36
 	pop bc			;ba37
-	djnz L_BA24		;ba38
+	djnz bloque_de_fichas		;ba38
 	ret			;ba3a
 L_BA3B:
 	ld a,001h		;ba3b
-	ld (0c20bh),a		;ba3d
-	ld a,(0c21dh)		;ba40
+	ld (0c20bh),a		;ba3d   ; guarda las fichas van a la pagina 1
+	ld a,(0c21dh)		;ba40   ; lee la ruina (0-4)
 	ld hl,0bde3h		;ba43
-	call 0543ah		;ba46
+	call 0543ah		;ba46   ; palabra_a: HL = la palabra A de la tabla HL
 	ld de,000a0h		;ba49
 	ld b,004h		;ba4c
 L_BA4E:
@@ -2678,14 +2678,14 @@ L_BA4E:
 	ld b,004h		;ba4f
 	push de			;ba51
 L_BA52:
-	ld a,(hl)			;ba52
-	call 04db4h		;ba53
+	ld a,(hl)			;ba52   ; una fila de 4 fichas del dibujo de la ruina
+	call 04db4h		;ba53   ; ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
 	inc hl			;ba56
 	ld a,d			;ba57
 	add a,008h		;ba58
 	ld d,a			;ba5a
 	djnz L_BA52		;ba5b
-	pop de			;ba5d
+	pop de			;ba5d   ; la siguiente fila
 	ld a,e			;ba5e
 	add a,008h		;ba5f
 	ld e,a			;ba61
@@ -2696,13 +2696,13 @@ L_BA68:
 	ld b,018h		;ba68
 L_BA6A:
 	push bc			;ba6a
-	call 05346h		;ba6b
+	call 05346h		;ba6b   ; fase_de_la_ruina: A = 0xC211 - (ruina * 5 + 1): la fase dentro de la ruina
 	add a,a			;ba6e
 	add a,a			;ba6f
 	add a,a			;ba70
-	ld hl,0e328h		;ba71
-	call 04083h		;ba74
-	call L_B99D		;ba77
+	ld hl,0e328h		;ba71   ; apunta a las puertas de la antesala (8 bytes cada una)
+	call 04083h		;ba74   ; hl_mas_a: HL = HL + A
+	call marco_de_puerta		;ba77   ; marco_de_puerta: el marco pequeno (0x28 x 0x28) o grande (0x30 x 0x38)
 	pop bc			;ba7a
 	push bc			;ba7b
 	ld e,0a3h		;ba7c
@@ -2724,21 +2724,21 @@ L_BA8A:
 	ld d,a			;ba91
 	ld hl,04068h		;ba92
 	ld bc,01820h		;ba95
-	call L_B998		;ba98
+	call copia_timp		;ba98   ; copia_timp: p00:4C73 con TIMP (0x48)
 	ld b,080h		;ba9b
 L_BA9D:
 	push bc			;ba9d
 	ld b,000h		;ba9e
 L_BAA0:
-	djnz L_BAA0		;baa0
+	djnz L_BAA0		;baa0   ; espera
 	pop bc			;baa2
 	djnz L_BA9D		;baa3
 	pop bc			;baa5
 	djnz L_BA6A		;baa6
 	scf			;baa8
 	ret			;baa9
-L_BAAA:
-	ld hl,0c2b0h		;baaa
+sprites_de_la_antesala:		; los sprites de los personajes en la antesala (p06:BE2D)
+	ld hl,0c2b0h		;baaa   ; apunta a la ficha del personaje 0 (14 bytes)
 	ld bc,00200h		;baad
 L_BAB0:
 	ld a,(hl)			;bab0
@@ -2746,10 +2746,10 @@ L_BAB0:
 	jr nz,L_BAB5		;bab2
 	inc c			;bab4
 L_BAB5:
-	ld de,00020h		;bab5
+	ld de,00020h		;bab5   ; C = cuantos personajes viven
 	add hl,de			;bab8
 	djnz L_BAB0		;bab9
-	ld de,0de00h		;babb
+	ld de,0de00h		;babb   ; los sprites de los personajes: 4 por cada uno
 	ld hl,0be2dh		;babe
 	ld a,c			;bac1
 	add a,a			;bac2
@@ -2759,12 +2759,12 @@ L_BAB5:
 	ld hl,0cc20h		;bac6
 	exx			;bac9
 L_BACA:
-	ld a,(0cc12h)		;baca
+	ld a,(0cc12h)		;baca   ; la X: 0xCC12 + dx
 	add a,(hl)			;bacd
 	ld (de),a			;bace
 	inc hl			;bacf
 	inc e			;bad0
-	ld a,(0cc13h)		;bad1
+	ld a,(0cc13h)		;bad1   ; la Y: 0xCC13 - dy; si se pasa, escondido (0xE0)
 	sub (hl)			;bad4
 	jr nc,L_BADC		;bad5
 	dec e			;bad7
@@ -2775,13 +2775,13 @@ L_BADC:
 	ld (de),a			;badc
 	inc hl			;badd
 	inc e			;bade
-	ld a,(0cc16h)		;badf
+	ld a,(0cc16h)		;badf   ; lee el sentido en la antesala
 	and a			;bae2
 	ld a,010h		;bae3
 	jr z,L_BAE8		;bae5
 	xor a			;bae7
 L_BAE8:
-	exx			;bae8
+	exx			;bae8   ; el patron de 0xCC20 mas 0x10 si va a la izquierda (0xCC16)
 	add a,(hl)			;bae9
 	inc hl			;baea
 	exx			;baeb
@@ -2792,9 +2792,9 @@ L_BAE8:
 	ret			;baf1
 L_BAF2:
 	xor a			;baf2
-	ld (0cc16h),a		;baf3
-	call L_BAAA		;baf6
-	call 05690h		;baf9
+	ld (0cc16h),a		;baf3   ; guarda el sentido en la antesala
+	call sprites_de_la_antesala		;baf6   ; sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+	call 05690h		;baf9   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	ld de,0e0a3h		;bafc
 	ld hl,020a0h		;baff
 	ld b,h			;bb02
@@ -2803,7 +2803,7 @@ L_BB03:
 	push hl			;bb04
 	push de			;bb05
 	ld bc,02001h		;bb06
-	call 04841h		;bb09
+	call 04841h		;bb09   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 	pop de			;bb0c
 	pop hl			;bb0d
 	inc e			;bb0e
@@ -2813,7 +2813,7 @@ L_BB12:
 	push bc			;bb12
 	ld b,000h		;bb13
 L_BB15:
-	djnz L_BB15		;bb15
+	djnz L_BB15		;bb15   ; espera
 	pop bc			;bb17
 	djnz L_BB12		;bb18
 	pop bc			;bb1a
@@ -2824,33 +2824,33 @@ L_BB1E:
 	ld de,06078h		;bb21
 	ld bc,0941ch		;bb24
 	ld a,004h		;bb27
-	call 04bdeh		;bb29
-	call L_BB49		;bb2c
+	call 04bdeh		;bb29   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+	call recuadro_del_mensaje		;bb2c   ; recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
 	ld a,(0002bh)		;bb2f
 	and 00fh		;bb32
 	ld hl,0be69h		;bb34
 	jr nz,L_BB46		;bb37
-	ld a,(0cc10h)		;bb39
+	ld a,(0cc10h)		;bb39   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;bb3c
 	ld hl,0be5bh		;bb3e
 	jr c,L_BB46		;bb41
 	ld hl,0bedah		;bb43
 L_BB46:
-	jp 04d4ah		;bb46
-L_BB49:
+	jp 04d4ah		;bb46   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+recuadro_del_mensaje:		; borra y enmarca el recuadro de mensajes
 	ld hl,03844h		;bb49
 	ld bc,09018h		;bb4c
-	call 05e2fh		;bb4f
+	call 05e2fh		;bb4f   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 	ld hl,03642h		;bb52
 	ld de,0941ch		;bb55
-	call 0473bh		;bb58
+	call 0473bh		;bb58   ; rectangulo_color_d: p00:4B74 con el color 0x0D
 	ld hl,03743h		;bb5b
 	ld de,0921ah		;bb5e
-	jp 0473bh		;bb61
+	jp 0473bh		;bb61   ; rectangulo_color_d: p00:4B74 con el color 0x0D
 L_BB64:
 	ld hl,0c22ah		;bb64
 	ld (hl),000h		;bb67
-	ld a,(0c006h)		;bb69
+	ld a,(0c006h)		;bb69   ; lee las teclas nuevas
 	and 01ch		;bb6c
 	ret z			;bb6e
 	and 00ch		;bb6f
@@ -2860,20 +2860,20 @@ L_BB64:
 L_BB76:
 	ld (hl),b			;bb76
 	ret			;bb77
-L_BB78:
+copia_6078:		; copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
 	ld de,03642h		;bb78
 	ld hl,06078h		;bb7b
 	ld bc,0941ch		;bb7e
-	jp 04841h		;bb81
+	jp 04841h		;bb81   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 L_BB84:
-	call L_BB49		;bb84
-	ld a,(0cc10h)		;bb87
+	call recuadro_del_mensaje		;bb84   ; recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
+	ld a,(0cc10h)		;bb87   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;bb8a
 	jr nc,L_BBB1		;bb8c
 L_BB8E:
 	ld a,(0002bh)		;bb8e
 	and 00fh		;bb91
-	ld a,(0c001h)		;bb93
+	ld a,(0c001h)		;bb93   ; lee el paso del estado
 	jr nz,L_BBA4		;bb96
 	cp 004h		;bb98
 	ld hl,0be88h		;bb9a
@@ -2886,19 +2886,19 @@ L_BBA4:
 	jr z,L_BBAE		;bba9
 	ld hl,0bec6h		;bbab
 L_BBAE:
-	jp 04d4ah		;bbae
+	jp 04d4ah		;bbae   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 L_BBB1:
-	ld a,(0e322h)		;bbb1
+	ld a,(0e322h)		;bbb1   ; lee las puertas abiertas de la antesala
 	and a			;bbb4
 	jr z,L_BB8E		;bbb5
 	ld a,(0002bh)		;bbb7
 	and 00fh		;bbba
 	jr nz,L_BBCD		;bbbc
 	ld hl,0beeah		;bbbe
-	call 04d4ah		;bbc1
-	ld a,(0e322h)		;bbc4
+	call 04d4ah		;bbc1   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+	ld a,(0e322h)		;bbc4   ; lee las puertas abiertas de la antesala
 	ld de,0704ch		;bbc7
-	jp 047b4h		;bbca
+	jp 047b4h		;bbca   ; cifra: la cifra A & 15 (0x21 + A) en (D, E), o espacio si es cero y C
 L_BBCD:
 	ld hl,0befah		;bbcd
 	jr L_BBAE		;bbd0
@@ -2907,54 +2907,54 @@ L_BBD2:
 	ld de,06078h		;bbd5
 	ld bc,0941ch		;bbd8
 	ld a,004h		;bbdb
-	call 04bdeh		;bbdd
-	call L_BB49		;bbe0
+	call 04bdeh		;bbdd   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+	call recuadro_del_mensaje		;bbe0   ; recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
 	ld a,(0002bh)		;bbe3
 	and 00fh		;bbe6
 	ld hl,0bf29h		;bbe8
 	jr nz,L_BBF0		;bbeb
 	ld hl,0bf1bh		;bbed
 L_BBF0:
-	call 04d4ah		;bbf0
+	call 04d4ah		;bbf0   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	ld a,05ah		;bbf3
 	ld (0c209h),a		;bbf5
-	jp L_B8A5		;bbf8
+	jp colores_de_la_antesala		;bbf8   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 L_BBFB:
-	call L_BAAA		;bbfb
-	call 05690h		;bbfe
+	call sprites_de_la_antesala		;bbfb   ; sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+	call 05690h		;bbfe   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	or a			;bc01
 	ld hl,0c209h		;bc02
 	dec (hl)			;bc05
 	ret nz			;bc06
-	call L_BB78		;bc07
+	call copia_6078		;bc07   ; copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
 	scf			;bc0a
 	ret			;bc0b
 L_BC0C:
 	xor a			;bc0c
-	ld (0cc16h),a		;bc0d
+	ld (0cc16h),a		;bc0d   ; guarda el sentido en la antesala
 	ld (0cc17h),a		;bc10
 	ld (0cc19h),a		;bc13
 	ld a,078h		;bc16
 	ld (0cc18h),a		;bc18
 	ld a,(0c31ch)		;bc1b
 	cp 003h		;bc1e
-	jp nz,L_B8A5		;bc20
-	ld a,(0c2d0h)		;bc23
+	jp nz,colores_de_la_antesala		;bc20   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
+	ld a,(0c2d0h)		;bc23   ; lee la ficha del personaje 1 (14 bytes)
 	inc a			;bc26
 	ld (0cc19h),a		;bc27
-	call L_BC36		;bc2a
-	call L_B8A5		;bc2d
+	call vuelve_un_personaje		;bc2a   ; vuelve_un_personaje: la ficha inicial (p06:BF6C) del personaje que no vive
+	call colores_de_la_antesala		;bc2d   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 L_BC30:
 	ld de,0bf88h		;bc30
-	jp 04926h		;bc33
-L_BC36:
-	ld a,(0c2b0h)		;bc36
+	jp 04926h		;bc33   ; rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
+vuelve_un_personaje:		; la ficha inicial (p06:BF6C) del personaje que no vive
+	ld a,(0c2b0h)		;bc36   ; lee la ficha del personaje 0 (14 bytes)
 	and a			;bc39
 	ld hl,0bf6ch		;bc3a
-	ld de,0c2b0h		;bc3d
+	ld de,0c2b0h		;bc3d   ; apunta a la ficha del personaje 0 (14 bytes)
 	jr nz,L_BC48		;bc40
 	ld hl,0bf7ah		;bc42
-	ld de,0c2d0h		;bc45
+	ld de,0c2d0h		;bc45   ; apunta a la ficha del personaje 1 (14 bytes)
 L_BC48:
 	ld bc,0000eh		;bc48
 	ldir		;bc4b
@@ -2963,21 +2963,21 @@ L_BC4E:
 	ld a,(0c31ch)		;bc4e
 	and a			;bc51
 	ret z			;bc52
-	call 05690h		;bc53
+	call 05690h		;bc53   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	ld a,(0cc17h)		;bc56
 	and a			;bc59
 	jr nz,L_BCC2		;bc5a
 	ld hl,0cc18h		;bc5c
 	dec (hl)			;bc5f
 	jr z,L_BCAE		;bc60
-	call L_BAAA		;bc62
+	call sprites_de_la_antesala		;bc62   ; sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
 	ld a,(0c31ch)		;bc65
 	dec a			;bc68
-	jr z,L_BCA0		;bc69
+	jr z,sprites_be35		;bc69
 	dec a			;bc6b
 	jr z,L_BC80		;bc6c
 	ld b,004h		;bc6e
-	ld hl,0de02h		;bc70
+	ld hl,0de02h		;bc70   ; apunta a el patron del sprite 0 en RAM
 L_BC73:
 	ld a,(hl)			;bc73
 	sub 010h		;bc74
@@ -2987,16 +2987,16 @@ L_BC73:
 	inc l			;bc79
 	inc l			;bc7a
 	djnz L_BC73		;bc7b
-	call L_BCA0		;bc7d
+	call sprites_be35		;bc7d   ; sprites_be35: los sprites del personaje 1 con p06:BE35
 L_BC80:
-	ld de,0de00h		;bc80
+	ld de,0de00h		;bc80   ; apunta a los atributos de los sprites en RAM
 	ld hl,0be2dh		;bc83
 L_BC86:
 	ld a,(0cc18h)		;bc86
 	ld c,a			;bc89
 	ld b,004h		;bc8a
 L_BC8C:
-	ld a,c			;bc8c
+	ld a,c			;bc8c   ; el sprite: escondido (0xE8) o en 0xC3 + (HL)
 	and 004h		;bc8d
 	ld a,0e8h		;bc8f
 	jr nz,L_BC98		;bc91
@@ -3005,18 +3005,18 @@ L_BC8C:
 	inc l			;bc96
 	inc l			;bc97
 L_BC98:
-	ld (de),a			;bc98
+	ld (de),a			;bc98   ; 4 sprites
 	inc e			;bc99
 	inc e			;bc9a
 	inc e			;bc9b
 	inc e			;bc9c
 	djnz L_BC8C		;bc9d
 	ret			;bc9f
-L_BCA0:
-	ld a,(0c2d0h)		;bca0
+sprites_be35:		; los sprites del personaje 1 con p06:BE35
+	ld a,(0c2d0h)		;bca0   ; lee la ficha del personaje 1 (14 bytes)
 	and a			;bca3
 	jr nz,L_BC80		;bca4
-	ld de,0de10h		;bca6
+	ld de,0de10h		;bca6   ; apunta a la Y del sprite 4 en RAM
 	ld hl,0be35h		;bca9
 	jr L_BC86		;bcac
 L_BCAE:
@@ -3025,7 +3025,7 @@ L_BCAE:
 	ld a,(0c31ch)		;bcb3
 	cp 003h		;bcb6
 	jr nz,L_BCCC		;bcb8
-	call L_BCD3		;bcba
+	call cuadro_de_la_tienda		;bcba   ; cuadro_de_la_tienda: los colores (p06:BD0B) y los sprites de 0xDE20
 	ld hl,0cc17h		;bcbd
 	inc (hl)			;bcc0
 	ret			;bcc1
@@ -3034,59 +3034,59 @@ L_BCC2:
 	dec (hl)			;bcc5
 	ret nz			;bcc6
 	ld e,0e8h		;bcc7
-	call L_BCD8		;bcc9
+	call sprites_de20		;bcc9   ; sprites_de20: los sprites de 0xDE20 junto a 0xCC13
 L_BCCC:
 	xor a			;bccc
 	ld (0c31ch),a		;bccd
-	jp L_BAAA		;bcd0
-L_BCD3:
-	call L_BD0B		;bcd3
+	jp sprites_de_la_antesala		;bcd0   ; sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+cuadro_de_la_tienda:		; los colores (p06:BD0B) y los sprites de 0xDE20
+	call colores_dc80		;bcd3   ; colores_dc80: 4 x 16 colores 0x0D/0x0A en 0xDC80
 	ld e,090h		;bcd6
-L_BCD8:
+sprites_de20:		; los sprites de 0xDE20 junto a 0xCC13
 	ld a,(0cc19h)		;bcd8
 	dec a			;bcdb
 	ld b,008h		;bcdc
 	jr nz,L_BCE2		;bcde
 	ld b,018h		;bce0
 L_BCE2:
-	ld hl,0de20h		;bce2
-	ld a,(0cc13h)		;bce5
+	ld hl,0de20h		;bce2   ; apunta a la Y del sprite 8 en RAM
+	ld a,(0cc13h)		;bce5   ; lee la X en la antesala
 	sub b			;bce8
 	ld d,a			;bce9
 	ld c,040h		;bcea
-	call L_BD05		;bcec
+	call pon_atributo		;bcec   ; pon_atributo: (HL) = E, D, C
 	ld c,044h		;bcef
 	inc l			;bcf1
 	inc l			;bcf2
-	call L_BD05		;bcf3
+	call pon_atributo		;bcf3   ; pon_atributo: (HL) = E, D, C
 	ld a,d			;bcf6
 	add a,010h		;bcf7
 	ld d,a			;bcf9
 	ld c,048h		;bcfa
 	inc l			;bcfc
 	inc l			;bcfd
-	call L_BD05		;bcfe
+	call pon_atributo		;bcfe   ; pon_atributo: (HL) = E, D, C
 	ld c,04ch		;bd01
 	inc l			;bd03
 	inc l			;bd04
-L_BD05:
-	ld (hl),e			;bd05
+pon_atributo:		; (HL) = E, D, C
+	ld (hl),e			;bd05   ; Y, X y patron
 	inc l			;bd06
 	ld (hl),d			;bd07
 	inc l			;bd08
 	ld (hl),c			;bd09
 	ret			;bd0a
-L_BD0B:
+colores_dc80:		; 4 x 16 colores 0x0D/0x0A en 0xDC80
 	ld hl,0dc80h		;bd0b
 	ld a,00dh		;bd0e
-	call L_BD1F		;bd10
+	call llena_16_a		;bd10   ; llena_16_a: 16 bytes de HL con A
 	ld a,00ah		;bd13
-	call L_BD1F		;bd15
+	call llena_16_a		;bd15   ; llena_16_a: 16 bytes de HL con A
 	ld a,00dh		;bd18
-	call L_BD1F		;bd1a
+	call llena_16_a		;bd1a   ; llena_16_a: 16 bytes de HL con A
 	ld a,00ah		;bd1d
-L_BD1F:
-	ld d,h			;bd1f
+llena_16_a:		; 16 bytes de HL con A
+	ld d,h			;bd1f   ; 16 bytes con A
 	ld e,l			;bd20
 	inc de			;bd21
 	ld bc,0000fh		;bd22
@@ -3094,9 +3094,9 @@ L_BD1F:
 	ldir		;bd26
 	ret			;bd28
 L_BD29:
-	ld hl,0cc13h		;bd29
-	ld de,0cc16h		;bd2c
-	ld a,(0c007h)		;bd2f
+	ld hl,0cc13h		;bd29   ; apunta a la X en la antesala
+	ld de,0cc16h		;bd2c   ; apunta a el sentido en la antesala
+	ld a,(0c007h)		;bd2f   ; lee las teclas que hay
 	rra			;bd32
 	rra			;bd33
 	rra			;bd34
@@ -3106,17 +3106,17 @@ L_BD29:
 	xor a			;bd3a
 	ld (0cc15h),a		;bd3b
 	inc a			;bd3e
-	ld (0cc14h),a		;bd3f
+	ld (0cc14h),a		;bd3f   ; guarda el cuadro del personaje en la antesala
 	ret			;bd42
 L_BD43:
 	ld a,(hl)			;bd43
 	cp 0d8h		;bd44
 	jr c,L_BD4E		;bd46
-	ld a,(0cc10h)		;bd48
+	ld a,(0cc10h)		;bd48   ; lee la pantalla de la antesala (0-2)
 	cp 002h		;bd4b
 	ret nc			;bd4d
 L_BD4E:
-	ld a,(hl)			;bd4e
+	ld a,(hl)			;bd4e   ; X + 4 y sentido 0
 	add a,004h		;bd4f
 	ld (hl),a			;bd51
 	xor a			;bd52
@@ -3126,7 +3126,7 @@ L_BD56:
 	ld a,(hl)			;bd56
 	cp 020h		;bd57
 	jr nc,L_BD60		;bd59
-	ld a,(0cc10h)		;bd5b
+	ld a,(0cc10h)		;bd5b   ; lee la pantalla de la antesala (0-2)
 	and a			;bd5e
 	ret z			;bd5f
 L_BD60:
@@ -3136,20 +3136,20 @@ L_BD60:
 	ld a,001h		;bd64
 	ld (de),a			;bd66
 L_BD67:
-	ld hl,0cc15h		;bd67
+	ld hl,0cc15h		;bd67   ; 0xCC15 cuenta; el cuadro de andar (0xCC14) sale de sus bits 2 y 3
 	inc (hl)			;bd6a
 	ld a,(hl)			;bd6b
-	rra			;bd6c
+	rra			;bd6c   ; el bit 2: cuadro 1
 	rra			;bd6d
 	ld c,001h		;bd6e
 	jr nc,L_BD79		;bd70
-	rra			;bd72
+	rra			;bd72   ; si no, el bit 3: cuadro 0 o 2
 	ld c,000h		;bd73
 	jr nc,L_BD79		;bd75
 	ld c,002h		;bd77
 L_BD79:
 	ld a,c			;bd79
-	ld (0cc14h),a		;bd7a
+	ld (0cc14h),a		;bd7a   ; guarda el cuadro del personaje en la antesala
 	jp 04713h		;bd7d
 
 ; ----------------------------------------------------------------------

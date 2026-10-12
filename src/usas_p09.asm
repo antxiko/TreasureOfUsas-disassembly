@@ -1339,8 +1339,8 @@ DATA_registro_b7c9_20:
 
 
 L_B8CC:
-	ld a,(0c215h)		;b8cc
-	ld hl,0c218h		;b8cf
+	ld a,(0c215h)		;b8cc   ; lee el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+	ld hl,0c218h		;b8cf   ; apunta a la vecina de arriba
 	dec a			;b8d2
 	add a,l			;b8d3
 	ld l,a			;b8d4
@@ -1352,14 +1352,14 @@ L_B8D8:
 	ret z			;b8db
 	and a			;b8dc
 	jr z,L_B8E3		;b8dd
-	ld (0c212h),a		;b8df
+	ld (0c212h),a		;b8df   ; guarda la pantalla de la fase (desde 1)
 	ret			;b8e2
 L_B8E3:
 	ld a,001h		;b8e3
-	ld (0c226h),a		;b8e5
+	ld (0c226h),a		;b8e5   ; guarda se sale de la fase
 	ret			;b8e8
 L_B8E9:
-	ld a,(0c211h)		;b8e9
+	ld a,(0c211h)		;b8e9   ; lee la fase (1-25: ruina * 5 + puerta)
 	add a,a			;b8ec
 	ld hl,L_B920+1		;b8ed
 	add a,l			;b8f0
@@ -1367,11 +1367,11 @@ L_B8E9:
 	jr nc,L_B8F5		;b8f2
 	inc h			;b8f4
 L_B8F5:
-	ld e,(hl)			;b8f5
+	ld e,(hl)			;b8f5   ; la tabla de la fase; 2 bytes por pantalla (0xC212 - 1)
 	inc hl			;b8f6
 	ld d,(hl)			;b8f7
 	ex de,hl			;b8f8
-	ld a,(0c212h)		;b8f9
+	ld a,(0c212h)		;b8f9   ; lee la pantalla de la fase (desde 1)
 	dec a			;b8fc
 	add a,a			;b8fd
 	add a,l			;b8fe
@@ -1379,10 +1379,10 @@ L_B8F5:
 	jr nc,L_B903		;b900
 	inc h			;b902
 L_B903:
-	ld de,0c218h		;b903
+	ld de,0c218h		;b903   ; apunta a la vecina de arriba
 	ld b,004h		;b906
 L_B908:
-	ld a,(hl)			;b908
+	ld a,(hl)			;b908   ; los nibbles de cada byte: primero el alto
 	bit 0,b		;b909
 	jr nz,L_B911		;b90b
 	rrca			;b90d
@@ -1939,10 +1939,11 @@ DATA_por_ruina_bcd6:
 	defb 06ch,0beh	; bcde
 
 ; ----------------------------------------------------------------------
-; DATOS pares_por_ruina: las 5 tablas de p09:BCD6: p01:604C lee el par 2 x C
-;   ([A][C]) de la de la ruina; lo leen p01:603E (499 bytes)
+; DATOS demo_por_ruina: las teclas de la demo de cada ruina (p09:BCD6): pares
+;   [teclas][cuadros] que p01:6017 va leyendo; 0xFF acaba la demo; lo leen
+;   p01:603E (499 bytes)
 ;   0xbce0..0xbed3  (499 bytes)
-DATA_pares_por_ruina:
+DATA_demo_por_ruina:
 	defb 008h,0c0h	; bce0
 	defb 009h,007h	; bce2
 	defb 000h,025h	; bce4

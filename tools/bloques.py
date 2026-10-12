@@ -648,7 +648,7 @@ def fin_lineas(trio, a):
 
 def lineas(trio, a, nom, lector):
     declara(trio, a, fin_lineas(trio, a), nom, "lineas [X][Y][largo] hasta 0xFF "
-            "(p00:55CE horizontales con L_4B0C, p00:55D1 verticales con L_4AD4)",
+            "(p00:55CE verticales con L_4B0C, p00:55D1 horizontales con L_4AD4)",
             lector, F=3)
 
 
@@ -807,8 +807,9 @@ def banco9():
             "ficha (p00:5AD5, segun 0xC240)", "p00:5AD5", F=4)
     tabla_de_palabras(T, 0xBCD6, 5, "por_ruina_bcd6", "la tabla de cada ruina "
                       "(p01:6044)", "p01:603E")
-    declara(T, 0xBCE0, 0xBED3, "pares_por_ruina", "las 5 tablas de p09:BCD6: "
-            "p01:604C lee el par 2 x C ([A][C]) de la de la ruina", "p01:603E", F=2)
+    declara(T, 0xBCE0, 0xBED3, "demo_por_ruina", "las teclas de la demo de cada "
+            "ruina (p09:BCD6): pares [teclas][cuadros] que p01:6017 va leyendo; "
+            "0xFF acaba la demo", "p01:603E", F=2)
     declara(T, 0xBED3, 0xBF1D, "registros_p9056", "74 bytes: p02:9056 copia 3 "
             "desde p09:BED3 + A a 0xC319", "p02:9050", F=3)
     declara(T, 0xBF1D, 0xBF37, "por_fase_bf1d", "un byte por fase (p00:5F2C, "

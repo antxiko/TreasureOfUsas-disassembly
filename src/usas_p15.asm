@@ -2664,16 +2664,16 @@ DATA_resto_BD96:
 
 
 L_BEBF:
-	ld de,0d200h		;bebf
+	ld de,0d200h		;bebf   ; apunta a el mapa de 32 x 24 fichas de la pantalla
 	ld a,006h		;bec2
 L_BEC4:
 	ex af,af'			;bec4
 	ld b,008h		;bec5
 L_BEC7:
-	ld a,(hl)			;bec7
+	ld a,(hl)			;bec7   ; el metabloque: sus 16 fichas en 0xE400 + n * 16
 	push de			;bec8
 	exx			;bec9
-	ld bc,0e400h		;beca
+	ld bc,0e400h		;beca   ; apunta a los metabloques (16 fichas cada uno)
 	ld h,000h		;becd
 	ld l,a			;becf
 	add hl,hl			;bed0
@@ -2681,9 +2681,9 @@ L_BEC7:
 	add hl,hl			;bed2
 	add hl,hl			;bed3
 	add hl,bc			;bed4
-	ld bc,01cffh		;bed5
+	ld bc,01cffh		;bed5   ; B = 0x1C: de una fila de 4 a la siguiente del mapa (32 - 4)
 	pop de			;bed8
-	ldi		;bed9
+	ldi		;bed9   ; las 4 filas de 4 fichas al mapa de 0xD200
 	ldi		;bedb
 	ldi		;bedd
 	ldi		;bedf
@@ -2709,17 +2709,17 @@ L_BEC7:
 	ldi		;befe
 	ldi		;bf00
 	exx			;bf02
-	inc hl			;bf03
+	inc hl			;bf03   ; el siguiente metabloque, 4 casillas a la derecha
 	inc e			;bf04
 	inc e			;bf05
 	inc e			;bf06
 	inc de			;bf07
 	djnz L_BEC7		;bf08
 	ex de,hl			;bf0a
-	ld bc,00060h		;bf0b
+	ld bc,00060h		;bf0b   ; la siguiente fila de metabloques: 0x60 mas (3 filas de 32)
 	add hl,bc			;bf0e
 	ex de,hl			;bf0f
-	ex af,af'			;bf10
+	ex af,af'			;bf10   ; 6 filas
 	dec a			;bf11
 	jp nz,L_BEC4		;bf12
 	ret			;bf15

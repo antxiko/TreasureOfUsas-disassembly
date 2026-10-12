@@ -32,3 +32,241 @@ F 0x73F1 16
 D 0x73FE 0x8000 pista_73FE  pista de musica (p13:6203), recorrida desde p13:672C (sigue en el banco 14, en 0x8000); lo leen p13:6203 (3074 bytes)
 F 0x73FE 16
 # --- fin de los bloques de bloques.py ---
+
+
+# --- A MANO: comentarios, nombres y bloques ---
+C 0x608B el canal acabado apunta a p13:6095 (un ret)
+C 0x6188 (ix+0x14) bit 0: el vibrato ya ha empezado
+C 0x618E si no, espera 10 cuadros (ix+0x15)
+C 0x619C el periodo del vibrato: el nibble alto de (ix+0x19)
+C 0x61AD el periodo de la nota (ix+0x17/0x18) mas o menos el nibble bajo
+C 0x61B9 (ix+0x16) cambia de signo cada vez
+C 0x6284 la nota (C >> 4) * 2: su periodo en la tabla de HL
+C 0x6295 >> la octava (ix+7) veces
+C 0x62A1 bit 6: con el desafinado de (ix+0x1A)
+C 0x636B 0xF0-0xFF, 0xD0-0xDF o 0xE0-0xEF
+C 0x637A 0xFF: el canal acaba
+C 0x6382 0xF0-0xFC: volumen; 0xFD y 0xFE: bucles
+C 0x6388 0xFE: (ix+0x10) cuenta las vueltas
+C 0x639E 0xFD: (ix+0x1F) cuenta las vueltas
+C 0x63BD con 0xC124 el volumen va a cero
+C 0x63EF 0xD0: (ix+0x1F) cuenta las vueltas
+C 0x63FA [veces][atras]: salta atras
+C 0x6412 las ordenes 0xE0-0xEF
+C 0x6437 0xE7 y 0xEB: el desafinado (ix+0x1A) y el bit 6
+C 0x6506 la envolvente: 0xFF acaba
+C 0x650D en modo crudo (bit 1), cada byte va tal cual
+C 0x6514 FE, FD, 28, 27, 26, 25, 24 y 2C son ordenes
+C 0x653C 0x2x: cuadros y mezclador; 0x1x: ruido
+C 0x6547 0x1x: el periodo de ruido (PSG 6) = (x & 15) * 2 y la nota siguiente
+C 0x656E el nibble alto: el volumen, menos (ix+0x1E)
+C 0x65CE 0xFE: (ix+0x11) cuenta las vueltas
+C 0x65E4 0xFD: (ix+0x1D) cuenta las vueltas
+C 0x6603 0x24 [lo][hi]: llama; la vuelta en (ix+0x20/0x21)
+C 0x6633 0x28: (ix+0x1D) cuenta las vueltas
+C 0x663E [veces][atras]: salta atras
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0x6000 motor_de_sonido un cuadro de sonido: el mezclador y los cuatro canales (0xC010-0xC016)
+L 0x606C salta_al_canal 0xC10C = A, 0xC10D = B y salta a HL
+L 0x6074 canal_libre el canal ha acabado: lo apunta a p13:6095 (`ret`)
+L 0x60B9 pon_periodo el periodo DE en los registros del canal 0xC10C
+L 0x60C5 pon_registro_canal E en el registro del PSG del canal
+L 0x60D4 pon_volumen E en el volumen del canal (registro 8 + 0xC10C)
+L 0x60DC mezcla_6120 el mezclador del canal con p13:6120
+L 0x60E3 mezcla_611a el mezclador del canal con p13:611A
+L 0x60EA mezcla_6114 el mezclador del canal con p13:6114
+L 0x60F1 mezcla_610e el mezclador del canal con p13:610E
+L 0x6134 canal_musica_1 IX = 0xC01C y p13:6146
+L 0x613B canal_musica_2 IX = 0xC044 y p13:6146
+L 0x6142 canal_musica_3 IX = 0xC06C y p13:6146
+L 0x6146 canal_de_musica un cuadro de un canal de musica: cuenta la nota y lee la pista
+L 0x6188 vibrato el vibrato del canal ((ix+0x14), (ix+0x15))
+L 0x61DE periodo_si_suena p13:60B9 si el canal no esta tapado (bit 5)
+L 0x6203 lee_pista el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+L 0x636B orden_de_pista las ordenes 0xD0-0xFF de la pista
+L 0x64D7 canal_40_1 IX = 0xC01C y p13:64ED
+L 0x64DD canal_40_2 IX = 0xC044 y p13:64ED
+L 0x64E3 canal_40_3 IX = 0xC06C y p13:64ED
+L 0x64E9 canal_de_efectos IX = 0xC094 y p13:64ED
+L 0x64F4 lee_envolvente un paso de la envolvente o del efecto de (ix+0x0C)
+C 0x6000 lee el mezclador del PSG (registro 7)
+C 0x6009 lee las banderas del sonido especial
+C 0x6016 lee la cuenta de bajada de volumen
+C 0x601F lee el volumen general
+C 0x6023 guarda el volumen general
+C 0x602D guarda el puntero del canal 1 y el byte siguiente (16 bits)
+C 0x6030 guarda el puntero del canal 2 y el byte siguiente (16 bits)
+C 0x6033 guarda el puntero del canal 3 y el byte siguiente (16 bits)
+C 0x6037 guarda los canales que suenan
+C 0x603C lee el sonido de 0xC11F es el 0x89
+C 0x6048 guarda la cuenta de bajada de volumen
+C 0x604D lee el puntero del canal 1 y el byte siguiente (16 bits)
+C 0x6050 salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
+C 0x6056 lee el puntero del canal 2 y el byte siguiente (16 bits)
+C 0x6059 salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
+C 0x605F lee el puntero del canal 3 y el byte siguiente (16 bits)
+C 0x6062 salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
+C 0x6069 lee el puntero del canal 4 y el byte siguiente (16 bits)
+C 0x606C guarda el canal de sonido en curso
+C 0x6070 guarda el numero del canal (0-3)
+C 0x6074 lee el numero del canal (0-3)
+C 0x607C guarda la prioridad del efecto que suena
+C 0x607F lee el numero del canal (0-3)
+C 0x6083 apunta a el puntero del canal 1
+C 0x6099 lee el puntero del canal especial 1 y el byte siguiente (16 bits)
+C 0x609C salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
+C 0x60A3 lee el puntero del canal especial 2 y el byte siguiente (16 bits)
+C 0x60A6 salta_al_canal: 0xC10C = A, 0xC10D = B y salta a HL
+C 0x60A9 lee las banderas del sonido especial
+C 0x60B4 lee el puntero del canal de los sonidos 0x70-0x7F y el byte siguiente (16 bits)
+C 0x60B9 lee el canal de sonido en curso
+C 0x60C5 lee el canal de sonido en curso
+C 0x60D4 lee el canal de sonido en curso
+C 0x60F5 lee el canal de sonido en curso
+C 0x60FE lee el mezclador del PSG (registro 7)
+C 0x6104 guarda el mezclador del PSG (registro 7)
+C 0x6126 apunta a la ficha del canal especial 1
+C 0x612A canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
+C 0x612D apunta a la ficha del canal especial 2
+C 0x6131 canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
+C 0x6134 apunta a la ficha del canal de musica 1
+C 0x6138 canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
+C 0x613B apunta a la ficha del canal de musica 2
+C 0x613F canal_de_musica: un cuadro de un canal de musica: cuenta la nota y lee la pista
+C 0x6142 apunta a la ficha del canal de musica 3
+C 0x6146 lee el numero del canal (0-3)
+C 0x614E lee la prioridad del efecto que suena
+C 0x6154 pone a uno el bit 5 de las banderas del canal
+C 0x6158 baja la cuenta de la nota
+C 0x615E mira el bit 0 de las banderas del canal
+C 0x6169 vibrato: el vibrato del canal ((ix+0x14), (ix+0x15))
+C 0x616C lee la cuenta de la nota
+C 0x6178 lee el volumen en curso
+C 0x617D guarda el volumen en curso
+C 0x6180 mira el bit 5 de las banderas del canal
+C 0x6185 pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x61D6 periodo_si_suena: p13:60B9 si el canal no esta tapado (bit 5)
+C 0x61DE mira el bit 5 de las banderas del canal
+C 0x61E3 pon_periodo: el periodo DE en los registros del canal 0xC10C
+C 0x61E6 mira el bit 5 de las banderas del canal
+C 0x61EB mira el bit 7 de las banderas del canal
+C 0x61F0 lee_envolvente: un paso de la envolvente o del efecto de (ix+0x0C)
+C 0x61F4 pone a uno el bit 7 de las banderas del canal
+C 0x61FA pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x61FD lee el puntero de la pista (bajo)
+C 0x6200 lee el puntero de la pista (alto)
+C 0x6208 orden_de_pista: las ordenes 0xD0-0xFF de la pista
+C 0x620B guarda el puntero de la pista (bajo)
+C 0x620E guarda el puntero de la pista (alto)
+C 0x621A lee el tempo del canal
+C 0x622B guarda la cuenta de la nota
+C 0x622E lee el numero del canal (0-3)
+C 0x6235 lee la prioridad del efecto que suena
+C 0x623B pone a cero el bit 5 de las banderas del canal
+C 0x623F mira el bit 0 de las banderas del canal
+C 0x6246 lee la cuenta de la nota
+C 0x624F mira el bit 5 de las banderas del canal
+C 0x6254 lee la musica de fase en marcha
+C 0x625A lee la altura de la musica de fase (p15:BE7A)
+C 0x6292 lee la octava del canal
+C 0x62B5 pon_periodo: el periodo DE en los registros del canal 0xC10C
+C 0x62B8 lee el volumen general
+C 0x62BB le suma el volumen del canal
+C 0x62C2 guarda el volumen en curso
+C 0x62C6 pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x62C9 mezcla_610e: el mezclador del canal con p13:610E
+C 0x62CC lee el instrumento del canal
+C 0x62DB lee el instrumento del canal
+C 0x62E2 lee la altura de la musica de fase (p15:BE7A)
+C 0x6313 guarda el puntero de la envolvente (bajo)
+C 0x6318 guarda el puntero de la envolvente (alto)
+C 0x631B pone a cero el bit 7 de las banderas del canal
+C 0x6321 guarda la cuenta de la envolvente
+C 0x6349 lee el tempo del canal
+C 0x6350 guarda la cuenta de la nota
+C 0x635E mira el bit 5 de las banderas del canal
+C 0x6365 guarda el volumen en curso
+C 0x6368 pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x63B1 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x63BA lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x63CC guarda el volumen del canal
+C 0x63E1 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x63E9 guarda el tempo del canal
+C 0x63EC lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x6406 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x640F lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x6440 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x6447 guarda la octava del canal
+C 0x644A lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x644D lee la vuelta de EF (bajo)
+C 0x6450 lee la vuelta de EF (alto)
+C 0x6453 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x645B pone a cero el bit 0 de las banderas del canal
+C 0x6462 guarda el instrumento del canal
+C 0x6465 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x6468 pone a uno el bit 0 de las banderas del canal
+C 0x646D lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x647D lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x6484 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x6487 pone a cero el bit 4 de las banderas del canal
+C 0x6494 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x649B guarda la vuelta de ED (bajo)
+C 0x649E guarda la vuelta de ED (alto)
+C 0x64A2 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x64A5 lee la vuelta de ED (bajo)
+C 0x64A8 lee la vuelta de ED (alto)
+C 0x64AB lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x64B2 guarda la vuelta de EF (bajo)
+C 0x64B5 guarda la vuelta de EF (alto)
+C 0x64B9 lee_pista: el siguiente byte de la pista: nota, silencio u orden (>= 0xD0)
+C 0x64BC lee el numero del canal (0-3)
+C 0x64C7 lee los canales que suenan
+C 0x64CB guarda los canales que suenan
+C 0x64CE canal_libre: el canal ha acabado: lo apunta a p13:6095 (`ret`)
+C 0x64D1 apunta a la ficha del canal especial 1
+C 0x64D7 apunta a la ficha del canal de musica 1
+C 0x64DD apunta a la ficha del canal de musica 2
+C 0x64E3 apunta a la ficha del canal de musica 3
+C 0x64E9 apunta a la ficha del canal de efectos
+C 0x64ED lee_envolvente: un paso de la envolvente o del efecto de (ix+0x0C)
+C 0x64F1 canal_libre: el canal ha acabado: lo apunta a p13:6095 (`ret`)
+C 0x64F4 baja la cuenta de la envolvente
+C 0x64FA lee el paso de la envolvente
+C 0x64FD guarda la cuenta de la envolvente
+C 0x6500 lee el puntero de la envolvente (bajo)
+C 0x6503 lee el puntero de la envolvente (alto)
+C 0x655B guarda el puntero de la envolvente (bajo)
+C 0x655E guarda el puntero de la envolvente (alto)
+C 0x6564 pon_registro_canal: E en el registro del PSG del canal
+C 0x6567 pone a cero el bit 1 de las banderas del canal
+C 0x656B pon_registro_canal: E en el registro del PSG del canal
+C 0x6581 guarda el puntero de la envolvente (bajo)
+C 0x6584 guarda el puntero de la envolvente (alto)
+C 0x6587 pon_periodo: el periodo DE en los registros del canal 0xC10C
+C 0x658A mira el bit 0 de las banderas del canal
+C 0x6598 pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x659B mira el bit 4 de el volumen en curso
+C 0x65A5 lee el numero del canal (0-3)
+C 0x65AC lee el volumen general
+C 0x65B5 pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x65B8 lee la cuenta de bajada de volumen
+C 0x65BE mira el bit 4 de las banderas del canal
+C 0x65CB pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x6611 pone a uno el bit 1 de las banderas del canal
+C 0x6618 pone a uno el bit 3 de las banderas del canal
+C 0x6624 lee las banderas del canal
+C 0x6629 guarda las banderas del canal
+C 0x6667 mezcla_6120: el mezclador del canal con p13:6120
+C 0x666C mezcla_610e: el mezclador del canal con p13:610E
+C 0x6675 mezcla_6114: el mezclador del canal con p13:6114
+C 0x667A mezcla_611a: el mezclador del canal con p13:611A
+C 0x6681 guarda el volumen en curso
+C 0x6685 pon_volumen: E en el volumen del canal (registro 8 + 0xC10C)
+C 0x668A guarda la cuenta de la envolvente
+C 0x668D guarda el paso de la envolvente
+C 0x669E pone a uno el bit 4 de las banderas del canal
+C 0x66A5 pone a cero el bit 4 de las banderas del canal
+C 0x66BA guarda el puntero de la envolvente (bajo)
+C 0x66BD guarda el puntero de la envolvente (alto)
+# --- fin de las anotaciones de anota.py ---

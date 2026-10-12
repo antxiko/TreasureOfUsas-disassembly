@@ -50,3 +50,1217 @@ F 0x9B55 2
 D 0x9D88 0x9D92 saltos_9D88  tabla de 5 palabras del despachador (call 0x408D en 0x9D85); lo leen L_408D (10 bytes)
 F 0x9D88 2
 # --- fin de los bloques de bloques.py ---
+
+
+# --- A MANO: comentarios, nombres y bloques ---
+C 0x8144 0xC208: si es el mismo, la mitad de la tabla de antes (C = 0); si no, la de despues (C = 4)
+C 0x815A el texto p12:B8A1 si 0xC208 es B; si no, p12:B8AF
+C 0x842F el tipo A en los actores de HL, de 0x80 en 0x80
+C 0x8434 ninguno: acarreo
+C 0x8540 el signo de la diferencia de X en 0xE307
+C 0x8543 la diferencia de Y / 4 & 0x38: la fila de la tabla (0-7)
+C 0x8548 la diferencia de X con el personaje, en valor absoluto
+C 0x8551 / 32: la columna (0-7)
+C 0x8559 p15:BD96[fila * 8 + columna]: el angulo hacia el personaje
+C 0x8564 los dos signos (0xE306/0xE307) dicen el cuadrante
+C 0x857A A * E (p02:858C) y / 32 en DE
+C 0x85B8 cuenta los actores de tipo 2 (C); el 0x17 o un tipo por debajo de 0x14 bastan
+C 0x85F4 cada 4 cuadros
+C 0x85FF 0x20 o 0x40 cuadros segun 0xCC3C
+C 0x8787 un byte de la lista por pieza, de 5 en 5 desde (ix+0x25)
+C 0x87B6 todas las cuentas del jefe a su valor inicial
+C 0x87D2 el registro de la pantalla en p09:B12B; si no hay o es 0xFF, nada
+C 0x881C el registro libre de 0xCC40 en IX
+C 0x8823 [tipo] y dos bytes de HL, luego el tipo y A
+C 0x8833 el primer registro libre (0) de 0xCC40; 4 de 4 bytes
+C 0x886F cada uno de los 4 registros de 0xCC40 que no esta libre
+C 0x887F [Y][X][tipo][..]: los tipos 2 y 0x14 no se dibujan
+C 0x888B el cuarto byte a 2: el dibujo grande (p02:88B6)
+C 0x8890 el pequeno: 3 trozos de 16 x 8 desde (0x38, 0xB0) con TIMP
+C 0x88AB el siguiente trozo, 8 lineas mas abajo y 16 mas a la derecha en el origen
+C 0x88B6 el grande: 24 x 16 de (0xB0, 0x90 + (4 - B) * 16) con la operacion 0x10
+C 0x88D9 y 4 trozos de 24 x 8 desde (0x38, 0x20) con TIMP
+C 0x88F7 0xCC3D = 2 y la cuenta de 0xCC39
+C 0x8A23 la fila de la pagina 1 del dibujo 0xCC35: 0x90 + 0xCC35 * 16
+C 0x8A42 el fotograma (ix+0x10): su puntero en p15:B744
+C 0x8A50 cuantas piezas: (ix+0x20)
+C 0x8A5B el primer byte: 0x80-0x84 es una plantilla de desplazamientos (p02:8A77)
+C 0x8A85 cada pieza: la Y + dy, la X + dx y el patron
+C 0x8AA5 las piezas de los 8 actores de 0xC400
+C 0x8AB8 cuantas piezas tiene el actor: (ix+0x20)
+C 0x8ABF cada pieza: su hueco en 0xDE28 (4 bytes por sprite)
+C 0x8ACE Y, X y patron a los atributos
+C 0x8AD4 (ix+1) bit 7: colores propios; si no, de 0x6E50 + patron * 16
+C 0x8AF5 la plantilla: 11 bytes desde (ix+7)
+C 0x8B31 complemento a dos de HL
+C 0x8B39 complemento a dos de DE
+C 0x8BB9 A trae una direccion por bit: se miran las 4 (B)
+C 0x8BC0 las direcciones 1 y 2 a 4 puntos; las demas en DE
+C 0x8BDC el resultado, un bit por direccion con suelo, en (ix+0x16)
+C 0x8D17 0xC314 baja: borra una linea mas del recuadro (LMMM)
+C 0x8D2B al llegar a cero, 0xC310 + 1
+C 0x8D3C 0xC314 sube: copia las lineas del recuadro una a una hacia arriba
+C 0x8D5E la ultima linea, de (0x50, ...) a (0x70, L)
+C 0x8EB7 4 bytes de p02:8ED2: los limites del dibujo que se descubre
+C 0x8EC5 0xC88C = 1 y 0xC88D = 0: la primera linea
+C 0x8ED6 cada 4 cuadros una linea mas del dibujo de (0x60, 0x90)
+C 0x8EFD hasta 0xC88A lineas
+C 0x8F06 el borde (R#7) parpadea entre 15 y 14
+C 0x8FA1 dos bytes por fila de 0xD200 (32 por fila)
+C 0x9012 3 filas de 4 fichas de p02:903D encima del personaje (X - 0x10)
+C 0x9018 la fila de 0xC31D: Y = 0xC31D * 8 + 0x14
+C 0x9029 cada ficha transparente (p00:4DCE)
+C 0x9035 la siguiente fila
+C 0x9088 0xC31C = A, 0xC216 = 1 y 0xC316 y 0xC271 a cero
+C 0x90C8 con 0xC316 y sin la cuenta de 0xC314
+C 0x90D3 0xC310 >= 2: copia 16 x 0x30 de 0xD500 a 0xD502
+C 0x91BE [pantalla]..: 0xFF acaba con acarreo
+C 0x91C8 4 bytes por registro
+C 0x9278 0x11 - (ix+0x11): cuantas lineas quedan
+C 0x9288 el byte (ix+A): la pieza
+C 0x928C * 16 + 0xDCA0: sus colores
+C 0x9295 la Y del actor sube una linea
+C 0x9335 (ix+0x1F) + B: el siguiente sentido; 0xFF pasa a 7 y 8 a 0
+
+C 0x88DE cada trozo: 24 x 8 con TIMP
+C 0x88EC el siguiente: 8 lineas mas abajo y 0x18 mas a la derecha en el origen
+C 0x8A30 D + 8, E + 0x14: del actor al sitio de su dibujo
+C 0x8D4D cada linea de 32 se copia una linea mas abajo (HMMM de 32 x 1)
+C 0x8D5A la de encima
+C 0x96AA los actores de tipo 0x17: si estan en su punto, (ix+0x1F) + 1
+C 0x96B8 (ix+0x1F) - 1, de 0 a 3
+C 0x9811 cada 0x10 cuadros, (ix+0x1F) + 1; al llegar a 5, p02:9850
+C 0x98DB mientras (ix+0x1C), el fotograma B + 2
+C 0x9966 solo los que no tienen paso (ix+1 a cero)
+C 0x996C su (ix+0x1F): entre C y D se queda con el mas bajo, en IX
+C 0x9985 busca el tipo 3 en los actores de HL
+C 0x9A1A con B = 1, el sentido C da la vuelta (xor 2)
+C 0x9C29 sube de B en B desde E mientras haya casillas: hasta 0x30
+C 0x9C36 con acarreo de p01:704C, alli
+C 0x9C54 baja de B en B: hasta 0xD0
+C 0x9C61 sin acarreo de p01:704C, alli
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0x8015 empieza_texto_de_ruina con 12: el texto a maquina de la ruina (p12:B603)
+L 0x80A7 posicion_del_texto 0xC8A7 y 0xC8A3 = (0x30, 0x58)
+L 0x80C0 recuadro_del_texto borra el recuadro, su marco y sus lineas segun 0xC8A9
+L 0x8168 nombres_de_estado con 12: los nombres de estado de los dos personajes en 0xC8B0
+L 0x81B2 copia_nombre copia a DE la cadena A de la tabla HL hasta 0xFF
+L 0x81DB cara_del_personaje_0 la cara del personaje 0 segun su estado (p06:A774)
+L 0x81E7 cara_del_personaje_1 la cara del personaje 1 segun su estado (p06:A794), cada 8 cuadros
+L 0x823C entra_jefe con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
+L 0x827F paleta_de_jefe con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+L 0x82E2 despacha_tipo despacha el tipo del actor - 1 (tabla p02:82E9, 63 tipos)
+L 0x8367 mueve_actor si (ix+6): Y += velocidad Y y X += velocidad X (16 bits)
+L 0x8393 acelera_actor si (ix+0x0B): velocidades += aceleraciones
+L 0x83BF actor_fuera salvo el tipo 0x21, se borra si sale por abajo o por los lados
+L 0x83D6 borra_actor tipo 0, libera sus piezas y esconde sus sprites
+L 0x8400 actor_por_tipo segun 0xC316 y el tipo: cuentas y p02:84AC
+L 0x841F hay_tipo_29 acarreo si ningun actor de 0xC400 es de tipo 0x29
+L 0x84C6 marca_piezas marca en 0xCC80 las piezas (ix+0x21) y (ix+0x26)
+L 0x84D4 marca_pieza 0xCC80 + A = 1
+L 0x84E0 apunta_al_personaje con 15: la direccion del actor hacia el personaje (p02:84F1)
+L 0x84F1 direccion_hacia las velocidades hacia el personaje con las tablas de p15:BD96/BDD6
+L 0x8530 distancia_al_personaje diferencias de Y y X con el personaje y sus signos (0xE306)
+L 0x857A escala_velocidad DE = H * E / 32 (p02:858C)
+L 0x858C multiplica HL = H * E (8 x 8 bits)
+L 0x8598 cuadro_de_jefe si no muere el personaje y hay jefe (p02:85B1): sus cuentas y dibujos
+L 0x85B1 busca_jefe acarreo si hay un actor de tipo 2 o 0x17 en 0xC400
+L 0x85F4 cuenta_cc3b cada 4 cuadros, 0xCC3B - 1; a cero, 0x20 o 0x40 y 0xCC3C cambia
+L 0x8613 crea_actor_0 p02:8615 con B = 0
+L 0x8615 crea_actor el actor C en (D, E) en el primer hueco de 0xC400
+L 0x8769 piezas_al_crear con 6: las piezas del tipo (p06:B569 y p06:B5A8)
+L 0x8791 pon_pieza el byte D en la pieza E del actor 0xDE83
+L 0x87B6 prepara_jefe pone a cero las cuentas del jefe y busca el de la pantalla (p02:9195)
+L 0x881C anota_cc40 anota el registro de HL en el primer hueco de 0xCC40
+L 0x882E hueco_cc40 DE = el primer hueco libre de 0xCC40 (4 de 4 bytes)
+L 0x886A recorre_cc40 los 4 registros de 0xCC40
+L 0x887F registro_cc40 un registro [Y][X][tipo][..] de 0xCC40
+L 0x88F7 cuenta_cc39 0xCC3D = 2 y 0xCC39 - 1
+L 0x8903 cuenta_cc36 0xCC3D = 3, 0xCC36 - 1 y el siguiente de 0xCC37 (0-3)
+L 0x8977 espera_cc3c (HL) = 0x30 o 0x60 segun 0xCC3C
+L 0x8983 lado_del_personaje D = L si la X del personaje es < 0x80, si no H
+L 0x89CD dibujo_cc35 copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
+L 0x8A09 dibujo_cc35_doble p02:89CD y dos piezas mas de (0x80, 0x38) y (0x98, 0x38)
+L 0x8A19 copia_24x8 copia 24 x 8 de (H, 0x38) a (D, E) con TIMP
+L 0x8A23 origen_cc35 HL = (0xB0, 0x90 + 0xCC35 * 16)
+L 0x8A30 desplaza_8_20 D + 8 y E + 0x14
+L 0x8A39 fotograma_del_actor con 15: el fotograma (ix+0x10) del actor (p02:8A42)
+L 0x8A42 piezas_del_fotograma la posicion y el patron de cada pieza del fotograma (p15:B744)
+L 0x8AB8 sprites_de_piezas los atributos de cada pieza del actor en 0xDE28
+L 0x8B03 sonido_0a el sonido 0x0A (p02:8B0D)
+L 0x8B31 niega_hl HL = -HL
+L 0x8B39 niega_de DE = -DE
+L 0x8B41 compara_y compara la Y del personaje con la del actor
+L 0x8B48 compara_x compara la X del personaje con la del actor
+L 0x8B4F azar 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
+L 0x8B7E velocidad_y_l (ix+7, 8) = L (H = 0)
+L 0x8B80 velocidad_y_h (ix+7, 8) = H * 256 (L = 0)
+L 0x8B82 pon_velocidad_y (ix+7, 8) = HL
+L 0x8B89 velocidad_x_l (ix+9, 0x0A) = L (H = 0)
+L 0x8B8B velocidad_x_h (ix+9, 0x0A) = H * 256 (L = 0)
+L 0x8B8D pon_velocidad_x (ix+9, 0x0A) = HL
+L 0x8B94 pon_aceleracion_x (ix+0x0E, 0x0F) = HL
+L 0x8B9B pon_aceleracion_y (ix+0x0C, 0x0D) = HL
+L 0x8BA9 para_actor velocidades a cero
+L 0x8BB7 mira_alrededor las casillas alrededor del actor segun las direcciones de A (p01:704C)
+L 0x8C0F pon_fotograma (ix+0x10) = H y (ix+0x11) = L
+L 0x8C16 estado_del_que_se_lleva A = el estado del personaje que se lleva
+L 0x8C22 crea_actor_aqui crea el actor C en la posicion del actor IX
+L 0x8CAD copia_8078 p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
+L 0x8CCA copia_9060 copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
+L 0x8D37 suma_c310 0xC310 + 1
+L 0x8D8A copia_6098 copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
+L 0x8DB9 crea_tipo_19_por_ruina crea ruina + 1 actores de tipo 0x19 en (0x78, 0x80), contados en 0xC313
+L 0x8DDC sin_tipo_19 si no queda ningun actor de tipo 0x19: 0xC21C = 1 y el sonido 0x42
+L 0x8E11 color_12_parpadea el color 12 de la paleta de p02:8E26 segun la cuenta de cuadros
+L 0x8E2E borra_todos_los_actores p02:83D6 con los 8 actores de 0xC400
+L 0x8E90 borra_d45e_y_actores pone a cero 4 registros de 0xD45E y borra los actores
+L 0x8EB7 prepara_c888 4 bytes de p02:8ED2 a 0xC888 y sus cuentas
+L 0x8ED6 paso_c888 cada 4 cuadros, el siguiente paso del dibujo de 0xC888 (p02:8F06)
+L 0x8F06 parpadeo_r7 R#7 (color del borde) 15 o 14 segun 0xC88E
+L 0x8F53 crea_tipo_23 si vive algun personaje y 0xC270 es la fase: crea el actor 0x23 en (0x34, 0x80)
+L 0x8F6D lee_d500 con 12: los 4 bytes de la fase de p12:B4D2 a 0xD500
+L 0x9012 dibuja_903d 3 x 4 fichas transparentes de p02:903D junto al personaje
+L 0x9049 lee_c319 con 9: 3 bytes de p09:BED3 + 3 * (0xC211 - 1) a 0xC319
+L 0x9098 cuenta_c314 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
+L 0x9120 marcas_de_la_pantalla con 12: los registros de p12:B8BB de la pantalla (p02:9148)
+L 0x9148 marca crea el actor 0x2A en la casilla [YX] del registro
+L 0x916C ya_marcado busca la casilla en 0xE000 con la pantalla y la fase
+L 0x9195 busca_de_la_pantalla con 9: el registro de p09:B12B[0xC211 - 1] de la pantalla; acarreo si no hay
+L 0x91BE registro_de_la_pantalla avanza de 4 en 4 hasta el de la pantalla 0xC212; acarreo en el 0xFF
+L 0x91D2 lee_b70d A = p09:B70D[A - 1]
+L 0x9210 estado_1_o_2 D = 0 si el estado del personaje es 1 o 2, si no 1
+L 0x921D pon_2f p02:9222 con A = 0x2F y DE = 0
+L 0x9222 pon_dos_campos (ix+A) = D y (ix+A+5) = E
+L 0x9278 colores_de_pieza HL = 0xDCA0 + (ix+A) * 16: los colores de la pieza A del actor; B = 0x11 - (ix+0x11)
+L 0x92DF parpadeo_del_actor el cuadro de parpadeo segun (ix+0x17) y la cuenta
+L 0x9390 fotograma_de_9365 (ix+0x10) = p02:9365[(ix+0x1F) * 3] (+ 1 en cuadros alternos)
+L 0x93AA mira_93c7 p02:8BB7 con las direcciones de p02:93C7[(ix+0x1F)]
+L 0x93D7 cuenta_1e_a0 (ix+0x1E) - 1; a cero vuelve a 0xA0 y p02:8C30
+L 0x93FD mira_al_personaje_22 (ix+0x10) = 0x22 o 0x23 segun el lado del personaje
+L 0x952B mira_al_personaje_b (ix+0x10) = B, o B + 2 si el personaje esta a la derecha
+L 0x95B8 fotograma_37 cada 16 cuadros, (ix+0x10) = 0x37 o 0x38
+L 0x95CC dispara_16 cada 0x40 cuadros crea el actor 0x16 debajo
+L 0x95FF cae_hasta_suelo si hay suelo (p02:9CE7): se para y pasa al siguiente paso
+L 0x96FA llega_al_punto (ix+0x1F) + 1 si el actor esta en la Y y X de HL
+L 0x9735 fotograma_3d_3f p02:9B8D con 0x3D / 0x3F
+L 0x973B marca_1c (ix+0x1C) bit 0
+L 0x97C5 sube_hacia_el_personaje la Y del actor hacia 0x20 por encima del personaje
+L 0x97DA rebota_en_borde cerca de un borde, sonido 0x0A y cambia el sentido (ix+0x17)
+L 0x9823 crea_tipo_15 crea un actor 0x15 en su posicion con IX = 0xCC3A
+L 0x9882 cuenta_tipo_15 A = cuantos actores de tipo 0x15 hay
+L 0x98D2 mira_al_personaje_2b (ix+0x10) = 0x2B o 0x2C (+ 2 mientras (ix+0x1C))
+L 0x98EB pon_1c_10 (ix+0x1C) = 0x10
+L 0x9932 el_15_de_menos busca entre los tipo 0x15 el de menor (ix+0x1F) por encima de C
+L 0x9966 compara_15 D = el (ix+0x1F) del actor HL si esta entre C y D
+L 0x997D busca_tipo_3 HL = el primer actor de tipo 3
+L 0x9992 cuenta_1e_20 (ix+0x1E) - 1; a cero, 0x20 y la direccion hacia el personaje
+L 0x99C9 al_azar_9a2a una direccion al azar de p02:9A2A
+L 0x9A4D fotograma_41 cada 4 cuadros, el fotograma alrededor de 0x41
+L 0x9B1C sonido_y_sigue el sonido 0x0A y p02:9AFE
+L 0x9B8D fotograma_por_sentido (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+L 0x9B9A alterna_fotograma cada 8 cuadros, (ix+0x10) alterna con C
+L 0x9C1C busca_suelo_arriba casillas hacia arriba desde el actor (p01:704C)
+L 0x9C47 busca_suelo_abajo casillas hacia abajo desde el actor (p01:704C)
+L 0x9CA8 se_para_si_choca si choca (p02:9D05): velocidad X 0, Y 0x400 y paso 0
+L 0x9CBA choca_de_lado (ix+0x1E) = 1 y acarreo si choca de lado (p02:9CC8)
+L 0x9CC8 choque_lateral la casilla de delante del actor segun su sentido (p02:8BB7)
+L 0x9CE7 choque_debajo la casilla de debajo del actor (p02:9D09) y p03:A683
+L 0x9D05 choque_4 p02:9D09 con E = 4
+L 0x9D07 choque_7 p02:9D09 con D = 7
+L 0x9D09 choque_en la casilla en (D, E) del actor (p02:9D15)
+L 0x9D0F choque_al_reves como p02:9D09 al reves
+L 0x9D15 mira_casilla p02:8BB7 con 0x80 en (D, E + 1); Z segun (ix+0x16) bit 3
+L 0x9D71 estado_no_3 acarreo si el estado del personaje no es 3
+L 0x9E06 hacia_el_personaje_2 velocidad X +-2 hacia el personaje y su fotograma
+L 0x9E18 salta_si_puede si no choca, el salto del actor
+L 0x9E40 hueco_para_saltar mira las casillas de arriba y delante (p02:8BB7)
+L 0x9F53 mira_al_personaje_89 cada 8 cuadros, (ix+0x10) = 0x89-0x8C segun el lado del personaje
+L 0x9F71 ataca (ix+0x1F) - 1; a cero, el fotograma de ataque y se lanza hacia el personaje
+C 0x8003 lee la ruina (0-4)
+C 0x8012 guarda el personaje del texto
+C 0x8015 recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
+C 0x8018 posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x30, 0x58)
+C 0x801B banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x8021 lee la ruina (0-4)
+C 0x8024 palabra_a: HL = la palabra A de la tabla HL
+C 0x8027 guarda el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0x802C guarda la espera hasta la siguiente letra
+C 0x8030 guarda el texto a maquina ha acabado
+C 0x8033 apunta a el texto a maquina en marcha
+C 0x8039 lee el personaje del texto
+C 0x803F cara_del_personaje_0: la cara del personaje 0 segun su estado (p06:A774)
+C 0x8044 cara_del_personaje_1: la cara del personaje 1 segun su estado (p06:A794), cada 8 cuadros
+C 0x8047 apunta a la espera hasta la siguiente letra
+C 0x8052 recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
+C 0x8059 banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x805C lee el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0x8061 guarda el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0x806F lee la posicion del texto a maquina y el byte siguiente (16 bits)
+C 0x8073 caracter_de_la_fuente: el caracter A de la fuente de la pagina 1 a (D, E) (HMMM)
+C 0x8076 avanza_caracter: D + 8 (+ 4 si el caracter es 0x7B), y E + 8 al pasar de linea
+C 0x807B lee el principio de la linea del texto a maquina y el byte siguiente (16 bits)
+C 0x807F lee la posicion del texto a maquina
+C 0x8085 guarda la posicion del texto a maquina y el byte siguiente (16 bits)
+C 0x808B guarda la espera hasta la siguiente letra
+C 0x8092 guarda la espera hasta la siguiente letra
+C 0x8095 apunta a el personaje del texto
+C 0x809C posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x30, 0x58)
+C 0x80A4 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x80AA guarda el principio de la linea del texto a maquina y el byte siguiente (16 bits)
+C 0x80AE guarda la posicion del texto a maquina y el byte siguiente (16 bits)
+C 0x80B4 guarda el texto a maquina en marcha
+C 0x80B8 guarda el texto a maquina ha acabado
+C 0x80C6 borra_rectangulo: HMMV con 0xFF en la pagina 0
+C 0x80C9 banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x80CC lee el personaje del texto
+C 0x80DD linea: LINE (0x70) de (H, L) con largo D y E
+C 0x80E0 lee el personaje del texto
+C 0x80EC lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
+C 0x80EF lee el personaje del texto
+C 0x80FB lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
+C 0x8100 lee el texto a maquina en marcha
+C 0x8107 recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
+C 0x810A nombres_de_estado: con 12: los nombres de estado de los dos personajes en 0xC8B0
+C 0x810D lee el personaje que se lleva (0 o 1)
+C 0x8110 guarda el personaje del texto
+C 0x8113 empieza_texto_de_ruina: con 12: el texto a maquina de la ruina (p12:B603)
+C 0x8119 guarda el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0x811C lee la ficha del personaje 0 (14 bytes)
+C 0x8120 lee la ficha del personaje 1 (14 bytes)
+C 0x8125 banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x8128 puerta_de_la_antesala: B = la puerta (1-5) segun 0xCC10 y la X 0xCC13
+C 0x8132 lee el personaje que se lleva (0 o 1)
+C 0x8139 lee el estado del personaje 0
+C 0x8141 lee el estado del personaje 1
+C 0x8151 palabra_a: HL = la palabra A de la tabla HL
+C 0x8154 guarda el puntero del texto a maquina y el byte siguiente (16 bits)
+C 0x8157 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8168 banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x8173 lee el personaje que se lleva (0 o 1)
+C 0x817F lee el estado del personaje 0
+C 0x8187 lee el estado del personaje 1
+C 0x8191 lee el estado del personaje 1
+C 0x8199 lee el estado del personaje 0
+C 0x819E copia_nombre: copia a DE la cadena A de la tabla HL hasta 0xFF
+C 0x81A8 copia_nombre: copia a DE la cadena A de la tabla HL hasta 0xFF
+C 0x81AF bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x81B3 palabra_a: HL = la palabra A de la tabla HL
+C 0x81C6 lee el estado del personaje 0
+C 0x81CB lee el estado del personaje 1
+C 0x81D2 copia_nombre: copia a DE la cadena A de la tabla HL hasta 0xFF
+C 0x81D8 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x81E1 lee el estado del personaje 0
+C 0x81ED lee el estado del personaje 1
+C 0x81F1 lee la cuenta de cuadros
+C 0x81F8 banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x8209 hl_mas_a: HL = HL + A
+C 0x820F bloque_de_fichas: B filas de C fichas de HL en (D, E)
+C 0x8212 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8217 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x821C juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x821F lee la ruina (0-4)
+C 0x8225 hl_mas_a: HL = HL + A
+C 0x8229 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x8233 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x8236 entra_jefe: con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
+C 0x8239 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x823C lee en la sala de la puerta 5
+C 0x8242 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x8249 busca_de_la_pantalla: con 9: el registro de p09:B12B[0xC211 - 1] de la pantalla; acarreo si no hay
+C 0x8253 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x8258 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x825B banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x825F lee la pantalla de la fase (desde 1)
+C 0x8267 paleta_de_jefe: con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+C 0x8270 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x8273 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x8283 hl_mas_a: HL = HL + A
+C 0x828D palabra_a: HL = la palabra A de la tabla HL
+C 0x8290 pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
+C 0x8293 cuadro_de_jefe: si no muere el personaje y hay jefe (p02:85B1): sus cuentas y dibujos
+C 0x8296 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x829C lee el tipo del actor
+C 0x82A3 despacha_tipo: despacha el tipo del actor - 1 (tabla p02:82E9, 63 tipos)
+C 0x82A6 lee el tipo del actor
+C 0x82AC mueve_actor: si (ix+6): Y += velocidad Y y X += velocidad X (16 bits)
+C 0x82AF acelera_actor: si (ix+0x0B): velocidades += aceleraciones
+C 0x82B2 actor_fuera: salvo el tipo 0x21, se borra si sale por abajo o por los lados
+C 0x82B5 lee la vida del actor (p01:721A)
+C 0x82B9 actor_por_tipo: segun 0xC316 y el tipo: cuentas y p02:84AC
+C 0x82C5 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x82CC lee el tipo del actor
+C 0x82D6 fotograma_del_actor: con 15: el fotograma (ix+0x10) del actor (p02:8A42)
+C 0x82E2 lee el tipo del actor
+C 0x82E6 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x8367 lee si el actor se mueve (p02:8367)
+C 0x836C lee la velocidad Y del actor
+C 0x836F lee la velocidad Y del actor (alta)
+C 0x8372 lee la Y del actor (fraccion)
+C 0x8375 lee la Y del actor
+C 0x8379 guarda la Y del actor (fraccion)
+C 0x837C guarda la Y del actor
+C 0x837F lee la velocidad X del actor
+C 0x8382 lee la velocidad X del actor (alta)
+C 0x8385 lee la X del actor (fraccion)
+C 0x8388 lee la X del actor
+C 0x838C guarda la X del actor (fraccion)
+C 0x838F guarda la X del actor
+C 0x8393 lee si el actor acelera (p02:8393)
+C 0x8398 lee la aceleracion Y del actor
+C 0x839B lee la aceleracion Y del actor (alta)
+C 0x839E lee la velocidad Y del actor
+C 0x83A1 lee la velocidad Y del actor (alta)
+C 0x83A5 guarda la velocidad Y del actor
+C 0x83A8 guarda la velocidad Y del actor (alta)
+C 0x83AB lee la aceleracion X del actor
+C 0x83AE lee la aceleracion X del actor (alta)
+C 0x83B1 lee la velocidad X del actor
+C 0x83B4 lee la velocidad X del actor (alta)
+C 0x83B8 guarda la velocidad X del actor
+C 0x83BB guarda la velocidad X del actor (alta)
+C 0x83BF lee el tipo del actor
+C 0x83C5 lee la Y del actor
+C 0x83CC lee la X del actor
+C 0x83D7 guarda el tipo del actor
+C 0x83E4 apunta a la Y del sprite 10 en RAM
+C 0x83EF apunta a las piezas de sprite ocupadas (22)
+C 0x83F3 de_mas_a: DE = DE + A
+C 0x8406 lee el tipo del actor
+C 0x8412 lee el tipo del actor
+C 0x8425 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x8438 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x843B lee el tipo del actor
+C 0x8441 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x8444 el tipo del actor = 0x28
+C 0x8448 el paso del actor = 0x00
+C 0x844C las piezas del actor (p02:8648) = 0x02
+C 0x8458 la vida del actor (p01:721A) = 0x01
+C 0x845C marca_piezas: marca en 0xCC80 las piezas (ix+0x21) y (ix+0x26)
+C 0x846A guarda si el actor se mueve (p02:8367)
+C 0x846D guarda si el actor acelera (p02:8393)
+C 0x8470 el fotograma del actor (p02:8A42) = 0x65
+C 0x8478 guarda las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
+C 0x8480 lee el paso del actor
+C 0x8487 sube el fotograma del actor (p02:8A42)
+C 0x848E sube el paso del actor
+C 0x8497 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x849E hay_tipo_29: acarreo si ningun actor de 0xC400 es de tipo 0x29
+C 0x84A4 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x84AE sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x84B1 lee la X del actor
+C 0x84B4 lee la Y del actor
+C 0x84BA borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
+C 0x84C0 crea_actor_0: p02:8615 con B = 0
+C 0x84C6 lee las piezas del actor (p02:8648)
+C 0x84CE marca_pieza: 0xCC80 + A = 1
+C 0x84D4 apunta a las piezas de sprite ocupadas (22)
+C 0x84D7 de_mas_a: DE = DE + A
+C 0x84E0 lee la Y del actor
+C 0x84E3 lee la X del actor
+C 0x84E7 banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
+C 0x84EB direccion_hacia: las velocidades hacia el personaje con las tablas de p15:BD96/BDD6
+C 0x84EE bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x84F4 distancia_al_personaje: diferencias de Y y X con el personaje y sus signos (0xE306)
+C 0x8510 escala_velocidad: DE = H * E / 32 (p02:858C)
+C 0x8517 niega_de: DE = -DE
+C 0x8522 escala_velocidad: DE = H * E / 32 (p02:858C)
+C 0x8529 niega_de: DE = -DE
+C 0x8535 lee la Y del personaje
+C 0x855C hl_mas_a: HL = HL + A
+C 0x857E multiplica: HL = H * E (8 x 8 bits)
+C 0x8598 lee la accion del personaje (4 muere, 5 escalera)
+C 0x859E busca_jefe: acarreo si hay un actor de tipo 2 o 0x17 en 0xC400
+C 0x85A2 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x85A5 cuenta_cc3b: cada 4 cuadros, 0xCC3B - 1; a cero, 0x20 o 0x40 y 0xCC3C cambia
+C 0x85A8 cuenta_cc36: 0xCC3D = 3, 0xCC36 - 1 y el siguiente de 0xCC37 (0-3)
+C 0x85AB cuenta_cc39: 0xCC3D = 2 y 0xCC39 - 1
+C 0x85AE bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x85B1 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x85CA banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x85CF lee_b70d: A = p09:B70D[A - 1]
+C 0x85D4 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x85E3 lee la ruina (0-4)
+C 0x85E9 hl_mas_a: HL = HL + A
+C 0x861E guarda variable de trabajo del banco 0
+C 0x8625 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x8638 guarda el actor que se esta creando y el byte siguiente (16 bits)
+C 0x863B banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x863E lee variable de trabajo del banco 0
+C 0x8644 hl_mas_a: HL = HL + A
+C 0x864C bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8657 apunta a las piezas de sprite ocupadas (22)
+C 0x8663 pon_pieza: el byte D en la pieza E del actor 0xDE83
+C 0x866E lee el actor que se esta creando y el byte siguiente (16 bits)
+C 0x8673 hl_mas_a: HL = HL + A
+C 0x867D apunta a las piezas de sprite ocupadas (22)
+C 0x8680 de_mas_a: DE = DE + A
+C 0x8696 lee el actor que se esta creando y el byte siguiente (16 bits)
+C 0x86A2 lee variable de trabajo del banco 0
+C 0x86BC si el actor se mueve (p02:8367) = 0x01
+C 0x86C4 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x03
+C 0x86C8 banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x86CE piezas_al_crear: con 6: las piezas del tipo (p06:B569 y p06:B5A8)
+C 0x86D1 lee variable de trabajo del banco 0
+C 0x86D7 de_mas_a: DE = DE + A
+C 0x86DB guarda la vida del actor (p01:721A)
+C 0x86DE bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x86E1 lee el actor que se esta creando y el byte siguiente (16 bits)
+C 0x86E4 lee el tipo del actor
+C 0x86E8 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x8769 lee las piezas del actor (p02:8648)
+C 0x876E lee el tipo del actor
+C 0x8772 hl_mas_a: HL = HL + A
+C 0x8779 palabra_a: HL = la palabra A de la tabla HL
+C 0x877D lee el actor que se esta creando y el byte siguiente (16 bits)
+C 0x8792 lee el actor que se esta creando y el byte siguiente (16 bits)
+C 0x879B hl_mas_a: HL = HL + A
+C 0x87A7 borra: pone a cero BC + 1 bytes desde HL
+C 0x87AA banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x87AD prepara_jefe: pone a cero las cuentas del jefe y busca el de la pantalla (p02:9195)
+C 0x87B0 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x87B3 recorre_cc40: los 4 registros de 0xCC40
+C 0x87D9 lee la pantalla de la fase (desde 1)
+C 0x87E1 lee_b70d: A = p09:B70D[A - 1]
+C 0x8800 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8804 crea_actor: el actor C en (D, E) en el primer hueco de 0xC400
+C 0x8808 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x8813 anota_cc40: anota el registro de HL en el primer hueco de 0xCC40
+C 0x881D hueco_cc40: DE = el primer hueco libre de 0xCC40 (4 de 4 bytes)
+C 0x883D recorre_cc40: los 4 registros de 0xCC40
+C 0x8846 hl_mas_a: HL = HL + A
+C 0x8854 hl_mas_a: HL = HL + A
+C 0x8866 dibujo_cc35_doble: p02:89CD y dos piezas mas de (0x80, 0x38) y (0x98, 0x38)
+C 0x8873 registro_cc40: un registro [Y][X][tipo][..] de 0xCC40
+C 0x88A5 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x88D5 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x88E6 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x890D espera_cc3c: (HL) = 0x30 o 0x60 segun 0xCC3C
+C 0x8927 hl_mas_a: HL = HL + A
+C 0x894E lee la X del personaje
+C 0x8959 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x895C desplaza_8_20: D + 8 y E + 0x14
+C 0x895F crea_actor_0: p02:8615 con B = 0
+C 0x8962 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x8983 lee la X del personaje
+C 0x8990 dibujo_cc35: copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
+C 0x899C copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x89AC copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x89B1 desplaza_8_20: D + 8 y E + 0x14
+C 0x89B6 azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
+C 0x89BF lado_del_personaje: D = L si la X del personaje es < 0x80, si no H
+C 0x89C4 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x89C7 crea_actor_0: p02:8615 con B = 0
+C 0x89CA banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x89CD origen_cc35: HL = (0xB0, 0x90 + 0xCC35 * 16)
+C 0x89DE copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x89E9 hl_mas_a: HL = HL + A
+C 0x89F0 lee la X del personaje
+C 0x8A09 dibujo_cc35: copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
+C 0x8A0F copia_24x8: copia 24 x 8 de (H, 0x38) a (D, E) con TIMP
+C 0x8A20 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x8A39 banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
+C 0x8A3C piezas_del_fotograma: la posicion y el patron de cada pieza del fotograma (p15:B744)
+C 0x8A3F bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8A62 le suma la Y del actor
+C 0x8A68 le suma la X del actor
+C 0x8A81 palabra_a: HL = la palabra A de la tabla HL
+C 0x8A88 le suma la Y del actor
+C 0x8A91 le suma la X del actor
+C 0x8AA0 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x8AAC sprites_de_piezas: los atributos de cada pieza del actor en 0xDE28
+C 0x8AC6 apunta a la Y del sprite 10 en RAM
+C 0x8B10 hl_mas_a: HL = HL + A
+C 0x8B16 niega_de: DE = -DE
+C 0x8B1D lee la Y del personaje
+C 0x8B20 le resta la Y del actor
+C 0x8B27 lee la X del personaje
+C 0x8B2A le resta la X del actor
+C 0x8B41 lee la Y del personaje
+C 0x8B44 compara con la Y del actor
+C 0x8B48 lee la X del personaje
+C 0x8B4B compara con la X del actor
+C 0x8B53 lee la X del personaje y el byte siguiente (16 bits)
+C 0x8B56 hl_mas_a: HL = HL + A
+C 0x8B5D apunta a la cuenta de cuadros del juego
+C 0x8B7A guarda el fotograma del actor (p02:8A42)
+C 0x8B82 guarda la velocidad Y del actor (alta)
+C 0x8B85 guarda la velocidad Y del actor
+C 0x8B8D guarda la velocidad X del actor (alta)
+C 0x8B90 guarda la velocidad X del actor
+C 0x8B94 guarda la aceleracion X del actor (alta)
+C 0x8B97 guarda la aceleracion X del actor
+C 0x8B9B guarda la aceleracion Y del actor (alta)
+C 0x8B9E guarda la aceleracion Y del actor
+C 0x8BA2 alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
+C 0x8BA5 si el actor acelera (p02:8393) = 0x00
+C 0x8BAA guarda la velocidad X del actor (alta)
+C 0x8BAD guarda la velocidad X del actor
+C 0x8BB0 guarda la velocidad Y del actor (alta)
+C 0x8BB3 guarda la velocidad Y del actor
+C 0x8BCD lee la Y del actor
+C 0x8BD2 lee la X del actor
+C 0x8BD8 compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
+C 0x8BED mira el bit 7 de la velocidad X del actor (alta)
+C 0x8BF2 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x8BF5 mira el bit 7 de la velocidad X del actor (alta)
+C 0x8BFA sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x8BFD lee la velocidad X del actor (alta)
+C 0x8C02 mira el bit 7 de la velocidad X del actor (alta)
+C 0x8C0F guarda el fotograma del actor (p02:8A42)
+C 0x8C16 lee el personaje que se lleva (0 o 1)
+C 0x8C1A lee el estado del personaje 0
+C 0x8C1E lee el estado del personaje 1
+C 0x8C22 lee la X del actor
+C 0x8C25 lee la Y del actor
+C 0x8C2A crea_actor_0: p02:8615 con B = 0
+C 0x8C32 crea_actor_aqui: crea el actor C en la posicion del actor IX
+C 0x8C35 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x01
+C 0x8C39 el fotograma del actor (p02:8A42) = 0x64
+C 0x8C41 el fotograma del actor (p02:8A42) = 0x88
+C 0x8C47 si el actor acelera (p02:8393) = 0x00
+C 0x8C4B apunta_al_personaje: con 15: la direccion del actor hacia el personaje (p02:84F1)
+C 0x8C4E pon_velocidad_y: (ix+7, 8) = HL
+C 0x8C52 pon_velocidad_x: (ix+9, 0x0A) = HL
+C 0x8C5B crea_actor_aqui: crea el actor C en la posicion del actor IX
+C 0x8C61 guarda la velocidad X del actor (alta)
+C 0x8C65 guarda la velocidad Y del actor (alta)
+C 0x8C68 guarda si el actor acelera (p02:8393)
+C 0x8C6B el fotograma del actor (p02:8A42) = 0x88
+C 0x8C7A copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x8C8A borra_rectangulo: HMMV con 0xFF en la pagina 0
+C 0x8C93 copia_9060: copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
+C 0x8C99 copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
+C 0x8C9C lee el jefe vencido (no queda ningun 0x19)
+C 0x8CA7 borra_rectangulo: HMMV con 0xFF en la pagina 0
+C 0x8CAA borra_d45e_y_actores: pone a cero 4 registros de 0xD45E y borra los actores
+C 0x8CAD copia_6098: copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
+C 0x8CB3 apunta a la ficha del canal de efectos
+C 0x8CBB copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x8CC7 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0x8CD3 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0x8CE2 lee en la sala de la puerta 5
+C 0x8CEA crea_tipo_23: si vive algun personaje y 0xC270 es la fase: crea el actor 0x23 en (0x34, 0x80)
+C 0x8CF3 borra_rectangulo: HMMV con 0xFF en la pagina 0
+C 0x8CF6 lee en la sala de la puerta 5
+C 0x8CFE despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x8D28 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x8D34 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x8D56 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x8D68 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x8D77 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x8D7A prepara_c888: 4 bytes de p02:8ED2 a 0xC888 y sus cuentas
+C 0x8D7F paso_c888: cada 4 cuadros, el siguiente paso del dibujo de 0xC888 (p02:8F06)
+C 0x8D95 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x8D98 color_12_parpadea: el color 12 de la paleta de p02:8E26 segun la cuenta de cuadros
+C 0x8DA0 copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
+C 0x8DA3 crea_tipo_19_por_ruina: crea ruina + 1 actores de tipo 0x19 en (0x78, 0x80), contados en 0xC313
+C 0x8DA6 suma_c310: 0xC310 + 1
+C 0x8DA9 lee la ruina (0-4)
+C 0x8DAF hl_mas_a: HL = HL + A
+C 0x8DB6 crea_actor_0: p02:8615 con B = 0
+C 0x8DBA guarda cuenta de trabajo de los actores
+C 0x8DBD lee la ruina (0-4)
+C 0x8DC8 crea_actor_0: p02:8615 con B = 0
+C 0x8DCC lee cuenta de trabajo de los actores
+C 0x8DD0 guarda cuenta de trabajo de los actores
+C 0x8DDC lee la accion del personaje (4 muere, 5 escalera)
+C 0x8DE2 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x8DF3 guarda el jefe vencido (no queda ningun 0x19)
+C 0x8DF8 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x8DFB sin_tipo_19: si no queda ningun actor de tipo 0x19: 0xC21C = 1 y el sonido 0x42
+C 0x8DFE color_12_parpadea: el color 12 de la paleta de p02:8E26 segun la cuenta de cuadros
+C 0x8E01 lee el jefe vencido (no queda ningun 0x19)
+C 0x8E06 borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
+C 0x8E09 suma_c310: 0xC310 + 1
+C 0x8E0E sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x8E11 lee la cuenta de cuadros del juego
+C 0x8E1B hl_mas_a: HL = HL + A
+C 0x8E23 pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
+C 0x8E2E apunta a los 8 actores (0x80 bytes cada uno)
+C 0x8E35 lee el tipo del actor
+C 0x8E39 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x8E4A sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x8E53 borra_d45e_y_actores: pone a cero 4 registros de 0xD45E y borra los actores
+C 0x8E56 suma_c310: 0xC310 + 1
+C 0x8E59 lee la accion del personaje (4 muere, 5 escalera)
+C 0x8E68 lee la fase (1-25: ruina * 5 + puerta)
+C 0x8E7C banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x8E82 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8E8A crea_actor_0: p02:8615 con B = 0
+C 0x8E8D suma_c310: 0xC310 + 1
+C 0x8E9B hl_mas_a: HL = HL + A
+C 0x8EA0 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x8EA6 lee el tipo del actor
+C 0x8EAB borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x8EFA copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0x8F1A banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
+C 0x8F1D lee la fase (1-25: ruina * 5 + puerta)
+C 0x8F24 hl_mas_a: HL = HL + A
+C 0x8F28 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8F2B lee la pantalla de la fase (desde 1)
+C 0x8F2F paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
+C 0x8F32 lee_d500: con 12: los 4 bytes de la fase de p12:B4D2 a 0xD500
+C 0x8F3C guarda el jefe vencido (no queda ningun 0x19)
+C 0x8F43 paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
+C 0x8F48 juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x8F4D juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
+C 0x8F50 lee_c319: con 9: 3 bytes de p09:BED3 + 3 * (0xC211 - 1) a 0xC319
+C 0x8F53 lee la ficha del personaje 0 (14 bytes)
+C 0x8F57 lee la ficha del personaje 1 (14 bytes)
+C 0x8F5C lee la fase (1-25: ruina * 5 + puerta)
+C 0x8F6A crea_actor_0: p02:8615 con B = 0
+C 0x8F6D banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x8F70 lee la fase (1-25: ruina * 5 + puerta)
+C 0x8F79 hl_mas_a: HL = HL + A
+C 0x8F91 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8F9B ficha_en: A = la ficha de 0xD200 en (D = X, E = Y), o fuera de la pantalla
+C 0x8FB0 lee la accion del personaje (4 muere, 5 escalera)
+C 0x8FB6 cuenta_c314: 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
+C 0x8FBC despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x8FD9 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x8FDF paleta_de_jefe: con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
+C 0x8FE2 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x8FEF crea_actor_0: p02:8615 con B = 0
+C 0x8FFF pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
+C 0x9002 dibuja_903d: 3 x 4 fichas transparentes de p02:903D junto al personaje
+C 0x902B ficha_transparente: la ficha A a (D, E) con TIMP (LMMM 0x48)
+C 0x9049 lee la fase (1-25: ruina * 5 + puerta)
+C 0x9052 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x9059 hl_mas_a: HL = HL + A
+C 0x9064 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x9067 apunta a la Y del personaje
+C 0x9076 lee la fase (1-25: ruina * 5 + puerta)
+C 0x907E lee el personaje que se lleva (0 o 1)
+C 0x90A3 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x90B7 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x90E4 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x90F0 banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x90F3 marcas_de_la_pantalla: con 12: los registros de p12:B8BB de la pantalla (p02:9148)
+C 0x90F6 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x9102 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0x9109 lee la ruina (0-4)
+C 0x9117 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x911A crea_actor: el actor C en (D, E) en el primer hueco de 0xC400
+C 0x911D banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x9120 lee en la sala de la puerta 5
+C 0x9126 lee la fase (1-25: ruina * 5 + puerta)
+C 0x912D palabra_a: HL = la palabra A de la tabla HL
+C 0x9135 lee la pantalla de la fase (desde 1)
+C 0x913A marca: crea el actor 0x2A en la casilla [YX] del registro
+C 0x915E ya_marcado: busca la casilla en 0xE000 con la pantalla y la fase
+C 0x9163 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x9166 crea_actor: el actor C en (D, E) en el primer hueco de 0xC400
+C 0x9169 banco_12_en_a000: pone el banco 12 en 0xA000
+C 0x917C lee la pantalla de la fase (desde 1)
+C 0x9183 lee la fase (1-25: ruina * 5 + puerta)
+C 0x918C hl_mas_a: HL = HL + A
+C 0x9198 lee la fase (1-25: ruina * 5 + puerta)
+C 0x919C palabra_a: HL = la palabra A de la tabla HL
+C 0x91A3 registro_de_la_pantalla: avanza de 4 en 4 hasta el de la pantalla 0xC212; acarreo en el 0xFF
+C 0x91AC hl_mas_a: HL = HL + A
+C 0x91AF lee la pantalla de la fase (desde 1)
+C 0x91B8 lee_b70d: A = p09:B70D[A - 1]
+C 0x91C3 lee la pantalla de la fase (desde 1)
+C 0x91D6 hl_mas_a: HL = HL + A
+C 0x91DB si el actor se mueve (p02:8367) = 0x00
+C 0x91DF las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x02
+C 0x91E3 pon_2f: p02:9222 con A = 0x2F y DE = 0
+C 0x91E6 lee la Y del actor
+C 0x91EB guarda la Y del actor
+C 0x91F1 plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)
+C 0x91F8 compara_x: compara la X del personaje con la del actor
+C 0x9200 estado_1_o_2: D = 0 si el estado del personaje es 1 o 2, si no 1
+C 0x9209 el fotograma del actor (p02:8A42) = 0x0B
+C 0x920D sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9210 estado_del_que_se_lleva: A = el estado del personaje que se lleva
+C 0x9225 hl_mas_a: HL = HL + A
+C 0x922B hl_mas_a: HL = HL + A
+C 0x9230 parpadeo_del_actor: el cuadro de parpadeo segun (ix+0x17) y la cuenta
+C 0x9233 lee el paso del actor
+C 0x9238 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x9243 sube el paso del actor
+C 0x924A el paso del actor = 0x81
+C 0x924E lee la cuenta de cuadros del juego
+C 0x9257 colores_de_pieza: HL = 0xDCA0 + (ix+A) * 16: los colores de la pieza A del actor; B = 0x11 - (ix+0x11)
+C 0x925F si el actor se mueve (p02:8367) = 0x01
+C 0x9263 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x03
+C 0x9267 sube el paso del actor
+C 0x926C pon_dos_campos: (ix+A) = D y (ix+A+5) = E
+C 0x926F lee el paso del actor
+C 0x9274 guarda el paso del actor
+C 0x9285 hl_mas_a: HL = HL + A
+C 0x929C hl_mas_a: HL = HL + A
+C 0x92A5 choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
+C 0x92AA choque_4: p02:9D09 con E = 4
+C 0x92AE sube el paso del actor
+C 0x92BA sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x92C8 choque_debajo: la casilla de debajo del actor (p02:9D09) y p03:A683
+C 0x92CC baja el paso del actor
+C 0x92CF velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0x92D4 velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x92DC sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x92E9 lee la cuenta de cuadros del juego
+C 0x92EF lee la cuenta de cuadros del juego
+C 0x9301 guarda el fotograma del actor (p02:8A42)
+C 0x9305 el fotograma del actor (p02:8A42) = 0x2F
+C 0x9316 cuenta_1e_a0: (ix+0x1E) - 1; a cero vuelve a 0xA0 y p02:8C30
+C 0x9319 lee el paso del actor
+C 0x9327 sube el paso del actor
+C 0x932A azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
+C 0x934F de_mas_a: DE = DE + A
+C 0x9355 velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x935B velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x935F guarda el fotograma del actor (p02:8A42)
+C 0x937B mira_93c7: p02:8BB7 con las direcciones de p02:93C7[(ix+0x1F)]
+C 0x937E fotograma_de_9365: (ix+0x10) = p02:9365[(ix+0x1F) * 3] (+ 1 en cuadros alternos)
+C 0x9385 baja el paso del actor
+C 0x9388 para_actor: velocidades a cero
+C 0x9399 de_mas_a: DE = DE + A
+C 0x939E lee la cuenta de cuadros del juego
+C 0x93A6 guarda el fotograma del actor (p02:8A42)
+C 0x93B0 palabra_a: HL = la palabra A de la tabla HL
+C 0x93B6 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x93E2 si el actor se mueve (p02:8367) = 0x00
+C 0x93E6 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x02
+C 0x93EA pon_2f: p02:9222 con A = 0x2F y DE = 0
+C 0x93ED lee la Y del actor
+C 0x93F2 guarda la Y del actor
+C 0x93F7 velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x93FA velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9401 compara_x: compara la X del personaje con la del actor
+C 0x940A guarda el fotograma del actor (p02:8A42)
+C 0x940E lee el paso del actor
+C 0x9413 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x942A lee la Y del actor
+C 0x9431 compara_y: compara la Y del personaje con la del actor
+C 0x9435 lee la Y del personaje
+C 0x943A compara con la Y del actor
+C 0x943E velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0x9445 sube el paso del actor
+C 0x944D mira_al_personaje_22: (ix+0x10) = 0x22 o 0x23 segun el lado del personaje
+C 0x9450 sube el paso del actor
+C 0x9456 compara_x: compara la X del personaje con la del actor
+C 0x9459 niega_hl: HL = -HL
+C 0x945C pon_aceleracion_x: (ix+0x0E, 0x0F) = HL
+C 0x945F si el actor acelera (p02:8393) = 0x01
+C 0x9463 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9466 lee la velocidad X del actor (alta)
+C 0x9471 compara_x: compara la X del personaje con la del actor
+C 0x947C lee la velocidad X del actor (alta)
+C 0x947F lee la velocidad X del actor
+C 0x9485 niega_hl: HL = -HL
+C 0x9488 pon_velocidad_y: (ix+7, 8) = HL
+C 0x948B velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9491 pon_aceleracion_x: (ix+0x0E, 0x0F) = HL
+C 0x9496 pon_aceleracion_y: (ix+0x0C, 0x0D) = HL
+C 0x9499 sube el paso del actor
+C 0x949D lee la velocidad Y del actor (alta)
+C 0x94A5 velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x94B3 plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)
+C 0x94B6 lee el paso del actor
+C 0x94C1 si el actor se mueve (p02:8367) = 0x01
+C 0x94D4 mira_al_personaje_b: (ix+0x10) = B, o B + 2 si el personaje esta a la derecha
+C 0x94E6 estado_del_que_se_lleva: A = el estado del personaje que se lleva
+C 0x94F9 sube el paso del actor
+C 0x94FC lee si el actor acelera (p02:8393)
+C 0x9503 guarda si el actor se mueve (p02:8367)
+C 0x9506 guarda si el actor acelera (p02:8393)
+C 0x9513 mira_al_personaje_b: (ix+0x10) = B, o B + 2 si el personaje esta a la derecha
+C 0x9516 baja el paso del actor
+C 0x951F crea_actor_aqui: crea el actor C en la posicion del actor IX
+C 0x9525 guarda si el actor acelera (p02:8393)
+C 0x952B compara_x: compara la X del personaje con la del actor
+C 0x9532 guarda el fotograma del actor (p02:8A42)
+C 0x953D plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)
+C 0x9540 fotograma_37: cada 16 cuadros, (ix+0x10) = 0x37 o 0x38
+C 0x9543 dispara_16: cada 0x40 cuadros crea el actor 0x16 debajo
+C 0x9546 lee el paso del actor
+C 0x9549 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x9554 sube el paso del actor
+C 0x955A lee la cuenta de cuadros del juego
+C 0x956A pon_velocidad_x: (ix+9, 0x0A) = HL
+C 0x956D compara_x: compara la X del personaje con la del actor
+C 0x9572 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9575 estado_del_que_se_lleva: A = el estado del personaje que se lleva
+C 0x957B sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9584 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x958A choque_7: p02:9D09 con D = 7
+C 0x958F choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
+C 0x9594 lee la X del actor
+C 0x95A1 baja el paso del actor
+C 0x95A5 sube el paso del actor
+C 0x95AC sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x95B3 el paso del actor = 0x00
+C 0x95B8 lee la cuenta de cuadros del juego
+C 0x95C0 lee la cuenta de cuadros del juego
+C 0x95C8 guarda el fotograma del actor (p02:8A42)
+C 0x95D4 lee la X del actor
+C 0x95D7 lee la Y del actor
+C 0x95E1 crea_actor_0: p02:8615 con B = 0
+C 0x95EA plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)
+C 0x95ED lee el paso del actor
+C 0x95F6 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x95F9 cae_hasta_suelo: si hay suelo (p02:9CE7): se para y pasa al siguiente paso
+C 0x95FC frena_caida: si la velocidad Y esta entre 6 y 0x50: 0x600 y sin aceleracion
+C 0x9603 choque_debajo: la casilla de debajo del actor (p02:9D09) y p03:A683
+C 0x9607 si el actor se mueve (p02:8367) = 0x00
+C 0x960B sube el paso del actor
+C 0x960E sube el fotograma del actor (p02:8A42)
+C 0x9615 pon_fotograma: (ix+0x10) = H y (ix+0x11) = L
+C 0x9618 lee el paso del actor
+C 0x961B despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x962C sube el paso del actor
+C 0x9631 velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9634 choque_4: p02:9D09 con E = 4
+C 0x963C sube el paso del actor
+C 0x963F sube el fotograma del actor (p02:8A42)
+C 0x9642 velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0x9649 sube el paso del actor
+C 0x9650 sube el fotograma del actor (p02:8A42)
+C 0x965A sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x965D compara_y: compara la Y del personaje con la del actor
+C 0x9662 lee la Y del personaje
+C 0x9667 le resta la Y del actor
+C 0x966D borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x9670 estado_del_que_se_lleva: A = el estado del personaje que se lleva
+C 0x9683 lee la X del actor
+C 0x9686 lee la Y del actor
+C 0x968F crea_actor_0: p02:8615 con B = 0
+C 0x96A7 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x96AE llega_al_punto: (ix+0x1F) + 1 si el actor esta en la Y y X de HL
+C 0x96C4 plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)
+C 0x96C7 lee la X del actor
+C 0x96DB compara_x: compara la X del personaje con la del actor
+C 0x96DE sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x96E3 compara_x: compara la X del personaje con la del actor
+C 0x96E6 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x96EC fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x96F5 el paso del actor = 0x01
+C 0x96FC hl_mas_a: HL = HL + A
+C 0x9700 compara con la Y del actor
+C 0x9707 compara con la X del actor
+C 0x970F lee el paso del actor
+C 0x9714 lee la velocidad Y del actor (alta)
+C 0x9719 fotograma_3d_3f: p02:9B8D con 0x3D / 0x3F
+C 0x9721 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x972D marca_1c: (ix+0x1C) bit 0
+C 0x9738 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9741 guarda si el actor se mueve (p02:8367)
+C 0x9744 guarda si el actor acelera (p02:8393)
+C 0x9747 fotograma_3d_3f: p02:9B8D con 0x3D / 0x3F
+C 0x974D guarda la X del actor
+C 0x9754 sube el paso del actor
+C 0x9757 si el actor se mueve (p02:8367) = 0x01
+C 0x9760 plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)
+C 0x9763 lee el paso del actor
+C 0x9772 le suma la X del actor
+C 0x9775 guarda la X del actor
+C 0x9781 sube el paso del actor
+C 0x9787 plantilla_de_actor: con 4-5-6: 11 bytes de HL a (ix+7)
+C 0x978A compara_x: compara la X del personaje con la del actor
+C 0x9790 el fotograma del actor (p02:8A42) = 0x1A
+C 0x9794 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x979C lee la cuenta de cuadros del juego
+C 0x97A1 sube_hacia_el_personaje: la Y del actor hacia 0x20 por encima del personaje
+C 0x97A4 rebota_en_borde: cerca de un borde, sonido 0x0A y cambia el sentido (ix+0x17)
+C 0x97B2 lee la Y del personaje
+C 0x97B7 compara con la Y del actor
+C 0x97BB sube el paso del actor
+C 0x97C2 velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0x97C5 lee la Y del personaje
+C 0x97CA compara con la Y del actor
+C 0x97D3 le suma la Y del actor
+C 0x97D6 guarda la Y del actor
+C 0x97DA lee la X del actor
+C 0x97DD le suma la velocidad X del actor (alta)
+C 0x97E5 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x97F8 guarda el fotograma del actor (p02:8A42)
+C 0x9800 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
+C 0x9805 lee el paso del actor
+C 0x9808 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x9823 lee la X del actor
+C 0x9826 lee la Y del actor
+C 0x983A crea_actor_0: p02:8615 con B = 0
+C 0x9850 sube el paso del actor
+C 0x985A pon_velocidad_x: (ix+9, 0x0A) = HL
+C 0x985D choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
+C 0x9860 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9863 choque_4: p02:9D09 con E = 4
+C 0x9866 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9870 cuenta_tipo_15: A = cuantos actores de tipo 0x15 hay
+C 0x987F sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9882 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x9897 sube el paso del actor
+C 0x989A si el actor se mueve (p02:8367) = 0x00
+C 0x989F si el actor se mueve (p02:8367) = 0x01
+C 0x98A3 baja el paso del actor
+C 0x98A6 estado_del_que_se_lleva: A = el estado del personaje que se lleva
+C 0x98BB crea_tipo_15: crea un actor 0x15 en su posicion con IX = 0xCC3A
+C 0x98C2 lee la vida del actor (p01:721A)
+C 0x98CF pon_fotograma: (ix+0x10) = H y (ix+0x11) = L
+C 0x98D2 compara_x: compara la X del personaje con la del actor
+C 0x98E7 guarda el fotograma del actor (p02:8A42)
+C 0x98F0 mira_al_personaje_2b: (ix+0x10) = 0x2B o 0x2C (+ 2 mientras (ix+0x1C))
+C 0x98F3 lee la vida del actor (p01:721A)
+C 0x98FC pon_1c_10: (ix+0x1C) = 0x10
+C 0x98FF cuenta_1e_20: (ix+0x1E) - 1; a cero, 0x20 y la direccion hacia el personaje
+C 0x9902 busca_tipo_3: HL = el primer actor de tipo 3
+C 0x9905 lee el paso del actor
+C 0x990A lee la vida del actor (p01:721A)
+C 0x9913 guarda la X del actor
+C 0x991B el_15_de_menos: busca entre los tipo 0x15 el de menor (ix+0x1F) por encima de C
+C 0x992E baja la Y del actor
+C 0x9934 apunta a los 8 actores (0x80 bytes cada uno)
+C 0x993C compara_15: D = el (ix+0x1F) del actor HL si esta entre C y D
+C 0x9941 hl_mas_a: HL = HL + A
+C 0x994B lee la Y del actor
+C 0x994F sube el paso del actor
+C 0x9952 compara_x: compara la X del personaje con la del actor
+C 0x995A niega_hl: HL = -HL
+C 0x995D pon_velocidad_x: (ix+9, 0x0A) = HL
+C 0x996E hl_mas_a: HL = HL + A
+C 0x997D apunta a los 8 actores (0x80 bytes cada uno)
+C 0x999A compara_x: compara la X del personaje con la del actor
+C 0x99A6 el fotograma del actor (p02:8A42) = 0x41
+C 0x99B5 alterna_fotograma: cada 8 cuadros, (ix+0x10) alterna con C
+C 0x99B8 lee el paso del actor
+C 0x99BE al_azar_9a2a: una direccion al azar de p02:9A2A
+C 0x99C5 sube el paso del actor
+C 0x99C9 azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
+C 0x99D0 azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
+C 0x99DE de_mas_a: DE = DE + A
+C 0x99E4 velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x99EA velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x99ED compara_x: compara la X del personaje con la del actor
+C 0x99F6 lee la X del personaje
+C 0x99F9 le resta la X del actor
+C 0x9A03 lee la Y del personaje
+C 0x9A06 le resta la Y del actor
+C 0x9A11 compara_y: compara la Y del personaje con la del actor
+C 0x9A3A lee la cuenta de cuadros del juego
+C 0x9A3F guarda si el actor se mueve (p02:8367)
+C 0x9A42 fotograma_41: cada 4 cuadros, el fotograma alrededor de 0x41
+C 0x9A49 baja el paso del actor
+C 0x9A4D lee la cuenta de cuadros del juego
+C 0x9A55 baja el fotograma del actor (p02:8A42)
+C 0x9A58 compara con el fotograma del actor (p02:8A42)
+C 0x9A5C sube el fotograma del actor (p02:8A42)
+C 0x9A5F sube el fotograma del actor (p02:8A42)
+C 0x9A63 el fotograma del actor (p02:8A42) = 0x88
+C 0x9A67 si el actor acelera (p02:8393) = 0x01
+C 0x9A6B la aceleracion Y del actor = 0x20
+C 0x9A6F lee la Y del actor
+C 0x9A7A velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9A7D azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
+C 0x9A8A compara_x: compara la X del personaje con la del actor
+C 0x9A8F niega_hl: HL = -HL
+C 0x9A96 pon_velocidad_x: (ix+9, 0x0A) = HL
+C 0x9A9A el fotograma del actor (p02:8A42) = 0x25
+C 0x9AA9 el paso del actor = 0x04
+C 0x9AAE lee el paso del actor
+C 0x9AB3 el fotograma del actor (p02:8A42) = 0x26
+C 0x9ABB sube el fotograma del actor (p02:8A42)
+C 0x9ABE sube el paso del actor
+C 0x9AC1 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x03
+C 0x9AC5 la aceleracion Y del actor = 0x40
+C 0x9AC9 si el actor acelera (p02:8393) = 0x01
+C 0x9ACF velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9AD4 frena_caida: si la velocidad Y esta entre 6 y 0x50: 0x600 y sin aceleracion
+C 0x9ADB choque_debajo: la casilla de debajo del actor (p02:9D09) y p03:A683
+C 0x9ADF si el actor acelera (p02:8393) = 0x00
+C 0x9AE3 para_actor: velocidades a cero
+C 0x9AE6 sube el paso del actor
+C 0x9AE9 compara_x: compara la X del personaje con la del actor
+C 0x9AF2 estado_no_3: acarreo si el estado del personaje no es 3
+C 0x9AFB velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x9B01 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9B08 alterna_fotograma: cada 8 cuadros, (ix+0x10) alterna con C
+C 0x9B0B choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
+C 0x9B0E sonido_y_sigue: el sonido 0x0A y p02:9AFE
+C 0x9B11 se_para_si_choca: si choca (p02:9D05): velocidad X 0, Y 0x400 y paso 0
+C 0x9B15 el paso del actor = 0x02
+C 0x9B1C sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9B2B el paso del actor = 0x00
+C 0x9B2F la velocidad Y del actor (alta) = 0xFF
+C 0x9B38 estado_no_3: acarreo si el estado del personaje no es 3
+C 0x9B46 el fotograma del actor (p02:8A42) = 0x00
+C 0x9B4C velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9B4F lee el paso del actor
+C 0x9B52 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x9B63 lee la velocidad Y del actor (alta)
+C 0x9B66 choque_7: p02:9D09 con D = 7
+C 0x9B6C sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x9B6F alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
+C 0x9B72 sube el paso del actor
+C 0x9B75 velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0x9B7C compara_x: compara la X del personaje con la del actor
+C 0x9B87 pon_velocidad_x: (ix+9, 0x0A) = HL
+C 0x9B8D lee la velocidad X del actor (alta)
+C 0x9B96 guarda el fotograma del actor (p02:8A42)
+C 0x9B9A lee la cuenta de cuadros del juego
+C 0x9BA0 lee el fotograma del actor (p02:8A42)
+C 0x9BA7 guarda el fotograma del actor (p02:8A42)
+C 0x9BAD alterna_fotograma: cada 8 cuadros, (ix+0x10) alterna con C
+C 0x9BB0 se_para_si_choca: si choca (p02:9D05): velocidad X 0, Y 0x400 y paso 0
+C 0x9BB4 choca_de_lado: (ix+0x1E) = 1 y acarreo si choca de lado (p02:9CC8)
+C 0x9BB7 estado_no_3: acarreo si el estado del personaje no es 3
+C 0x9BCB lee la Y del personaje
+C 0x9BCE le resta la Y del actor
+C 0x9BD6 lee la Y del personaje
+C 0x9BD9 compara con la Y del actor
+C 0x9BDF busca_suelo_arriba: casillas hacia arriba desde el actor (p01:704C)
+C 0x9BEA busca_suelo_abajo: casillas hacia abajo desde el actor (p01:704C)
+C 0x9BF0 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9BF8 busca_suelo_abajo: casillas hacia abajo desde el actor (p01:704C)
+C 0x9C03 busca_suelo_arriba: casillas hacia arriba desde el actor (p01:704C)
+C 0x9C08 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9C0E fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9C16 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9C1C lee la X del actor
+C 0x9C1F lee la Y del actor
+C 0x9C47 lee la X del actor
+C 0x9C4A lee la Y del actor
+C 0x9C76 velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9C79 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9C80 el paso del actor = 0x02
+C 0x9C84 si el actor se mueve (p02:8367) = 0x00
+C 0x9C8F velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9C92 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9C9B el paso del actor = 0x04
+C 0x9C9F si el actor se mueve (p02:8367) = 0x00
+C 0x9CA8 choque_4: p02:9D09 con E = 4
+C 0x9CAC velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9CB1 velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9CB4 el paso del actor = 0x00
+C 0x9CBE choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
+C 0x9CCC lee la velocidad X del actor (alta)
+C 0x9CD6 le suma la velocidad X del actor (alta)
+C 0x9CDD mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x9CE8 le suma la velocidad Y del actor (alta)
+C 0x9CEC choque_en: la casilla en (D, E) del actor (p02:9D15)
+C 0x9CF0 alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
+C 0x9CF7 le suma la velocidad Y del actor (alta)
+C 0x9CFB choque_al_reves: como p02:9D09 al reves
+C 0x9CFF alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
+C 0x9D09 mira_casilla: p02:8BB7 con 0x80 en (D, E + 1); Z segun (ix+0x16) bit 3
+C 0x9D0F mira_casilla: p02:8BB7 con 0x80 en (D, E + 1); Z segun (ix+0x16) bit 3
+C 0x9D19 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x9D27 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x9D34 si el actor se mueve (p02:8367) = 0x01
+C 0x9D38 el fotograma del actor (p02:8A42) = 0x00
+C 0x9D3C sube el paso del actor
+C 0x9D43 compara con la Y del actor
+C 0x9D47 alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
+C 0x9D4A el paso del actor = 0x01
+C 0x9D51 lee la Y del actor
+C 0x9D54 le suma la velocidad Y del actor (alta)
+C 0x9D5D sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x9D60 alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
+C 0x9D63 el paso del actor = 0x01
+C 0x9D6E borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x9D71 estado_del_que_se_lleva: A = el estado del personaje que se lleva
+C 0x9D79 el fotograma del actor (p02:8A42) = 0x10
+C 0x9D7D la velocidad Y del actor (alta) = 0x06
+C 0x9D82 lee el paso del actor
+C 0x9D85 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x9D92 lee la velocidad Y del actor (alta)
+C 0x9D95 choque_7: p02:9D09 con D = 7
+C 0x9D99 velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0x9D9C alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
+C 0x9D9F sube el paso del actor
+C 0x9DA6 sube el fotograma del actor (p02:8A42)
+C 0x9DAB sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x9DB2 sube el paso del actor
+C 0x9DB9 hacia_el_personaje_2: velocidad X +-2 hacia el personaje y su fotograma
+C 0x9DBE alterna_fotograma: cada 8 cuadros, (ix+0x10) alterna con C
+C 0x9DC1 salta_si_puede: si no choca, el salto del actor
+C 0x9DCD azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
+C 0x9DE0 estado_no_3: acarreo si el estado del personaje no es 3
+C 0x9DEC estado_no_3: acarreo si el estado del personaje no es 3
+C 0x9DF4 pon_velocidad_x: (ix+9, 0x0A) = HL
+C 0x9DFA fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9DFD sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9E03 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9E06 compara_x: compara la X del personaje con la del actor
+C 0x9E0F velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x9E15 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9E18 hueco_para_saltar: mira las casillas de arriba y delante (p02:8BB7)
+C 0x9E1C choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
+C 0x9E28 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x9E30 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9E33 sube el paso del actor
+C 0x9E3A si el actor se mueve (p02:8367) = 0x00
+C 0x9E47 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x9E55 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x9E5E velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9E61 el fotograma del actor (p02:8A42) = 0x10
+C 0x9E65 la velocidad Y del actor (alta) = 0x03
+C 0x9E69 el paso del actor = 0x00
+C 0x9E6F lee la cuenta de cuadros del juego
+C 0x9E75 lee la velocidad X del actor (alta)
+C 0x9E80 lee la X del actor
+C 0x9E84 guarda la X del actor
+C 0x9E87 lee la Y del actor
+C 0x9E8C guarda la Y del actor
+C 0x9E92 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9E99 si el actor se mueve (p02:8367) = 0x01
+C 0x9E9D velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0x9EA4 hacia_el_personaje_2: velocidad X +-2 hacia el personaje y su fotograma
+C 0x9EA7 el paso del actor = 0x02
+C 0x9EAE fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9EB5 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0x9EBA velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x9EC0 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9ECC lee el paso del actor
+C 0x9ED8 guarda la velocidad X del actor (alta)
+C 0x9EDB estado_del_que_se_lleva: A = el estado del personaje que se lleva
+C 0x9EEF baja el paso del actor
+C 0x9EF5 sube el paso del actor
+C 0x9EFA velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9EFD el fotograma del actor (p02:8A42) = 0x8F
+C 0x9F01 la aceleracion Y del actor = 0x40
+C 0x9F05 si el actor acelera (p02:8393) = 0x01
+C 0x9F09 lee la X del personaje
+C 0x9F0C compara con la X del actor
+C 0x9F15 velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x9F1A lee la velocidad Y del actor (alta)
+C 0x9F21 el fotograma del actor (p02:8A42) = 0x8F
+C 0x9F25 lee la velocidad Y del actor (alta)
+C 0x9F2C mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
+C 0x9F37 mira_al_personaje_89: cada 8 cuadros, (ix+0x10) = 0x89-0x8C segun el lado del personaje
+C 0x9F3A ataca: (ix+0x1F) - 1; a cero, el fotograma de ataque y se lanza hacia el personaje
+C 0x9F3E choque_4: p02:9D09 con E = 4
+C 0x9F43 choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
+C 0x9F50 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0x9F53 lee la cuenta de cuadros del juego
+C 0x9F59 lee la X del personaje
+C 0x9F5C compara con la X del actor
+C 0x9F65 lee la cuenta de cuadros del juego
+C 0x9F6D guarda el fotograma del actor (p02:8A42)
+C 0x9F75 lee la X del personaje
+C 0x9F78 compara con la X del actor
+C 0x9F81 guarda el fotograma del actor (p02:8A42)
+C 0x9F84 lee la velocidad X del actor (alta)
+C 0x9F8A velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
+C 0x9F8D sube el paso del actor
+C 0x9F94 lee la X del personaje
+C 0x9F97 compara con la X del actor
+C 0x9FA0 lee la X del actor
+C 0x9FA3 lee la Y del actor
+C 0x9FAD crea_actor_0: p02:8615 con B = 0
+C 0x9FB4 el fotograma del actor (p02:8A42) = 0x51
+C 0x9FBE velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+C 0x9FC2 lee el paso del actor
+C 0x9FCE fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
+C 0x9FD5 lee la Y del personaje
+C 0x9FD8 le resta la Y del actor
+C 0x9FE3 velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
+C 0x9FE6 si el actor acelera (p02:8393) = 0x01
+C 0x9FEA la aceleracion Y del actor = 0x40
+C 0x9FEE lee la X del personaje
+C 0x9FF1 compara con la X del actor
+C 0x9FFA sube el paso del actor
+C 0x9FFD velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
+# --- fin de las anotaciones de anota.py ---

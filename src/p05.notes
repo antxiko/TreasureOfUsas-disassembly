@@ -138,3 +138,125 @@ F 0x9D06 16
 D 0x9D26 0x9ED6 fichas_p96BE_f6  18 fichas de 8x8 a 3 bit(s) por punto (24 bytes cada una), entrada 6 de la lista fichas_p96BE; lo leen p05:96BE (432 bytes)
 F 0x9D26 24
 # --- fin de los bloques de bloques.py ---
+
+
+# --- A MANO: comentarios, nombres y bloques ---
+C 0x9483 0xC240 cuenta cuadros; cada 2, 0xC241 baja
+C 0x948D a cero: 0xC242 = 1, se acaba
+C 0x94A4 [ficha]: 0xFF acaba, 0xFE baja una fila
+C 0x94AD 0xFE [dx]: la fila siguiente empieza en D + dx y E + 8
+C 0x966E la primera vez: 0xC89A = 0xAC y 0xC890 = 1
+C 0x9792 cada 4 cuadros, un paso del fundido desde negro de la paleta de p06:B550
+C 0x979B la terna 0xCA06 de la paleta: [color][RB][G]
+C 0x97A5 0xFF: acabado
+C 0x97AB 7 menos cada componente (rojo, azul, verde) a 0xCA08-0xCA0A
+C 0x97CC rojo: el paso (0xCA07) menos ese valor, sin bajar de cero
+C 0x97DE azul, igual
+C 0x97ED verde, igual
+C 0x97FB el color con esos tres valores
+C 0x97FF 8 pasos por color; luego el siguiente color de la paleta
+C 0x9883 copia una linea del texto (hasta B caracteres o 0xFF) a 0xCA10
+C 0x988D la linea en (0xA0, 0x20) menos la cuenta de 0xCA03 (sube)
+C 0x98A4 cada 8 pasos, la siguiente linea (0xCA02)
+C 0x9FA9 dos cifras (p00:479C) y la siguiente columna (E + C)
+C 0x9FEF el numero (HL) + 1 sin tocar los registros (p06:A550)
+C 0x97D7 el rojo al nibble alto del primer byte (0RRR0BBB)
+C 0x97DE el azul: el paso menos 0xCA09
+C 0x9FAE dos cifras de (HL)
+C 0x9FB4 el siguiente par de cifras y la siguiente columna (E + C)
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0x9453 caracteres_del_titulo los tres RLE de caracteres del titulo (p05:94C3, 950B, 9550) a la VRAM
+L 0x94A3 rotulo las fichas del rotulo de HL: 0xFE [dx] baja una fila, 0xFF acaba
+L 0x9EEC pantalla_del_final_5 patrones, texto p06:A173, recuadros y lineas del final
+L 0x9F7C lineas_a21f las lineas verticales de p06:A21F
+L 0x9F82 lineas_a200 las lineas horizontales de p06:A200
+L 0x9F88 cifras_c2b9 las cifras de 0xC2B9 de los dos personajes
+L 0x9FA7 tres_cifras 3 pares de cifras de HL (p00:479C)
+L 0x9FBC marcadores_del_final los numeros de las fichas de los dos personajes
+L 0x9FEF numero_guardando p06:A550 con (HL) + 1 sin tocar registros
+C 0x941C pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
+C 0x942F rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
+C 0x9432 caracteres_del_titulo: los tres RLE de caracteres del titulo (p05:94C3, 950B, 9550) a la VRAM
+C 0x9438 pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
+C 0x9441 rotulo: las fichas del rotulo de HL: 0xFE [dx] baja una fila, 0xFF acaba
+C 0x9444 pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
+C 0x9447 apunta a el personaje que se lleva (0 o 1)
+C 0x9456 apunta a bufer de fichas decodificadas
+C 0x9459 rle_guardando_hl: p00:5578 sin tocar HL
+C 0x9462 caracteres_guardando_hl: p00:4CBF sin tocar HL
+C 0x9468 rle_guardando_hl: p00:5578 sin tocar HL
+C 0x9471 caracteres_guardando_hl: p00:4CBF sin tocar HL
+C 0x9477 rle_guardando_hl: p00:5578 sin tocar HL
+C 0x9480 caracteres: B caracteres de 1 bit de HL en (D, E) de la pagina 1 con el color C
+C 0x94A0 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
+C 0x94BC avanza_ocho: D + 8, y E + 8 si D da la vuelta
+C 0x966B lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
+C 0x9689 lee la ruina (0-4)
+C 0x968F palabra_a: HL = la palabra A de la tabla HL
+C 0x969E ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
+C 0x96BB lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
+C 0x96C4 lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
+C 0x96CA rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
+C 0x96EA pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
+C 0x96F7 apunta a los metabloques (16 fichas cada uno)
+C 0x96FA rle: RLE de DE a HL: 0 acaba, n < 0x80 repite el siguiente, si no copia n & 0x7F
+C 0x96FD apunta a los metabloques (16 fichas cada uno)
+C 0x970A ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
+C 0x9721 pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
+C 0x9725 guarda la cuenta de cuadros
+C 0x9730 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0x9733 pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
+C 0x974F pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
+C 0x9762 hl_mas_a: HL = HL + A
+C 0x9765 apunta a los atributos de los sprites en RAM
+C 0x976F apunta a los colores de los sprites en RAM (16 por sprite)
+C 0x977C atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0x97A2 hl_mas_a: HL = HL + A
+C 0x97FC pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
+C 0x980C apunta a los atributos de los sprites en RAM
+C 0x9821 apunta a los colores de los sprites en RAM (16 por sprite)
+C 0x982E atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0x983D borra: pone a cero BC + 1 bytes desde HL
+C 0x9846 borra: pone a cero BC + 1 bytes desde HL
+C 0x9864 hl_mas_a: HL = HL + A
+C 0x9868 de_mas_a: DE = DE + A
+C 0x987A borra_rectangulo: HMMV con 0xFF en la pagina 0
+C 0x9880 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0x9ED6 apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
+C 0x9ED9 pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
+C 0x9EDC lee la ficha del personaje 0 (14 bytes)
+C 0x9EDF guarda el personaje del final
+C 0x9EE3 guarda la opcion del final
+C 0x9EE6 pantalla_del_final_5: patrones, texto p06:A173, recuadros y lineas del final
+C 0x9EE9 pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
+C 0x9EEF rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
+C 0x9EF5 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0x9EF8 lista_a7f8: la lista de fichas p06:A7F8
+C 0x9EFB paleta_b351: la paleta p06:B351
+C 0x9F04 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F0B rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F14 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F19 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F22 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F27 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F30 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F39 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F42 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
+C 0x9F45 cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
+C 0x9F4B marcadores_del_final: los numeros de las fichas de los dos personajes
+C 0x9F4E lineas_a200: las lineas horizontales de p06:A200
+C 0x9F51 lineas_a21f: las lineas verticales de p06:A21F
+C 0x9F5B apunta a la ficha del personaje 0 (14 bytes)
+C 0x9F64 de_mas_a: DE = DE + A
+C 0x9F70 hl_mas_a: HL = HL + A
+C 0x9F75 lee las monedas (16 bits) y el byte siguiente (16 bits)
+C 0x9F7F lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
+C 0x9F85 lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
+C 0x9F95 tres_cifras: 3 pares de cifras de HL (p00:479C)
+C 0x9F9D hl_mas_a: HL = HL + A
+C 0x9FCC numero_guardando: p06:A550 con (HL) + 1 sin tocar registros
+C 0x9FD4 numero_guardando: p06:A550 con (HL) + 1 sin tocar registros
+C 0x9FE7 numero_guardando: p06:A550 con (HL) + 1 sin tocar registros
+C 0x9FFB lee las teclas especiales
+# --- fin de las anotaciones de anota.py ---

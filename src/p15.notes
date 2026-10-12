@@ -520,3 +520,17 @@ F 0xBD96 16
 D 0xBF16 0xC000 relleno_ff  234 bytes a 0xFF hasta el final del banco: relleno; lo leen nadie (234 bytes)
 F 0xBF16 16
 # --- fin de los bloques de bloques.py ---
+
+
+# --- A MANO: comentarios, nombres y bloques ---
+C 0xBEC7 el metabloque: sus 16 fichas en 0xE400 + n * 16
+C 0xBED5 B = 0x1C: de una fila de 4 a la siguiente del mapa (32 - 4)
+C 0xBED9 las 4 filas de 4 fichas al mapa de 0xD200
+C 0xBF03 el siguiente metabloque, 4 casillas a la derecha
+C 0xBF0B la siguiente fila de metabloques: 0x60 mas (3 filas de 32)
+C 0xBF10 6 filas
+
+# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+C 0xBEBF apunta a el mapa de 32 x 24 fichas de la pantalla
+C 0xBECA apunta a los metabloques (16 fichas cada uno)
+# --- fin de las anotaciones de anota.py ---

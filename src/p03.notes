@@ -201,15 +201,15 @@ L 0xBE4C dibujo_8800 copia 16 x 16 de (0x88, 0) a la posicion del actor con TIMP
 L 0xBFE0 tabla_por_estado HL = p03:BFF1[byte 6 del personaje]
 C 0xA000 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 C 0xA005 choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
-C 0xA008 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xA008 invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xA00B lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
-C 0xA010 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xA010 invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xA014 lee la velocidad Y del actor (alta)
 C 0xA01E choque_7: p02:9D09 con D = 7
-C 0xA021 sonido_08: el sonido 8 (p02:8B0D)
+C 0xA021 invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 C 0xA024 frena_caida: si la velocidad Y esta entre 6 y 0x50: 0x600 y sin aceleracion
 C 0xA027 choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
-C 0xA02A sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xA02A invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xA030 fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 C 0xA033 lee la velocidad Y del actor (alta)
 C 0xA03B choque_7: p02:9D09 con D = 7
@@ -679,9 +679,9 @@ C 0xAD8B lee la velocidad Y del actor (alta)
 C 0xAD92 mira_alrededor: las casillas alrededor del actor segun las direcciones de A (p01:704C)
 C 0xAD9E lee la velocidad Y del actor (alta)
 C 0xADA1 choque_por_sentido: la casilla a D (o -D, segun la velocidad X) y E del actor (p02:8BB7)
-C 0xADA4 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xADA4 invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xADAB choque_por_sentido: la casilla a D (o -D, segun la velocidad X) y E del actor (p02:8BB7)
-C 0xADAE sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xADAE invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xADB2 alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
 C 0xADB5 para_actor: velocidades a cero
 C 0xADB8 lee la X del actor
@@ -725,11 +725,11 @@ C 0xAEA2 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina ori
 C 0xAEA5 sube la Y del actor
 C 0xAEA9 lee la Y del actor
 C 0xAEAC le suma la velocidad Y del actor (alta)
-C 0xAEB4 sonido_08: el sonido 8 (p02:8B0D)
+C 0xAEB4 invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 C 0xAEB7 velocidad_al_azar: H = 1 o 2 al azar, negativo al azar
 C 0xAEBA lee la velocidad X del actor (alta)
 C 0xAEC1 velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
-C 0xAEC6 sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xAEC6 invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xAED2 crea_actor_aqui: crea el actor C en la posicion del actor IX
 C 0xAED5 vida_por_ruina: la vida del actor + ruina * 16, y (ix+0x1A) igual
 C 0xAED8 el fotograma del actor (p02:8A42) = 0x49
@@ -757,7 +757,7 @@ C 0xAF54 lee la X del actor
 C 0xAF57 lee la Y del actor
 C 0xAF62 crea_actor_0: p02:8615 con B = 0
 C 0xAF6A choque_fc: p02:9CCC con E = 0xFC
-C 0xAF6D sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xAF6D invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xAF70 lee la Y del actor
 C 0xAF7B alterna_b: (ix+0x18) + 1; con (ix+0x18) & C, B + 1
 C 0xAF7E si el actor se mueve (p02:8367) = 0x00
@@ -767,7 +767,7 @@ C 0xAF99 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
 C 0xAF9C compara_x: compara la X del personaje con la del actor
 C 0xAF9F la velocidad X del actor (alta) = 0x01
 C 0xAFA4 la velocidad X del actor (alta) = 0xFF
-C 0xAFA9 sonido_08: el sonido 8 (p02:8B0D)
+C 0xAFA9 invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 C 0xAFAC si el actor acelera (p02:8393) = 0x01
 C 0xAFB3 pon_aceleracion_y: (ix+0x0C, 0x0D) = HL
 C 0xAFB6 velocidad_x_l: (ix+9, 0x0A) = L (H = 0)
@@ -785,7 +785,7 @@ C 0xB005 azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al az
 C 0xB00C velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 C 0xB012 pon_velocidad_y: (ix+7, 8) = HL
 C 0xB015 azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
-C 0xB01C sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xB01C invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xB022 pon_aceleracion_y: (ix+0x0C, 0x0D) = HL
 C 0xB025 vida_por_ruina: la vida del actor + ruina * 16, y (ix+0x1A) igual
 C 0xB028 lee la Y del actor
@@ -925,11 +925,11 @@ C 0xB3EA sonido_43_y_fotograma: cada 16 cuadros el sonido 0x43; el fotograma B o
 C 0xB3ED cerca_en_x_8: acarreo y velocidad X = L si el personaje esta a menos de 8 en X
 C 0xB3F2 compara_x: compara la X del personaje con la del actor
 C 0xB3F8 velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
-C 0xB3FC sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xB3FC invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xB3FF cerca_en_y_8: acarreo y velocidad Y = L si el personaje esta a menos de 8 en Y
 C 0xB404 compara_y: compara la Y del personaje con la del actor
 C 0xB40A velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
-C 0xB40E sonido_08: el sonido 8 (p02:8B0D)
+C 0xB40E invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 C 0xB411 cerca_en_y_8: acarreo y velocidad Y = L si el personaje esta a menos de 8 en Y
 C 0xB415 cerca_en_x_8: acarreo y velocidad X = L si el personaje esta a menos de 8 en X
 C 0xB419 sube el paso del actor
@@ -1193,7 +1193,7 @@ C 0xBB91 le suma la X del actor
 C 0xBB95 lee la Y del actor
 C 0xBB9C compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 C 0xBBA6 compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
-C 0xBBAA sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xBBAA invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xBBB2 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0xBBB7 lee la X del actor
 C 0xBBBE lee la Y del actor
@@ -1218,8 +1218,8 @@ C 0xBC06 compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es 
 C 0xBC1B lee la vida del actor (p01:721A)
 C 0xBC21 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xBC25 la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x48
-C 0xBC29 sonido_0a: el sonido 0x0A (p02:8B0D)
-C 0xBC2C sonido_08: el sonido 8 (p02:8B0D)
+C 0xBC29 invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
+C 0xBC2C invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 C 0xBC2F la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x1E
 C 0xBC33 sube el paso del actor
 C 0xBC36 velocidad_y_l: (ix+7, 8) = L (H = 0)
@@ -1238,7 +1238,7 @@ C 0xBC73 pon_velocidad_y: (ix+7, 8) = HL
 C 0xBC7A pon_velocidad_x: (ix+9, 0x0A) = HL
 C 0xBC81 pon_velocidad_x: (ix+9, 0x0A) = HL
 C 0xBC86 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
-C 0xBC8A sonido_0a: el sonido 0x0A (p02:8B0D)
+C 0xBC8A invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 C 0xBC98 guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xBC9C sube el paso del actor
 C 0xBC9F sube si el actor se mueve (p02:8367)

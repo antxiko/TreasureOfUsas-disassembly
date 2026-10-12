@@ -19,10 +19,10 @@ L_A000:
 	ret			;a004
 choca_o_cuenta:		; el sonido 0x0A si choca de lado o si (ix+0x11) & 15 es cero
 	call 09cc8h		;a005   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
-	jp nz,08b03h		;a008   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	jp nz,08b03h		;a008   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld a,(ix+011h)		;a00b   ; lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	and 00fh		;a00e
-	jp z,08b03h		;a010   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	jp z,08b03h		;a010   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ret			;a013
 L_A014:
 	ld a,(ix+008h)		;a014   ; lee la velocidad Y del actor (alta)
@@ -31,11 +31,11 @@ L_A014:
 	add a,0f0h		;a01b
 	ld e,a			;a01d
 	call 09d07h		;a01e   ; choque_7: p02:9D09 con D = 7
-	call nz,08affh		;a021   ; sonido_08: el sonido 8 (p02:8B0D)
+	call nz,08affh		;a021   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 L_A024:
 	call frena_caida		;a024   ; frena_caida: si la velocidad Y esta entre 6 y 0x50: 0x600 y sin aceleracion
 	call 09cc8h		;a027   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
-	call nz,08b03h		;a02a   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	call nz,08b03h		;a02a   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld de,05254h		;a02d
 	call 09b8dh		;a030   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 	ld a,(ix+008h)		;a033   ; lee la velocidad Y del actor (alta)
@@ -1844,11 +1844,11 @@ L_AD9C:
 	ld d,008h		;ad9c
 	ld e,(ix+008h)		;ad9e   ; lee la velocidad Y del actor (alta)
 	call 09ccch		;ada1   ; choque_por_sentido: la casilla a D (o -D, segun la velocidad X) y E del actor (p02:8BB7)
-	jp nz,08b03h		;ada4   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	jp nz,08b03h		;ada4   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld d,008h		;ada7
 	ld e,000h		;ada9
 	call 09ccch		;adab   ; choque_por_sentido: la casilla a D (o -D, segun la velocidad X) y E del actor (p02:8BB7)
-	jp nz,08b03h		;adae   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	jp nz,08b03h		;adae   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ret			;adb1
 L_ADB2:
 	call alinea_y		;adb2   ; alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
@@ -1978,7 +1978,7 @@ rebota_arriba:		; si se sale por arriba: rebota con velocidad al azar y sonido 0
 	add a,02ch		;aeaf
 	cp 054h		;aeb1
 	ret nc			;aeb3
-	call 08affh		;aeb4   ; sonido_08: el sonido 8 (p02:8B0D)
+	call 08affh		;aeb4   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 	call velocidad_al_azar		;aeb7   ; velocidad_al_azar: H = 1 o 2 al azar, negativo al azar
 	ld a,(ix+00ah)		;aeba   ; lee la velocidad X del actor (alta)
 	xor h			;aebd
@@ -1987,7 +1987,7 @@ rebota_arriba:		; si se sale por arriba: rebota con velocidad al azar y sonido 0
 	call 08b8bh		;aec1   ; velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 	pop af			;aec4
 	ret z			;aec5
-	jp 08b03h		;aec6   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	jp 08b03h		;aec6   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 crea_27_cada:		; (ix+0x1F) - 1; a cero, A y crea el actor 0x27
 	dec (ix+01fh)		;aec9
 	ret nz			;aecc
@@ -2058,7 +2058,7 @@ L_AF38:
 L_AF68:
 	ld d,00ch		;af68
 	call 09ccah		;af6a   ; choque_fc: p02:9CCC con E = 0xFC
-	call nz,08b03h		;af6d   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	call nz,08b03h		;af6d   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld a,(ix+003h)		;af70   ; lee la Y del actor
 	cp 034h		;af73
 	jr c,L_AFA9		;af75
@@ -2082,7 +2082,7 @@ L_AF8C:
 	ld (ix+00ah),0ffh		;afa4   ; la velocidad X del actor (alta) = 0xFF
 	ret			;afa8
 L_AFA9:
-	call 08affh		;afa9   ; sonido_08: el sonido 8 (p02:8B0D)
+	call 08affh		;afa9   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 	ld (ix+00bh),001h		;afac   ; si el actor acelera (p02:8393) = 0x01
 	ld hl,00040h		;afb0
 	call 08b9bh		;afb3   ; pon_aceleracion_y: (ix+0x0C, 0x0D) = HL
@@ -2136,7 +2136,7 @@ L_B005:
 	call 08b4fh		;b015   ; azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
 	bit 1,a		;b018
 	jr z,L_B01F		;b01a
-	call 08b03h		;b01c   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	call 08b03h		;b01c   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 L_B01F:
 	ld hl,00080h		;b01f
 	jp 08b9bh		;b022   ; pon_aceleracion_y: (ix+0x0C, 0x0D) = HL
@@ -2708,7 +2708,7 @@ L_B3E2:
 	push af			;b3f7
 	call 08b8bh		;b3f8   ; velocidad_x_h: (ix+9, 0x0A) = H * 256 (L = 0)
 	pop af			;b3fb
-	call c,08b03h		;b3fc   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	call c,08b03h		;b3fc   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 L_B3FF:
 	call cerca_en_y_8		;b3ff   ; cerca_en_y_8: acarreo y velocidad Y = L si el personaje esta a menos de 8 en Y
 	jr c,L_B411		;b402
@@ -2717,7 +2717,7 @@ L_B3FF:
 	push af			;b409
 	call 08b80h		;b40a   ; velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
 	pop af			;b40d
-	call c,08affh		;b40e   ; sonido_08: el sonido 8 (p02:8B0D)
+	call c,08affh		;b40e   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 L_B411:
 	call cerca_en_y_8		;b411   ; cerca_en_y_8: acarreo y velocidad Y = L si el personaje esta a menos de 8 en Y
 	ret nc			;b414
@@ -3841,7 +3841,7 @@ L_BB91:
 	call 0704ch		;bba6   ; compara_ficha: acarreo si la ficha de (D, E + 4) (p01:7176) menos 1 es menor que 0xC222
 	ret nc			;bba9
 L_BBAA:
-	call 08b03h		;bbaa   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	call 08b03h		;bbaa   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	inc (ix+016h)		;bbad
 L_BBB0:
 	ld a,01fh		;bbb0
@@ -3899,8 +3899,8 @@ L_BC19:
 	dec (ix+011h)		;bc21   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;bc24
 	ld (ix+011h),048h		;bc25   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x48
-	call 08b03h		;bc29   ; sonido_0a: el sonido 0x0A (p02:8B0D)
-	jp 08affh		;bc2c   ; sonido_08: el sonido 8 (p02:8B0D)
+	call 08b03h		;bc29   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
+	jp 08affh		;bc2c   ; invierte_velocidad_y: la velocidad Y del actor, al reves (p02:8B0D con A = 8)
 L_BC2F:
 	ld (ix+011h),01eh		;bc2f   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x1E
 	inc (ix+001h)		;bc33   ; sube el paso del actor
@@ -3942,7 +3942,7 @@ L_BC84:
 	djnz L_BC9C		;bc84
 	dec (ix+011h)		;bc86   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;bc89
-	call 08b03h		;bc8a   ; sonido_0a: el sonido 0x0A (p02:8B0D)
+	call 08b03h		;bc8a   ; invierte_velocidad_x: la velocidad X del actor, al reves (p02:8B0D con A = 0x0A): rebota
 	ld a,(ix+017h)		;bc8d
 	xor 001h		;bc90
 	ld (ix+017h),a		;bc92

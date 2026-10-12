@@ -2090,7 +2090,7 @@ L_6EDF:
 	dec (hl)			;6ee1
 	jp nz,L_6ABD		;6ee2
 	call 04a44h		;6ee5   ; esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
-	call 04a07h		;6ee8   ; apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
+	call 04a07h		;6ee8   ; apaga_y_borra_212: pantalla apagada y las 0xD4 (212) lineas de la pagina 0 a cero (p00:4A0A)
 	ld a,(0002bh)		;6eeb   ; con la BIOS no japonesa, una espera de 0x100 y 0xC21F + 8
 	and 00fh		;6eee
 	jp z,L_66EF		;6ef0
@@ -2135,7 +2135,7 @@ L_6F3F:
 	djnz L_6F4B		;6f3f
 	dec (hl)			;6f41
 	jp nz,L_6ABD		;6f42
-	call 04a07h		;6f45   ; apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
+	call 04a07h		;6f45   ; apaga_y_borra_212: pantalla apagada y las 0xD4 (212) lineas de la pagina 0 a cero (p00:4A0A)
 	jp L_6C4F		;6f48
 L_6F4B:
 	djnz L_6F69		;6f4b
@@ -2157,7 +2157,7 @@ L_6F69:
 	inc hl			;6f72
 	dec (hl)			;6f73
 	jp nz,L_6ABD		;6f74
-	call 04a07h		;6f77   ; apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
+	call 04a07h		;6f77   ; apaga_y_borra_212: pantalla apagada y las 0xD4 (212) lineas de la pagina 0 a cero (p00:4A0A)
 	jp L_6DE1		;6f7a
 L_6F7D:
 	djnz L_6F92		;6f7d

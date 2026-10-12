@@ -38,7 +38,6 @@ D 0x4010 0x401D segunda_cabecera  "CD", la palabra 0x5307 (bytes 07 53: el numer
 D 0x401D 0x403D relleno_cabecera  32 bytes a 0xFF hasta p00:403D, la interrupcion
 D 0x49CD 0x49CE ret_suelto  un `ret` (0xC9) detras del `ret` de p00:49CC: nada salta aqui
 D 0x57E4 0x57E6 ceros_p57E4  dos bytes a cero detras de la plantilla p00:57BC (40 bytes): ninguna instruccion los lee
-
 C 0x45F7 0xC205 bit 0: hay un cartucho 07 49 en otra ranura (p06:B78D)
 C 0x45FC con el, se empieza con 0x100 en 0xC259
 C 0x46D1 la puerta C de la antesala: su registro de 8 bytes en 0xE328
@@ -147,7 +146,6 @@ C 0x4EDE el bit de D (plano 1) y el de E (plano 0): el indice de 2 bits
 C 0x4EE9 su color de 0xDF00 en el nibble alto
 C 0x4EF0 el segundo punto con los dos bits siguientes
 C 0x4EFD los dos puntos al bufer
-
 C 0x47C5 el recuadro de las cifras: rectangulo de 256 x 20 en (0, 0) color 11
 C 0x47D0 y tres lineas verticales de 0x14 que lo parten
 C 0x4F39 una fila de 3 bits: tres bytes, uno por plano
@@ -206,6 +204,328 @@ C 0x5C80 B al bufer; con 0xC26A, OR con lo que haya
 C 0x5F08 DE = HL + 1 y ldir: copia el cero hacia delante
 C 0x5F59 6 copias de 16 x 8 de la pagina 1 a la 1 (A = 5)
 C 0x5F67 la siguiente, 8 lineas mas abajo
+C 0x403D sin interrupciones mientras se mira si ya se esta dentro
+C 0x4041 si ya se estaba dentro de la interrupcion...
+C 0x4043 (y se marca que se esta dentro)
+C 0x4045 ...no se anida: fuera
+C 0x4049 los bancos 13-14-15: el motor de sonido en 0x6000
+C 0x404E 14 en 0x8000
+C 0x4052 15 en 0xA000
+C 0x4059 el motor puede haber abierto las interrupciones
+C 0x406C fuera de la interrupcion
+C 0x4073 si el cuadro del juego anterior no ha acabado...
+C 0x4075 ...no se empieza otro
+C 0x4078 marca que se esta dentro del cuadro del juego
+C 0x4079 con las interrupciones abiertas: la musica sigue aunque el cuadro tarde
+C 0x407D cuadro acabado
+C 0x4081 vuelve a la BIOS con las interrupciones abiertas
+C 0x4083 L + A...
+C 0x4085 sin acarreo, H no cambia
+C 0x4086 con acarreo, H + 1
+C 0x4088 E + A...
+C 0x408A sin acarreo, D no cambia
+C 0x408B con acarreo, D + 1
+C 0x408D HL = la tabla, pegada detras del `call`
+C 0x408E dos bytes por entrada
+C 0x4092 la palabra A de la tabla...
+C 0x4095 ...en HL
+C 0x4096 y salta: el `ret` de la rutina vuelve a quien llamo al despachador
+C 0x4097 sin interrupciones durante el arranque
+C 0x4098 la pila baja desde 0xF0F0, bajo la copia de los bancos (0xF0F1)
+C 0x409E los bits 2-3 de RSLREG: el slot primario de la pagina 1 (0x4000-0x7FFF)
+C 0x40A5 EXPTBL: si el slot primario esta expandido (bit 7)...
+C 0x40AA ...se marca en el bit 7 del slot
+C 0x40AE SLTTBL (0xFCC5 + slot): el secundario
+C 0x40B2 SLTTBL del slot: el secundario de la pagina 1 en sus bits 2-3
+C 0x40B6 ENASLT: ese slot tambien en la pagina 2 (0x8000-0xBFFF)
+C 0x40C1 0x30F0 bytes a cero: 0xC000-0xF0EF
+C 0x40C4 el primero a cero; ldir lo arrastra
+C 0x40CC H.TIMI (0xFD9F) = jp interrupcion: el juego corre en la interrupcion
+C 0x40D7 CLIKSW (0xF3DB) = 0: sin el clic de las teclas
+C 0x40DE y aqui se queda: todo lo demas va en la interrupcion
+C 0x40E3 una vuelta mas
+C 0x40E8 el estado (C) y el paso (B)
+C 0x40E9 en los estados 0-2 (titulo, demo)...
+C 0x40ED ...al volver se pasa por p00:461D (empezar la partida con las teclas)
+C 0x4110 estado 0 (el arranque); B = el paso: paso 1
+C 0x411B el rotulo ya se ha descubierto (0xC242)?
+C 0x4123 sin espera
+C 0x4127 paso 2
+C 0x412C la espera...
+C 0x413D sin espera
+C 0x4141 paso 3: el fundido del titulo
+C 0x414F el titulo ya esta (0xCA00)?
+C 0x4154 lo vuelve a borrar y sigue con el prologo
+C 0x415C sin espera
+C 0x415F paso 4: el prologo
+C 0x416D el prologo ha acabado (0xCA01)?
+C 0x4170 se borra y al estado siguiente con la espera de A = 0
+C 0x4181 paso 0: el rotulo pintado, al paso 1
+C 0x4186 estado 1: la espera...
+C 0x4188 ...y al estado siguiente
+C 0x418B estado 2 (la demo): paso 1
+C 0x4193 mientras la fase siga en marcha, la demo sigue
+C 0x4195 al acabar, al estado 0
+C 0x4199 0x20 cuadros de espera
+C 0x41A7 0x20 cuadros de espera
+C 0x41AF el paso siguiente
+C 0x41B1 estado 3 (PLAY START): paso 1
+C 0x41B6 la espera...
+C 0x41B7 ...acabada: el paso siguiente
+C 0x41B9 cada 4 cuadros...
+C 0x41BB ...el texto PLAY START aparece y desaparece
+C 0x41C4 paso 2: la partida nueva
+C 0x41D8 y al estado siguiente
+C 0x41DB paso 0: la musica 0x8A...
+C 0x41E0 ...y 0x50 cuadros de espera
+C 0x41E4 estado 4 (las escenas), sin tocar B (el paso)
+C 0x41E9 paso 1: el guion de la escena
+C 0x41F1 el acarreo del guion...
+C 0x41F6 sin acarreo, la escena sigue
+C 0x41FA la escena siguiente
+C 0x420A en la ruina 0, el paso siguiente sin mas
+C 0x421A el paso siguiente
+C 0x421C paso 2
+C 0x4221 en la ruina 0...
+C 0x4222 ...directamente a la antesala
+C 0x4233 el texto a maquina no ha acabado: sigue
+C 0x4238 sin tecla nueva, sigue
+C 0x424C la musica 0x89 (la antesala)
+C 0x4254 paso 3: en la antesala
+C 0x4259 con la tecla especial 0 (F1)...
+C 0x425A ...la pantalla INFORMATION (p00:432D)
+C 0x4260 sin acarreo, sigue en la antesala
+C 0x4270 paso 4: ante la puerta
+C 0x427E sin respuesta (0xC22A), espera
+C 0x4280 1: si
+C 0x4281 a entrar
+C 0x428F 2 (no): vuelve al paso anterior
+C 0x4294 en las pantallas 0-1 de la antesala...
+C 0x4296 (la 2 es la del templo)
+C 0x429B si viven los dos...
+C 0x42A0 ...hay que elegir (paso 6)
+C 0x42AB 0x78 cuadros de espera
+C 0x42B0 el paso 6: elegir personaje
+C 0x42B5 y los personajes a cero
+C 0x42B7 paso 5
+C 0x42BC con puertas abiertas...
+C 0x42BD ...el mensaje sin mas
+C 0x42C2 si viven los dos...
+C 0x42C6 ...hay que elegir
+C 0x42C7 (paso 6)
+C 0x42CC una tecla acaba la espera
+C 0x42D2 o la cuenta
+C 0x42D7 sin puertas abiertas...
+C 0x42D8 ...el mensaje de la eleccion
+C 0x42E3 al paso 3 (la antesala)
+C 0x42F2 0x78 cuadros de espera
+C 0x42F7 paso 6: elegir personaje
+C 0x42FC una tecla...
+C 0x42FD ...elige
+C 0x4302 la espera...
+C 0x4303 ...sin acabar, nada
+C 0x4316 paso 7: la captura del companero
+C 0x4321 mientras 0xC23B este a cero, espera
+C 0x4326 sin texto a maquina en marcha
+C 0x4339 al estado 0x0D: INFORMATION desde la antesala
+C 0x433E paso 8: el texto de la antesala
+C 0x4346 hasta que acabe el texto a maquina
+C 0x434B paso 9: a la fase
+C 0x435C la fase en marcha
+C 0x435E al estado siguiente con 0x20 cuadros de espera
+C 0x4366 el estado siguiente...
+C 0x4367 ...desde su paso 0
+C 0x4381 la escena desde su paso 0
+C 0x438B se acaba la ruina (0xC217)?
+C 0x438F al estado 0x0A
+C 0x4394 capturado el companero (0xC216)?
+C 0x4398 al estado 9
+C 0x43A9 se sale de la pantalla (0xC215)?
+C 0x43AA al estado 8: la pantalla vecina
+C 0x43B2 con la pausa...
+C 0x43B3 ...la pantalla INFORMATION
+C 0x43B8 la fase ha acabado...
+C 0x43B9 ...al estado siguiente
+C 0x43C0 al estado 0x0B: INFORMATION en la pausa
+C 0x43C5 estado 6 (al morir): paso 1, la captura en la antesala
+C 0x43CD el acarreo de p06:BBFB: el mensaje ha acabado
+C 0x43D2 si no, sigue
+C 0x43D6 0xC208 = pantalla * 2 + 1...
+C 0x43DC ...+ 1 si la X de la antesala pasa de 0x7F: la puerta
+C 0x43E1 guarda la puerta del companero capturado
+C 0x43E4 a la antesala (estado 4, paso 3)
+C 0x43E7 paso 0
+C 0x43EB sin puerta guardada
+C 0x43F1 si no vive ninguno, GAME OVER
+C 0x4402 la musica 0x89 (la antesala)
+C 0x440A la musica 0x8E (GAME OVER)...
+C 0x440F ...y al estado 7
+C 0x4419 los dos a cero: Z...
+C 0x441A ...sin acarreo
+C 0x441B alguno vive: acarreo
+C 0x441D estado 7 (GAME OVER), sin tocar B (el paso)
+C 0x4422 paso 1
+C 0x4427 con el cartucho 07 51 en otra ranura...
+C 0x442E ...y la tecla F5 (0xC00E bit 4)...
+C 0x4432 ...se sigue (0xC20C = 1)
+C 0x4437 F5 CONTINUE sin color: se borra
+C 0x4440 en cuadros impares...
+C 0x4441 ...nada
+C 0x4445 la espera...
+C 0x4446 ...sin acabar, sigue
+C 0x444A sin el cartucho 07 51...
+C 0x444C ...se acaba la partida
+C 0x444E con F5 pulsado...
+C 0x4452 ...se sigue
+C 0x4457 fuera de partida: el bit 6 a cero
+C 0x4461 GAME OVER
+C 0x446A con el cartucho 07 51...
+C 0x446C ...tambien F5 CONTINUE
+C 0x4472 0xB4 cuadros de espera
+C 0x447B sin seguir pendiente
+C 0x447E a la antesala
+C 0x4493 se sale de la fase?
+C 0x4495 no: de vuelta a la fase (estado 5)
+C 0x4498 si: se borra...
+C 0x449A ...y estado 4, paso 2: la antesala
+C 0x44A0 pinta la antesala con la musica
+C 0x44A3 estado 9 (capturado el companero), sin tocar B
+C 0x44A8 paso 1
+C 0x44B3 mientras 0xC31C no este a cero, sigue
+C 0x44B8 estado 4, paso 3: la antesala
+C 0x44D5 sin captura pendiente
+C 0x44D8 la musica 0x89 (la antesala)
+C 0x44E0 estado 0x0A (acaba la ruina), sin tocar B
+C 0x44E5 paso 1
+C 0x44EA con acarreo, sigue
+C 0x44EC sin fin de ruina pendiente
+C 0x44FB la ruina siguiente
+C 0x4501 la ruina nueva
+C 0x4507 hasta la 4...
+C 0x4509 ...al estado 4: las escenas
+C 0x4511 en la ruina 5 (el final), la escena desde su paso 0
+C 0x451E paso 2
+C 0x4526 el acarreo del guion de la escena
+C 0x452B si no, sigue
+C 0x452F antes de la ruina 5...
+C 0x4531 ...al estado 4
+C 0x4536 tras la ruina 5: se acaba la partida
+C 0x4539 paso 0
+C 0x454C la musica de la ruina: 0x8B hasta la 3...
+C 0x4552 ...0x8C desde la 4
+C 0x4566 los estados de p00:4575 (dos por ruina)
+C 0x456C el del personaje 0...
+C 0x4570 ...y el del 1
+C 0x458E con la tecla especial 0 (F1)...
+C 0x458F ...se vuelve; si no, sigue
+C 0x4590 se quita la pausa
+C 0x4597 el sonido especial 0xFE
+C 0x459F al estado 5: la fase
+C 0x45A4 estado 0x0C (la clave): paso 0...
+C 0x45A5 ...o el 1
+C 0x45BC sin clave tecleada (0xE379), nada
+C 0x45C1 si la clave no vale (0xE37A)...
+C 0x45C5 ...se acaba
+C 0x45CB la ruina de la clave
+C 0x45D8 a 0xC21D
+C 0x45EE estado 4, paso 2: la antesala de esa ruina
+C 0x45FA el bit 0: el cartucho 07 49
+C 0x45FB sin el, nada
+C 0x4612 con la tecla especial 0 (F1)...
+C 0x4613 ...se vuelve a la antesala
+C 0x461A estado 4, paso 3
+C 0x4620 las teclas nuevas de este cuadro en 0xC200
+C 0x4626 sin tecla nueva, nada
+C 0x4628 una tecla corta la espera
+C 0x4630 en el estado 1 (el titulo)...
+C 0x4633 ...con las teclas 0x10 o 0x20:
+C 0x4637 en partida (0xC002 = 0x40)
+C 0x463D 0x10 (espacio): al estado 3, PLAY START
+C 0x4643 si no, al estado 0x0C: la clave
+C 0x4645 el estado...
+C 0x4647 ...desde su paso 0
+C 0x464A en los otros estados (0 y 2): el titulo sin esperas
+C 0x464C para la musica
+C 0x465D ©KONAMI 1987 y PUSH SPACE KEY
+C 0x4666 0x2DFF bytes a cero desde 0xC202
+C 0x467D la fase 1 y su pantalla 1
+C 0x4682 VIT y las letras del marcador
+C 0x468B el dibujo de 16 x 16 de (0x68, 0) en (3, 0xC4)
+C 0x46A0 el recuadro del marcador: (0, 0) a (0x14, 0) con el color 0x0A
+C 0x46B1 el recuadro del plano de la antesala, color 0x0D
+C 0x46BA y dos lineas verticales de 0x10 que lo parten
+C 0x46CB las 5 puertas, desde la X 0x50
+C 0x46F0 a la altura 0x0C
+C 0x4702 la puerta siguiente
+C 0x4705 (lo mismo que p00:4713)
+C 0x471F la marca del personaje: X / 8 + 0x50...
+C 0x472B ...+ la pantalla de la antesala * 0x20...
+C 0x4735 ...- 1
+C 0x4736 en la linea 0x0D, de 2 x 4
+C 0x4804 la cifra alta (nibble alto)...
+C 0x480B ...* 2: sus dos mitades en la tabla DE
+C 0x480F la mitad de arriba
+C 0x481D la cifra siguiente 8 puntos a la derecha
+C 0x4821 la cifra baja (nibble bajo)
+C 0x4824 * 2: sus dos mitades
+C 0x4828 la mitad de arriba
+C 0x4830 la mitad de abajo, 8 lineas mas abajo
+C 0x4834 el segundo byte de la cifra
+C 0x483E 8 x 8
+C 0x4841 pagina 1 a pagina 0
+C 0x485F el estado del personaje (0-3) en p00:4891: cuantas marcas llenas
+C 0x4866 4 marcas
+C 0x4868 en la pagina 1, desde (0, 0xC0)...
+C 0x486B ...a (4, 0x7A) de la pagina 0
+C 0x4895 la direccion de lectura de VRAM
+C 0x489C el puerto de datos del VDP (0x0006)
+C 0x48A1 BC bytes de la VRAM a (DE)
+C 0x48A3 A vueltas de 256
+C 0x48AA sin resto, A = B vueltas justas
+C 0x48AE con resto, una vuelta mas
+C 0x48B8 el puerto de datos del VDP (0x0007)
+C 0x48BD BC bytes de HL a la VRAM
+C 0x48BF A vueltas de 256
+C 0x48C8 D = los bytes de la ultima vuelta
+C 0x48CA con resto, una vuelta mas
+C 0x48CE el puerto de datos del VDP
+C 0x48E1 el puerto de datos del VDP
+C 0x48E6 un byte a la VRAM
+C 0x48F5 sin interrupciones mientras se habla con el VDP
+C 0x48F6 a R#14...
+C 0x4914 sin interrupciones mientras se habla con el VDP
+C 0x4915 a R#14...
+C 0x4917 0x8E: R#14
+C 0x491B los 8 bits bajos
+C 0x4927 la direccion de VRAM...
+C 0x492B ...a HL; DE, al RLE
+C 0x492F el puerto de datos del VDP
+C 0x4935 0: acaba
+C 0x4937 B = n
+C 0x4941 B = n & 0x7F bytes
+C 0x4947 el byte que se repite
+C 0x4949 n veces
+C 0x495E DE' (la cuenta de bytes del RLE)...
+C 0x4961 ...a BC
+C 0x4970 BC * 8, la parte alta en B: B = bytes / 32, los sprites
+C 0x4980 C = cuantos sprites
+C 0x4981 32 bytes por sprite
+C 0x4987 el byte con los bits al reves
+C 0x498B el sprite siguiente
+C 0x4996 16 bytes: la columna izquierda con la derecha
+C 0x49B0 DE = HL y los bits de A al reves
+C 0x49B6 el bit bajo de C...
+C 0x49B8 ...entra por abajo en A
+C 0x49BD el RLE de DE (p00:49CE) tal cual a la VRAM HL
+C 0x49C1 DE' = la cuenta de bytes...
+C 0x49C4 ...a BC
+C 0x49D2 DE' cuenta los bytes
+C 0x49D8 0: acaba
+C 0x49E9 los n & 0x7F bytes
+C 0x49EE n bytes mas en la cuenta
+C 0x49F4 el byte que se repite
+C 0x49F6 n veces
+C 0x49FF con C = 0 para p00:4A0F
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x403D interrupcion gancho H.TIMI: la musica con 13-14-15 (p13:6000) y, si no esta ya dentro, el cuadro del juego
@@ -225,7 +545,7 @@ L 0x461D vuelta_de_estado lo que corre tras los estados 0-2 (p00:40ED la deja en
 L 0x4666 borra_partida pone a cero 0xC202-0xEFFF, la ruina 0 y la pantalla 1
 L 0x4682 pinta_marcador el texto de p00:5062, los marcos y las cifras del marcador
 L 0x46A0 marco_del_marcador los rectangulos y lineas del marcador, sus caracteres y el nombre de la ruina
-L 0x4713 copia_9460_antesala copia 0xA0 x 4 de (0x94, 0x60) a (0x0D, 0x30) de la pagina 1 a la 0, y sigue con la X de la antesala
+L 0x4713 plano_de_la_antesala el plano de la antesala del marcador: 0xA0 x 4 de (0x60, 0x94) de la pagina 1 a (0x30, 0x0D), y la marca del personaje segun la pantalla y la X
 L 0x473B rectangulo_color_d p00:4B74 con el color 0x0D
 L 0x4740 nombre_de_la_ruina con 13-14-15: el texto de p15:BE3D[ruina]
 L 0x4752 barra_de_vida la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
@@ -257,7 +577,7 @@ L 0x496C voltea_sprites voltea en horizontal los patrones de 0xD600 (bits al rev
 L 0x49B2 invierte_bits A con sus 8 bits al reves
 L 0x49CE rle_a_d600 RLE de DE a 0xD600: 0 acaba, n < 0x80 repite, si no copia n & 0x7F; DE' = bytes
 L 0x4A04 apaga_y_borra esconde los sprites y borra la pagina 0 con la pantalla apagada
-L 0x4A07 apaga_y_espera pantalla apagada y BC = 0xD4 de espera
+L 0x4A07 apaga_y_borra_212 pantalla apagada y las 0xD4 (212) lineas de la pagina 0 a cero (p00:4A0A)
 L 0x4A12 pantalla_encendida R#1 con el bit 6 (pantalla) y sprites encendidos
 L 0x4A1F pantalla_apagada R#1 sin el bit 6 y sprites apagados (R#8)
 L 0x4A2C apaga_y_borra_todo pantalla apagada, sprites escondidos y la pagina 0 borrada
@@ -754,7 +1074,6 @@ C 0x4614 apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 
 C 0x4617 entra_en_la_antesala: pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
 C 0x461D lee_joystick_y_teclado: A = mando del puerto 1 (PSG 14) con las teclas del cursor y espacio
 C 0x4623 teclas_nuevas: (HL) = las teclas de A; (HL - 1) = las que no estaban antes
-C 0x4628 apunta a la espera del estado, en cuadros
 C 0x462D apunta a el estado del juego
 C 0x4639 guarda las banderas (bit 6: en partida)
 C 0x464E sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
@@ -782,8 +1101,6 @@ C 0x46C8 linea_vertical: LINE (0x70) vertical (ARG = 1) de B puntos en (H, L), c
 C 0x46D8 hl_mas_a: HL = HL + A
 C 0x4710 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 C 0x471C copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
-C 0x471F lee la X en la antesala
-C 0x472B lee la pantalla de la antesala (0-2)
 C 0x473D rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
 C 0x4740 bancos_13_14_15: pone los bancos 13-14-15 y su copia
 C 0x4743 lee la ruina (0-4)
@@ -814,7 +1131,6 @@ C 0x4843 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina ori
 C 0x485C byte_del_personaje: A = el byte B de la ficha del personaje que se lleva (0xC2B0 + 0xC240 * 32)
 C 0x4862 hl_mas_a: HL = HL + A
 C 0x4880 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
-C 0x4895 direccion_vram_lectura: R#14 y la direccion de LECTURA de VRAM de HL
 C 0x4898 cuenta_de_bytes: B y A para un otir de BC bytes
 C 0x48B1 direccion_vram: R#14 y la direccion de ESCRITURA de VRAM de HL
 C 0x48B4 cuenta_de_bytes: B y A para un otir de BC bytes

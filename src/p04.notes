@@ -734,16 +734,16 @@ C 0x6EB9 guarda los atributos de los sprites en RAM y el byte siguiente (16 bits
 C 0x6EC8 hl_mas_a: HL = HL + A
 C 0x6ED0 guarda el patron del sprite 0 en RAM
 C 0x6EE5 esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
-C 0x6EE8 apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
+C 0x6EE8 apaga_y_borra_212: pantalla apagada y las 0xD4 (212) lineas de la pagina 0 a cero (p00:4A0A)
 C 0x6EF9 apunta a el paso de la escena
 C 0x6F0D borra_y_marco: borra el rectangulo y p06:A494
 C 0x6F15 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 C 0x6F2D borra_y_marco: borra el rectangulo y p06:A494
 C 0x6F35 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
-C 0x6F45 apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
+C 0x6F45 apaga_y_borra_212: pantalla apagada y las 0xD4 (212) lineas de la pagina 0 a cero (p00:4A0A)
 C 0x6F57 borra_y_marco: borra el rectangulo y p06:A494
 C 0x6F5D texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
-C 0x6F77 apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
+C 0x6F77 apaga_y_borra_212: pantalla apagada y las 0xD4 (212) lineas de la pagina 0 a cero (p00:4A0A)
 C 0x6F82 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 C 0x6F87 sonido_y_456: el sonido A y los bancos 4-5-6
 C 0x6FA3 baja_c8ea: cada 4 cuadros, 0xC8EA - 2 hasta 0xFE

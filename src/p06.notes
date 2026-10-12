@@ -611,7 +611,7 @@ C 0xB92E pinta_d200: las 32 x 24 fichas de 0xD200 desde la linea 20 (p00:4DB4)
 C 0xB931 compone_puertas: compone en la pagina 1 los marcos y hojas de las puertas
 C 0xB934 puertas_de_la_pantalla: las dos puertas de la pantalla 0xCC10 (p06:B97B)
 C 0xB937 puerta_grande: en la pantalla 2 de la antesala, la puerta grande (p06:B998)
-C 0xB93A copia_9460_antesala: copia 0xA0 x 4 de (0x94, 0x60) a (0x0D, 0x30) de la pagina 1 a la 0, y sigue con la X de la antesala
+C 0xB93A plano_de_la_antesala: el plano de la antesala del marcador: 0xA0 x 4 de (0x60, 0x94) de la pagina 1 a (0x30, 0x0D), y la marca del personaje segun la pantalla y la X
 C 0xB93D pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 C 0xB940 lee la pantalla de la antesala (0-2)
 C 0xB953 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
@@ -715,5 +715,5 @@ C 0xBD3F guarda el cuadro del personaje en la antesala
 C 0xBD48 lee la pantalla de la antesala (0-2)
 C 0xBD5B lee la pantalla de la antesala (0-2)
 C 0xBD7A guarda el cuadro del personaje en la antesala
-C 0xBD7D copia_9460_antesala: copia 0xA0 x 4 de (0x94, 0x60) a (0x0D, 0x30) de la pagina 1 a la 0, y sigue con la X de la antesala
+C 0xBD7D plano_de_la_antesala: el plano de la antesala del marcador: 0xA0 x 4 de (0x60, 0x94) de la pagina 1 a (0x30, 0x0D), y la marca del personaje segun la pantalla y la X
 # --- fin de las anotaciones de anota.py ---

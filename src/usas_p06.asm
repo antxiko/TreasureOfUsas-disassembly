@@ -2517,7 +2517,7 @@ pinta_pantalla_antesala:		; pantalla apagada, sprites escondidos y la pantalla 0
 	call compone_puertas		;b931   ; compone_puertas: compone en la pagina 1 los marcos y hojas de las puertas
 	call puertas_de_la_pantalla		;b934   ; puertas_de_la_pantalla: las dos puertas de la pantalla 0xCC10 (p06:B97B)
 	call puerta_grande		;b937   ; puerta_grande: en la pantalla 2 de la antesala, la puerta grande (p06:B998)
-	call 04713h		;b93a   ; copia_9460_antesala: copia 0xA0 x 4 de (0x94, 0x60) a (0x0D, 0x30) de la pagina 1 a la 0, y sigue con la X de la antesala
+	call 04713h		;b93a   ; plano_de_la_antesala: el plano de la antesala del marcador: 0xA0 x 4 de (0x60, 0x94) de la pagina 1 a (0x30, 0x0D), y la marca del personaje segun la pantalla y la X
 	jp 04a12h		;b93d   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 puerta_grande:		; en la pantalla 2 de la antesala, la puerta grande (p06:B998)
 	ld a,(0cc10h)		;b940   ; lee la pantalla de la antesala (0-2)
@@ -3150,7 +3150,7 @@ cuadro_de_andar_antesala:		; 0xCC15 + 1; el cuadro de andar (0xCC14) de sus bits
 L_BD79:
 	ld a,c			;bd79
 	ld (0cc14h),a		;bd7a   ; guarda el cuadro del personaje en la antesala
-	jp 04713h		;bd7d   ; copia_9460_antesala: copia 0xA0 x 4 de (0x94, 0x60) a (0x0D, 0x30) de la pagina 1 a la 0, y sigue con la X de la antesala
+	jp 04713h		;bd7d   ; plano_de_la_antesala: el plano de la antesala del marcador: 0xA0 x 4 de (0x60, 0x94) de la pagina 1 a (0x30, 0x0D), y la marca del personaje segun la pantalla y la X
 
 ; ----------------------------------------------------------------------
 ; DATOS bloque_BD80: 5 x 5 fichas que p06:B9D8 compone en la pagina 1 (marcos

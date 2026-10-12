@@ -141,7 +141,7 @@ L_80EC:
 L_80FB:
 	call 055d1h		;80fb   ; lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
 	jr L_80A4		;80fe
-L_8100:
+texto_de_la_antesala:		; el texto a maquina de la antesala: si no esta en marcha, el recuadro, los nombres por animo y el texto de la puerta
 	ld a,(0c8a0h)		;8100   ; lee el texto a maquina en marcha
 	and a			;8103
 	jp nz,L_8039		;8104
@@ -285,7 +285,7 @@ L_81F1:
 	ld bc,00202h		;820c
 	call 0ba24h		;820f   ; bloque_de_fichas: B filas de C fichas de HL en (D, E)
 	jp 05464h		;8212   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-L_8215:
+juegos_de_la_sala_5:		; los juegos de sprites 0x28, 0x19 y el de la ruina (p02:822C)
 	ld a,028h		;8215
 	call 055f0h		;8217   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 	ld a,019h		;821a
@@ -309,10 +309,10 @@ DATA_resto_822C:
 ; ======================================================================
 
 
-L_8231:
+juego_30:		; el juego de sprites 0x30 (p00:55F0)
 	ld a,030h		;8231
 	jp 055f0h		;8233   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
-L_8236:
+entra_jefe_y_vuelve:		; p02:823C y vuelve con 1-2-3
 	call entra_jefe		;8236   ; entra_jefe: con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
 	jp 05464h		;8239   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 entra_jefe:		; con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantalla
@@ -380,7 +380,7 @@ paleta_de_jefe:		; con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
 	ld hl,0b781h		;828a
 	call 0543ah		;828d   ; palabra_a: HL = la palabra A de la tabla HL
 	jp 04a9dh		;8290   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
-L_8293:
+cuadro_de_actores:		; el jefe (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
 	call cuadro_de_jefe		;8293   ; cuadro_de_jefe: si no muere el personaje y hay jefe (p02:85B1): sus cuentas y dibujos
 	ld ix,0c400h		;8296   ; apunta a los 8 actores (0x80 bytes cada uno)
 	ld b,008h		;829a
@@ -406,7 +406,7 @@ L_82BD:
 	add ix,de		;82c0
 	djnz L_829C		;82c2
 	ret			;82c4
-L_82C5:
+fotogramas_de_actores:		; el fotograma de los 8 actores de 0xC400, salvo el tipo 0x37 (p02:8A42)
 	ld ix,0c400h		;82c5   ; apunta a los 8 actores (0x80 bytes cada uno)
 	ld b,008h		;82c9
 L_82CB:
@@ -658,7 +658,7 @@ L_8492:
 	xor a			;849a
 	ld (0e30bh),a		;849b
 	call hay_tipo_29		;849e   ; hay_tipo_29: acarreo si ningun actor de 0xC400 es de tipo 0x29
-	jp c,0a70dh		;84a1
+	jp c,0a70dh		;84a1   ; en_objeto_29: borra el actor y lo rehace como objeto de tipo 0x29: 2 piezas, colores 0x0D y 0x4E
 	jp borra_actor		;84a4   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 
 ; ----------------------------------------------------------------------
@@ -699,7 +699,7 @@ marca_pieza:		; 0xCC80 + A = 1
 	ld a,001h		;84da
 	ld (de),a			;84dc
 	ret			;84dd
-L_84DE:
+apunta_al_personaje_80:		; p02:84E0 con A = 0x80
 	ld a,080h		;84de
 apunta_al_personaje:		; con 15: la direccion del actor hacia el personaje (p02:84F1)
 	ld e,(ix+003h)		;84e0   ; lee la Y del actor
@@ -1128,7 +1128,7 @@ pon_pieza:		; el byte D en la pieza E del actor 0xDE83
 	ld (hl),d			;879e
 	pop hl			;879f
 	ret			;87a0
-L_87A1:
+prepara_la_pantalla:		; borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p02:87B6)
 	ld hl,0cc40h		;87a1
 	ld bc,0000fh		;87a4
 	call 05f08h		;87a7   ; borra: pone a cero BC + 1 bytes desde HL
@@ -1228,7 +1228,7 @@ L_8833:
 	inc de			;8839
 	djnz L_8833		;883a
 	ret			;883c
-L_883D:
+cuadro_de_cc40:		; los 4 registros de 0xCC40 y el dibujo del de 0xCC35
 	call recorre_cc40		;883d   ; recorre_cc40: los 4 registros de 0xCC40
 	ld a,(0cc35h)		;8840
 	ld hl,0cc50h		;8843
@@ -1620,7 +1620,7 @@ L_8A85:
 	inc l			;8a9c
 	djnz L_8A85		;8a9d
 	ret			;8a9f
-L_8AA0:
+sprites_de_actores:		; los atributos de las piezas de los 8 actores de 0xC400 (p02:8AB8)
 	ld hl,0c400h		;8aa0   ; apunta a los 8 actores (0x80 bytes cada uno)
 	ld b,008h		;8aa3
 L_8AA5:
@@ -1644,7 +1644,7 @@ sprites_de_piezas:		; los atributos de cada pieza del actor en 0xDE28
 	and a			;8abc
 	ret z			;8abd
 	inc l			;8abe
-L_8ABF:
+sprites_de_las_piezas:		; cada pieza de HL: Y, X y patron a su hueco de 0xDE28 y su color (p02:8AB8 sin contar)
 	push bc			;8abf   ; cada pieza: su hueco en 0xDE28 (4 bytes por sprite)
 	ld a,(hl)			;8ac0
 	ld b,a			;8ac1
@@ -1683,7 +1683,7 @@ L_8AEC:
 L_8AF0:
 	pop bc			;8af0
 	inc l			;8af1
-	djnz L_8ABF		;8af2
+	djnz sprites_de_las_piezas		;8af2
 	ret			;8af4
 L_8AF5:
 	push ix		;8af5   ; la plantilla: 11 bytes desde (ix+7)
@@ -1693,7 +1693,7 @@ L_8AF5:
 	ld e,a			;8afb
 	ldir		;8afc
 	ret			;8afe
-L_8AFF:
+sonido_08:		; el sonido 8 (p02:8B0D)
 	ld a,008h		;8aff
 	jr L_8B0D		;8b01
 sonido_0a:		; el sonido 0x0A (p02:8B0D)
@@ -1716,13 +1716,13 @@ L_8B0D:
 	inc hl			;8b1a
 	ld (hl),d			;8b1b
 	ret			;8b1c
-L_8B1D:
+distancia_y:		; A = |Y del personaje - Y del actor|
 	ld a,(0c244h)		;8b1d   ; lee la Y del personaje
 	sub (ix+003h)		;8b20   ; le resta la Y del actor
 	ret nc			;8b23
 	neg		;8b24
 	ret			;8b26
-L_8B27:
+distancia_x:		; A = |X del personaje - X del actor|
 	ld a,(0c246h)		;8b27   ; lee la X del personaje
 	sub (ix+005h)		;8b2a   ; le resta la X del actor
 	ret nc			;8b2d
@@ -1769,10 +1769,10 @@ azar:		; 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
 	ret			;8b67
 L_8B68:
 	bit 0,(ix+017h)		;8b68
-	jr z,L_8B70		;8b6c
+	jr z,alterna_b		;8b6c
 	inc b			;8b6e
 	inc b			;8b6f
-L_8B70:
+alterna_b:		; (ix+0x18) + 1; con (ix+0x18) & C, B + 1
 	inc (ix+018h)		;8b70
 	ld a,(ix+018h)		;8b73
 	and c			;8b76
@@ -1805,7 +1805,7 @@ pon_aceleracion_y:		; (ix+0x0C, 0x0D) = HL
 	ld (ix+00dh),h		;8b9b   ; guarda la aceleracion Y del actor (alta)
 	ld (ix+00ch),l		;8b9e   ; guarda la aceleracion Y del actor
 	ret			;8ba1
-L_8BA2:
+alinea_y_para:		; la Y del actor al centro de su fila (p03:A683), sin aceleracion y quieto
 	call 0a683h		;8ba2   ; alinea_y: la Y del actor al centro de su fila de 8 (+ 4)
 	ld (ix+00bh),000h		;8ba5   ; si el actor acelera (p02:8393) = 0x00
 para_actor:		; velocidades a cero
@@ -1919,7 +1919,7 @@ L_8C5E:
 	ld (ix+00bh),a		;8c68   ; guarda si el actor acelera (p02:8393)
 	ld (ix+010h),088h		;8c6b   ; el fotograma del actor (p02:8A42) = 0x88
 	ret			;8c6f
-L_8C70:
+copia_84_y_c310:		; copia 0x10 x 0x20 de (0x84, 0) a (0xA4, 0) y sigue segun 0xC310
 	ld hl,00084h		;8c70
 	ld de,000a4h		;8c73
 	ld bc,01020h		;8c76
@@ -1963,7 +1963,7 @@ copia_9060:		; copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
 	ld bc,07070h		;8ccd
 	ld hl,09060h		;8cd0
 	jp 04841h		;8cd3   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
-L_8CD6:
+prepara_la_sala_5:		; 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo suyo
 	ld a,010h		;8cd6
 	ld (0c314h),a		;8cd8
 	xor a			;8cdb
@@ -1972,12 +1972,12 @@ L_8CD6:
 	ld a,(0c20ah)		;8ce2   ; lee en la sala de la puerta 5
 	or a			;8ce5
 	ret z			;8ce6
-	call 05a87h		;8ce7
+	call 05a87h		;8ce7   ; paleta_5a8d: la paleta p00:5A8D
 	call crea_tipo_23		;8cea   ; crea_tipo_23: si vive algun personaje y 0xC270 es la fase: crea el actor 0x23 en (0x34, 0x80)
 	ld hl,000a4h		;8ced
 	ld bc,01020h		;8cf0
 	jp 05e2fh		;8cf3   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
-L_8CF6:
+cuadro_de_la_sala_5:		; en la sala 5, despacha 0xC310 (tabla p02:8D01)
 	ld a,(0c20ah)		;8cf6   ; lee en la sala de la puerta 5
 	or a			;8cf9
 	ret z			;8cfa
@@ -2195,11 +2195,11 @@ L_8E34:
 	djnz L_8E34		;8e42
 	ret			;8e44
 L_8E45:
-	call 07901h		;8e45
+	call 07901h		;8e45   ; borra_a_barras: borra la VRAM a barras: un byte cada 13 desde (0x24, 0x1A), con esperas
 	ld a,024h		;8e48
 	call 056e3h		;8e4a   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	ld hl,0f0a4h		;8e4d
-	call 06194h		;8e50
+	call 06194h		;8e50   ; barrido_de_lineas: 0x10 lineas verticales de 0x20 puntos (p00:4B0C) desde (H, L)
 	call borra_d45e_y_actores		;8e53   ; borra_d45e_y_actores: pone a cero 4 registros de 0xD45E y borra los actores
 	jp suma_c310		;8e56   ; suma_c310: 0xC310 + 1
 L_8E59:
@@ -2215,7 +2215,7 @@ L_8E64:
 	ld a,(0c211h)		;8e68   ; lee la fase (1-25: ruina * 5 + puerta)
 	cp b			;8e6b
 	jr z,L_8E77		;8e6c
-	call 06811h		;8e6e
+	call 06811h		;8e6e   ; accion_6: accion 6, los colores del personaje y sin invencible (0xC256 = 0)
 	ld hl,0c310h		;8e71
 	inc (hl)			;8e74
 	inc (hl)			;8e75
@@ -2224,7 +2224,7 @@ L_8E77:
 	ld a,001h		;8e77
 	ld (0c271h),a		;8e79
 	call 054b4h		;8e7c   ; banco_6_en_a000: pone el banco 6 en 0xA000
-	call 0bc30h		;8e7f
+	call 0bc30h		;8e7f   ; rle_bf88: el RLE de p06:BF88 a la VRAM (p00:4926)
 	call 05464h		;8e82   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld c,01ah		;8e85
 	ld de,08030h		;8e87
@@ -2318,7 +2318,7 @@ parpadeo_r7:		; R#7 (color del borde) 15 o 14 segun 0xC88E
 L_8F11:
 	ld c,007h		;8f11
 	jp 00047h		;8f13   ; BIOS WRTVDP - Writes data in the VDP-register
-L_8F16:
+sala_del_final_de_fase:		; en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), cuentas a cero, 0xC316 = 1, juegos 0x27 y 0x30, p09:BED3 y el actor 0x23
 	xor a			;8f16
 	ld (0c316h),a		;8f17
 	call 054a5h		;8f1a   ; banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
@@ -2396,7 +2396,7 @@ L_8FA1:
 	add hl,de			;8fa7
 	djnz L_8FA1		;8fa8
 	ret			;8faa
-L_8FAB:
+cuadro_del_final_de_fase:		; con 0xC316 y sin morir: la cuenta 0xC314 y despacha 0xC310 (tabla p02:8FBF)
 	ld a,(0c316h)		;8fab
 	or a			;8fae
 	ret z			;8faf
@@ -2580,13 +2580,13 @@ cuenta_c314:		; 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
 	ld de,(0d502h)		;90b2
 	xor a			;90b6
 	jp 04c73h		;90b7   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
-L_90BA:
+cuenta_30_d502:		; 0xC314 = 0x30 y p02:8F94 con DE = (0xD502)
 	ld a,030h		;90ba
 	ld (0c314h),a		;90bc
 	ld de,(0d502h)		;90bf
 	ld a,001h		;90c3
 	jp L_8F94		;90c5
-L_90C8:
+cuadro_c314:		; con 0xC316: la cuenta 0xC314 y, con 0xC310 >= 2, copia 16 x 0x30 de (0xD500) a (0xD502)
 	ld a,(0c316h)		;90c8   ; con 0xC316 y sin la cuenta de 0xC314
 	or a			;90cb
 	ret z			;90cc
@@ -2604,7 +2604,7 @@ L_90C8:
 	ld de,(0d502h)		;90e7
 	ld a,001h		;90eb
 	jp L_8F94		;90ed
-L_90F0:
+marcas_y_vuelve:		; con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
 	call 054aah		;90f0   ; banco_12_en_a000: pone el banco 12 en 0xA000
 	call marcas_de_la_pantalla		;90f3   ; marcas_de_la_pantalla: con 12: los registros de p12:B8BB de la pantalla (p02:9148)
 	jp 05464h		;90f6   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -3179,7 +3179,7 @@ L_94BC:
 	ret nz			;94c8
 	ld a,(ix+01dh)		;94c9
 	ld hl,0ae38h		;94cc
-	call 0a396h		;94cf
+	call 0a396h		;94cf   ; plantilla_por_once: la plantilla de actor (p00:5596) de HL + A * 11
 	ld b,01dh		;94d2
 	call mira_al_personaje_b		;94d4   ; mira_al_personaje_b: (ix+0x10) = B, o B + 2 si el personaje esta a la derecha
 	ld a,(ix+01dh)		;94d7
@@ -4046,7 +4046,7 @@ L_9B34:
 	add a,a			;9b3f
 L_9B40:
 	ld (ix+011h),a		;9b40   ; guarda la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
-	jp L_8AFF		;9b43
+	jp sonido_08		;9b43   ; sonido_08: el sonido 8 (p02:8B0D)
 L_9B46:
 	ld (ix+010h),000h		;9b46   ; el fotograma del actor (p02:8A42) = 0x00
 	ld h,004h		;9b4a
@@ -4261,9 +4261,9 @@ choca_de_lado:		; (ix+0x1E) = 1 y acarreo si choca de lado (p02:9CC8)
 	ret			;9cc7
 choque_lateral:		; la casilla de delante del actor segun su sentido (p02:8BB7)
 	ld d,007h		;9cc8
-L_9CCA:
+choque_fc:		; p02:9CCC con E = 0xFC
 	ld e,0fch		;9cca
-L_9CCC:
+choque_por_sentido:		; la casilla a D (o -D, segun la velocidad X) y E del actor (p02:8BB7)
 	ld a,(ix+00ah)		;9ccc   ; lee la velocidad X del actor (alta)
 	cp 080h		;9ccf
 	ld a,d			;9cd1
@@ -4642,7 +4642,7 @@ L_9FC2:
 	ld a,(ix+001h)		;9fc2   ; lee el paso del actor
 	and a			;9fc5
 	jr nz,$+78		;9fc6
-	call 0a005h		;9fc8
+	call 0a005h		;9fc8   ; choca_o_cuenta: el sonido 0x0A si choca de lado o si (ix+0x11) & 15 es cero
 	ld de,05153h		;9fcb
 	call fotograma_por_sentido		;9fce   ; fotograma_por_sentido: (ix+0x10) = D si va a la derecha (velocidad X positiva), si no E
 	dec (ix+011h)		;9fd1   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)

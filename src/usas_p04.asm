@@ -33,7 +33,7 @@ DATA_resto_6000:
 ; ======================================================================
 
 
-L_6085:
+guion_de_la_escena:		; las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)
 	ld a,(0c21dh)		;6085   ; lee la ruina (0-4)
 	cp 005h		;6088
 	jr z,L_60A4		;608a
@@ -45,7 +45,7 @@ L_6085:
 	and 010h		;6099
 	jr z,L_60A4		;609b
 	ld a,000h		;609d
-	call 05451h		;609f
+	call 05451h		;609f   ; sonido_y_456: el sonido A y los bancos 4-5-6
 	scf			;60a2
 	ret			;60a3
 L_60A4:
@@ -159,12 +159,12 @@ L_6164:
 	djnz L_6173		;6164
 	dec (hl)			;6166
 	jp nz,L_6232		;6167
-	call 09665h		;616a
+	call 09665h		;616a   ; lista_9241: la lista de fichas p05:9241 (colores p05:9231)
 	call pantalla_73b4		;616d   ; pantalla_73b4: paleta, mapa p05:93C6, el dibujo y el texto p04:73BD
 	jp L_6698		;6170
 L_6173:
 	djnz L_61A0		;6173
-	call 0966eh		;6175
+	call 0966eh		;6175   ; parpadeo_de_ruina: 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
 	ld hl,0c899h		;6178
 	ld a,(hl)			;617b
 	or a			;617c
@@ -797,7 +797,7 @@ L_65D0:
 	ld b,004h		;65e2
 L_65E4:
 	push bc			;65e4   ; cada bloque de fichas (p00:4D6C)
-	call 04d6ch		;65e5
+	call 04d6ch		;65e5   ; bloque_4x3: 4 x 3 fichas de HL con TIMP desde (D, E); cada fila desde D = 0xE0
 	pop bc			;65e8
 	djnz L_65E4		;65e9
 	pop hl			;65eb
@@ -868,10 +868,10 @@ L_666B:
 	dec (hl)			;666d
 	jp nz,L_6746		;666e
 	ld de,00200h		;6671
-	call 055b9h		;6674
+	call 055b9h		;6674   ; suma_monedas: las monedas (0xC259, BCD) + E (y D al byte alto)
 	call texto_68d6		;6677   ; texto_68d6: el texto p04:68D6 y p00:4785
 	ld a,002h		;667a
-	call 05451h		;667c
+	call 05451h		;667c   ; sonido_y_456: el sonido A y los bancos 4-5-6
 	jp L_66EF		;667f
 L_6682:
 	djnz L_669E		;6682
@@ -1221,7 +1221,7 @@ texto_68d6:		; el texto p04:68D6 y p00:4785
 	ld hl,068d6h		;68ca
 	call 04d4ah		;68cd   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	ld bc,0883bh		;68d0
-	jp 04785h		;68d3
+	jp 04785h		;68d3   ; cifras_dobles_en: las cifras dobles de 0xC25A y 0xC259 en BC (p00:47FE)
 
 ; ----------------------------------------------------------------------
 ; DATOS resto_68D6: tablas cortas que apuntan p04:68CA (0x68D6), p04:66AF
@@ -2090,7 +2090,7 @@ L_6EDF:
 	dec (hl)			;6ee1
 	jp nz,L_6ABD		;6ee2
 	call 04a44h		;6ee5   ; esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
-	call 04a07h		;6ee8
+	call 04a07h		;6ee8   ; apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
 	ld a,(0002bh)		;6eeb   ; con la BIOS no japonesa, una espera de 0x100 y 0xC21F + 8
 	and 00fh		;6eee
 	jp z,L_66EF		;6ef0
@@ -2135,7 +2135,7 @@ L_6F3F:
 	djnz L_6F4B		;6f3f
 	dec (hl)			;6f41
 	jp nz,L_6ABD		;6f42
-	call 04a07h		;6f45
+	call 04a07h		;6f45   ; apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
 	jp L_6C4F		;6f48
 L_6F4B:
 	djnz L_6F69		;6f4b
@@ -2157,14 +2157,14 @@ L_6F69:
 	inc hl			;6f72
 	dec (hl)			;6f73
 	jp nz,L_6ABD		;6f74
-	call 04a07h		;6f77
+	call 04a07h		;6f77   ; apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
 	jp L_6DE1		;6f7a
 L_6F7D:
 	djnz L_6F92		;6f7d
 	ld hl,071c8h		;6f7f
 	call 04d4ah		;6f82   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	ld a,0ffh		;6f85
-	call 05451h		;6f87
+	call 05451h		;6f87   ; sonido_y_456: el sonido A y los bancos 4-5-6
 	ld a,00eh		;6f8a
 	ld (0c8eah),a		;6f8c
 	jp L_6DE1		;6f8f

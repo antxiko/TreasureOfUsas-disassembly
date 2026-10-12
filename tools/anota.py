@@ -39,7 +39,7 @@ RAIZ = os.path.dirname(AQUI)
 sys.path.insert(0, AQUI)
 
 from paginas import ORG                                    # noqa: E402
-from anotaciones import (BANCOS, CAMBIOS_DE_BANCO, FICHAS,  # noqa: E402
+from anotaciones import (BANCOS, CAMBIOS_DE_BANCO, DESTINOS, FICHAS,  # noqa: E402
                          RAM, RAM16, RUTINAS, trio)
 
 INI = "# --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---"
@@ -152,6 +152,8 @@ def destino_de(b, a, dest, k, ventanas, medido):
         return b
     if (b, a) in medido:
         return medido[(b, a)]
+    if (b, a) in DESTINOS:
+        return DESTINOS[(b, a)]
     return (ventanas or {}).get(k, {}).get(dest & 0xE000)
 
 

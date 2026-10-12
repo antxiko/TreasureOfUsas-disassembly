@@ -658,7 +658,7 @@ DATA_pantalla_p73B4:
 ; ======================================================================
 
 
-L_941C:
+pinta_el_rotulo:		; el rotulo del arranque en la pagina 1: R#7 = 0x0F, HMMV, caracteres p05:94C3-9550, paleta p05:9614 y fichas p05:9624
 	call 04a1fh		;941c   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	ld b,00fh		;941f
 	ld c,007h		;9421
@@ -699,7 +699,7 @@ caracteres_del_titulo:		; los tres RLE de caracteres del titulo (p05:94C3, 950B,
 	ld de,0d800h		;947a
 	ld bc,01a03h		;947d
 	jp 04cbfh		;9480   ; caracteres: B caracteres de 1 bit de HL en (D, E) de la pagina 1 con el color C
-L_9483:
+descubre_el_rotulo:		; cada 2 cuadros, 0x31 - 0xC241 lineas del rotulo de la pagina 1 a la 0; con 0xC241 a cero, 0xC242 = 1
 	ld hl,0c240h		;9483   ; 0xC240 cuenta cuadros; cada 2, 0xC241 baja
 	dec (hl)			;9486
 	ld a,(hl)			;9487
@@ -741,7 +741,7 @@ L_94A4:
 	jr rotulo		;94b6
 L_94B8:
 	ld a,c			;94b8
-	call 04e19h		;94b9
+	call 04e19h		;94b9   ; ficha_de_pagina_1: la ficha A de la pagina 1 a (D, E) de la pagina 1 (HMMM)
 	call 04e3fh		;94bc   ; avanza_ocho: D + 8, y E + 8 si D da la vuelta
 	jr L_94A4		;94bf
 L_94C1:
@@ -817,11 +817,11 @@ DATA_rotulo_titulo:
 ; ======================================================================
 
 
-L_9665:
+lista_9241:		; la lista de fichas p05:9241 (colores p05:9231)
 	ld hl,09241h		;9665
 	ld de,09231h		;9668
 	jp 0529ch		;966b   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
-L_966E:
+parpadeo_de_ruina:		; 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
 	ld a,(0c890h)		;966e   ; la primera vez: 0xC89A = 0xAC y 0xC890 = 1
 	and a			;9671
 	jr nz,L_967E		;9672
@@ -873,7 +873,7 @@ DATA_coordenadas_por_ruina:
 ; ======================================================================
 
 
-L_96B5:
+fichas_del_titulo:		; las listas de fichas p05:83B3 y p05:9A4B y el RLE de p05:96CD a la VRAM
 	ld hl,083b3h		;96b5
 	ld de,083adh		;96b8
 	call 0529ch		;96bb   ; lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
@@ -896,7 +896,7 @@ DATA_patrones_p96CA:
 ; ======================================================================
 
 
-L_96EA:
+mapa_del_titulo:		; el mapa de 14 x 15 fichas del RLE p05:9988 (en 0xE400), con la pantalla apagada
 	call 04a1fh		;96ea   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	xor a			;96ed
 	ld (0ca07h),a		;96ee
@@ -949,7 +949,7 @@ DATA_texto_p9728:
 ; ======================================================================
 
 
-L_9748:
+paleta_a_negro:		; los 16 colores de la paleta a cero
 	ld b,010h		;9748
 L_974A:
 	ld a,b			;974a
@@ -958,7 +958,7 @@ L_974A:
 	call 04a73h		;974f   ; pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 	djnz L_974A		;9752
 	ret			;9754
-L_9755:
+sprite_del_titulo:		; el sprite 0 en la Y y X de p05:9782[(0xCA05 >> 2) & 7], color 13; 0xCA05 + 1
 	ld hl,0ca05h		;9755
 	ld a,(hl)			;9758
 	push hl			;9759
@@ -1002,7 +1002,7 @@ DATA_tabla_p975F:
 ; ======================================================================
 
 
-L_9792:
+fundido_del_titulo:		; cada 4 cuadros, un paso del fundido desde negro de la paleta p06:B550
 	ld a,(0c003h)		;9792   ; cada 4 cuadros, un paso del fundido desde negro de la paleta de p06:B550
 	and 003h		;9795
 	ret nz			;9797
@@ -1108,11 +1108,11 @@ L_980C:
 	ld a,001h		;9831
 	ld (0ca00h),a		;9833
 	ret			;9836
-L_9837:
+borra_ca00:		; pone a cero 0xCA00-0xCA2F
 	ld hl,0ca00h		;9837
 	ld bc,0002fh		;983a
 	jp 05f08h		;983d   ; borra: pone a cero BC + 1 bytes desde HL
-L_9840:
+linea_del_prologo:		; una linea del prologo (p05:994D con la BIOS japonesa, p05:98B1 si no) que sube; al acabar, 0xCA01 = 1 y el texto p00:5068
 	ld hl,0ca10h		;9840
 	ld bc,00018h		;9843
 	call 05f08h		;9846   ; borra: pone a cero BC + 1 bytes desde HL
@@ -1163,7 +1163,7 @@ L_988D:
 	ld d,a			;989b
 	ld hl,0ca10h		;989c
 	ld c,0ffh		;989f
-	call 04d54h		;98a1
+	call 04d54h		;98a1   ; texto_en_de: el texto de HL en la posicion (D, E) que ya hay, con C (p00:4D4A sin leer [X][Y])
 	ld hl,0ca03h		;98a4   ; cada 8 pasos, la siguiente linea (0xCA02)
 	inc (hl)			;98a7
 	ld a,(hl)			;98a8
@@ -1384,14 +1384,14 @@ DATA_fichas_p96BE_f6:
 ; ======================================================================
 
 
-L_9ED6:
+entra_en_informacion:		; la pantalla INFORMATION: guarda el personaje (0xC229), la mejora 0 y p05:9EEC
 	call 04a2ch		;9ed6   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 	call 04a1fh		;9ed9   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	ld a,(0c2b0h)		;9edc   ; lee la ficha del personaje 0 (14 bytes)
 	ld (0c229h),a		;9edf   ; guarda el personaje elegido en INFORMATION
 	xor a			;9ee2
 	ld (0c228h),a		;9ee3   ; guarda la mejora elegida en INFORMATION (0-2)
-	call pinta_informacion		;9ee6
+	call pinta_informacion		;9ee6   ; pinta_informacion: patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 END, F2 CANCEL), recuadros y lineas
 	jp 04a12h		;9ee9   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 pinta_informacion:		; patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 END, F2 CANCEL), recuadros y lineas
 	ld de,0a226h		;9eec
@@ -1430,12 +1430,12 @@ pinta_informacion:		; patrones, texto p06:A173 (INFORMATION, COIN, SPD, JMP, F1 
 	ld de,0240ch		;9f3f
 	call 0a494h		;9f42   ; rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 	call cifras_c2b9		;9f45   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
-	call 04797h		;9f48
-	call numeros_de_informacion		;9f4b
+	call 04797h		;9f48   ; cifras_dobles_48bc: p00:4785 con BC = 0x48BC
+	call numeros_de_informacion		;9f4b   ; numeros_de_informacion: los numeros de las fichas de los dos personajes en INFORMATION
 	call lineas_a200		;9f4e   ; lineas_a200: las lineas horizontales de p06:A200
 	call lineas_a21f		;9f51   ; lineas_a21f: las lineas verticales de p06:A21F
 	ld a,001h		;9f54
-	call 0a4beh		;9f56
+	call 0a4beh		;9f56   ; retratos_en: los retratos de los dos personajes con 0xDE80 = A (p06:A4BD con A)
 	ld b,002h		;9f59
 	ld hl,0c2b0h		;9f5b   ; apunta a la ficha del personaje 0 (14 bytes)
 L_9F5E:
@@ -1503,7 +1503,7 @@ numeros_de_informacion:		; los numeros de las fichas de los dos personajes en IN
 	ld hl,0c2b5h		;9fbc
 	ld a,(hl)			;9fbf
 	ld de,03467h		;9fc0
-	call 04758h		;9fc3
+	call 04758h		;9fc3   ; barra_de_cuartos: la barra de A / 4 trozos llenos de (HL - 1) / 4 (trozos de 4 x 8 de la pagina 1)
 	ld hl,0c2b1h		;9fc6
 	ld de,03480h		;9fc9
 	call numero_guardando		;9fcc   ; numero_guardando: p06:A550 con (HL) + 1 sin tocar registros
@@ -1515,7 +1515,7 @@ numeros_de_informacion:		; los numeros de las fichas de los dos personajes en IN
 	ld hl,0c2d5h		;9fd7
 	ld a,(hl)			;9fda
 	ld de,0b467h		;9fdb
-	call 04758h		;9fde
+	call 04758h		;9fde   ; barra_de_cuartos: la barra de A / 4 trozos llenos de (HL - 1) / 4 (trozos de 4 x 8 de la pagina 1)
 	ld hl,0c2d1h		;9fe1
 	ld de,0b480h		;9fe4
 	call numero_guardando		;9fe7   ; numero_guardando: p06:A550 con (HL) + 1 sin tocar registros
@@ -1529,12 +1529,12 @@ numero_guardando:		; p06:A550 con (HL) + 1 sin tocar registros
 	push hl			;9ff1
 	push de			;9ff2
 	push bc			;9ff3
-	call 0a550h		;9ff4
+	call 0a550h		;9ff4   ; marcas_de_numero: el numero A en marcas: 5 en los bytes 0 y 1 de la ficha, 3 en los demas
 	pop bc			;9ff7
 	pop de			;9ff8
 	pop hl			;9ff9
 	ret			;9ffa
-L_9FFB:
+cuadro_de_informacion:		; un cuadro de INFORMATION: teclas, cursor, compra y numeros; con la tecla especial 2, deshace (sigue en p06:A000)
 	ld a,(0c00eh)		;9ffb   ; lee las teclas especiales
 	rra			;9ffe
 	rra			;9fff

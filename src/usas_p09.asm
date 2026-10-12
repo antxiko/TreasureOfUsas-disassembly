@@ -1338,7 +1338,7 @@ DATA_registro_b7c9_20:
 ; ======================================================================
 
 
-L_B8CC:
+pantalla_vecina:		; 0xC212 = la vecina del lado 0xC215 (0xC218-0xC21B)
 	ld a,(0c215h)		;b8cc   ; lee el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	ld hl,0c218h		;b8cf   ; apunta a la vecina de arriba
 	dec a			;b8d2
@@ -1358,7 +1358,7 @@ L_B8E3:
 	ld a,001h		;b8e3
 	ld (0c226h),a		;b8e5   ; guarda se sale de la fase
 	ret			;b8e8
-L_B8E9:
+vecinas_de_la_pantalla:		; las cuatro vecinas de la pantalla de p09:B921[0xC211] a 0xC218-0xC21B
 	ld a,(0c211h)		;b8e9   ; lee la fase (1-25: ruina * 5 + puerta)
 	add a,a			;b8ec
 	ld hl,L_B920+1		;b8ed

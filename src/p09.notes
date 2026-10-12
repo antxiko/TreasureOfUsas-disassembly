@@ -249,6 +249,8 @@ C 0xB8F5 la tabla de la fase; 2 bytes por pantalla (0xC212 - 1)
 C 0xB908 los nibbles de cada byte: primero el alto
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0xB8CC pantalla_vecina 0xC212 = la vecina del lado 0xC215 (0xC218-0xC21B)
+L 0xB8E9 vecinas_de_la_pantalla las cuatro vecinas de la pantalla de p09:B921[0xC211] a 0xC218-0xC21B
 C 0xB8CC lee el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 C 0xB8CF apunta a la vecina de arriba
 C 0xB8DF guarda la pantalla de la fase (desde 1)

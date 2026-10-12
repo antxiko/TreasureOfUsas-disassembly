@@ -2663,7 +2663,7 @@ DATA_resto_BD96:
 ; ======================================================================
 
 
-L_BEBF:
+fichas_de_la_pantalla:		; las 32 x 24 fichas de la pantalla a 0xD200, 6 filas de metabloques de 8
 	ld de,0d200h		;bebf   ; apunta a el mapa de 32 x 24 fichas de la pantalla
 	ld a,006h		;bec2
 L_BEC4:

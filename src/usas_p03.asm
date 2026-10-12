@@ -17,7 +17,7 @@
 L_A000:
 	ld (ix+011h),020h		;a000   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 	ret			;a004
-L_A005:
+choca_o_cuenta:		; el sonido 0x0A si choca de lado o si (ix+0x11) & 15 es cero
 	call 09cc8h		;a005   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
 	jp nz,08b03h		;a008   ; sonido_0a: el sonido 0x0A (p02:8B0D)
 	ld a,(ix+011h)		;a00b   ; lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
@@ -31,7 +31,7 @@ L_A014:
 	add a,0f0h		;a01b
 	ld e,a			;a01d
 	call 09d07h		;a01e   ; choque_7: p02:9D09 con D = 7
-	call nz,08affh		;a021
+	call nz,08affh		;a021   ; sonido_08: el sonido 8 (p02:8B0D)
 L_A024:
 	call frena_caida		;a024   ; frena_caida: si la velocidad Y esta entre 6 y 0x50: 0x600 y sin aceleracion
 	call 09cc8h		;a027   ; choque_lateral: la casilla de delante del actor segun su sentido (p02:8BB7)
@@ -64,7 +64,7 @@ L_A062:
 	ld d,a			;a06a
 	ld e,(ix+003h)		;a06b   ; lee la Y del actor
 	push de			;a06e
-	call 070bfh		;a06f
+	call 070bfh		;a06f   ; ficha_en_menos_1: A = la ficha de 0xD200 en (D, E) - 1 (p01:7176) y sigue en p01:7141
 	pop de			;a072
 	jr c,L_A086		;a073
 	ld (ix+010h),079h		;a075   ; el fotograma del actor (p02:8A42) = 0x79
@@ -194,7 +194,7 @@ L_A145:
 	add a,e			;a14b
 	ld e,a			;a14c
 	ld (ix+01eh),a		;a14d
-	jp 070bfh		;a150
+	jp 070bfh		;a150   ; ficha_en_menos_1: A = la ficha de 0xD200 en (D, E) - 1 (p01:7176) y sigue en p01:7141
 L_A153:
 	ld a,(ix+003h)		;a153   ; lee la Y del actor
 	cp 0d4h		;a156
@@ -488,7 +488,7 @@ L_A35D:
 plantilla_aebc:		; la plantilla (ix+0x1F) * 11 de p06:AEBC (p00:5596)
 	ld hl,0aebch		;a390
 	ld a,(ix+01fh)		;a393
-L_A396:
+plantilla_por_once:		; la plantilla de actor (p00:5596) de HL + A * 11
 	ld b,a			;a396
 	add a,a			;a397
 	add a,a			;a398
@@ -896,7 +896,7 @@ L_A654:
 	ld a,016h		;a665
 	call 056e3h		;a667   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	inc (ix+001h)		;a66a   ; sube el paso del actor
-	call 08ba2h		;a66d
+	call 08ba2h		;a66d   ; alinea_y_para: la Y del actor al centro de su fila (p03:A683), sin aceleracion y quieto
 	ld (ix+003h),0c4h		;a670   ; la Y del actor = 0xC4
 	ld a,(0c246h)		;a674   ; lee la X del personaje
 	cp (ix+005h)		;a677   ; compara con la X del actor
@@ -971,7 +971,7 @@ ciclo_74_77:		; cada 8 cuadros, el fotograma de 0x74 a 0x77
 	ret c			;a707
 	ld (ix+010h),074h		;a708   ; el fotograma del actor (p02:8A42) = 0x74
 	ret			;a70c
-L_A70D:
+en_objeto_29:		; borra el actor y lo rehace como objeto de tipo 0x29: 2 piezas, colores 0x0D y 0x4E
 	call 083d6h		;a70d   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 	ld (ix+000h),029h		;a710   ; el tipo del actor = 0x29
 	ld (ix+001h),000h		;a714   ; el paso del actor = 0x00
@@ -1022,7 +1022,7 @@ L_A76F:
 	ld a,(ix+016h)		;a781
 	and 004h		;a784
 	ret z			;a786
-	call 08ba2h		;a787
+	call 08ba2h		;a787   ; alinea_y_para: la Y del actor al centro de su fila (p03:A683), sin aceleracion y quieto
 	inc (ix+001h)		;a78a   ; sube el paso del actor
 	ret			;a78d
 L_A78E:
@@ -1051,7 +1051,7 @@ L_A78E:
 	pop hl			;a7c0
 	ld a,(ix+015h)		;a7c1
 	jr $+70		;a7c4
-L_A7C6:
+dibuja_objetos_2a:		; el dibujo de los objetos de tipo 0x2A de 0xC400 (p03:A80A)
 	ld ix,0c400h		;a7c6   ; apunta a los 8 actores (0x80 bytes cada uno)
 	ld b,008h		;a7ca
 L_A7CC:
@@ -1177,7 +1177,7 @@ L_A871:
 	push hl			;a87b
 	ld hl,0c000h		;a87c   ; apunta a el estado del juego
 	ld (0c243h),hl		;a87f   ; guarda la Y del personaje (16 bits, fraccion) y el byte siguiente (16 bits)
-	call 084deh		;a882
+	call 084deh		;a882   ; apunta_al_personaje_80: p02:84E0 con A = 0x80
 	call 08b82h		;a885   ; pon_velocidad_y: (ix+7, 8) = HL
 	ex de,hl			;a888
 	call 08b8dh		;a889   ; pon_velocidad_x: (ix+9, 0x0A) = HL
@@ -1843,11 +1843,11 @@ L_AD74:
 L_AD9C:
 	ld d,008h		;ad9c
 	ld e,(ix+008h)		;ad9e   ; lee la velocidad Y del actor (alta)
-	call 09ccch		;ada1
+	call 09ccch		;ada1   ; choque_por_sentido: la casilla a D (o -D, segun la velocidad X) y E del actor (p02:8BB7)
 	jp nz,08b03h		;ada4   ; sonido_0a: el sonido 0x0A (p02:8B0D)
 	ld d,008h		;ada7
 	ld e,000h		;ada9
-	call 09ccch		;adab
+	call 09ccch		;adab   ; choque_por_sentido: la casilla a D (o -D, segun la velocidad X) y E del actor (p02:8BB7)
 	jp nz,08b03h		;adae   ; sonido_0a: el sonido 0x0A (p02:8B0D)
 	ret			;adb1
 L_ADB2:
@@ -1978,7 +1978,7 @@ rebota_arriba:		; si se sale por arriba: rebota con velocidad al azar y sonido 0
 	add a,02ch		;aeaf
 	cp 054h		;aeb1
 	ret nc			;aeb3
-	call 08affh		;aeb4
+	call 08affh		;aeb4   ; sonido_08: el sonido 8 (p02:8B0D)
 	call velocidad_al_azar		;aeb7   ; velocidad_al_azar: H = 1 o 2 al azar, negativo al azar
 	ld a,(ix+00ah)		;aeba   ; lee la velocidad X del actor (alta)
 	xor h			;aebd
@@ -2039,7 +2039,7 @@ L_AF38:
 	jp z,L_AED8		;af3d
 	ld b,04ch		;af40
 	ld c,004h		;af42
-	call 08b70h		;af44
+	call 08b70h		;af44   ; alterna_b: (ix+0x18) + 1; con (ix+0x18) & C, B + 1
 	dec (ix+01eh)		;af47
 	ret nz			;af4a
 	ld a,006h		;af4b
@@ -2057,14 +2057,14 @@ L_AF38:
 	ret			;af67
 L_AF68:
 	ld d,00ch		;af68
-	call 09ccah		;af6a
+	call 09ccah		;af6a   ; choque_fc: p02:9CCC con E = 0xFC
 	call nz,08b03h		;af6d   ; sonido_0a: el sonido 0x0A (p02:8B0D)
 	ld a,(ix+003h)		;af70   ; lee la Y del actor
 	cp 034h		;af73
 	jr c,L_AFA9		;af75
 	ld b,049h		;af77
 	ld c,004h		;af79
-	call 08b70h		;af7b
+	call 08b70h		;af7b   ; alterna_b: (ix+0x18) + 1; con (ix+0x18) & C, B + 1
 	ld (ix+006h),000h		;af7e   ; si el actor se mueve (p02:8367) = 0x00
 	bit 1,(ix+018h)		;af82
 	jr nz,L_AF8C		;af86
@@ -2082,7 +2082,7 @@ L_AF8C:
 	ld (ix+00ah),0ffh		;afa4   ; la velocidad X del actor (alta) = 0xFF
 	ret			;afa8
 L_AFA9:
-	call 08affh		;afa9
+	call 08affh		;afa9   ; sonido_08: el sonido 8 (p02:8B0D)
 	ld (ix+00bh),001h		;afac   ; si el actor acelera (p02:8393) = 0x01
 	ld hl,00040h		;afb0
 	call 08b9bh		;afb3   ; pon_aceleracion_y: (ix+0x0C, 0x0D) = HL
@@ -2096,7 +2096,7 @@ L_AFC2:
 L_AFC6:
 	ld (ix+010h),088h		;afc6   ; el fotograma del actor (p02:8A42) = 0x88
 	ld (ix+00bh),001h		;afca   ; si el actor acelera (p02:8393) = 0x01
-	call 08b27h		;afce
+	call 08b27h		;afce   ; distancia_x: A = |X del personaje - X del actor|
 	cp 040h		;afd1
 	ld d,003h		;afd3
 	jr c,L_AFD9		;afd5
@@ -2451,7 +2451,7 @@ DATA_resto_B249:
 ; ======================================================================
 
 
-L_B259:
+mira_el_globo:		; sin globo (0xC272) y sin morir: lo que sigue de los objetos de animo
 	ld a,(0c272h)		;b259
 	or a			;b25c
 	ret nz			;b25d
@@ -2548,7 +2548,7 @@ L_B2DF:
 	add a,003h		;b2f6
 	ld (0c2a0h),a		;b2f8   ; guarda la Y del globo
 	ret			;b2fb
-L_B2FC:
+cuenta_del_globo:		; esconde el sprite 8, cuenta 0xC272 (p03:B30A) y, sin disparos, sigue
 	ld a,0e0h		;b2fc
 	ld (0de20h),a		;b2fe   ; guarda la Y del sprite 8 en RAM
 	call cuenta_c272		;b301   ; cuenta_c272: 0xC272 - 1; a cero, esconde los sprites de 0xDE20/24 y p00:5ABD
@@ -2585,19 +2585,19 @@ cuenta_c272:		; 0xC272 - 1; a cero, esconde los sprites de 0xDE20/24 y p00:5ABD
 	or a			;b325
 	ret z			;b326
 	dec (hl)			;b327
-	jp nz,07625h		;b328
+	jp nz,07625h		;b328   ; globo_encima: los sprites 8 y 9 en (Y - 0x30, X - 8) del personaje, patrones 0x28 y 0x2C y sus colores (p01:765B)
 	ld a,0e0h		;b32b
 	ld (0de20h),a		;b32d   ; guarda la Y del sprite 8 en RAM
 	ld (0de24h),a		;b330   ; guarda la Y del sprite 9 en RAM
 	jp 05abdh		;b333   ; sprites_a3c1: los patrones de p15:A3C1 segun el estado del personaje
-L_B336:
+borra_c2a7:		; 0xC2A7 = 0
 	xor a			;b336
 	ld (0c2a7h),a		;b337
 	ret			;b33a
 L_B33B:
 	ld hl,0c2a5h		;b33b
 	dec (hl)			;b33e
-	jr z,L_B336		;b33f
+	jr z,borra_c2a7		;b33f
 	call alterna_c2a2		;b341   ; alterna_c2a2: cada 4 cuadros, 0xC2A2 xor 4
 	call avanza_c2a1		;b344   ; avanza_c2a1: 0xC2A1 + 1 si 0xC2A6 y no se pasa
 	ld hl,0b34fh		;b347
@@ -2717,7 +2717,7 @@ L_B3FF:
 	push af			;b409
 	call 08b80h		;b40a   ; velocidad_y_h: (ix+7, 8) = H * 256 (L = 0)
 	pop af			;b40d
-	call c,08affh		;b40e
+	call c,08affh		;b40e   ; sonido_08: el sonido 8 (p02:8B0D)
 L_B411:
 	call cerca_en_y_8		;b411   ; cerca_en_y_8: acarreo y velocidad Y = L si el personaje esta a menos de 8 en Y
 	ret nc			;b414
@@ -2824,7 +2824,7 @@ dibujo_b4da:		; copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10
 	ld b,010h		;b4e4
 	ld a,010h		;b4e6
 	jp 04c73h		;b4e8   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
-L_B4EB:
+posicion_por_personaje:		; HL = 0x7060 con el personaje 0, 0x3060 con el 1
 	ld a,(0c240h)		;b4eb   ; lee el personaje que se lleva (0 o 1)
 	or a			;b4ee
 	ld hl,07060h		;b4ef
@@ -2903,7 +2903,7 @@ L_B56E:
 	ld a,(0c20ah)		;b579   ; lee en la sala de la puerta 5
 	or a			;b57c
 	ret z			;b57d
-	jp 08215h		;b57e
+	jp 08215h		;b57e   ; juegos_de_la_sala_5: los juegos de sprites 0x28, 0x19 y el de la ruina (p02:822C)
 L_B581:
 	dec (ix+003h)		;b581   ; baja la Y del actor
 	call dibujo_b4da		;b584   ; dibujo_b4da: copia (ix+0x11) lineas de (0x88, 0x80) junto al actor (LMMM 0x10)
@@ -2943,7 +2943,7 @@ L_B5C1:
 	xor a			;b5c6
 	ld (ix+013h),a		;b5c7   ; guarda las banderas de choque del actor (bit 0 personaje, bit 1 disparos)
 	push ix		;b5ca
-	call 05b60h		;b5cc
+	call 05b60h		;b5cc   ; fotograma_a_fa80: un fotograma de cada personaje a la VRAM desde 0xFA80 (p00:5B6E)
 	pop ix		;b5cf
 piezas_por_personaje:		; los patrones de las piezas (0x4B o 0x5C) segun el personaje y el fotograma 0x5E
 	ld a,(0c240h)		;b5d1   ; lee el personaje que se lleva (0 o 1)
@@ -2978,16 +2978,16 @@ L_B602:
 	call 04083h		;b60d   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;b610
 	push ix		;b611
-	call 05b60h		;b613
+	call 05b60h		;b613   ; fotograma_a_fa80: un fotograma de cada personaje a la VRAM desde 0xFA80 (p00:5B6E)
 	pop ix		;b616
 	ld a,(ix+005h)		;b618
 	cp 0f0h		;b61b
 	ret c			;b61d
-	call 06811h		;b61e
+	call 06811h		;b61e   ; accion_6: accion 6, los colores del personaje y sin invencible (0xC256 = 0)
 	ld hl,0c310h		;b621
 	inc (hl)			;b624
 	call 083d6h		;b625   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
-	jp 0545eh		;b628
+	jp 0545eh		;b628   ; vuelve_un_personaje_456: con 4-5-6: p06:BC36 y vuelve con 1-2-3
 
 ; ----------------------------------------------------------------------
 ; DATOS resto_B62B: tablas cortas que apuntan p03:B60A (0xB62B); el tamano de
@@ -3048,7 +3048,7 @@ L_B681:
 	ret nz			;b68a
 	inc (ix+001h)		;b68b   ; sube el paso del actor
 	ret			;b68e
-L_B68F:
+choques_con_cd00:		; salvo muriendo y fuera de la sala 5: los choques de los 9 actores de 0xCD00 (p03:B6AB) y sus empujones
 	ld a,(0c24bh)		;b68f   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;b692
 	ret z			;b694
@@ -3656,7 +3656,7 @@ L_BA49:
 L_BA52:
 	call 047ebh		;ba52   ; byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
 	ld (hl),000h		;ba55
-	jp 04752h		;ba57
+	jp 04752h		;ba57   ; barra_de_vida: la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
 L_BA5A:
 	ld a,(ix+005h)		;ba5a   ; lee la X del actor
 	sub d			;ba5d
@@ -3900,7 +3900,7 @@ L_BC19:
 	ret nz			;bc24
 	ld (ix+011h),048h		;bc25   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x48
 	call 08b03h		;bc29   ; sonido_0a: el sonido 0x0A (p02:8B0D)
-	jp 08affh		;bc2c
+	jp 08affh		;bc2c   ; sonido_08: el sonido 8 (p02:8B0D)
 L_BC2F:
 	ld (ix+011h),01eh		;bc2f   ; la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x1E
 	inc (ix+001h)		;bc33   ; sube el paso del actor
@@ -4039,7 +4039,7 @@ L_BD4E:
 	inc c			;bd57
 L_BD58:
 	push bc			;bd58
-	call 05421h		;bd59
+	call 05421h		;bd59   ; con_13_14_15_segun_c: con 13-14-15: p15:B411 o la otra tabla segun C
 	pop bc			;bd5c
 	djnz L_BD6C		;bd5d
 	dec (ix+016h)		;bd5f
@@ -4155,7 +4155,7 @@ L_BE27:
 	dec (ix+011h)		;be27   ; baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 	ret nz			;be2a
 	call copia_hueco_enemigo		;be2b   ; copia_hueco_enemigo: copia 16 x 24 del hueco del enemigo (p01:780D) a su posicion
-	call 077f9h		;be2e
+	call 077f9h		;be2e   ; dibujo_del_actor_78: copia 16 x 16 de (0x78, 0) con TIMP a la X e Y del actor
 	xor a			;be31
 	ld (ix+001h),a		;be32   ; guarda el paso del actor
 	ld (ix+01fh),a		;be35

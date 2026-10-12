@@ -25,6 +25,29 @@ class Listado(unittest.TestCase):
         linea = next(l for l in r.stdout.splitlines() if l.strip().startswith("sin explicar"))
         self.assertEqual(int(linea.split()[2]), 0, linea)
 
+    def test_toda_llamada_a_otro_banco_va_a_una_rutina_con_nombre(self):
+        """Un `call`/`jp` a 0x6000-0xBFFF de otro banco: su destino, en RUTINAS.
+
+        sin_bautizar.py solo ve las llamadas del propio banco; esto mira las
+        que cruzan el mapper con el banco que resuelve tools/anota.py."""
+        import re
+        sys.path.insert(0, TOOLS)
+        import anota
+        from anotaciones import BANCOS, RUTINAS
+        medido, sin = anota.medidas(), []
+        for b in BANCOS:
+            filas = anota.listado(b)
+            ventanas = anota.ventanas_de(filas, b)
+            for k, (a, t) in enumerate(filas):
+                m = re.match(r"(?:call|jp)\s+(?:(?:nz|z|nc|c|po|pe|p|m),)?0([0-9a-f]{4})h$", t)
+                if not m or int(m.group(1), 16) < 0x6000:
+                    continue
+                d = int(m.group(1), 16)
+                bb = anota.destino_de(b, a, d, k, ventanas, medido)
+                if (bb, d) not in RUTINAS:
+                    sin.append("p%02d:%04X -> p%s:%04X" % (b, a, "??" if bb is None else "%02d" % bb, d))
+        self.assertEqual(sin, [])
+
     def test_el_makefile_y_paginas_py_dicen_lo_mismo(self):
         sys.path.insert(0, TOOLS)
         from paginas import ORG

@@ -531,6 +531,7 @@ C 0xBF0B la siguiente fila de metabloques: 0x60 mas (3 filas de 32)
 C 0xBF10 6 filas
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0xBEBF fichas_de_la_pantalla las 32 x 24 fichas de la pantalla a 0xD200, 6 filas de metabloques de 8
 C 0xBEBF apunta a el mapa de 32 x 24 fichas de la pantalla
 C 0xBECA apunta a los metabloques (16 fichas cada uno)
 # --- fin de las anotaciones de anota.py ---

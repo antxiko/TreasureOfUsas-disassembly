@@ -254,6 +254,7 @@ C 0x65EE la copia a la pagina 0
 C 0x65F1 0xC8E5 = 4 y el siguiente paso con 0x30 cuadros
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0x6085 guion_de_la_escena las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)
 L 0x6234 borra_recuadro_4626 borra 0x4C x 0x1C en (0x26, 0x46) y p06:A494
 L 0x623D borra_recuadro_6626 borra 0x54 x 0x1C en (0x26, 0x66) y p06:A494
 L 0x6246 borra_recuadro_4636 borra 0x44 x 0x0C en (0x36, 0x46) y p06:A494
@@ -347,6 +348,7 @@ C 0x6085 lee la ruina (0-4)
 C 0x608C lee la escena (0-11)
 C 0x6093 lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 C 0x6096 lee las teclas que hay
+C 0x609F sonido_y_456: el sonido A y los bancos 4-5-6
 C 0x60A4 atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 C 0x60A7 lee la ruina (0-4)
 C 0x60AA despacha: salta a la palabra A de la tabla pegada detras del `call`
@@ -369,7 +371,9 @@ C 0x613E lee el texto a maquina ha acabado
 C 0x614D dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
 C 0x6150 borra_de_70: borra 0xFF x 0x48 desde (0, 0x70)
 C 0x6155 texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+C 0x616A lista_9241: la lista de fichas p05:9241 (colores p05:9231)
 C 0x616D pantalla_73b4: paleta, mapa p05:93C6, el dibujo y el texto p04:73BD
+C 0x6175 parpadeo_de_ruina: 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
 C 0x6180 pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC220
 C 0x6183 sprites_6020: 16 bytes de p04:6020 a 0xDE14 y dos colores de sprite
 C 0x6192 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
@@ -489,6 +493,7 @@ C 0x65A5 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0x65B4 anima_de00: parpadeo de 0xDE02 y avance de 0xDE01
 C 0x65B7 lee la X del sprite 2 en RAM
 C 0x65D3 copia_rectangulo_guardando: p00:4BDE sin tocar los registros
+C 0x65E5 bloque_4x3: 4 x 3 fichas de HL con TIMP desde (D, E); cada fila desde D = 0xE0
 C 0x65FE apunta a la Y del sprite 5 en RAM
 C 0x660E colores_de_sprite: B veces: 16 bytes con D y 16 con E
 C 0x6616 colores_de_sprite: B veces: 16 bytes con D y 16 con E
@@ -500,7 +505,9 @@ C 0x6656 mapa_y_vuelve: p04:7296 y vuelve atras
 C 0x665B copia_6850_a_d20d: 10 bytes de p04:6850 a 0xD20D y p04:71FE
 C 0x6662 borra_pantalla_escena: borra 0xFF x 0x60 desde (0, 0)
 C 0x6665 texto_68d6: el texto p04:68D6 y p00:4785
+C 0x6674 suma_monedas: las monedas (0xC259, BCD) + E (y D al byte alto)
 C 0x6677 texto_68d6: el texto p04:68D6 y p00:4785
+C 0x667C sonido_y_456: el sonido A y los bancos 4-5-6
 C 0x6688 apunta a la escena (0-11)
 C 0x668C pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC220
 C 0x668F sprites_68e5: 12 bytes de p04:68E5 a 0xDE00 y los de p04:68F2/68EE
@@ -560,6 +567,7 @@ C 0x68B1 borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0x68B6 rectangulo_guardando: p00:4B74 con el color 0x0D sin tocar registros
 C 0x68C7 borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0x68CD texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0x68D3 cifras_dobles_en: las cifras dobles de 0xC25A y 0xC259 en BC (p00:47FE)
 C 0x68F6 cuenta_c8e4: cada 8 cuadros, 0xC8E4 de 0 a 2 y el patron de 0xDE12
 C 0x68FF apunta a la X del sprite 0 en RAM
 C 0x6905 mueve_sprites: cada 8 cuadros, + C a B sprites de HL
@@ -710,13 +718,17 @@ C 0x6EB9 guarda los atributos de los sprites en RAM y el byte siguiente (16 bits
 C 0x6EC8 hl_mas_a: HL = HL + A
 C 0x6ED0 guarda el patron del sprite 0 en RAM
 C 0x6EE5 esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
+C 0x6EE8 apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
 C 0x6F0D borra_y_marco: borra el rectangulo y p06:A494
 C 0x6F15 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 C 0x6F2D borra_y_marco: borra el rectangulo y p06:A494
 C 0x6F35 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
+C 0x6F45 apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
 C 0x6F57 borra_y_marco: borra el rectangulo y p06:A494
 C 0x6F5D texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0x6F77 apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
 C 0x6F82 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0x6F87 sonido_y_456: el sonido A y los bancos 4-5-6
 C 0x6FA3 baja_c8ea: cada 4 cuadros, 0xC8EA - 2 hasta 0xFE
 C 0x6FB9 pon_en_sprites: A en B sprites de HL (de 4 en 4)
 C 0x6FC5 hl_mas_a: HL = HL + A

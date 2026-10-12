@@ -180,11 +180,22 @@ C 0x7E9D sube una linea cada 0x3C cuadros ((ix+0x11) cuenta)
 C 0x7EAA la Y - 1 y una linea mas ocupada
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
+L 0x6017 teclas_de_la_demo la demo: 0xC00A cuenta los cuadros de la tecla; al acabar, la siguiente de p01:603C (0xFF acaba)
+L 0x6033 lee_teclas_especiales las teclas de las filas 6 y 7 (p00:5049) a 0xC00F y las nuevas a 0xC00E (p00:5005)
 L 0x603C tecla_de_la_demo con 9: A = las teclas y C = los cuadros del paso C de la demo de la ruina (p09:BCD6)
+L 0x605A cuadro_de_partida un cuadro de la partida: p00:563F y, en cuadros pares, 0xC00D + 1, los mandos y la pausa
 L 0x60AD pausa en partida, si se pulsa la tecla de 0xC00E bit 0: 0xC008 = 1 y el sonido 0xFD
 L 0x60E5 cuenta_ccb7 0xCCB7 - 1 si no es cero
-L 0x611D personaje_0_vivo 0xC240 = la ficha del personaje 0 (0xC2B0)
+L 0x60ED entra_en_la_antesala pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
+L 0x60F3 pinta_la_antesala la fuente, los graficos, la paleta, el mapa y los metabloques de la antesala y el marcador
+L 0x611D lleva_segun_ficha_0 0xC240 = el byte 0 de la ficha del personaje 0
+L 0x6124 cuadro_de_la_antesala el personaje en la antesala: su cuadro, andar, sprites, cambio de pantalla y puertas abiertas
 L 0x6142 marcador_de_vidas con 6: p06:BAAA
+L 0x6154 marca_e320 un 1 dos bytes antes de la direccion de 0xE320
+L 0x615C anda_en_la_antesala_1 con 6: el cuadro de andar de la antesala, los sprites y el marcador de vidas
+L 0x617B abre_las_puertas el marcador de vidas, los sonidos 0x24 y 0xFF y p06:BA68
+L 0x6194 barrido_de_lineas 0x10 lineas verticales de 0x20 puntos (p00:4B0C) desde (H, L)
+L 0x61B1 calcula_la_fase 0xC211 = ruina * 5 + la puerta de la antesala (p01:61C2)
 L 0x61C2 puerta_de_la_antesala B = la puerta (1-5) segun 0xCC10 y la X 0xCC13
 L 0x61DA mando_horizontal las teclas izquierda/derecha (0x0C) de 0xC007 con las de 0xC275
 L 0x61FA mira_suelo_del_actor si (ix+5) es cero y no se muere (0xC24B != 4): p01:6309
@@ -217,6 +228,7 @@ L 0x66EA recorre_cd00 p01:76DA con los 9 actores de 0xCD00
 L 0x6723 mira_y_cae p01:70AC y, si no hay acarreo, p01:63B6
 L 0x67CA invencible la cuenta de 0xC24F mientras 0xC256 y los colores del personaje
 L 0x67F2 colores_del_personaje 0xC24C/0xC24D segun el personaje y la sala
+L 0x6811 accion_6 accion 6, los colores del personaje y sin invencible (0xC256 = 0)
 L 0x6825 dibuja_al_personaje las fichas del personaje en la pagina 1 segun 0xC253 y 0xC26F
 L 0x6867 cuadro_de_animacion L = el cuadro (0xD8 + 2 cada 2 cuadros) segun (ix+9)
 L 0x6897 copia_linea_f0 una linea de (H, L) a (D, 0xF0) (p00:4BDE)
@@ -258,6 +270,7 @@ L 0x7090 techo_del_personaje las fichas encima del personaje (p01:7132)
 L 0x70A0 ficha_arriba la ficha 4 puntos por encima del personaje si esta centrado en la casilla
 L 0x70AC ficha_abajo la ficha 13 puntos por debajo del personaje si esta centrado en la casilla
 L 0x70BA ficha_en_x la ficha en (X del personaje, A) (p01:7176)
+L 0x70BF ficha_en_menos_1 A = la ficha de 0xD200 en (D, E) - 1 (p01:7176) y sigue en p01:7141
 L 0x70C8 centrado_en_x acarreo si (X + 3) & 15 < 6: el personaje esta en el centro de su casilla
 L 0x7167 dos_fichas p01:704C en E + C y en E - C
 L 0x7176 ficha_en A = la ficha de 0xD200 en (D = X, E = Y), o fuera de la pantalla
@@ -266,6 +279,7 @@ L 0x71F2 disparo_acierta borra el disparo y quita al actor lo de p01:7234[tipo -
 L 0x721A quita_vida_al_actor (ix+0x12) - p01:7234[0xDE80 - 1]; a cero, sonido 0x17
 L 0x7286 actores_contra_el_personaje los 8 actores con (ix+0x13) bit 0 contra el personaje
 L 0x72C8 toca_al_personaje lo que pasa al tocar el actor IX segun su tipo (0x29, 0x2A, 0x0E...)
+L 0x730F sonido_de_vida el sonido 0x1D o 0x23 segun la vida (byte 5 de la ficha) y su barra (p00:4752)
 L 0x732B tipo_7_o_13 Z y sin acarreo si el tipo es 7 o 13
 L 0x7398 personaje_1_fuerte acarreo si 0xC26F, el estado del personaje 1 es 3 y el tipo es menor de 0x37
 L 0x73AC toca_tipo_14 sonido 0x18, (ix+0x13) = 0 y el paso siguiente
@@ -276,27 +290,35 @@ L 0x7444 caja_del_disparo con 15: la caja del disparo IY (p01:744D)
 L 0x744D medidas_del_disparo las medidas del disparo IY de p15:BEAD[tipo - 1]
 L 0x74A9 caja_del_actor con 6: la caja del actor IX de p06:B6D3[tipo - 1]
 L 0x74CB cajas_se_tocan acarreo si las dos cajas (D, E, H, L y las de HL') se tocan
+L 0x74E7 umbral_de_fichas fuera de la sala 5, el umbral de fichas de p01:704C (0xC222 = 0x11, 0xC223 = 0x12)
 L 0x7509 marca_en_e000 un hueco en 0xE000 (de 4 en 4) para el actor IX salvo el tipo 0x29
 L 0x7583 despacha_por_personaje despacha A con IX = la ficha del personaje
 L 0x761D sprites_a426_encima los patrones de p15:A426 y dos sprites encima del personaje
+L 0x7625 globo_encima los sprites 8 y 9 en (Y - 0x30, X - 8) del personaje, patrones 0x28 y 0x2C y sus colores (p01:765B)
 L 0x7654 llena_16 16 bytes de DE con A
 L 0x7663 actores_de_cd00 los 9 actores de 0xCD00: su paso, movimiento, piezas y sprites
 L 0x76A2 despacha_actor_cd00 despacha el tipo - 1 del actor con B = su paso
 L 0x76C8 actor_6_o_12 los tipos 6 y 12 cerca del borde de abajo
 L 0x76DA libera_piezas libera en 0xCC80 las piezas (ix+0x20) del actor
 L 0x76FC piezas_del_actor con 15: las piezas del actor de p15:B57E[tipo][(ix+0x10)]
+L 0x772E crea_enemigos_de_pantalla fuera de la sala 5: el bloque 0x0D y los enemigos de p15:A4F9[fase][pantalla] en 0xCD00
 L 0x7776 crea_enemigo los patrones de su tipo y [tipo][Y][X] de la lista (p15:A4F9)
 L 0x77B8 lee_ix17 (ix+0x17) = el siguiente byte de la lista
 L 0x77C7 lee_ix15 (ix+0x15) = el siguiente byte de la lista
+L 0x77F9 dibujo_del_actor_78 copia 16 x 16 de (0x78, 0) con TIMP a la X e Y del actor
 L 0x780D hueco_del_enemigo DE = la posicion del dibujo del enemigo segun su numero en 0xCD00
+L 0x7832 dibujo_del_actor_y14 un dibujo en la X del actor y su Y - 0x14
 L 0x7871 piezas_salvo_8_9_10 las piezas del enemigo salvo los tipos 8, 9 y 10
 L 0x787B reserva_piezas reserva en 0xCC80 las piezas del actor y copia sus dos bytes
 L 0x78A8 pieza_libre C = la primera pieza libre de 0xCC80 (22), marcada; acarreo si hay
 L 0x78BD coloca_piezas con 15: la posicion de cada pieza (desplazamientos de p01:78E5)
 L 0x78E5 desplazamientos_por_tipo DE = la tabla de desplazamientos del tipo A (p15:B6D2-B6EE)
+L 0x7901 borra_a_barras borra la VRAM a barras: un byte cada 13 desde (0x24, 0x1A), con esperas
 L 0x7948 objetos los 8 objetos de 0xCB00 de la pantalla 0xC212
 L 0x7974 sprites_del_objeto los dos sprites del objeto, o escondidos si no es de esta pantalla
 L 0x79A0 colores_del_objeto los colores del objeto (p02:8ABF)
+L 0x79A9 objetos_de_la_fase borra 0xCB00 y pone los objetos de la fase de p12:BF59[0xC211]
+L 0x79E2 objetos_sin_coger los 8 objetos de 0xCB00 de esta pantalla que no se han cogido
 L 0x7AD7 objeto_baja con acarreo de p01:704C debajo, la Y del objeto + 16 o - 16
 L 0x7AF4 objeto_vuelve el objeto vuelve a su sitio
 L 0x7B02 paso_del_objeto el paso del objeto: cogerlo, caer, subir...
@@ -310,17 +332,28 @@ L 0x7C7F destapa_casillas devuelve las 2 x 2 casillas guardadas del objeto
 L 0x7C97 devuelve_dos_casillas copia dos casillas de (BC) a (HL)
 L 0x7C9E fichas_debajo p01:704C en las dos casillas debajo del objeto (D - 4 y D + 4)
 L 0x7CB0 compara_ficha_guardando p01:704C sin tocar BC, DE ni HL
+L 0x7CBA busca_puerta_de_salida con 9: la puerta de salida de la fase (p09:BF35[0xC211]) a 0xD510
+L 0x7CED pinta_puerta_de_salida si la puerta de salida (0xD510) esta en esta pantalla, su dibujo
 L 0x7D34 puerta_de_salida la puerta de salida de la fase (0xD510)
+L 0x7DB1 entrada_de_la_fase en la primera pantalla y fuera de la sala 5: la posicion de entrada (p01:7DEF)
 L 0x7DF0 posicion_de_entrada con 9: (H, L) = el lado y la Y de entrada de p09:BF1D[0xC211]
 L 0x7E12 sale_por_la_entrada en la pantalla 1, junto a la entrada y pulsando hacia fuera: 0xC215 = 3 o 4
 L 0x7E6F bloque_que_baja el bloque de (ix+0x16) que baja o sube con (ix+0x1B)
 L 0x7EFD bloques_d180 los 2 bloques de 0xD180 de la pantalla
+L 0x7F1F bloques_de_la_fase borra 0xD180 y pone los 2 bloques que se mueven de la fase (p12:B591[0xC211])
+L 0x7F7B bloque_de_pantalla el bloque de 0xD180 de esta pantalla, si lo hay
+L 0x7FC7 bloque_13 si el bloque en curso (0xD100) es el 0x0D, segun 0xCCC0
+L 0x7FE0 posicion_bloque_13 si el bloque en curso es el 0x0D, su posicion de 0xD118/0xD119
+L 0x7FF2 texto_de_ruina_japones solo con la BIOS japonesa y sin otro texto en marcha (0xC8AB, 0xC8A0)
 C 0x6004 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x6007 banco_9_en_a000: pone el banco 9 en 0xA000
+C 0x600A pantalla_vecina: 0xC212 = la vecina del lado 0xC215 (0xC218-0xC21B)
 C 0x600D bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x6011 guarda el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
+C 0x6014 cambia_de_pantalla_y_enciende: p00:5E7A y la pantalla encendida
 C 0x6022 tecla_de_la_demo: con 9: A = las teclas y C = los cuadros del paso C de la demo de la ruina (p09:BCD6)
 C 0x602D tecla_de_la_demo: con 9: A = las teclas y C = los cuadros del paso C de la demo de la ruina (p09:BCD6)
+C 0x6030 teclas_c007: p00:5005 con HL = 0xC007: las teclas y las nuevas
 C 0x6033 lee_teclas: A = teclas de las filas 6 y 7 de la matriz
 C 0x6039 teclas_nuevas: (HL) = las teclas de A; (HL - 1) = las que no estaban antes
 C 0x603E banco_9_en_a000: pone el banco 9 en 0xA000
@@ -328,23 +361,31 @@ C 0x6041 lee la ruina (0-4)
 C 0x6047 palabra_a: HL = la palabra A de la tabla HL
 C 0x604C hl_mas_a: HL = HL + A
 C 0x6054 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
+C 0x605A copia_e8: copia 5 x 0 de (0xE8, 0) a (0xE8, 0) de la pagina 1 a la 1 (HMMM)
 C 0x605D lee la cuenta de cuadros
 C 0x6063 apunta a la cuenta de cuadros del juego
 C 0x6067 lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 C 0x606A pausa: en partida, si se pulsa la tecla de 0xC00E bit 0: 0xC008 = 1 y el sonido 0xFD
 C 0x606E dibuja_al_personaje: las fichas del personaje en la pagina 1 segun 0xC253 y 0xC26F
 C 0x6071 cuadro_del_personaje: mando, movimiento y la accion 0xC24B (despacho)
+C 0x6074 choques_con_cd00: salvo muriendo y fuera de la sala 5: los choques de los 9 actores de 0xCD00 (p03:B6AB) y sus empujones
 C 0x6077 puerta_de_salida: la puerta de salida de la fase (0xD510)
 C 0x607A azar: 0xC3A0 = 0xC3A0 + (0xC246 + 0xC3A0) + 0xC00D + 0x0B: numero al azar
 C 0x607D cuadro_de_personaje_y_disparos: p06:B259, p06:B2FC, la accion y los sprites
 C 0x6080 disparos_y_cambio: disparos, sus sprites y la tecla 0x10 de cambiar de personaje
+C 0x6083 cuadro_de_la_sala_5: en la sala 5, despacha 0xC310 (tabla p02:8D01)
+C 0x6086 cuadro_del_final_de_fase: con 0xC316 y sin morir: la cuenta 0xC314 y despacha 0xC310 (tabla p02:8FBF)
+C 0x6089 cuadro_de_actores: el jefe (p02:8598) y los 8 actores de 0xC400: su tipo, movimiento y vida
 C 0x608C sale_por_la_entrada: en la pantalla 1, junto a la entrada y pulsando hacia fuera: 0xC215 = 3 o 4
 C 0x6092 cuenta_ccb7: 0xCCB7 - 1 si no es cero
 C 0x6095 actores_de_cd00: los 9 actores de 0xCD00: su paso, movimiento, piezas y sprites
 C 0x6098 objetos: los 8 objetos de 0xCB00 de la pantalla 0xC212
 C 0x609B bloques_d180: los 2 bloques de 0xD180 de la pantalla
+C 0x609E fotogramas_de_actores: el fotograma de los 8 actores de 0xC400, salvo el tipo 0x37 (p02:8A42)
+C 0x60A1 sprites_de_actores: los atributos de las piezas de los 8 actores de 0xC400 (p02:8AB8)
 C 0x60A4 disparos_contra_actores: cada disparo de 0xC320 contra los 8 actores de 0xC400 con (ix+0x13) bit 1
 C 0x60A7 actores_contra_el_personaje: los 8 actores con (ix+0x13) bit 0 contra el personaje
+C 0x60AA atributos_rotados: los colores de los sprites (p00:5676) y los atributos de 0xDE00 a la VRAM 0x7600 empezando cada cuadro por otro sprite (0xC00C + 0x68): el parpadeo cuando hay muchos
 C 0x60AD lee las banderas (bit 6: en partida)
 C 0x60B3 lee la accion del personaje (4 muere, 5 escalera)
 C 0x60B9 lee el jefe vencido (no queda ningun 0x19)
@@ -355,7 +396,6 @@ C 0x60CF lee en la sala de la puerta 5
 C 0x60D4 lee el jefe vencido (no queda ningun 0x19)
 C 0x60D9 lee la X del personaje
 C 0x60ED pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
-C 0x60F0 personaje_0_vivo: 0xC240 = la ficha del personaje 0 (0xC2B0)
 C 0x60F3 pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 C 0x60F6 carga_la_fuente: con 13-14-15: la fuente (p14:9289) y los caracteres del marcador
 C 0x60F9 graficos_de_antesala: la lista de fichas de la antesala (p07:60B0[ruina]) y la de p12:A7AA
@@ -364,15 +404,22 @@ C 0x60FF mapa_de_antesala: RLE del mapa de la antesala (p10:603C) a 0xEC00
 C 0x6102 metabloques_de_antesala: RLE de los metabloques de la antesala (p11:88CB) a 0xE400
 C 0x6105 marco_del_marcador: los rectangulos y lineas del marcador, sus caracteres y el nombre de la ruina
 C 0x6108 lee el cuadro del personaje en la antesala
+C 0x610B fotograma_a_f800: un fotograma de cada personaje a la VRAM desde 0xF800 (p00:5B6E)
 C 0x610E banco_6_en_a000: pone el banco 6 en 0xA000
 C 0x6111 colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
+C 0x6114 puertas_de_la_ruina: en la pagina 1, los dibujos de p06:BDE3[ruina] desde (0xA0, 0)
+C 0x6117 pinta_pantalla_antesala: pantalla apagada, sprites escondidos y la pantalla 0xCC10 de la antesala
 C 0x611A bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x611D lee la ficha del personaje 0 (14 bytes)
 C 0x6120 guarda el personaje que se lleva (0 o 1)
 C 0x6124 lee el cuadro del personaje en la antesala
+C 0x6127 fotograma_a_f800: un fotograma de cada personaje a la VRAM desde 0xF800 (p00:5B6E)
 C 0x612A banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x612D anda_en_la_antesala: con las teclas, la X (0xCC13) y el sentido (0xCC16) en la antesala
 C 0x6130 sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
+C 0x6133 cambia_pantalla_antesala: con la X de la antesala en un borde, la pantalla siguiente o la anterior (0xCC10)
 C 0x6136 atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0x6139 puertas_abiertas: cuenta en 0xE322 las puertas abiertas de la pantalla de la antesala (0xE328 + 0xCC10 * 16)
 C 0x613D bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x6142 banco_6_en_a000: pone el banco 6 en 0xA000
 C 0x6145 sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
@@ -381,8 +428,10 @@ C 0x614B banco_6_en_a000: pone el banco 6 en 0xA000
 C 0x614E colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 C 0x6151 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x615C banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x615F cuadro_de_andar_antesala: 0xCC15 + 1; el cuadro de andar (0xCC14) de sus bits 2 y 3
 C 0x6162 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x6165 lee el cuadro del personaje en la antesala
+C 0x6168 fotograma_a_f800: un fotograma de cada personaje a la VRAM desde 0xF800 (p00:5B6E)
 C 0x616B marcador_de_vidas: con 6: p06:BAAA
 C 0x616E atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 C 0x6171 apunta a la X en la antesala
@@ -391,6 +440,7 @@ C 0x617E atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites
 C 0x6183 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x6188 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x618B banco_6_en_a000: pone el banco 6 en 0xA000
+C 0x618E abre_puertas: 0x18 veces, la puerta de la fase de la ruina (p00:5346) en 0xE328
 C 0x6191 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x619E linea_vertical: LINE (0x70) vertical (ARG = 1) de B puntos en (H, L), color C
 C 0x61B1 lee la ruina (0-4)
@@ -573,6 +623,7 @@ C 0x66C4 lee la fase (1-25: ruina * 5 + puerta)
 C 0x66CA borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
 C 0x66CD recorre_cd00: p01:76DA con los 9 actores de 0xCD00
 C 0x66D7 crea_actor_0: p02:8615 con B = 0
+C 0x66DC juego_30: el juego de sprites 0x30 (p00:55F0)
 C 0x66E0 guarda en marcha la fase
 C 0x66EC apunta a los 9 actores de la pantalla (0x80 bytes cada uno)
 C 0x66F1 libera_piezas: libera en 0xCC80 las piezas (ix+0x20) del actor
@@ -646,6 +697,8 @@ C 0x68F3 apunta a los atributos de los sprites en RAM
 C 0x6923 colores_a_ram: 16 + 16 colores de 0xC24C/0xC24D a HL
 C 0x6944 ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 C 0x6947 lee la cuenta de cuadros del juego
+C 0x694C mira_el_globo: sin globo (0xC272) y sin morir: lo que sigue de los objetos de animo
+C 0x694F cuenta_del_globo: esconde el sprite 8, cuenta 0xC272 (p03:B30A) y, sin disparos, sigue
 C 0x6952 despacha_accion: despacha la accion del personaje (0xC24B)
 C 0x6959 nada_6aea: solo ret
 C 0x695C sprites_del_personaje_a_ram: los atributos de los sprites del personaje en 0xDE00
@@ -969,6 +1022,7 @@ C 0x72FC lee los cartuchos encontrados (bits 0-3: 07 49, 07 50, 07 51, 07 52)
 C 0x730C empieza_salto: 0xC264 = 1 y el salto segun la accion
 C 0x730F byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
 C 0x731A sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x731D barra_de_vida: la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
 C 0x7327 guarda invencible
 C 0x732B lee el tipo del actor
 C 0x7338 lee la accion del personaje (4 muere, 5 escalera)
@@ -1032,8 +1086,10 @@ C 0x757B hl_mas_a: HL = HL + A
 C 0x7580 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 C 0x7584 ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 C 0x7589 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x75B8 suma_monedas: las monedas (0xC259, BCD) + E (y D al byte alto)
 C 0x75BB dos_cifras_dobles: las cifras de 0xC25A y 0xC259 en grande (p00:47FE)
 C 0x75C0 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x75C7 cuenta_30_d502: 0xC314 = 0x30 y p02:8F94 con DE = (0xD502)
 C 0x75CC sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x75D9 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 C 0x75E6 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
@@ -1139,6 +1195,7 @@ C 0x7963 sprites_del_objeto: los dos sprites del objeto, o escondidos si no es d
 C 0x7967 colores_del_objeto: los colores del objeto (p02:8ABF)
 C 0x796E hl_mas_a: HL = HL + A
 C 0x7974 lee la pantalla de la fase (desde 1)
+C 0x79A6 sprites_de_las_piezas: cada pieza de HL: Y, X y patron a su hueco de 0xDE28 y su color (p02:8AB8 sin contar)
 C 0x79A9 apunta a los objetos de la fase (0x20 bytes cada uno)
 C 0x79AF borra: pone a cero BC + 1 bytes desde HL
 C 0x79B2 banco_12_en_a000: pone el banco 12 en 0xA000

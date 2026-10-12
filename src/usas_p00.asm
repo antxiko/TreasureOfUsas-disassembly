@@ -174,7 +174,7 @@ DATA_saltos_40F4:
 L_4110:
 	djnz L_4127		;4110
 	call bancos_4_5_6		;4112   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09483h		;4115
+	call 09483h		;4115   ; descubre_el_rotulo: cada 2 cuadros, 0x31 - 0xC241 lineas del rotulo de la pagina 1 a la 0; con 0xC241 a cero, 0xC242 = 1
 	call bancos_1_2_3		;4118   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c242h)		;411b
 	or a			;411e
@@ -189,29 +189,29 @@ L_4127:
 	ret nz			;412d
 	call graficos_del_titulo		;412e   ; graficos_del_titulo: la fuente, CHGCLR y las fichas del titulo
 	call bancos_4_5_6		;4131   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09748h		;4134
-	call 096eah		;4137
+	call 09748h		;4134   ; paleta_a_negro: los 16 colores de la paleta a cero
+	call 096eah		;4137   ; mapa_del_titulo: el mapa de 14 x 15 fichas del RLE p05:9988 (en 0xE400), con la pantalla apagada
 	call bancos_1_2_3		;413a   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	xor a			;413d
 	jp espera_y_sigue		;413e   ; espera_y_sigue: 0xC004 = A y pasa al siguiente paso (0xC001 + 1)
 L_4141:
 	djnz L_415F		;4141
 	call bancos_4_5_6		;4143   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09755h		;4146
-	call 09792h		;4149
+	call 09755h		;4146   ; sprite_del_titulo: el sprite 0 en la Y y X de p05:9782[(0xCA05 >> 2) & 7], color 13; 0xCA05 + 1
+	call 09792h		;4149   ; fundido_del_titulo: cada 4 cuadros, un paso del fundido desde negro de la paleta p06:B550
 	ld hl,0ca00h		;414c
 	ld a,(hl)			;414f
 	and a			;4150
 	jp z,bancos_1_2_3		;4151   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld (hl),000h		;4154
-	call 09837h		;4156
+	call 09837h		;4156   ; borra_ca00: pone a cero 0xCA00-0xCA2F
 	call bancos_1_2_3		;4159   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	xor a			;415c
 	jr espera_y_sigue		;415d
 L_415F:
 	djnz L_4175		;415f
 	call bancos_4_5_6		;4161   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09840h		;4164
+	call 09840h		;4164   ; linea_del_prologo: una linea del prologo (p05:994D con la BIOS japonesa, p05:98B1 si no) que sube; al acabar, 0xCA01 = 1 y el texto p00:5068
 	call bancos_1_2_3		;4167   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld hl,0ca01h		;416a
 	ld a,(hl)			;416d
@@ -223,7 +223,7 @@ L_415F:
 L_4175:
 	call apaga_y_borra		;4175   ; apaga_y_borra: esconde los sprites y borra la pagina 0 con la pantalla apagada
 	call bancos_4_5_6		;4178   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0941ch		;417b
+	call 0941ch		;417b   ; pinta_el_rotulo: el rotulo del arranque en la pagina 1: R#7 = 0x0F, HMMV, caracteres p05:94C3-9550, paleta p05:9614 y fichas p05:9624
 	call bancos_1_2_3		;417e   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jr siguiente_paso		;4181
 L_4183:
@@ -268,7 +268,7 @@ L_41C4:
 	call borra_partida		;41c6   ; borra_partida: pone a cero 0xC202-0xEFFF, la ruina 0 y la pantalla 1
 	call personajes_al_empezar		;41c9   ; personajes_al_empezar: con 6: las dos fichas de personaje de p06:BF6C a 0xC2B0 y 0xC2D0
 	call bancos_4_5_6		;41cc   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0b751h		;41cf
+	call 0b751h		;41cf   ; busca_otros_cartuchos: recorre las ranuras (EXPTBL 0xFCC1) y marca en 0xC205 los cartuchos 07 49-07 52 (p06:B78D)
 	call bancos_1_2_3		;41d2   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	call bonus_de_cartucho		;41d5   ; bonus_de_cartucho: 0xC259 = 0x100 si 0xC205 tiene el bit 0 (cartucho 07 49 en otra ranura, p06:B78D)
 	jp L_435E		;41d8
@@ -283,7 +283,7 @@ L_41E4:
 	exx			;41e8
 	djnz L_421C		;41e9
 	call bancos_4_5_6		;41eb   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 06085h		;41ee
+	call 06085h		;41ee   ; guion_de_la_escena: las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)
 	push af			;41f1
 	call bancos_1_2_3		;41f2   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	pop af			;41f5
@@ -292,14 +292,14 @@ L_41E4:
 	inc (hl)			;41fa
 	call apaga_y_borra		;41fb   ; apaga_y_borra: esconde los sprites y borra la pagina 0 con la pantalla apagada
 	call bancos_4_5_6		;41fe   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09665h		;4201
+	call 09665h		;4201   ; lista_9241: la lista de fichas p05:9241 (colores p05:9231)
 	call bancos_1_2_3		;4204   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c21dh)		;4207   ; lee la ruina (0-4)
 	or a			;420a
 	jp z,siguiente_paso		;420b   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 	call bancos_4_5_6		;420e   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
 	call 07390h		;4211   ; pantalla_73b4: paleta, mapa p05:93C6, el dibujo y el texto p04:73BD
-	call 0a249h		;4214
+	call 0a249h		;4214   ; empieza_rotulo_de_ruina: el texto a maquina de p06:A2B9[ruina]: [X] y caracteres, en (X, 0xB0)
 	call bancos_1_2_3		;4217   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jr siguiente_paso		;421a
 L_421C:
@@ -308,8 +308,8 @@ L_421C:
 	or a			;4221
 	jr z,L_423A		;4222
 	call bancos_4_5_6		;4224   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0966eh		;4227
-	call 0a28ah		;422a
+	call 0966eh		;4227   ; parpadeo_de_ruina: 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
+	call 0a28ah		;422a   ; letra_del_rotulo: si no ha acabado, cada 0xC8A5 cuadros la siguiente letra del texto a maquina
 	call bancos_1_2_3		;422d   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c8a6h)		;4230   ; lee el texto a maquina ha acabado
 	and a			;4233
@@ -319,12 +319,12 @@ L_421C:
 	ret z			;4239
 L_423A:
 	call bancos_4_5_6		;423a   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0b870h		;423d
-	call 0b865h		;4240
+	call 0b870h		;423d   ; puertas_de_la_antesala: las 5 puertas de 0xE328 a 0xFF y luego las de la ruina (p06:BE3D)
+	call 0b865h		;4240   ; al_entrar_en_la_antesala: 0xCC12 = 0xC3 y la X de la antesala (0xCC13) = 0x30
 	call bancos_1_2_3		;4243   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 L_4246:
 	call apaga_y_borra_todo		;4246   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
-	call 060edh		;4249
+	call 060edh		;4249   ; entra_en_la_antesala: pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
 	ld a,089h		;424c
 	call sonido		;424e   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	jp siguiente_paso		;4251   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
@@ -333,17 +333,17 @@ L_4254:
 	ld a,(0c00eh)		;4256   ; lee las teclas especiales
 	rra			;4259
 	jp c,L_432D		;425a
-	call 06124h		;425d
+	call 06124h		;425d   ; cuadro_de_la_antesala: el personaje en la antesala: su cuadro, andar, sprites, cambio de pantalla y puertas abiertas
 	ret nc			;4260
-	call 061b1h		;4261
+	call 061b1h		;4261   ; calcula_la_fase: 0xC211 = ruina * 5 + la puerta de la antesala (p01:61C2)
 	call bancos_4_5_6		;4264   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb1eh		;4267
+	call 0bb1eh		;4267   ; mensaje_de_la_puerta: el recuadro y el texto de la puerta segun la BIOS y la pantalla (p06:BE5B, BE69, BEDA)
 	call bancos_1_2_3		;426a   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jp siguiente_paso		;426d   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 L_4270:
 	djnz L_42B7		;4270
 	call bancos_4_5_6		;4272   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb64h		;4275
+	call 0bb64h		;4275   ; si_o_no: 0xC22A = la respuesta con las teclas (1 o 2) o 0
 	call bancos_1_2_3		;4278   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c22ah)		;427b
 	and a			;427e
@@ -367,7 +367,7 @@ L_4291:
 	jr nz,L_42B0		;42a0
 L_42A2:
 	call bancos_4_5_6		;42a2   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb84h		;42a5
+	call 0bb84h		;42a5   ; mensaje_de_eleccion: el recuadro y el texto: solo entra uno, elige, faltan llaves (p06:BE88-BEFA)
 	call bancos_1_2_3		;42a8   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,078h		;42ab
 	jp espera_y_sigue		;42ad   ; espera_y_sigue: 0xC004 = A y pasa al siguiente paso (0xC001 + 1)
@@ -404,7 +404,7 @@ L_42D4:
 	ret			;42e8
 L_42E9:
 	call bancos_4_5_6		;42e9   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bb84h		;42ec
+	call 0bb84h		;42ec   ; mensaje_de_eleccion: el recuadro y el texto: solo entra uno, elige, faltan llaves (p06:BE88-BEFA)
 	call bancos_1_2_3		;42ef   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,078h		;42f2
 	jp espera_y_sigue		;42f4   ; espera_y_sigue: 0xC004 = A y pasa al siguiente paso (0xC001 + 1)
@@ -418,15 +418,15 @@ L_42F7:
 	ret nz			;4303
 L_4304:
 	call borra_personajes		;4304   ; borra_personajes: pone a cero 0xC240-0xC258
-	call 0611dh		;4307
+	call 0611dh		;4307   ; lleva_segun_ficha_0: 0xC240 = el byte 0 de la ficha del personaje 0
 	call bancos_4_5_6		;430a   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0a410h		;430d
+	call 0a410h		;430d   ; copia_de_la_puerta: copia 0x20 x 8 de (X - 0x18, 0x93) a (0x78, 0x60) segun la X de la antesala (0xCC13)
 	call bancos_1_2_3		;4310   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jp siguiente_paso		;4313   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 L_4316:
 	djnz L_433E		;4316
 	call bancos_4_5_6		;4318   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0a581h		;431b
+	call 0a581h		;431b   ; elige_personaje: la eleccion de personaje: cambia con las teclas, el recuadro parpadea y, con el que vive, la tecla 0x10
 	call bancos_1_2_3		;431e   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c23bh)		;4321
 	and a			;4324
@@ -436,21 +436,21 @@ L_4316:
 	jp siguiente_paso		;432a   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 L_432D:
 	call bancos_4_5_6		;432d   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09ed6h		;4330
+	call 09ed6h		;4330   ; entra_en_informacion: la pantalla INFORMATION: guarda el personaje (0xC229), la mejora 0 y p05:9EEC
 	call bancos_1_2_3		;4333   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	call marco_del_marcador		;4336   ; marco_del_marcador: los rectangulos y lineas del marcador, sus caracteres y el nombre de la ruina
 	ld a,00dh		;4339
 	jp pon_estado		;433b   ; pon_estado: 0xC000 = A y 0x20 cuadros de espera en 0xC004
 L_433E:
 	djnz L_434B		;433e
-	call 08100h		;4340
+	call 08100h		;4340   ; texto_de_la_antesala: el texto a maquina de la antesala: si no esta en marcha, el recuadro, los nombres por animo y el texto de la puerta
 	ld a,(0c8a6h)		;4343   ; lee el texto a maquina ha acabado
 	and a			;4346
 	ret z			;4347
 	jp siguiente_paso		;4348   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 L_434B:
 	djnz L_436C		;434b
-	call 0617bh		;434d
+	call 0617bh		;434d   ; abre_las_puertas: el marcador de vidas, los sonidos 0x24 y 0xFF y p06:BA68
 	call apaga_y_borra_todo		;4350   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 	call entra_en_fase		;4353   ; entra_en_fase: graficos, paleta, sprites, mapa y metabloques de la fase; pantalla 1
 	call musica_de_fase		;4356   ; musica_de_fase: la musica de la ruina segun el personaje (p15:BE7A), o la de la sala 5
@@ -478,7 +478,7 @@ L_436C:
 	ld (0c21fh),a		;4382
 	jp siguiente_paso		;4385   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 L_4388:
-	call 0605ah		;4388
+	call 0605ah		;4388   ; cuadro_de_partida: un cuadro de la partida: p00:563F y, en cuadros pares, 0xC00D + 1, los mandos y la pausa
 	ld a,(0c217h)		;438b
 	and a			;438e
 	ld a,00ah		;438f
@@ -488,7 +488,7 @@ L_4388:
 	ld a,009h		;4398
 	jp nz,pon_estado		;439a   ; pon_estado: 0xC000 = A y 0x20 cuadros de espera en 0xC004
 	call bancos_4_5_6		;439d   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0b66ah		;43a0
+	call 0b66ah		;43a0   ; mira_los_bordes: salvo muriendo, si la X o la Y del personaje pasa un borde: 0xC215 = el lado
 	call bancos_1_2_3		;43a3   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c215h)		;43a6   ; lee el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	and a			;43a9
@@ -502,13 +502,13 @@ L_4388:
 	jp z,L_435E		;43b9
 	ret			;43bc
 L_43BD:
-	call pantalla_de_informacion		;43bd
+	call pantalla_de_informacion		;43bd   ; pantalla_de_informacion: con 4-5-6: la pantalla INFORMATION de la pausa, donde se compran mejoras con monedas (p06:A465, p05:9EEC)
 	ld a,00bh		;43c0
 	jp pon_estado		;43c2   ; pon_estado: 0xC000 = A y 0x20 cuadros de espera en 0xC004
 L_43C5:
 	djnz L_43E7		;43c5
 	call bancos_4_5_6		;43c7   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bbfbh		;43ca
+	call 0bbfbh		;43ca   ; espera_el_mensaje: los sprites de la antesala y, con la cuenta 0xC209 a cero, quita el recuadro (acarreo)
 	push af			;43cd
 	call bancos_1_2_3		;43ce   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	pop af			;43d1
@@ -532,9 +532,9 @@ L_43E7:
 	call ninguno_vivo		;43ee   ; ninguno_vivo: acarreo si las fichas de los dos personajes (0xC2B0 y 0xC2D0) son cero
 	jr c,L_440A		;43f1
 	call apaga_y_borra_todo		;43f3   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
-	call 060edh		;43f6
+	call 060edh		;43f6   ; entra_en_la_antesala: pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
 	call bancos_4_5_6		;43f9   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bbd2h		;43fc
+	call 0bbd2h		;43fc   ; mensaje_de_captura: el recuadro y el texto: el companero, capturado (p06:BF1B, BF29)
 	call bancos_1_2_3		;43ff   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,089h		;4402
 	call sonido		;4404   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
@@ -602,7 +602,7 @@ L_4477:
 	jr L_449A		;447e
 L_4480:
 	call banco_9_en_a000		;4480   ; banco_9_en_a000: pone el banco 9 en 0xA000
-	call 0b8cch		;4483
+	call 0b8cch		;4483   ; pantalla_vecina: 0xC212 = la vecina del lado 0xC215 (0xC218-0xC21B)
 	call bancos_1_2_3		;4486   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	call cambia_de_pantalla		;4489   ; cambia_de_pantalla: pinta la pantalla nueva: mapa, actores, objetos y sprites
 	xor a			;448c
@@ -622,7 +622,7 @@ L_44A3:
 	exx			;44a7
 	djnz L_44BF		;44a8
 	call bancos_4_5_6		;44aa   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bc4eh		;44ad
+	call 0bc4eh		;44ad   ; cuadro_de_la_captura: si 0xC31C: los sprites y la cuenta 0xCC18
 	call bancos_1_2_3		;44b0   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c31ch)		;44b3
 	and a			;44b6
@@ -632,11 +632,11 @@ L_44B8:
 	ld (0c000h),hl		;44bb   ; guarda el estado del juego y el byte siguiente (16 bits)
 	ret			;44be
 L_44BF:
-	call 06154h		;44bf
+	call 06154h		;44bf   ; marca_e320: un 1 dos bytes antes de la direccion de 0xE320
 	call apaga_y_borra_todo		;44c2   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
-	call 060f3h		;44c5
+	call 060f3h		;44c5   ; pinta_la_antesala: la fuente, los graficos, la paleta, el mapa y los metabloques de la antesala y el marcador
 	call bancos_4_5_6		;44c8   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0bc0ch		;44cb
+	call 0bc0ch		;44cb   ; prepara_la_captura: sentido y cuentas de la antesala a cero, 0xCC18 = 0x78; con 0xC31C distinto de 3, los colores de la antesala
 	call bancos_1_2_3		;44ce   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	xor a			;44d1
 	ld (0c21ch),a		;44d2   ; guarda el jefe vencido (no queda ningun 0x19)
@@ -649,7 +649,7 @@ L_44E0:
 	call lee_mandos		;44e1   ; lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 	exx			;44e4
 	djnz L_451E		;44e5
-	call 0615ch		;44e7
+	call 0615ch		;44e7   ; anda_en_la_antesala_1: con 6: el cuadro de andar de la antesala, los sprites y el marcador de vidas
 	ret c			;44ea
 	xor a			;44eb
 	ld (0c217h),a		;44ec
@@ -677,7 +677,7 @@ L_44E0:
 L_451E:
 	djnz L_4539		;451e
 	call bancos_4_5_6		;4520   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 06085h		;4523
+	call 06085h		;4523   ; guion_de_la_escena: las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)
 	push af			;4526
 	call bancos_1_2_3		;4527   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	pop af			;452a
@@ -691,9 +691,9 @@ L_4539:
 	xor a			;4539
 	ld (0c20ah),a		;453a   ; guarda en la sala de la puerta 5
 	call borra_e000		;453d   ; borra_e000: pone a cero 0xE000-0xE07F
-	call 06154h		;4540
+	call 06154h		;4540   ; marca_e320: un 1 dos bytes antes de la direccion de 0xE320
 	call apaga_y_borra_todo		;4543   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
-	call 060f3h		;4546
+	call 060f3h		;4546   ; pinta_la_antesala: la fuente, los graficos, la paleta, el mapa y los metabloques de la antesala y el marcador
 	ld a,(0c21dh)		;4549   ; lee la ruina (0-4)
 	cp 004h		;454c
 	ld a,08bh		;454e
@@ -702,7 +702,7 @@ L_4539:
 L_4554:
 	call sonido		;4554   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	call bancos_4_5_6		;4557   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0baf2h		;455a
+	call 0baf2h		;455a   ; sale_de_la_fase: sentido 0 en la antesala, los sprites de los personajes y el barrido de 0x20 lineas
 	call bancos_1_2_3		;455d   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jp siguiente_paso		;4560   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 estados_de_la_ruina:		; el estado de los dos personajes al entrar en la ruina (p00:4575)
@@ -734,7 +734,7 @@ DATA_por_ruina_c2b6:
 L_457F:
 	call lee_mandos		;457f   ; lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 	call bancos_4_5_6		;4582   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09ffbh		;4585
+	call 09ffbh		;4585   ; cuadro_de_informacion: un cuadro de INFORMATION: teclas, cursor, compra y numeros; con la tecla especial 2, deshace (sigue en p06:A000)
 	call bancos_1_2_3		;4588   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c00eh)		;458b   ; lee las teclas especiales
 	rra			;458e
@@ -752,12 +752,12 @@ L_45A4:
 	dec b			;45a4
 	jr z,L_45B3		;45a5
 	call bancos_4_5_6		;45a7   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0a2fch		;45aa
+	call 0a2fch		;45aa   ; pantalla_de_clave: borra lo tecleado (0xE360) y pinta el recuadro de la clave
 	call bancos_1_2_3		;45ad   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	jp siguiente_paso		;45b0   ; siguiente_paso: 0xC001 + 1: el siguiente paso del estado
 L_45B3:
 	call bancos_4_5_6		;45b3   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0a32ah		;45b6
+	call 0a32ah		;45b6   ; teclea_clave: la tecla nueva al final de lo tecleado en 0xE360 (0xE378 cuenta las letras)
 	call bancos_1_2_3		;45b9   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0e379h)		;45bc
 	and a			;45bf
@@ -776,7 +776,7 @@ L_45B3:
 	call carga_la_fuente		;45dc   ; carga_la_fuente: con 13-14-15: la fuente (p14:9289) y los caracteres del marcador
 	call estados_de_la_ruina		;45df   ; estados_de_la_ruina: el estado de los dos personajes al entrar en la ruina (p00:4575)
 	call bancos_4_5_6		;45e2   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 0b751h		;45e5
+	call 0b751h		;45e5   ; busca_otros_cartuchos: recorre las ranuras (EXPTBL 0xFCC1) y marca en 0xC205 los cartuchos 07 49-07 52 (p06:B78D)
 	call bancos_1_2_3		;45e8   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	call bonus_de_cartucho		;45eb   ; bonus_de_cartucho: 0xC259 = 0x100 si 0xC205 tiene el bit 0 (cartucho 07 49 en otra ranura, p06:B78D)
 	ld hl,00204h		;45ee
@@ -792,13 +792,13 @@ bonus_de_cartucho:		; 0xC259 = 0x100 si 0xC205 tiene el bit 0 (cartucho 07 49 en
 L_4603:
 	call lee_mandos		;4603   ; lee_mandos: fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 	call bancos_4_5_6		;4606   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 09ffbh		;4609
+	call 09ffbh		;4609   ; cuadro_de_informacion: un cuadro de INFORMATION: teclas, cursor, compra y numeros; con la tecla especial 2, deshace (sigue en p06:A000)
 	call bancos_1_2_3		;460c   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c00eh)		;460f   ; lee las teclas especiales
 	rra			;4612
 	ret nc			;4613
 	call apaga_y_borra_todo		;4614   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
-	call 060edh		;4617
+	call 060edh		;4617   ; entra_en_la_antesala: pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
 	jp L_44B8		;461a
 vuelta_de_estado:		; lo que corre tras los estados 0-2 (p00:40ED la deja en la pila): lee los mandos y empieza la partida
 	call lee_joystick_y_teclado		;461d   ; lee_joystick_y_teclado: A = mando del puerto 1 (PSG 14) con las teclas del cursor y espacio
@@ -833,7 +833,7 @@ L_464A:
 	call graficos_del_titulo		;4651   ; graficos_del_titulo: la fuente, CHGCLR y las fichas del titulo
 	call paleta_b550		;4654   ; paleta_b550: con 4-5-6: la paleta p06:B550
 	call bancos_4_5_6		;4657   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 096eah		;465a
+	call 096eah		;465a   ; mapa_del_titulo: el mapa de 14 x 15 fichas del RLE p05:9988 (en 0xE400), con la pantalla apagada
 	ld hl,05068h		;465d
 	call texto		;4660   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	jp bancos_1_2_3		;4663   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -864,7 +864,7 @@ pinta_marcador:		; el texto de p00:5062, los marcos y las cifras del marcador
 	call copia_de_pagina_1		;4694   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 	call dos_cifras_dobles		;4697   ; dos_cifras_dobles: las cifras de 0xC25A y 0xC259 en grande (p00:47FE)
 	call barra_del_personaje		;469a   ; barra_del_personaje: la barra de 4 del byte 6 del personaje (p00:4891)
-	jp L_4752		;469d
+	jp barra_de_vida		;469d   ; barra_de_vida: la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
 marco_del_marcador:		; los rectangulos y lineas del marcador, sus caracteres y el nombre de la ruina
 	ld hl,00000h		;46a0
 	ld de,00014h		;46a3
@@ -927,7 +927,7 @@ L_4702:
 	ld bc,0a004h		;470b
 	ld a,004h		;470e
 	call copia_rectangulo		;4710   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
-L_4713:
+copia_9460_antesala:		; copia 0xA0 x 4 de (0x94, 0x60) a (0x0D, 0x30) de la pagina 1 a la 0, y sigue con la X de la antesala
 	ld de,0300dh		;4713
 	ld hl,06094h		;4716
 	ld bc,0a004h		;4719
@@ -959,10 +959,10 @@ nombre_de_la_ruina:		; con 13-14-15: el texto de p15:BE3D[ruina]
 	call palabra_a		;4749   ; palabra_a: HL = la palabra A de la tabla HL
 	call texto		;474c   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	jp bancos_1_2_3		;474f   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-L_4752:
+barra_de_vida:		; la barra de la vida (byte 5 de la ficha) en (0x2A, 6) (p00:4758)
 	ld de,02a06h		;4752
 	call byte_5_del_personaje		;4755   ; byte_5_del_personaje: A = el byte 5 de la ficha del personaje que se lleva
-L_4758:
+barra_de_cuartos:		; la barra de A / 4 trozos llenos de (HL - 1) / 4 (trozos de 4 x 8 de la pagina 1)
 	srl a		;4758   ; A / 4 y (HL - 1) / 4: la barra en cuartos
 	srl a		;475a
 	ld c,a			;475c
@@ -995,7 +995,7 @@ L_477F:
 	ret			;4781
 dos_cifras_dobles:		; las cifras de 0xC25A y 0xC259 en grande (p00:47FE)
 	ld bc,0d802h		;4782
-L_4785:
+cifras_dobles_en:		; las cifras dobles de 0xC25A y 0xC259 en BC (p00:47FE)
 	ld hl,0c25ah		;4785
 	push bc			;4788
 	push hl			;4789
@@ -1007,10 +1007,10 @@ L_4785:
 	add a,010h		;4791
 	ld b,a			;4793
 	jp cifra_doble		;4794   ; cifra_doble: las dos cifras BCD de (HL) en grande, con las mitades de p00:4846
-L_4797:
+cifras_dobles_48bc:		; p00:4785 con BC = 0x48BC
 	ld bc,048bch		;4797
-	jr L_4785		;479a
-L_479C:
+	jr cifras_dobles_en		;479a
+pares_de_cifras:		; B pares de cifras BCD de HL hacia atras (p00:47B4), sin ceros a la izquierda
 	ld c,000h		;479c
 L_479E:
 	dec b			;479e
@@ -1485,7 +1485,7 @@ L_49FC:
 	jr L_4A0A		;4a02
 apaga_y_borra:		; esconde los sprites y borra la pagina 0 con la pantalla apagada
 	call esconde_sprites		;4a04   ; esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
-L_4A07:
+apaga_y_espera:		; pantalla apagada y BC = 0xD4 de espera
 	ld bc,000d4h		;4a07
 L_4A0A:
 	push bc			;4a0a
@@ -2048,7 +2048,7 @@ L_4D50:
 	inc hl			;4d51
 	ld e,(hl)			;4d52
 	inc hl			;4d53
-L_4D54:
+texto_en_de:		; el texto de HL en la posicion (D, E) que ya hay, con C (p00:4D4A sin leer [X][Y])
 	ld a,(hl)			;4d54   ; el caracter; 0xFF acaba
 	inc hl			;4d55
 	ld b,a			;4d56
@@ -2065,8 +2065,8 @@ L_4D54:
 L_4D68:
 	add a,d			;4d68
 	ld d,a			;4d69
-	jr L_4D54		;4d6a
-L_4D6C:
+	jr texto_en_de		;4d6a
+bloque_4x3:		; 4 x 3 fichas de HL con TIMP desde (D, E); cada fila desde D = 0xE0
 	ld bc,00403h		;4d6c
 L_4D6F:
 	ld a,(hl)			;4d6f   ; B fichas de HL en una fila, C filas
@@ -2182,7 +2182,7 @@ caracter_transparente:		; la ficha de A con TIMP (LMMM 0x58) en (D, E)
 	pop hl			;4e16
 	pop bc			;4e17
 	ret			;4e18
-L_4E19:
+ficha_de_pagina_1:		; la ficha A de la pagina 1 a (D, E) de la pagina 1 (HMMM)
 	push bc			;4e19
 	push hl			;4e1a
 	push de			;4e1b
@@ -2551,12 +2551,12 @@ DATA_registros_vdp:
 lee_mandos:		; fuera de partida (0xC002 bit 6 a cero) salta a p01:6017; si no lee mandos y teclado a 0xC006/0xC007
 	ld a,(0c002h)		;4fee   ; lee las banderas (bit 6: en partida)
 	and 040h		;4ff1
-	jp z,06017h		;4ff3
+	jp z,06017h		;4ff3   ; teclas_de_la_demo: la demo: 0xC00A cuenta los cuadros de la tecla; al acabar, la siguiente de p01:603C (0xFF acaba)
 	call lee_teclas		;4ff6   ; lee_teclas: A = teclas de las filas 6 y 7 de la matriz
 	ld hl,0c00fh		;4ff9
 	call teclas_nuevas		;4ffc   ; teclas_nuevas: (HL) = las teclas de A; (HL - 1) = las que no estaban antes
 	call lee_joystick_y_teclado		;4fff   ; lee_joystick_y_teclado: A = mando del puerto 1 (PSG 14) con las teclas del cursor y espacio
-L_5002:
+teclas_c007:		; p00:5005 con HL = 0xC007: las teclas y las nuevas
 	ld hl,0c007h		;5002   ; apunta a las teclas que hay
 teclas_nuevas:		; (HL) = las teclas de A; (HL - 1) = las que no estaban antes
 	ld c,(hl)			;5005   ; C = las teclas del cuadro anterior; (HL) = las de ahora
@@ -2724,7 +2724,7 @@ graficos_del_titulo:		; la fuente, CHGCLR y las fichas del titulo
 	ld bc,00007h		;512e
 	call 00047h		;5131   ; BIOS WRTVDP - Writes data in the VDP-register
 	call bancos_4_5_6		;5134   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
-	call 096b5h		;5137
+	call 096b5h		;5137   ; fichas_del_titulo: las listas de fichas p05:83B3 y p05:9A4B y el RLE de p05:96CD a la VRAM
 	call bancos_1_2_3		;513a   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0002bh)		;513d
 	and 00fh		;5140
@@ -2787,7 +2787,7 @@ fichas_comunes:		; con 13-14-15: la lista p15:BB95 y p15:B4EB
 	ld de,0bb71h		;51c8
 	ld hl,0bb95h		;51cb
 	call lista_y_vuelve		;51ce   ; lista_y_vuelve: p00:529C y vuelve con 1-2-3
-	jp 0b4ebh		;51d1
+	jp 0b4ebh		;51d1   ; posicion_por_personaje: HL = 0x7060 con el personaje 0, 0x3060 con el 1
 graficos_de_sala5:		; la lista p08:8A35 y el dibujo de p06:B105 con sus remiendos
 	ld hl,08a35h		;51d4
 	ld de,08a19h		;51d7
@@ -3123,7 +3123,7 @@ paleta_de_antesala:		; p06:B271 y la de la ruina (p06:B281)
 	ld hl,0b281h		;5419
 	call palabra_a		;541c   ; palabra_a: HL = la palabra A de la tabla HL
 	jr paleta_y_vuelve		;541f
-L_5421:
+con_13_14_15_segun_c:		; con 13-14-15: p15:B411 o la otra tabla segun C
 	call bancos_13_14_15		;5421   ; bancos_13_14_15: pone los bancos 13-14-15 y su copia
 	ld a,c			;5424
 	and a			;5425
@@ -3154,14 +3154,14 @@ L_5448:
 	inc l			;544d
 	djnz L_5448		;544e
 	ret			;5450
-L_5451:
+sonido_y_456:		; el sonido A y los bancos 4-5-6
 	call sonido		;5451   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	jr bancos_4_5_6		;5454
-L_5456:
+texto_de_ruina_y_456:		; con 1-2-3: p01:7FF2 y vuelve con 4-5-6
 	call bancos_1_2_3		;5456   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-	call 07ff2h		;5459
+	call 07ff2h		;5459   ; texto_de_ruina_japones: solo con la BIOS japonesa y sin otro texto en marcha (0xC8AB, 0xC8A0)
 	jr bancos_4_5_6		;545c
-L_545E:
+vuelve_un_personaje_456:		; con 4-5-6: p06:BC36 y vuelve con 1-2-3
 	call bancos_4_5_6		;545e   ; bancos_4_5_6: pone los bancos 4-5-6 (p00:5490)
 	call 0bc36h		;5461   ; vuelve_un_personaje: la ficha inicial (p06:BF6C) del personaje que no vive
 bancos_1_2_3:		; pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -3374,7 +3374,7 @@ ajuste_de_pantalla:		; R#18 (ajuste de la imagen) = D
 	out (c),a		;55b5
 	ei			;55b7
 	ret			;55b8
-L_55B9:
+suma_monedas:		; las monedas (0xC259, BCD) + E (y D al byte alto)
 	ld hl,0c259h		;55b9   ; apunta a las monedas (16 bits)
 	ld a,(hl)			;55bc
 	add a,e			;55bd
@@ -3474,14 +3474,14 @@ direccion_de_patron:		; DE = 0xF800 + A * 8
 	add hl,de			;563c
 	ex de,hl			;563d
 	ret			;563e
-L_563F:
+copia_e8:		; copia 5 x 0 de (0xE8, 0) a (0xE8, 0) de la pagina 1 a la 1 (HMMM)
 	ld hl,000e8h		;563f
 	ld d,h			;5642
 	ld e,l			;5643
 	ld bc,00005h		;5644
 	ld a,004h		;5647
 	jp copia_rectangulo		;5649   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
-L_564C:
+atributos_rotados:		; los colores de los sprites (p00:5676) y los atributos de 0xDE00 a la VRAM 0x7600 empezando cada cuadro por otro sprite (0xC00C + 0x68): el parpadeo cuando hay muchos
 	ld hl,0c00ch		;564c
 	ld a,(hl)			;564f
 	add a,068h		;5650
@@ -3954,11 +3954,11 @@ pinta_pantalla_de_fase:		; la pantalla 0xC212 de 0xEC00 a 0xD200 (p15:BEBF)
 	push hl			;5a06
 	call bancos_13_14_15		;5a07   ; bancos_13_14_15: pone los bancos 13-14-15 y su copia
 	pop hl			;5a0a
-	call 0bebfh		;5a0b
+	call 0bebfh		;5a0b   ; fichas_de_la_pantalla: las 32 x 24 fichas de la pantalla a 0xD200, 6 filas de metabloques de 8
 	jp bancos_1_2_3		;5a0e   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-L_5A11:
+pantalla_con_15:		; con 15: p15:BEBF (las 32 x 24 fichas de la pantalla) y vuelve con 6 en 0xA000
 	call banco_15_en_a000		;5a11   ; banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
-	call 0bebfh		;5a14
+	call 0bebfh		;5a14   ; fichas_de_la_pantalla: las 32 x 24 fichas de la pantalla a 0xD200, 6 filas de metabloques de 8
 	jp banco_6_en_a000		;5a17   ; banco_6_en_a000: pone el banco 6 en 0xA000
 pinta_d200:		; las 32 x 24 fichas de 0xD200 desde la linea 20 (p00:4DB4)
 	ld hl,0d200h		;5a1a   ; apunta a el mapa de 32 x 24 fichas de la pantalla
@@ -4033,7 +4033,7 @@ DATA_paleta_c240_1:
 ; ======================================================================
 
 
-L_5A87:
+paleta_5a8d:		; la paleta p00:5A8D
 	ld hl,05a8dh		;5a87
 	jp pon_paleta		;5a8a   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
 
@@ -4053,7 +4053,7 @@ DATA_paleta_p5A87:
 
 
 sprites_del_estado:		; si se lleva al personaje 0, con 13-14-15 los patrones de p15:A31B
-	call 06234h		;5a97
+	call 06234h		;5a97   ; ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 	ld a,(0c240h)		;5a9a   ; lee el personaje que se lleva (0 o 1)
 	or a			;5a9d
 	ret nz			;5a9e
@@ -4075,7 +4075,7 @@ sprites_a3c1:		; los patrones de p15:A3C1 segun el estado del personaje
 	ld hl,0a3c1h		;5abd
 L_5AC0:
 	push hl			;5ac0
-	call 08c16h		;5ac1
+	call 08c16h		;5ac1   ; estado_del_que_se_lleva: A = el estado del personaje que se lleva
 	push af			;5ac4
 	call bancos_13_14_15		;5ac5   ; bancos_13_14_15: pone los bancos 13-14-15 y su copia
 	pop af			;5ac8
@@ -4126,7 +4126,7 @@ estado_por_14:		; HL + (ix+6) * 14: los 7 fotogramas del estado
 	sub b			;5b0e
 	jp hl_mas_a		;5b0f   ; hl_mas_a: HL = HL + A
 sprites_del_personaje:		; con 13-14-15: los 7 fotogramas del estado del personaje (p14:97AE o p14:9BCE)
-	call 06234h		;5b12
+	call 06234h		;5b12   ; ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 	ld a,(0c240h)		;5b15   ; lee el personaje que se lleva (0 o 1)
 	cp 001h		;5b18
 	call z,fotogramas_9f4a		;5b1a   ; fotogramas_9f4a: con 13-14-15: la lista de fotogramas de p14:9F4A[(ix+6)]
@@ -4166,11 +4166,11 @@ L_5B3A:
 	pop bc			;5b5a
 	djnz L_5B3A		;5b5b
 	jp bancos_1_2_3		;5b5d   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
-L_5B60:
+fotograma_a_fa80:		; un fotograma de cada personaje a la VRAM desde 0xFA80 (p00:5B6E)
 	ld hl,0fa80h		;5b60
 	ld (0c273h),hl		;5b63
 	jr L_5B6E		;5b66
-L_5B68:
+fotograma_a_f800:		; un fotograma de cada personaje a la VRAM desde 0xF800 (p00:5B6E)
 	ld hl,0f800h		;5b68
 	ld (0c273h),hl		;5b6b
 L_5B6E:
@@ -4427,17 +4427,17 @@ vuelve_a_la_fase:		; graficos, paleta, mapa y pantalla de la fase y sus actores
 	call z,pinta_pantalla_de_fase		;5d14   ; pinta_pantalla_de_fase: la pantalla 0xC212 de 0xEC00 a 0xD200 (p15:BEBF)
 	call pinta_d200		;5d17   ; pinta_d200: las 32 x 24 fichas de 0xD200 desde la linea 20 (p00:4DB4)
 	call pinta_marcador		;5d1a   ; pinta_marcador: el texto de p00:5062, los marcos y las cifras del marcador
-	call 0a7c6h		;5d1d
+	call 0a7c6h		;5d1d   ; dibuja_objetos_2a: el dibujo de los objetos de tipo 0x2A de 0xC400 (p03:A80A)
 	call actores_al_entrar		;5d20   ; actores_al_entrar: los 9 actores de 0xCD00: tipos 8, 9 y 10
 	call objetos_de_pantalla		;5d23   ; objetos_de_pantalla: los objetos de 0xCB00 de la pantalla 0xC212
-	call 07fe0h		;5d26
-	call 0883dh		;5d29
-	call 090c8h		;5d2c
-	call 07db1h		;5d2f
-	call 07cedh		;5d32
+	call 07fe0h		;5d26   ; posicion_bloque_13: si el bloque en curso es el 0x0D, su posicion de 0xD118/0xD119
+	call 0883dh		;5d29   ; cuadro_de_cc40: los 4 registros de 0xCC40 y el dibujo del de 0xCC35
+	call 090c8h		;5d2c   ; cuadro_c314: con 0xC316: la cuenta 0xC314 y, con 0xC310 >= 2, copia 16 x 0x30 de (0xD500) a (0xD502)
+	call 07db1h		;5d2f   ; entrada_de_la_fase: en la primera pantalla y fuera de la sala 5: la posicion de entrada (p01:7DEF)
+	call 07cedh		;5d32   ; pinta_puerta_de_salida: si la puerta de salida (0xD510) esta en esta pantalla, su dibujo
 	ld a,(0c20ah)		;5d35   ; lee en la sala de la puerta 5
 	and a			;5d38
-	call nz,08c70h		;5d39
+	call nz,08c70h		;5d39   ; copia_84_y_c310: copia 0x10 x 0x20 de (0x84, 0) a (0xA4, 0) y sigue segun 0xC310
 	jp pantalla_encendida		;5d3c   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 actores_al_entrar:		; los 9 actores de 0xCD00: tipos 8, 9 y 10
 	ld ix,0cd00h		;5d3f   ; apunta a los 9 actores de la pantalla (0x80 bytes cada uno)
@@ -4451,7 +4451,7 @@ L_5D47:
 	push de			;5d50
 	ld a,(ix+000h)		;5d51   ; lee el tipo del actor
 	cp 009h		;5d54
-	call z,07832h		;5d56
+	call z,07832h		;5d56   ; dibujo_del_actor_y14: un dibujo en la X del actor y su Y - 0x14
 	ld a,(ix+000h)		;5d59   ; lee el tipo del actor
 	cp 008h		;5d5c
 	call z,actor_tipo_8		;5d5e   ; actor_tipo_8: el tipo 8 segun su paso: p01:77F9 o p06:BE4C
@@ -4464,7 +4464,7 @@ L_5D47:
 actor_tipo_8:		; el tipo 8 segun su paso: p01:77F9 o p06:BE4C
 	ld a,(ix+001h)		;5d6b
 	and a			;5d6e
-	jp z,077f9h		;5d6f
+	jp z,077f9h		;5d6f   ; dibujo_del_actor_78: copia 16 x 16 de (0x78, 0) con TIMP a la X e Y del actor
 	jp 0be4ch		;5d72   ; dibujo_8800: copia 16 x 16 de (0x88, 0) a la posicion del actor con TIMP
 actores_tipo_10:		; copia el dibujo de los actores de tipo 10 de 0xCD00
 	ld ix,0cd00h		;5d75   ; apunta a los 9 actores de la pantalla (0x80 bytes cada uno)
@@ -4509,7 +4509,7 @@ posicion_en_d200:		; DE = 0xD200 + la casilla de la Y y la X del actor (p01:7C42
 	ld c,(ix+003h)		;5dba
 	ld b,(ix+005h)		;5dbd
 	ld de,00000h		;5dc0
-	jp 07c42h		;5dc3
+	jp 07c42h		;5dc3   ; casilla: DE = 0xD200 + la casilla de (B = X, C = Y) - DE
 actor_tipo_10:		; el dibujo del actor de tipo 10 en (X, Y) y su casilla
 	ld a,d			;5dc6
 	exx			;5dc7
@@ -4600,39 +4600,39 @@ entra_en_fase:		; graficos, paleta, sprites, mapa y metabloques de la fase; pant
 	call sprites_a3c1		;5e62   ; sprites_a3c1: los patrones de p15:A3C1 segun el estado del personaje
 	call metabloques_de_fase		;5e65   ; metabloques_de_fase: RLE de los metabloques de la ruina (p10:6032) o de la sala 5 a 0xE400
 	call mapa_de_fase		;5e68   ; mapa_de_fase: RLE del mapa de la fase (p10:5FFE[0xC211]) o de la sala 5 a 0xEC00
-	call 079a9h		;5e6b
-	call 07cbah		;5e6e
-	call 07f1fh		;5e71
-L_5E74:
+	call 079a9h		;5e6b   ; objetos_de_la_fase: borra 0xCB00 y pone los objetos de la fase de p12:BF59[0xC211]
+	call 07cbah		;5e6e   ; busca_puerta_de_salida: con 9: la puerta de salida de la fase (p09:BF35[0xC211]) a 0xD510
+	call 07f1fh		;5e71   ; bloques_de_la_fase: borra 0xD180 y pone los 2 bloques que se mueven de la fase (p12:B591[0xC211])
+cambia_de_pantalla_y_enciende:		; p00:5E7A y la pantalla encendida
 	call cambia_de_pantalla		;5e74   ; cambia_de_pantalla: pinta la pantalla nueva: mapa, actores, objetos y sprites
 	jp pantalla_encendida		;5e77   ; pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 cambia_de_pantalla:		; pinta la pantalla nueva: mapa, actores, objetos y sprites
-	call 074e7h		;5e7a
+	call 074e7h		;5e7a   ; umbral_de_fichas: fuera de la sala 5, el umbral de fichas de p01:704C (0xC222 = 0x11, 0xC223 = 0x12)
 	call banco_9_en_a000		;5e7d   ; banco_9_en_a000: pone el banco 9 en 0xA000
-	call 0b8e9h		;5e80
+	call 0b8e9h		;5e80   ; vecinas_de_la_pantalla: las cuatro vecinas de la pantalla de p09:B921[0xC211] a 0xC218-0xC21B
 	call bancos_1_2_3		;5e83   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	call apaga_y_borra_todo		;5e86   ; apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 	call pantalla_apagada		;5e89   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
-	call 07fc7h		;5e8c
+	call 07fc7h		;5e8c   ; bloque_13: si el bloque en curso (0xD100) es el 0x0D, segun 0xCCC0
 	call borra_c320		;5e8f   ; borra_c320: pone a cero 0xC320-0xC39F
 	call borra_cc80		;5e92   ; borra_cc80: pone a cero 0xCC80-0xD17F
-	call 0b336h		;5e95
+	call 0b336h		;5e95   ; borra_c2a7: 0xC2A7 = 0
 	call pinta_pantalla_de_fase		;5e98   ; pinta_pantalla_de_fase: la pantalla 0xC212 de 0xEC00 a 0xD200 (p15:BEBF)
 	call pinta_d200		;5e9b   ; pinta_d200: las 32 x 24 fichas de 0xD200 desde la linea 20 (p00:4DB4)
 	call pinta_marcador		;5e9e   ; pinta_marcador: el texto de p00:5062, los marcos y las cifras del marcador
-	call 07cedh		;5ea1
-	call 07db1h		;5ea4
+	call 07cedh		;5ea1   ; pinta_puerta_de_salida: si la puerta de salida (0xD510) esta en esta pantalla, su dibujo
+	call 07db1h		;5ea4   ; entrada_de_la_fase: en la primera pantalla y fuera de la sala 5: la posicion de entrada (p01:7DEF)
 	call patrones_b511		;5ea7   ; patrones_b511: con 13-14-15: el RLE de p15:B511 a la VRAM 0xFFC0
-	call 079e2h		;5eaa
-	call 07f7bh		;5ead
-	call 0772eh		;5eb0
+	call 079e2h		;5eaa   ; objetos_sin_coger: los 8 objetos de 0xCB00 de esta pantalla que no se han cogido
+	call 07f7bh		;5ead   ; bloque_de_pantalla: el bloque de 0xD180 de esta pantalla, si lo hay
+	call 0772eh		;5eb0   ; crea_enemigos_de_pantalla: fuera de la sala 5: el bloque 0x0D y los enemigos de p15:A4F9[fase][pantalla] en 0xCD00
 	call paleta_vacia		;5eb3   ; paleta_vacia: fuera de la sala 5: la paleta p06:B35B (vacia)
-	call 08236h		;5eb6
+	call 08236h		;5eb6   ; entra_jefe_y_vuelve: p02:823C y vuelve con 1-2-3
 	call borra_actores		;5eb9   ; borra_actores: pone a cero 0xC400-0xC7FF y 0xCC60-0xCC63
-	call 087a1h		;5ebc
-	call 090f0h		;5ebf
-	call 08cd6h		;5ec2
-	jp 08f16h		;5ec5
+	call 087a1h		;5ebc   ; prepara_la_pantalla: borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p02:87B6)
+	call 090f0h		;5ebf   ; marcas_y_vuelve: con 12: las marcas de la pantalla (p12:B8BB) y vuelve con 1-2-3
+	call 08cd6h		;5ec2   ; prepara_la_sala_5: 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo suyo
+	jp 08f16h		;5ec5   ; sala_del_final_de_fase: en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), cuentas a cero, 0xC316 = 1, juegos 0x27 y 0x30, p09:BED3 y el actor 0x23
 borra_personajes:		; pone a cero 0xC240-0xC258
 	ld hl,0c240h		;5ec8   ; apunta a el personaje que se lleva (0 o 1)
 	ld bc,00018h		;5ecb
@@ -4769,10 +4769,10 @@ en_la_fase:		; si 0xC215 es cero: p01:6033, p01:605A y p06:B66A con el 6, y la t
 	ld a,(0c215h)		;5fc1   ; lee el lado por el que se sale (1 arriba, 2 abajo, 3 izquierda, 4 derecha)
 	and a			;5fc4
 	jr nz,$+66		;5fc5
-	call 06033h		;5fc7
-	call 0605ah		;5fca
+	call 06033h		;5fc7   ; lee_teclas_especiales: las teclas de las filas 6 y 7 (p00:5049) a 0xC00F y las nuevas a 0xC00E (p00:5005)
+	call 0605ah		;5fca   ; cuadro_de_partida: un cuadro de la partida: p00:563F y, en cuadros pares, 0xC00D + 1, los mandos y la pausa
 	call banco_6_en_a000		;5fcd   ; banco_6_en_a000: pone el banco 6 en 0xA000
-	call 0b66ah		;5fd0
+	call 0b66ah		;5fd0   ; mira_los_bordes: salvo muriendo, si la X o la Y del personaje pasa un borde: 0xC215 = el lado
 	call bancos_1_2_3		;5fd3   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld a,(0c00eh)		;5fd6   ; lee las teclas especiales
 	and 010h		;5fd9

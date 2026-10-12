@@ -88,6 +88,21 @@ def pixeles(buf):
     return out
 
 
+# LOS COLORES. Las capas van con los colores 6 y 9 (0x49: el bit CC hace OR),
+# y donde se tocan sale el 15 (p01:67F2; Cles en la sala 5, 0x4B). La paleta es
+# la de las fases (p00:53DE: p06:B335, el 15 negro) con la de cada personaje
+# encima (p00:5A69): p00:5A79 para Wit y p00:5A80 para Cles.
+PALETA_PERSONAJE = {0: 0x5A79, 1: 0x5A80}
+
+
+def colores_de(personaje):
+    from rom import T123
+    import fases
+    v = fases.vram_de_ruina(0)
+    v.paleta(T123, PALETA_PERSONAJE[personaje])
+    return {1: v.rgb(COLOR_0), 2: v.rgb(COLOR_1), 3: v.rgb(COLOR_0 | COLOR_1)}
+
+
 def fotogramas(personaje, estado):
     t = TABLAS[personaje]
     return [palabra(T131415, t + estado * 14 + 2 * k) for k in range(7)]
@@ -96,12 +111,11 @@ def fotogramas(personaje, estado):
 def hoja(ruta, escala=3):
     """2 personajes x 4 estados x 7 fotogramas, con la paleta de las fases de la ruina 0."""
     from PIL import Image
-    import fases
-    v = fases.vram_de_ruina(0)
-    colores = {0: None, 1: v.rgb(COLOR_0), 2: v.rgb(COLOR_1), 3: v.rgb(COLOR_0 | COLOR_1)}
     ancho, alto = 7 * 20 + 4, 2 * 4 * 36 + 8
     img = Image.new("RGB", (ancho, alto), (24, 24, 24))
     for pj in range(2):
+        colores = colores_de(pj)
+        colores[0] = None
         for est in range(4):
             for k, foto in enumerate(fotogramas(pj, est)):
                 px = pixeles(compone(foto))
@@ -145,9 +159,7 @@ def anima(ruta, escala=3):
     andar, en el aire, escalera y escalera con direccion. Un cuadro del GIF
     son 2 cuadros del juego (60 Hz)."""
     from PIL import Image
-    import fases
-    v = fases.vram_de_ruina(0)
-    colores = {1: v.rgb(COLOR_0), 2: v.rgb(COLOR_1), 3: v.rgb(COLOR_0 | COLOR_1)}
+    colores = {pj: colores_de(pj) for pj in range(2)}
     px = {(pj, est): [pixeles(compone(f)) for f in fotogramas(pj, est)]
           for pj in range(2) for est in range(4)}
     # cuadros del juego por cuadro de GIF y cuantos cuadros de GIF: un ciclo
@@ -170,7 +182,7 @@ def anima(ruta, escala=3):
                     for y in range(32):
                         for x in range(16):
                             if d[y][x]:
-                                img.putpixel((4 + c * 22 + x, oy + y), colores[d[y][x]])
+                                img.putpixel((4 + c * 22 + x, oy + y), colores[pj][d[y][x]])
         imgs.append(img.resize((img.width * escala, img.height * escala), Image.NEAREST))
     imgs[0].save(ruta, save_all=True, append_images=imgs[1:],
                  duration=round(paso_gif * 1000 / 60), loop=0)

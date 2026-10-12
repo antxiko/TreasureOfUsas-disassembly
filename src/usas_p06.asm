@@ -43,7 +43,7 @@ L_A023:
 	ld a,020h		;a033
 	call 04083h		;a035   ; hl_mas_a: HL = HL + A
 	djnz L_A023		;a038
-	ld hl,(0c22bh)		;a03a
+	ld hl,(0c22bh)		;a03a   ; lee las monedas al entrar en INFORMATION y el byte siguiente (16 bits)
 	ld (0c259h),hl		;a03d   ; guarda las monedas (16 bits) y el byte siguiente (16 bits)
 	call 09f88h		;a040   ; cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 	call 04797h		;a043   ; cifras_dobles_48bc: p00:4785 con BC = 0x48BC
@@ -401,7 +401,7 @@ DATA_nombre_ruina_4:
 
 
 pantalla_de_clave:		; borra lo tecleado (0xE360) y pinta el recuadro de la clave
-	ld hl,0e360h		;a2fc
+	ld hl,0e360h		;a2fc   ; apunta a lo tecleado (la clave)
 	ld bc,0001fh		;a2ff
 	call 05f08h		;a302   ; borra: pone a cero BC + 1 bytes desde HL
 	ld hl,040a0h		;a305
@@ -415,18 +415,18 @@ pantalla_de_clave:		; borra lo tecleado (0xE360) y pinta el recuadro de la clave
 	call 04b74h		;a31a   ; rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
 	xor a			;a31d
 	ld (0c20eh),a		;a31e
-	ld (0c20fh),a		;a321
+	ld (0c20fh),a		;a321   ; guarda la tecla tecleada
 	ld hl,0a27ah		;a324
 	jp 04d4ah		;a327   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 teclea_clave:		; la tecla nueva al final de lo tecleado en 0xE360 (0xE378 cuenta las letras)
 	call lee_teclado		;a32a   ; lo tecleado (p06:A392): si no hay tecla nueva, nada
-	ld a,(0c20fh)		;a32d
+	ld a,(0c20fh)		;a32d   ; lee la tecla tecleada
 	and a			;a330
 	ret z			;a331
 	ld b,a			;a332
 	ld de,0e378h		;a333   ; la tecla al final de lo escrito en 0xE360 (0xE378 cuenta las letras) y 0xFF detras
 	ld a,(de)			;a336
-	ld hl,0e360h		;a337
+	ld hl,0e360h		;a337   ; apunta a lo tecleado (la clave)
 	call 04083h		;a33a   ; hl_mas_a: HL = HL + A
 	ld a,b			;a33d
 	ld (hl),a			;a33e
@@ -474,7 +474,7 @@ L_A37B:
 	ld (0e379h),a		;a381
 	ret			;a384
 compara_con_e360:		; compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
-	ld de,0e360h		;a385
+	ld de,0e360h		;a385   ; apunta a lo tecleado (la clave)
 L_A388:
 	ld a,(de)			;a388   ; compara byte a byte hasta el 0xFF
 	cp (hl)			;a389
@@ -2848,7 +2848,7 @@ recuadro_del_mensaje:		; borra y enmarca el recuadro de mensajes
 	ld de,0921ah		;bb5e
 	jp 0473bh		;bb61   ; rectangulo_color_d: p00:4B74 con el color 0x0D
 si_o_no:		; 0xC22A = la respuesta con las teclas (1 o 2) o 0
-	ld hl,0c22ah		;bb64
+	ld hl,0c22ah		;bb64   ; apunta a la respuesta en la antesala (1 o 2)
 	ld (hl),000h		;bb67
 	ld a,(0c006h)		;bb69   ; lee las teclas nuevas
 	and 01ch		;bb6c
@@ -2917,13 +2917,13 @@ mensaje_de_captura:		; el recuadro y el texto: el companero, capturado (p06:BF1B
 L_BBF0:
 	call 04d4ah		;bbf0   ; texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 	ld a,05ah		;bbf3
-	ld (0c209h),a		;bbf5
+	ld (0c209h),a		;bbf5   ; guarda la cuenta del mensaje de la antesala
 	jp colores_de_la_antesala		;bbf8   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 espera_el_mensaje:		; los sprites de la antesala y, con la cuenta 0xC209 a cero, quita el recuadro (acarreo)
 	call sprites_de_la_antesala		;bbfb   ; sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
 	call 05690h		;bbfe   ; atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 	or a			;bc01
-	ld hl,0c209h		;bc02
+	ld hl,0c209h		;bc02   ; apunta a la cuenta del mensaje de la antesala
 	dec (hl)			;bc05
 	ret nz			;bc06
 	call copia_6078		;bc07   ; copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
@@ -2935,7 +2935,7 @@ prepara_la_captura:		; sentido y cuentas de la antesala a cero, 0xCC18 = 0x78; c
 	ld (0cc17h),a		;bc10
 	ld (0cc19h),a		;bc13
 	ld a,078h		;bc16
-	ld (0cc18h),a		;bc18
+	ld (0cc18h),a		;bc18   ; guarda la cuenta de la captura en la antesala
 	ld a,(0c31ch)		;bc1b
 	cp 003h		;bc1e
 	jp nz,colores_de_la_antesala		;bc20   ; colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
@@ -2967,7 +2967,7 @@ cuadro_de_la_captura:		; si 0xC31C: los sprites y la cuenta 0xCC18
 	ld a,(0cc17h)		;bc56
 	and a			;bc59
 	jr nz,L_BCC2		;bc5a
-	ld hl,0cc18h		;bc5c
+	ld hl,0cc18h		;bc5c   ; apunta a la cuenta de la captura en la antesala
 	dec (hl)			;bc5f
 	jr z,L_BCAE		;bc60
 	call sprites_de_la_antesala		;bc62   ; sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
@@ -2992,7 +2992,7 @@ L_BC80:
 	ld de,0de00h		;bc80   ; apunta a los atributos de los sprites en RAM
 	ld hl,0be2dh		;bc83
 L_BC86:
-	ld a,(0cc18h)		;bc86
+	ld a,(0cc18h)		;bc86   ; lee la cuenta de la captura en la antesala
 	ld c,a			;bc89
 	ld b,004h		;bc8a
 L_BC8C:
@@ -3021,7 +3021,7 @@ sprites_be35:		; los sprites del personaje 1 con p06:BE35
 	jr L_BC86		;bcac
 L_BCAE:
 	ld a,078h		;bcae
-	ld (0cc18h),a		;bcb0
+	ld (0cc18h),a		;bcb0   ; guarda la cuenta de la captura en la antesala
 	ld a,(0c31ch)		;bcb3
 	cp 003h		;bcb6
 	jr nz,L_BCCC		;bcb8
@@ -3030,7 +3030,7 @@ L_BCAE:
 	inc (hl)			;bcc0
 	ret			;bcc1
 L_BCC2:
-	ld hl,0cc18h		;bcc2
+	ld hl,0cc18h		;bcc2   ; apunta a la cuenta de la captura en la antesala
 	dec (hl)			;bcc5
 	ret nz			;bcc6
 	ld e,0e8h		;bcc7

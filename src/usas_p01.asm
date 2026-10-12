@@ -48,7 +48,7 @@ L_602D:
 	jp 05002h		;6030   ; teclas_c007: p00:5005 con HL = 0xC007: las teclas y las nuevas
 lee_teclas_especiales:		; las teclas de las filas 6 y 7 (p00:5049) a 0xC00F y las nuevas a 0xC00E (p00:5005)
 	call 05049h		;6033   ; lee_teclas: A = teclas de las filas 6 y 7 de la matriz
-	ld hl,0c00fh		;6036
+	ld hl,0c00fh		;6036   ; apunta a las teclas especiales que hay
 	jp 05005h		;6039   ; teclas_nuevas: (HL) = las teclas de A; (HL - 1) = las que no estaban antes
 tecla_de_la_demo:		; con 9: A = las teclas y C = los cuadros del paso C de la demo de la ruina (p09:BCD6)
 	dec hl			;603c
@@ -142,7 +142,7 @@ cuenta_ccb7:		; 0xCCB7 - 1 si no es cero
 	ret			;60ec
 entra_en_la_antesala:		; pantalla apagada, el personaje 0 (p01:60E5) y p01:60F3
 	call 04a1fh		;60ed   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
-	call lleva_segun_ficha_0		;60f0
+	call lleva_segun_ficha_0		;60f0   ; lleva_segun_ficha_0: 0xC240 = el byte 0 de la ficha del personaje 0
 pinta_la_antesala:		; la fuente, los graficos, la paleta, el mapa y los metabloques de la antesala y el marcador
 	call 04a1fh		;60f3   ; pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 	call 050c1h		;60f6   ; carga_la_fuente: con 13-14-15: la fuente (p14:9289) y los caracteres del marcador
@@ -444,7 +444,7 @@ muere:		; sonido 0x8D, accion 4 (0xC24B), paleta y el dibujo de la muerte
 	ld a,004h		;6315
 	ld (0c24bh),a		;6317   ; guarda la accion del personaje (4 muere, 5 escalera)
 	ld a,080h		;631a
-	ld (0c260h),a		;631c
+	ld (0c260h),a		;631c   ; guarda la cuenta de invencible
 	call 05a56h		;631f   ; paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
 	ld a,(0c246h)		;6322   ; lee la X del personaje
 	sub 008h		;6325
@@ -574,7 +574,7 @@ avanza_horizontal:		; mueve en X con la velocidad de p01:6485 y mira las paredes
 L_6415:
 	xor a			;6415
 L_6416:
-	ld hl,0c252h		;6416
+	ld hl,0c252h		;6416   ; apunta a la cuenta de cuadros del paso del personaje
 	inc (hl)			;6419
 	call cambia_sentido		;641a   ; cambia_sentido: 0xC250 = A y, si cambia, p01:69AC
 	push de			;641d
@@ -885,7 +885,7 @@ L_6629:
 	call suelo_bajo_el_personaje		;662f   ; suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 	jp nc,L_6342		;6632
 	call para_y		;6635   ; para_y: 0xC247 = 0: velocidad Y a cero
-	ld a,(0c26ch)		;6638
+	ld a,(0c26ch)		;6638   ; lee la cuenta de la postura de disparo (4 u 8)
 	or a			;663b
 	jr nz,L_6659		;663c
 	ld a,(0c007h)		;663e   ; lee las teclas que hay
@@ -902,7 +902,7 @@ L_6646:
 	jr nz,L_665F		;6656
 	ret			;6658
 L_6659:
-	ld hl,0c26ch		;6659
+	ld hl,0c26ch		;6659   ; apunta a la cuenta de la postura de disparo (4 u 8)
 	dec (hl)			;665c
 	jr L_6646		;665d
 L_665F:
@@ -946,7 +946,7 @@ L_66A6:
 	call 056e3h		;66a8   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	jp L_63B6		;66ab
 L_66AE:
-	ld hl,0c260h		;66ae
+	ld hl,0c260h		;66ae   ; apunta a la cuenta de invencible
 	ld a,(hl)			;66b1
 	or a			;66b2
 	ret z			;66b3
@@ -1037,7 +1037,7 @@ L_6744:
 	jp c,L_63B6		;6753
 L_6756:
 	call suma_velocidad_y		;6756   ; suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
-	ld hl,0c252h		;6759
+	ld hl,0c252h		;6759   ; apunta a la cuenta de cuadros del paso del personaje
 	inc (hl)			;675c
 	ret			;675d
 L_675E:
@@ -1077,7 +1077,7 @@ L_679A:
 	jp L_63B6		;67b4
 L_67B7:
 	call suma_velocidad_y		;67b7   ; suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
-	ld hl,0c252h		;67ba
+	ld hl,0c252h		;67ba   ; apunta a la cuenta de cuadros del paso del personaje
 	inc (hl)			;67bd
 	ret			;67be
 L_67BF:
@@ -1115,15 +1115,15 @@ colores_del_personaje:		; 0xC24C/0xC24D segun el personaje y la sala
 	jr z,L_6808		;67f9
 	ld a,(0c20ah)		;67fb   ; lee en la sala de la puerta 5
 	ld b,a			;67fe
-	ld a,(0c316h)		;67ff
+	ld a,(0c316h)		;67ff   ; lee en la sala del final de fase
 	or b			;6802
 	jr z,L_6808		;6803
 	ld de,0064bh		;6805
 L_6808:
 	ld a,d			;6808
-	ld (0c24ch),a		;6809
+	ld (0c24ch),a		;6809   ; guarda el color de la capa 0 del personaje
 	ld a,e			;680c
-	ld (0c24dh),a		;680d
+	ld (0c24dh),a		;680d   ; guarda el color de la capa 1 del personaje
 	ret			;6810
 accion_6:		; accion 6, los colores del personaje y sin invencible (0xC256 = 0)
 	ld a,006h		;6811
@@ -1141,7 +1141,7 @@ dibuja_al_personaje:		; las fichas del personaje en la pagina 1 segun 0xC253 y 0
 	ld a,(0c24bh)		;6828   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;682b
 	jr z,L_6821		;682d
-	ld a,(0c26fh)		;682f
+	ld a,(0c26fh)		;682f   ; lee el golpe de Cles en marcha
 	or a			;6832
 	jr nz,L_6851		;6833
 L_6835:
@@ -1158,7 +1158,7 @@ L_6838:
 	jp 04bdeh		;6845   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 L_6848:
 	xor a			;6848
-	ld (0c26fh),a		;6849
+	ld (0c26fh),a		;6849   ; guarda el golpe de Cles en marcha
 	ld a,(0c253h)		;684c   ; lee el cuadro de animacion del personaje
 	jr L_6838		;684f
 L_6851:
@@ -1227,7 +1227,7 @@ L_689D:
 	ld a,004h		;68a2
 	jp 04bdeh		;68a4   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 cuadro_de_la_accion:		; HL = el cuadro de la accion 0xC24B y el sentido 0xC250
-	ld a,(0c26ch)		;68a7
+	ld a,(0c26ch)		;68a7   ; lee la cuenta de la postura de disparo (4 u 8)
 	or a			;68aa
 	ld a,000h		;68ab
 	jr nz,L_68B2		;68ad
@@ -1261,7 +1261,7 @@ sprites_del_personaje_a_ram:		; los atributos de los sprites del personaje en 0x
 	cp 004h		;68dd
 	ld hl,0692bh		;68df
 	jr nz,L_68EE		;68e2
-	ld a,(0c26bh)		;68e4
+	ld a,(0c26bh)		;68e4   ; lee el paso de la muerte (1 o 2)
 	cp 002h		;68e7
 	jr nz,L_68EE		;68e9
 	ld hl,0692fh		;68eb
@@ -1325,7 +1325,7 @@ DATA_tabla_p68DF:
 
 
 colores_a_ram:		; 16 + 16 colores de 0xC24C/0xC24D a HL
-	ld de,0c24ch		;6933
+	ld de,0c24ch		;6933   ; apunta a el color de la capa 0 del personaje
 	ld c,002h		;6936
 L_6938:
 	ld a,(de)			;6938
@@ -1352,7 +1352,7 @@ cuadro_de_personaje_y_disparos:		; p06:B259, p06:B2FC, la accion y los sprites
 	ld a,(0c24bh)		;695f   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;6962
 	ret nz			;6964
-	ld a,(0c26bh)		;6965
+	ld a,(0c26bh)		;6965   ; lee el paso de la muerte (1 o 2)
 	or a			;6968
 	ret z			;6969
 	dec a			;696a
@@ -1416,12 +1416,12 @@ L_69B0:
 	ld hl,069e6h		;69be
 	ld a,(ix+001h)		;69c1   ; lee el nivel de velocidad del personaje (indice de p01:6485)
 	call 04083h		;69c4   ; hl_mas_a: HL = HL + A
-	ld a,(0c252h)		;69c7
+	ld a,(0c252h)		;69c7   ; lee la cuenta de cuadros del paso del personaje
 	cp (hl)			;69ca
 	ret c			;69cb
 L_69CC:
 	xor a			;69cc
-	ld (0c252h),a		;69cd
+	ld (0c252h),a		;69cd   ; guarda la cuenta de cuadros del paso del personaje
 	ld a,(0c253h)		;69d0   ; lee el cuadro de animacion del personaje
 	add a,002h		;69d3
 	cp 008h		;69d5
@@ -1463,9 +1463,9 @@ L_69F5:
 	ret			;6a02
 L_6A03:
 	ld a,006h		;6a03   ; los colores del personaje: 6 y 0x49
-	ld (0c24ch),a		;6a05
+	ld (0c24ch),a		;6a05   ; guarda el color de la capa 0 del personaje
 	ld a,049h		;6a08
-	ld (0c24dh),a		;6a0a
+	ld (0c24dh),a		;6a0a   ; guarda el color de la capa 1 del personaje
 	ld a,(0c260h)		;6a0d   ; 0xC260, la cuenta de invencible: el parpadeo, mas lento al final
 	cp 060h		;6a10
 	ld c,00fh		;6a12
@@ -1481,7 +1481,7 @@ L_6A21:
 	and c			;6a24
 	ret nz			;6a25
 	inc c			;6a26
-	ld a,(0c260h)		;6a27
+	ld a,(0c260h)		;6a27   ; lee la cuenta de invencible
 	and c			;6a2a
 	ld hl,00098h		;6a2b
 	jr nz,L_6A33		;6a2e
@@ -1511,11 +1511,11 @@ L_6A43:
 	ld a,048h		;6a5a
 	call 04c73h		;6a5c   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 	ld a,001h		;6a5f
-	ld (0c26bh),a		;6a61
+	ld (0c26bh),a		;6a61   ; guarda el paso de la muerte (1 o 2)
 	ret			;6a64
 L_6A65:
 	ld a,002h		;6a65
-	ld (0c26bh),a		;6a67
+	ld (0c26bh),a		;6a67   ; guarda el paso de la muerte (1 o 2)
 	ld a,(0c246h)		;6a6a   ; lee la X del personaje
 	sub 008h		;6a6d
 	ld d,a			;6a6f
@@ -1550,11 +1550,11 @@ L_6AAB:
 	ld hl,069e6h		;6ab1
 	ld a,(ix+001h)		;6ab4   ; lee el nivel de velocidad del personaje (indice de p01:6485)
 	call 04083h		;6ab7   ; hl_mas_a: HL = HL + A
-	ld a,(0c252h)		;6aba
+	ld a,(0c252h)		;6aba   ; lee la cuenta de cuadros del paso del personaje
 	cp (hl)			;6abd
 	jr c,L_6ADA		;6abe
 	xor a			;6ac0
-	ld (0c252h),a		;6ac1
+	ld (0c252h),a		;6ac1   ; guarda la cuenta de cuadros del paso del personaje
 	ld a,(0c253h)		;6ac4   ; lee el cuadro de animacion del personaje
 	inc a			;6ac7
 	cp 00ch		;6ac8
@@ -1766,7 +1766,7 @@ postura_de_disparo:		; en accion 0: 0xC26C = 4 u 8 y la accion 2
 	jr z,L_6C09		;6c05
 	ld a,008h		;6c07
 L_6C09:
-	ld (0c26ch),a		;6c09
+	ld (0c26ch),a		;6c09   ; guarda la cuenta de la postura de disparo (4 u 8)
 	ld a,002h		;6c0c
 	ld (0c24bh),a		;6c0e   ; guarda la accion del personaje (4 muere, 5 escalera)
 	ret			;6c11
@@ -1892,7 +1892,7 @@ L_6CE6:
 	ld a,(0c244h)		;6ce9   ; lee la Y del personaje
 	ld (ix+002h),a		;6cec   ; guarda la Y del disparo
 	ld a,001h		;6cef
-	ld (0c26fh),a		;6cf1
+	ld (0c26fh),a		;6cf1   ; guarda el golpe de Cles en marcha
 	call disparo_8		;6cf4   ; disparo_8: (ix+0x0D) = 8
 	ld a,(ix+00dh)		;6cf7
 	add a,a			;6cfa
@@ -1915,10 +1915,10 @@ L_6D1C:
 	ld (ix+00dh),008h		;6d1c
 L_6D20:
 	ld a,001h		;6d20
-	ld (0c26fh),a		;6d22
+	ld (0c26fh),a		;6d22   ; guarda el golpe de Cles en marcha
 	ld (ix+00ch),004h		;6d25   ; el hueco de sprite del disparo = 0x04
 L_6D29:
-	ld a,(0c26ch)		;6d29
+	ld a,(0c26ch)		;6d29   ; lee la cuenta de la postura de disparo (4 u 8)
 	or a			;6d2c
 	ld a,000h		;6d2d
 	jr nz,L_6D34		;6d2f
@@ -1961,7 +1961,7 @@ L_6D5F:
 	ld a,(0c246h)		;6d65   ; lee la X del personaje
 	ld (ix+004h),a		;6d68   ; guarda la X del disparo
 	ld a,001h		;6d6b
-	ld (0c26fh),a		;6d6d
+	ld (0c26fh),a		;6d6d   ; guarda el golpe de Cles en marcha
 	ld (ix+00dh),018h		;6d70
 	ret			;6d74
 disparo_8:		; (ix+0x0D) = 8
@@ -2064,7 +2064,7 @@ L_6E26:
 	djnz L_6E26		;6e28
 	xor a			;6e2a
 	ld (ix+000h),a		;6e2b   ; guarda el tipo del disparo
-	ld (0c26fh),a		;6e2e
+	ld (0c26fh),a		;6e2e   ; guarda el golpe de Cles en marcha
 	ret			;6e31
 despacha_disparo:		; despacha el tipo del disparo - 1
 	ld a,(ix+000h)		;6e32   ; lee el tipo del disparo
@@ -2354,7 +2354,7 @@ L_6FF7:
 	ld a,(0c240h)		;6ff7   ; lee el personaje que se lleva (0 o 1)
 	or a			;6ffa
 	jr z,L_701A		;6ffb
-	ld a,(0c316h)		;6ffd
+	ld a,(0c316h)		;6ffd   ; lee en la sala del final de fase
 	ld b,a			;7000
 	ld a,(0c20ah)		;7001   ; lee en la sala de la puerta 5
 	or b			;7004
@@ -2910,7 +2910,7 @@ L_7383:
 	scf			;7396
 	ret			;7397
 personaje_1_fuerte:		; acarreo si 0xC26F, el estado del personaje 1 es 3 y el tipo es menor de 0x37
-	ld a,(0c26fh)		;7398
+	ld a,(0c26fh)		;7398   ; lee el golpe de Cles en marcha
 	or a			;739b
 	ret z			;739c
 	ld a,(0c2d6h)		;739d   ; lee el estado del personaje 1
@@ -3016,7 +3016,7 @@ DATA_tabla_p740F:
 
 
 caja_grande:		; acarreo y HL = p01:7442 si 0xC26F y el estado del personaje 1 es 3
-	ld a,(0c26fh)		;7431
+	ld a,(0c26fh)		;7431   ; lee el golpe de Cles en marcha
 	or a			;7434
 	ret z			;7435
 	ld a,(0c2d6h)		;7436   ; lee el estado del personaje 1
@@ -3279,7 +3279,7 @@ L_75B8:
 	ld a,021h		;75be
 	jp 056e3h		;75c0   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 L_75C3:
-	ld hl,0c310h		;75c3
+	ld hl,0c310h		;75c3   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;75c6
 	call 090bah		;75c7   ; cuenta_30_d502: 0xC314 = 0x30 y p02:8F94 con DE = (0xD502)
 	ld a,040h		;75ca
@@ -3291,10 +3291,10 @@ L_75CF:
 	xor a			;75d8
 	call 04bdeh		;75d9   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 L_75DC:
-	ld hl,0c310h		;75dc
+	ld hl,0c310h		;75dc   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;75df
 	xor a			;75e0
-	ld (0c314h),a		;75e1
+	ld (0c314h),a		;75e1   ; guarda la cuenta de la sala del final de fase o de la sala 5
 	ld a,040h		;75e4
 	call 056e3h		;75e6   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 	ld a,0ffh		;75e9
@@ -3328,7 +3328,7 @@ L_75FB:
 sprites_a426_encima:		; los patrones de p15:A426 y dos sprites encima del personaje
 	call 05ab8h		;761d   ; sprites_a426: los patrones de p15:A426 segun el estado del personaje
 	ld a,010h		;7620
-	ld (0c272h),a		;7622
+	ld (0c272h),a		;7622   ; guarda la cuenta del globo de animo
 globo_encima:		; los sprites 8 y 9 en (Y - 0x30, X - 8) del personaje, patrones 0x28 y 0x2C y sus colores (p01:765B)
 	ld a,(0c244h)		;7625   ; lee la Y del personaje
 	sub 030h		;7628
@@ -5036,7 +5036,7 @@ texto_de_ruina_japones:		; solo con la BIOS japonesa y sin otro texto en marcha 
 	ld a,(0002bh)		;7ff2
 	and 00fh		;7ff5
 	ret nz			;7ff7
-	ld a,(0c8abh)		;7ff8
+	ld a,(0c8abh)		;7ff8   ; lee el texto a maquina ya ha salido
 	and a			;7ffb
 	ret nz			;7ffc
 	ld a,(0c8a0h)		;7ffd   ; lee el texto a maquina en marcha

@@ -1347,7 +1347,7 @@ L_A9A6:
 	ld a,(0c31bh)		;a9c0
 	or a			;a9c3
 	jr z,L_A9DD		;a9c4
-	ld hl,0c319h		;a9c6
+	ld hl,0c319h		;a9c6   ; apunta a los 3 bytes de la fase de p09:BED3
 	ld d,(hl)			;a9c9
 	inc hl			;a9ca
 	ld e,(hl)			;a9cb
@@ -1364,7 +1364,7 @@ L_A9A6:
 L_A9DD:
 	ld a,041h		;a9dd
 	call 056e3h		;a9df   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
-	ld hl,0c310h		;a9e2
+	ld hl,0c310h		;a9e2   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;a9e5
 	ld a,000h		;a9e6
 	ld (0c31dh),a		;a9e8
@@ -2452,13 +2452,13 @@ DATA_resto_B249:
 
 
 mira_el_globo:		; sin globo (0xC272) y sin morir: lo que sigue de los objetos de animo
-	ld a,(0c272h)		;b259
+	ld a,(0c272h)		;b259   ; lee la cuenta del globo de animo
 	or a			;b25c
 	ret nz			;b25d
 	ld a,(0c24bh)		;b25e   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;b261
 	ret z			;b263
-	ld a,(0c26fh)		;b264
+	ld a,(0c26fh)		;b264   ; lee el golpe de Cles en marcha
 	or a			;b267
 	ret nz			;b268
 	ld a,(0c257h)		;b269   ; lee hay disparos en marcha
@@ -2555,7 +2555,7 @@ cuenta_del_globo:		; esconde el sprite 8, cuenta 0xC272 (p03:B30A) y, sin dispar
 	ld a,(0c257h)		;b304   ; lee hay disparos en marcha
 	or a			;b307
 	jr nz,$+46		;b308
-	ld a,(0c26fh)		;b30a
+	ld a,(0c26fh)		;b30a   ; lee el golpe de Cles en marcha
 	or a			;b30d
 	jr nz,$+40		;b30e
 	ld a,(0c2a7h)		;b310
@@ -2580,7 +2580,7 @@ DATA_saltos_B319:
 
 
 cuenta_c272:		; 0xC272 - 1; a cero, esconde los sprites de 0xDE20/24 y p00:5ABD
-	ld hl,0c272h		;b321
+	ld hl,0c272h		;b321   ; apunta a la cuenta del globo de animo
 	ld a,(hl)			;b324
 	or a			;b325
 	ret z			;b326
@@ -2797,7 +2797,7 @@ L_B495:
 	ret nc			;b4a5
 	inc (ix+001h)		;b4a6   ; sube el paso del actor
 	call 08b7eh		;b4a9   ; velocidad_y_l: (ix+7, 8) = L (H = 0)
-	ld a,(0c319h)		;b4ac
+	ld a,(0c319h)		;b4ac   ; lee los 3 bytes de la fase de p09:BED3
 	ld d,a			;b4af
 	ld a,(0c31ah)		;b4b0
 	ld e,a			;b4b3
@@ -2867,7 +2867,7 @@ L_B524:
 	ld a,(0c20ah)		;b530   ; lee en la sala de la puerta 5
 	or a			;b533
 	jr nz,L_B557		;b534
-	ld a,(0c310h)		;b536
+	ld a,(0c310h)		;b536   ; lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	cp 001h		;b539
 	ret nz			;b53b
 L_B53C:
@@ -2882,7 +2882,7 @@ L_B53C:
 	ld (ix+03eh),a		;b553
 	ret			;b556
 L_B557:
-	ld a,(0c310h)		;b557
+	ld a,(0c310h)		;b557   ; lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	cp 003h		;b55a
 	ret c			;b55c
 	jr L_B53C		;b55d
@@ -2984,7 +2984,7 @@ L_B602:
 	cp 0f0h		;b61b
 	ret c			;b61d
 	call 06811h		;b61e   ; accion_6: accion 6, los colores del personaje y sin invencible (0xC256 = 0)
-	ld hl,0c310h		;b621
+	ld hl,0c310h		;b621   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;b624
 	call 083d6h		;b625   ; borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 	jp 0545eh		;b628   ; vuelve_un_personaje_456: con 4-5-6: p06:BC36 y vuelve con 1-2-3

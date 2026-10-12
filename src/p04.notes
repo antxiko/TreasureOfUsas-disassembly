@@ -352,6 +352,7 @@ C 0x609F sonido_y_456: el sonido A y los bancos 4-5-6
 C 0x60A4 atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
 C 0x60A7 lee la ruina (0-4)
 C 0x60AA despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0x60B9 apunta a el paso de la escena
 C 0x60C3 texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
 C 0x60CB letra_a_maquina: cada 0xC8A5 cuadros, el siguiente caracter del texto
 C 0x60CE lee el texto a maquina ha acabado
@@ -366,14 +367,17 @@ C 0x6109 sprites_6020: 16 bytes de p04:6020 a 0xDE14 y dos colores de sprite
 C 0x6123 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 C 0x6126 borra_recuadro_4626: borra 0x4C x 0x1C en (0x26, 0x46) y p06:A494
 C 0x612E texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+C 0x6136 apunta a la cuenta de la escena
 C 0x613B letra_a_maquina: cada 0xC8A5 cuadros, el siguiente caracter del texto
 C 0x613E lee el texto a maquina ha acabado
 C 0x614D dibujo_de_escena: el dibujo de la escena en su posicion (p04:7239/7251)
 C 0x6150 borra_de_70: borra 0xFF x 0x48 desde (0, 0x70)
 C 0x6155 texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+C 0x615D apunta a la cuenta de la escena
 C 0x616A lista_9241: la lista de fichas p05:9241 (colores p05:9231)
 C 0x616D pantalla_73b4: paleta, mapa p05:93C6, el dibujo y el texto p04:73BD
 C 0x6175 parpadeo_de_ruina: 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
+C 0x6178 apunta a el parpadeo de la ruina acabado
 C 0x6180 pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC220
 C 0x6183 sprites_6020: 16 bytes de p04:6020 a 0xDE14 y dos colores de sprite
 C 0x6192 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
@@ -392,6 +396,8 @@ C 0x6204 pon_en_sprites: A en B sprites de HL (de 4 en 4)
 C 0x6209 texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
 C 0x6211 lee la X del sprite 2 en RAM
 C 0x6218 anima_de08: parpadeo de 0xDE0A y avance de 0xDE09
+C 0x621B apunta a la cuenta de la escena
+C 0x622B apunta a la cuenta de la escena
 C 0x623A borra_y_marco: borra el rectangulo y p06:A494
 C 0x6243 borra_y_marco: borra el rectangulo y p06:A494
 C 0x624C borra_y_marco: borra el rectangulo y p06:A494
@@ -414,6 +420,7 @@ C 0x62E3 sprite_en_rango: el sprite de HL entre 0x5C y 0x9C
 C 0x62EF lee la cuenta de cuadros
 C 0x62F5 suma_sprites: + 1 a B sprites de HL (de 4 en 4)
 C 0x62FB cuenta_c8e1: cada 16 cuadros, 0xC8E1 + 0xC8E2
+C 0x62FE apunta a el paso de la escena
 C 0x6304 sprites_de01: 2 sprites desde 0xDE01 en rango (p04:6292)
 C 0x6307 apunta a el patron del sprite 0 en RAM
 C 0x630C parpadeo_de_2: p04:6251 con B = 2
@@ -445,6 +452,7 @@ C 0x63A0 sprite_de01_ola: 0xDE00 segun p04:629B y el parpadeo de 0xDE02
 C 0x63A3 apunta a la X del sprite 1 en RAM
 C 0x63B6 apunta a la X del sprite 1 en RAM
 C 0x63B9 altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
+C 0x63BC apunta a la cuenta de la escena
 C 0x63C4 guarda el patron del sprite 0 en RAM
 C 0x63C7 apunta a la X del sprite 0 en RAM
 C 0x63CA altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
@@ -482,11 +490,13 @@ C 0x64F9 apunta a la X del sprite 0 en RAM
 C 0x64FC altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
 C 0x6503 lee la cuenta de cuadros
 C 0x650B apunta a el patron del sprite 0 en RAM
+C 0x6511 apunta a el paso de la escena
 C 0x6529 palabra_a: HL = la palabra A de la tabla HL
 C 0x652C pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
 C 0x6539 llena_dc00: B bytes de 0xDC00 con C
 C 0x653F llena_hl: B bytes de HL con C
 C 0x6551 anima_de00: parpadeo de 0xDE02 y avance de 0xDE01
+C 0x6554 apunta a la cuenta de la escena
 C 0x656A apunta a los atributos de los sprites en RAM
 C 0x656D hl_mas_a: HL = HL + A
 C 0x65A5 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
@@ -513,6 +523,7 @@ C 0x668C pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC22
 C 0x668F sprites_68e5: 12 bytes de p04:68E5 a 0xDE00 y los de p04:68F2/68EE
 C 0x6692 patron_78: 16 sprites de 0xDE3E con el patron 0x78
 C 0x6695 colores_de_escena: los colores de sprite de 0xDC00 por tramos
+C 0x6698 apunta a el paso de la escena
 C 0x66A0 anima_7_0f: p04:67C8 con B = 7 y D = 0x0F
 C 0x66AC anima_7_0f: p04:67C8 con B = 7 y D = 0x0F
 C 0x66C6 hl_mas_a: HL = HL + A
@@ -520,6 +531,7 @@ C 0x66D8 busca_4a: busca el sprite 0x4A en 0xDE3C (de 16 en 16)
 C 0x66DF anima_de01_d: avanza 0xDE01 y el parpadeo de 0xDE02 cada D cuadros
 C 0x66E4 patron_7c: 16 sprites con el patron 0x7C
 C 0x66EC patron_80: 16 sprites con el patron 0x80
+C 0x66F1 guarda la cuenta de la escena
 C 0x66FD apunta a el patron del sprite 0 en RAM
 C 0x6702 busca_4a: busca el sprite 0x4A en 0xDE3C (de 16 en 16)
 C 0x6710 patron_78: 16 sprites de 0xDE3E con el patron 0x78
@@ -569,6 +581,7 @@ C 0x68C7 borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0x68CD texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 C 0x68D3 cifras_dobles_en: las cifras dobles de 0xC25A y 0xC259 en BC (p00:47FE)
 C 0x68F6 cuenta_c8e4: cada 8 cuadros, 0xC8E4 de 0 a 2 y el patron de 0xDE12
+C 0x68F9 lee el paso de la escena
 C 0x68FF apunta a la X del sprite 0 en RAM
 C 0x6905 mueve_sprites: cada 8 cuadros, + C a B sprites de HL
 C 0x6908 lee la X del sprite 0 en RAM
@@ -609,6 +622,7 @@ C 0x6A22 palabra_a: HL = la palabra A de la tabla HL
 C 0x6A26 apunta a los atributos de los sprites en RAM
 C 0x6A2A suma_a_sprite: (HL) + C y HL + 4
 C 0x6A36 apunta a el patron del sprite 0 en RAM
+C 0x6A78 apunta a el paso de la escena
 C 0x6A83 colores_142: p04:7029 con B = 4 y DE = 0x0142
 C 0x6A8C copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
 C 0x6A9E texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
@@ -674,6 +688,7 @@ C 0x6CBC lee el texto a maquina ha acabado
 C 0x6CCD apunta a la escena (0-11)
 C 0x6CD1 pinta_escena: fichas, paleta, mapa, sprites y dibujo de la escena 0xC220
 C 0x6CE1 texto_a_maquina: p04:73D2 en (0x7C, 0x30), borrando antes con la BIOS japonesa
+C 0x6CEC apunta a la cuenta de la escena
 C 0x6CFA borra_de_70: borra 0xFF x 0x48 desde (0, 0x70)
 C 0x6D02 lee la cuenta de cuadros
 C 0x6D14 rectangulo_c8e6: el rectangulo de 0xC8E6-0xC8E8
@@ -687,6 +702,7 @@ C 0x6D48 doce_sprites: 12 bytes de DE en 12 sprites de HL
 C 0x6D4B apunta a el patron del sprite 0 en RAM
 C 0x6D52 pon_en_sprites: A en B sprites de HL (de 4 en 4)
 C 0x6D58 apunta a la Y del sprite 12 en RAM
+C 0x6D60 apunta a las teclas especiales que hay
 C 0x6D63 llena_dc00: B bytes de 0xDC00 con C
 C 0x6D68 apunta a los colores de los sprites en RAM (16 por sprite)
 C 0x6D6F hl_mas_a: HL = HL + A
@@ -719,6 +735,7 @@ C 0x6EC8 hl_mas_a: HL = HL + A
 C 0x6ED0 guarda el patron del sprite 0 en RAM
 C 0x6EE5 esconde_sprites: Y = 0xE0 en las dos tablas de atributos (0x7600 y 0xF600)
 C 0x6EE8 apaga_y_espera: pantalla apagada y BC = 0xD4 de espera
+C 0x6EF9 apunta a el paso de la escena
 C 0x6F0D borra_y_marco: borra el rectangulo y p06:A494
 C 0x6F15 empieza_texto_a_maquina: el texto A de p04:743F (japones) o p04:745D en DE
 C 0x6F2D borra_y_marco: borra el rectangulo y p06:A494

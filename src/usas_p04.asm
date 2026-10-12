@@ -71,7 +71,7 @@ DATA_saltos_60AD:
 
 
 L_60B9:
-	ld hl,0c21fh		;60b9
+	ld hl,0c21fh		;60b9   ; apunta a el paso de la escena
 	ld b,(hl)			;60bc
 	inc l			;60bd
 	inc l			;60be
@@ -131,7 +131,7 @@ L_612E:
 L_6134:
 	djnz L_6147		;6134
 L_6136:
-	ld hl,0c221h		;6136
+	ld hl,0c221h		;6136   ; apunta a la cuenta de la escena
 	ld (hl),080h		;6139
 L_613B:
 	call letra_a_maquina		;613b   ; letra_a_maquina: cada 0xC8A5 cuadros, el siguiente caracter del texto
@@ -152,7 +152,7 @@ L_6147:
 L_615B:
 	djnz L_6164		;615b
 L_615D:
-	ld hl,0c221h		;615d
+	ld hl,0c221h		;615d   ; apunta a la cuenta de la escena
 	ld (hl),000h		;6160
 	jr L_613B		;6162
 L_6164:
@@ -165,7 +165,7 @@ L_6164:
 L_6173:
 	djnz L_61A0		;6173
 	call 0966eh		;6175   ; parpadeo_de_ruina: 0xAC cuadros: cada 16, la ficha 0x1A/0x1B en la posicion de la ruina (p05:96AB); al acabar, 0xC899 = 1
-	ld hl,0c899h		;6178
+	ld hl,0c899h		;6178   ; apunta a el parpadeo de la ruina acabado
 	ld a,(hl)			;617b
 	or a			;617c
 	ret z			;617d
@@ -241,7 +241,7 @@ L_620F:
 	jr nc,L_621B		;6216
 	call anima_de08		;6218   ; anima_de08: parpadeo de 0xDE0A y avance de 0xDE09
 L_621B:
-	ld hl,0c221h		;621b
+	ld hl,0c221h		;621b   ; apunta a la cuenta de la escena
 	jp L_615D		;621e
 L_6221:
 	djnz L_6229		;6221
@@ -252,7 +252,7 @@ L_6221:
 L_6229:
 	ld a,03ch		;6229
 L_622B:
-	ld hl,0c221h		;622b
+	ld hl,0c221h		;622b   ; apunta a la cuenta de la escena
 	ld (hl),a			;622e
 	dec l			;622f
 	dec l			;6230
@@ -407,7 +407,7 @@ L_62E2:
 	ret			;62fa
 L_62FB:
 	call cuenta_c8e1		;62fb   ; cuenta_c8e1: cada 16 cuadros, 0xC8E1 + 0xC8E2
-	ld hl,0c21fh		;62fe
+	ld hl,0c21fh		;62fe   ; apunta a el paso de la escena
 	ld b,(hl)			;6301
 	djnz L_631A		;6302
 	call sprites_de01		;6304   ; sprites_de01: 2 sprites desde 0xDE01 en rango (p04:6292)
@@ -484,7 +484,7 @@ L_63B4:
 	djnz L_63D5		;63b4
 	ld hl,0de05h		;63b6   ; apunta a la X del sprite 1 en RAM
 	call altura_de_la_ola		;63b9   ; altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
-	ld hl,0c221h		;63bc
+	ld hl,0c221h		;63bc   ; apunta a la cuenta de la escena
 	dec (hl)			;63bf
 	jp nz,L_6232		;63c0
 	xor a			;63c3
@@ -684,7 +684,7 @@ sprite_de01_ola:		; 0xDE00 segun p04:629B y el parpadeo de 0xDE02
 	ld (hl),a			;650f
 	ret			;6510
 L_6511:
-	ld hl,0c21fh		;6511
+	ld hl,0c21fh		;6511   ; apunta a el paso de la escena
 	ld b,(hl)			;6514
 	inc l			;6515
 	inc l			;6516
@@ -714,7 +714,7 @@ L_6511:
 L_654F:
 	djnz L_658D		;654f   ; paso 2 de la escena: la animacion y la cuenta de 0xC221
 	call anima_de00		;6551   ; anima_de00: parpadeo de 0xDE02 y avance de 0xDE01
-	ld hl,0c221h		;6554
+	ld hl,0c221h		;6554   ; apunta a la cuenta de la escena
 	dec (hl)			;6557
 	jp nz,L_6232		;6558
 	ld (hl),040h		;655b   ; cada 0x40 cuadros, un sprite mas (patron 0x74, Y 0x70) con la X de 0xC8E5
@@ -884,7 +884,7 @@ L_6682:
 	call patron_78		;6692   ; patron_78: 16 sprites de 0xDE3E con el patron 0x78
 	call colores_de_escena		;6695   ; colores_de_escena: los colores de sprite de 0xDC00 por tramos
 L_6698:
-	ld hl,0c21fh		;6698
+	ld hl,0c21fh		;6698   ; apunta a el paso de la escena
 	inc (hl)			;669b
 	or a			;669c
 	ret			;669d
@@ -935,7 +935,7 @@ L_66D6:
 	call patron_80		;66ec   ; patron_80: 16 sprites con el patron 0x80
 L_66EF:
 	ld a,080h		;66ef
-	ld (0c221h),a		;66f1
+	ld (0c221h),a		;66f1   ; guarda la cuenta de la escena
 	jp L_6698		;66f4
 L_66F7:
 	djnz L_6707		;66f7
@@ -1241,7 +1241,7 @@ DATA_resto_68D6:
 
 L_68F6:
 	call cuenta_c8e4		;68f6   ; cuenta_c8e4: cada 8 cuadros, 0xC8E4 de 0 a 2 y el patron de 0xDE12
-	ld a,(0c21fh)		;68f9
+	ld a,(0c21fh)		;68f9   ; lee el paso de la escena
 	ld b,a			;68fc
 	djnz L_693B		;68fd
 	ld hl,0de01h		;68ff   ; apunta a la X del sprite 0 en RAM
@@ -1437,7 +1437,7 @@ DATA_resto_6A3E:
 
 
 L_6A78:
-	ld hl,0c21fh		;6a78
+	ld hl,0c21fh		;6a78   ; apunta a el paso de la escena
 	ld b,(hl)			;6a7b
 	inc l			;6a7c
 	inc l			;6a7d
@@ -1797,7 +1797,7 @@ DATA_resto_6CE7:
 
 L_6CEA:
 	djnz L_6CF4		;6cea
-	ld hl,0c221h		;6cec
+	ld hl,0c221h		;6cec   ; apunta a la cuenta de la escena
 	ld (hl),0c0h		;6cef
 	jp L_613B		;6cf1
 L_6CF4:
@@ -1856,7 +1856,7 @@ L_6D3C:
 	ld de,0de30h		;6d58   ; apunta a la Y del sprite 12 en RAM
 	ld bc,00038h		;6d5b
 	ldir		;6d5e
-	ld bc,0c00fh		;6d60
+	ld bc,0c00fh		;6d60   ; apunta a las teclas especiales que hay
 	call llena_dc00		;6d63   ; llena_dc00: B bytes de 0xDC00 con C
 	ld b,003h		;6d66
 	ld hl,0dc00h		;6d68   ; apunta a los colores de los sprites en RAM (16 por sprite)
@@ -2096,7 +2096,7 @@ L_6EDF:
 	jp z,L_66EF		;6ef0
 	ld hl,00100h		;6ef3
 	ld (0c8f7h),hl		;6ef6
-	ld hl,0c21fh		;6ef9
+	ld hl,0c21fh		;6ef9   ; apunta a el paso de la escena
 	ld a,(hl)			;6efc
 	add a,008h		;6efd
 	ld (hl),a			;6eff

@@ -355,6 +355,7 @@ C 0x6022 tecla_de_la_demo: con 9: A = las teclas y C = los cuadros del paso C de
 C 0x602D tecla_de_la_demo: con 9: A = las teclas y C = los cuadros del paso C de la demo de la ruina (p09:BCD6)
 C 0x6030 teclas_c007: p00:5005 con HL = 0xC007: las teclas y las nuevas
 C 0x6033 lee_teclas: A = teclas de las filas 6 y 7 de la matriz
+C 0x6036 apunta a las teclas especiales que hay
 C 0x6039 teclas_nuevas: (HL) = las teclas de A; (HL - 1) = las que no estaban antes
 C 0x603E banco_9_en_a000: pone el banco 9 en 0xA000
 C 0x6041 lee la ruina (0-4)
@@ -396,6 +397,7 @@ C 0x60CF lee en la sala de la puerta 5
 C 0x60D4 lee el jefe vencido (no queda ningun 0x19)
 C 0x60D9 lee la X del personaje
 C 0x60ED pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
+C 0x60F0 lleva_segun_ficha_0: 0xC240 = el byte 0 de la ficha del personaje 0
 C 0x60F3 pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
 C 0x60F6 carga_la_fuente: con 13-14-15: la fuente (p14:9289) y los caracteres del marcador
 C 0x60F9 graficos_de_antesala: la lista de fichas de la antesala (p07:60B0[ruina]) y la de p12:A7AA
@@ -487,6 +489,7 @@ C 0x62FF lee las teclas izquierda/derecha del cuadro anterior
 C 0x630B sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x630F guarda invencible
 C 0x6317 guarda la accion del personaje (4 muere, 5 escalera)
+C 0x631C guarda la cuenta de invencible
 C 0x631F paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
 C 0x6322 lee la X del personaje
 C 0x6328 lee el personaje que se lleva (0 o 1)
@@ -523,6 +526,7 @@ C 0x63FE ficha_arriba: la ficha 4 puntos por encima del personaje si esta centra
 C 0x6403 lee la X del personaje
 C 0x6408 guarda la X del personaje
 C 0x640D guarda la accion del personaje (4 muere, 5 escalera)
+C 0x6416 apunta a la cuenta de cuadros del paso del personaje
 C 0x641A cambia_sentido: 0xC250 = A y, si cambia, p01:69AC
 C 0x641E velocidad_x: 0xC249 = la velocidad X de p01:6485[(ix+1)], con el signo de 0xC250
 C 0x6422 prueba_pared_6: p01:644C con D = 6
@@ -601,9 +605,11 @@ C 0x6624 guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 b
 C 0x662C guarda la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x662F suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x6635 para_y: 0xC247 = 0: velocidad Y a cero
+C 0x6638 lee la cuenta de la postura de disparo (4 u 8)
 C 0x663E lee las teclas que hay
 C 0x6646 lee las teclas izquierda/derecha del cuadro anterior
 C 0x664F lee las teclas izquierda/derecha del cuadro anterior
+C 0x6659 apunta a la cuenta de la postura de disparo (4 u 8)
 C 0x665F guarda el sentido del personaje
 C 0x6663 cae_por_abajo: acarreo si la Y pasa de 0xD0 y hay vecina abajo
 C 0x6667 para_x: 0xC249 = 0: velocidad X a cero
@@ -616,6 +622,7 @@ C 0x6695 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente
 C 0x669B prueba_pared: acarreo si hay pared a D puntos (p01:644C)
 C 0x66A0 para_x: 0xC249 = 0: velocidad X a cero
 C 0x66A8 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x66AE apunta a la cuenta de invencible
 C 0x66B6 si el personaje esta (0: no) = 0x01
 C 0x66BA lee la ficha del personaje 0 (14 bytes)
 C 0x66BE lee la ficha del personaje 1 (14 bytes)
@@ -641,6 +648,7 @@ C 0x6744 lee la Y del personaje
 C 0x674A ficha_en_x: la ficha en (X del personaje, A) (p01:7176)
 C 0x6750 suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x6756 suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
+C 0x6759 apunta a la cuenta de cuadros del paso del personaje
 C 0x675E velocidad_y: 0xC247 = la velocidad Y de p01:64A0[(ix+1)]
 C 0x6761 lee la velocidad Y del personaje (16 bits) y el byte siguiente (16 bits)
 C 0x6765 niega_de: DE = -DE
@@ -661,6 +669,7 @@ C 0x67A7 ficha_en_x: la ficha en (X del personaje, A) (p01:7176)
 C 0x67AC suelo_bajo_el_personaje: si hay suelo bajo el personaje en su siguiente Y
 C 0x67B1 suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
 C 0x67B7 suma_velocidad_y: 0xC243 = 0xC243 + 0xC247: la Y de 16 bits
+C 0x67BA apunta a la cuenta de cuadros del paso del personaje
 C 0x67C3 avanza_horizontal: mueve en X con la velocidad de p01:6485 y mira las paredes
 C 0x67C6 suma_velocidad_x: 0xC245 = 0xC245 + 0xC249: la X de 16 bits
 C 0x67D0 lee la accion del personaje (4 muere, 5 escalera)
@@ -669,13 +678,18 @@ C 0x67E3 guarda invencible
 C 0x67EB lee la cuenta de cuadros del juego
 C 0x67F2 lee el personaje que se lleva (0 o 1)
 C 0x67FB lee en la sala de la puerta 5
+C 0x67FF lee en la sala del final de fase
+C 0x6809 guarda el color de la capa 0 del personaje
+C 0x680D guarda el color de la capa 1 del personaje
 C 0x6813 guarda la accion del personaje (4 muere, 5 escalera)
 C 0x6816 colores_del_personaje: 0xC24C/0xC24D segun el personaje y la sala
 C 0x681A guarda invencible
 C 0x6825 ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 C 0x6828 lee la accion del personaje (4 muere, 5 escalera)
+C 0x682F lee el golpe de Cles en marcha
 C 0x6835 lee el cuadro de animacion del personaje
 C 0x6845 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x6849 guarda el golpe de Cles en marcha
 C 0x684C lee el cuadro de animacion del personaje
 C 0x6851 lee los 4 disparos (0x20 bytes cada uno)
 C 0x6857 lee el estado del personaje (0-3)
@@ -685,6 +699,7 @@ C 0x687D cuadro_de_la_accion: HL = el cuadro de la accion 0xC24B y el sentido 0x
 C 0x6880 copia_linea_f0: una linea de (H, L) a (D, 0xF0) (p00:4BDE)
 C 0x6886 cuadro_de_la_accion: HL = el cuadro de la accion 0xC24B y el sentido 0xC250
 C 0x68A4 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x68A7 lee la cuenta de la postura de disparo (4 u 8)
 C 0x68AF lee la accion del personaje (4 muere, 5 escalera)
 C 0x68B2 hl_mas_a: HL = HL + A
 C 0x68B5 lee la accion del personaje (4 muere, 5 escalera)
@@ -693,8 +708,10 @@ C 0x68BF lee la direccion de las teclas (0, 1, 2)
 C 0x68C8 lee la cuenta de cuadros del juego
 C 0x68CE lee el sentido del personaje
 C 0x68DA lee la accion del personaje (4 muere, 5 escalera)
+C 0x68E4 lee el paso de la muerte (1 o 2)
 C 0x68F3 apunta a los atributos de los sprites en RAM
 C 0x6923 colores_a_ram: 16 + 16 colores de 0xC24C/0xC24D a HL
+C 0x6933 apunta a el color de la capa 0 del personaje
 C 0x6944 ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
 C 0x6947 lee la cuenta de cuadros del juego
 C 0x694C mira_el_globo: sin globo (0xC272) y sin morir: lo que sigue de los objetos de animo
@@ -703,6 +720,7 @@ C 0x6952 despacha_accion: despacha la accion del personaje (0xC24B)
 C 0x6959 nada_6aea: solo ret
 C 0x695C sprites_del_personaje_a_ram: los atributos de los sprites del personaje en 0xDE00
 C 0x695F lee la accion del personaje (4 muere, 5 escalera)
+C 0x6965 lee el paso de la muerte (1 o 2)
 C 0x696F guarda los atributos de los sprites en RAM
 C 0x6972 guarda la Y del sprite 1 en RAM
 C 0x6976 lee los 8 actores (0x80 bytes cada uno)
@@ -712,6 +730,8 @@ C 0x6998 lee la accion del personaje (4 muere, 5 escalera)
 C 0x699B despacha: salta a la palabra A de la tabla pegada detras del `call`
 C 0x69C1 lee el nivel de velocidad del personaje (indice de p01:6485)
 C 0x69C4 hl_mas_a: HL = HL + A
+C 0x69C7 lee la cuenta de cuadros del paso del personaje
+C 0x69CD guarda la cuenta de cuadros del paso del personaje
 C 0x69D0 lee el cuadro de animacion del personaje
 C 0x69DE lee el sentido del personaje
 C 0x69E2 guarda el cuadro de animacion del personaje
@@ -720,11 +740,16 @@ C 0x69F1 guarda el cuadro de animacion del personaje
 C 0x69F5 lee el cuadro de animacion del personaje
 C 0x69FB lee el sentido del personaje
 C 0x69FF guarda el cuadro de animacion del personaje
+C 0x6A05 guarda el color de la capa 0 del personaje
+C 0x6A0A guarda el color de la capa 1 del personaje
+C 0x6A27 lee la cuenta de invencible
 C 0x6A33 lee la X del personaje
 C 0x6A39 lee el personaje que se lleva (0 o 1)
 C 0x6A43 lee la Y del personaje
 C 0x6A52 copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 C 0x6A5C copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
+C 0x6A61 guarda el paso de la muerte (1 o 2)
+C 0x6A67 guarda el paso de la muerte (1 o 2)
 C 0x6A6A lee la X del personaje
 C 0x6A70 lee el personaje que se lleva (0 o 1)
 C 0x6A7A lee la Y del personaje
@@ -737,6 +762,8 @@ C 0x6AA8 bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 C 0x6AAB lee la direccion de las teclas (0, 1, 2)
 C 0x6AB4 lee el nivel de velocidad del personaje (indice de p01:6485)
 C 0x6AB7 hl_mas_a: HL = HL + A
+C 0x6ABA lee la cuenta de cuadros del paso del personaje
+C 0x6AC1 guarda la cuenta de cuadros del paso del personaje
 C 0x6AC4 lee el cuadro de animacion del personaje
 C 0x6ACE guarda el cuadro de animacion del personaje
 C 0x6AD6 guarda el cuadro de animacion del personaje
@@ -777,6 +804,7 @@ C 0x6BCF lee la direccion de las teclas (0, 1, 2)
 C 0x6BDC x_del_disparo: (ix+4) + 2 u 8 segun el tipo y el sentido (ix+9)
 C 0x6BE3 despacha: salta a la palabra A de la tabla pegada detras del `call`
 C 0x6BF8 lee la accion del personaje (4 muere, 5 escalera)
+C 0x6C09 guarda la cuenta de la postura de disparo (4 u 8)
 C 0x6C0E guarda la accion del personaje (4 muere, 5 escalera)
 C 0x6C12 lee el personaje que se lleva (0 o 1)
 C 0x6C17 lee el tipo del disparo
@@ -811,12 +839,15 @@ C 0x6CE3 velocidad_800: p01:6D87 con DE = 0x800
 C 0x6CE6 cuadro_de_animacion: L = el cuadro (0xD8 + 2 cada 2 cuadros) segun (ix+9)
 C 0x6CE9 lee la Y del personaje
 C 0x6CEC guarda la Y del disparo
+C 0x6CF1 guarda el golpe de Cles en marcha
 C 0x6CF4 disparo_8: (ix+0x0D) = 8
 C 0x6D01 velocidad_del_disparo: (ix+7, 8) = DE, negada (p02:8B39) si (ix+9) es cero
 C 0x6D04 el hueco de sprite del disparo = 0x04
 C 0x6D08 lee el sentido del disparo (0: a la izquierda)
 C 0x6D12 guarda el registro de sprite del disparo (p09:B7C9)
+C 0x6D22 guarda el golpe de Cles en marcha
 C 0x6D25 el hueco de sprite del disparo = 0x04
+C 0x6D29 lee la cuenta de la postura de disparo (4 u 8)
 C 0x6D31 lee la accion del personaje (4 muere, 5 escalera)
 C 0x6D37 hl_mas_a: HL = HL + A
 C 0x6D3B guarda el registro de sprite del disparo (p09:B7C9)
@@ -829,6 +860,7 @@ C 0x6D5F lee la Y del personaje
 C 0x6D62 guarda la Y del disparo
 C 0x6D65 lee la X del personaje
 C 0x6D68 guarda la X del disparo
+C 0x6D6D guarda el golpe de Cles en marcha
 C 0x6D7A lee el sentido del disparo (0: a la izquierda)
 C 0x6D80 guarda el registro de sprite del disparo (p09:B7C9)
 C 0x6D87 lee el sentido del disparo (0: a la izquierda)
@@ -861,6 +893,7 @@ C 0x6E19 apunta a los atributos de los sprites en RAM
 C 0x6E1C lee el hueco de sprite del disparo
 C 0x6E21 de_mas_a: DE = DE + A
 C 0x6E2B guarda el tipo del disparo
+C 0x6E2E guarda el golpe de Cles en marcha
 C 0x6E32 lee el tipo del disparo
 C 0x6E38 despacha: salta a la palabra A de la tabla pegada detras del `call`
 C 0x6E52 lee la cuenta de cuadros del juego
@@ -933,6 +966,7 @@ C 0x6FCD suma_sin_pasar: (DE) + (HL), o 0xFF si se pasa (y nada si (DE) >= 0x80)
 C 0x6FE1 ff: A = 0xFF
 C 0x6FF0 cero: A = 0
 C 0x6FF7 lee el personaje que se lleva (0 o 1)
+C 0x6FFD lee en la sala del final de fase
 C 0x7001 lee en la sala de la puerta 5
 C 0x7009 apunta a el color del sprite 4 en RAM
 C 0x7015 hl_mas_a: HL = HL + A
@@ -1038,6 +1072,7 @@ C 0x7386 velocidad_y_l: (ix+7, 8) = L (H = 0)
 C 0x738B sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x738E la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
 C 0x7392 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
+C 0x7398 lee el golpe de Cles en marcha
 C 0x739D lee el estado del personaje 1
 C 0x73A4 lee el tipo del actor
 C 0x73AC lee el paso del actor
@@ -1054,6 +1089,7 @@ C 0x7412 lee el personaje que se lleva (0 o 1)
 C 0x7416 hl_mas_a: HL = HL + A
 C 0x7419 lee la X del personaje
 C 0x7422 lee la Y del personaje
+C 0x7431 lee el golpe de Cles en marcha
 C 0x7436 lee el estado del personaje 1
 C 0x7444 banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
 C 0x7447 medidas_del_disparo: las medidas del disparo IY de p15:BEAD[tipo - 1]
@@ -1089,9 +1125,12 @@ C 0x7589 despacha: salta a la palabra A de la tabla pegada detras del `call`
 C 0x75B8 suma_monedas: las monedas (0xC259, BCD) + E (y D al byte alto)
 C 0x75BB dos_cifras_dobles: las cifras de 0xC25A y 0xC259 en grande (p00:47FE)
 C 0x75C0 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0x75C3 apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0x75C7 cuenta_30_d502: 0xC314 = 0x30 y p02:8F94 con DE = (0xD502)
 C 0x75CC sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x75D9 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
+C 0x75DC apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
+C 0x75E1 guarda la cuenta de la sala del final de fase o de la sala 5
 C 0x75E6 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x75EB sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x75FE ficha_del_personaje: IX = la ficha del personaje que se lleva (0xC2B0 o 0xC2D0)
@@ -1102,6 +1141,7 @@ C 0x7612 sprites_a426_encima: los patrones de p15:A426 y dos sprites encima del 
 C 0x7617 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0x761A musica_de_fase_otra: como p00:54C8 con 0xDE80 = 1
 C 0x761D sprites_a426: los patrones de p15:A426 segun el estado del personaje
+C 0x7622 guarda la cuenta del globo de animo
 C 0x7625 lee la Y del personaje
 C 0x762B lee la X del personaje
 C 0x7631 guarda la Y del sprite 8 en RAM y el byte siguiente (16 bits)
@@ -1316,5 +1356,6 @@ C 0x7FBD copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0x7FC0 apunta a el bloque que se mueve en curso
 C 0x7FC7 apunta a el bloque que se mueve en curso
 C 0x7FE0 lee el bloque que se mueve en curso
+C 0x7FF8 lee el texto a maquina ya ha salido
 C 0x7FFD lee el texto a maquina en marcha
 # --- fin de las anotaciones de anota.py ---

@@ -419,6 +419,7 @@ C 0xA01B atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites
 C 0xA020 apunta a la ficha del personaje 0 (14 bytes)
 C 0xA029 hl_mas_a: HL = HL + A
 C 0xA035 hl_mas_a: HL = HL + A
+C 0xA03A lee las monedas al entrar en INFORMATION y el byte siguiente (16 bits)
 C 0xA03D guarda las monedas (16 bits) y el byte siguiente (16 bits)
 C 0xA040 cifras_c2b9: las cifras de 0xC2B9 de los dos personajes
 C 0xA043 cifras_dobles_48bc: p00:4785 con BC = 0x48BC
@@ -474,14 +475,19 @@ C 0xA2A8 avanza_ocho: D + 8, y E + 8 si D da la vuelta
 C 0xA2AB guarda la posicion del texto a maquina y el byte siguiente (16 bits)
 C 0xA2B1 guarda la espera hasta la siguiente letra
 C 0xA2B7 guarda el texto a maquina ha acabado
+C 0xA2FC apunta a lo tecleado (la clave)
 C 0xA302 borra: pone a cero BC + 1 bytes desde HL
 C 0xA30F rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
 C 0xA31A rectangulo: los cuatro lados de un rectangulo (p00:4B8E y p00:4B98)
+C 0xA321 guarda la tecla tecleada
 C 0xA327 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xA32D lee la tecla tecleada
+C 0xA337 apunta a lo tecleado (la clave)
 C 0xA33A hl_mas_a: HL = HL + A
 C 0xA34C texto_en_de: el texto de HL en la posicion (D, E) que ya hay, con C (p00:4D4A sin leer [X][Y])
 C 0xA365 palabra_a: HL = la palabra A de la tabla HL
 C 0xA36A compara_con_e360: compara (HL) con 0xE360 hasta 0xFF; Z si son iguales
+C 0xA385 apunta a lo tecleado (la clave)
 C 0xA3B1 hl_mas_a: HL = HL + A
 C 0xA410 lee la X en la antesala
 C 0xA420 copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
@@ -649,6 +655,7 @@ C 0xBB46 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 C 0xBB4F borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0xBB58 rectangulo_color_d: p00:4B74 con el color 0x0D
 C 0xBB61 rectangulo_color_d: p00:4B74 con el color 0x0D
+C 0xBB64 apunta a la respuesta en la antesala (1 o 2)
 C 0xBB69 lee las teclas nuevas
 C 0xBB81 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0xBB84 recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
@@ -662,11 +669,14 @@ C 0xBBCA cifra: la cifra A & 15 (0x21 + A) en (D, E), o espacio si es cero y C
 C 0xBBDD copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 C 0xBBE0 recuadro_del_mensaje: borra y enmarca el recuadro de mensajes
 C 0xBBF0 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0xBBF5 guarda la cuenta del mensaje de la antesala
 C 0xBBF8 colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 C 0xBBFB sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
 C 0xBBFE atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0xBC02 apunta a la cuenta del mensaje de la antesala
 C 0xBC07 copia_6078: copia 0x94 x 0x1C de (0x78, 0x60) a (0x42, 0x36)
 C 0xBC0D guarda el sentido en la antesala
+C 0xBC18 guarda la cuenta de la captura en la antesala
 C 0xBC20 colores_de_la_antesala: los colores de sprite de los dos personajes (p06:B8F3/B8F7)
 C 0xBC23 lee la ficha del personaje 1 (14 bytes)
 C 0xBC2A vuelve_un_personaje: la ficha inicial (p06:BF6C) del personaje que no vive
@@ -676,13 +686,17 @@ C 0xBC36 lee la ficha del personaje 0 (14 bytes)
 C 0xBC3D apunta a la ficha del personaje 0 (14 bytes)
 C 0xBC45 apunta a la ficha del personaje 1 (14 bytes)
 C 0xBC53 atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0xBC5C apunta a la cuenta de la captura en la antesala
 C 0xBC62 sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
 C 0xBC70 apunta a el patron del sprite 0 en RAM
 C 0xBC7D sprites_be35: los sprites del personaje 1 con p06:BE35
 C 0xBC80 apunta a los atributos de los sprites en RAM
+C 0xBC86 lee la cuenta de la captura en la antesala
 C 0xBCA0 lee la ficha del personaje 1 (14 bytes)
 C 0xBCA6 apunta a la Y del sprite 4 en RAM
+C 0xBCB0 guarda la cuenta de la captura en la antesala
 C 0xBCBA cuadro_de_la_tienda: los colores (p06:BD0B) y los sprites de 0xDE20
+C 0xBCC2 apunta a la cuenta de la captura en la antesala
 C 0xBCC9 sprites_de20: los sprites de 0xDE20 junto a 0xCC13
 C 0xBCD0 sprites_de_la_antesala: los sprites de los personajes en la antesala (p06:BE2D)
 C 0xBCD3 colores_dc80: 4 x 16 colores 0x0D/0x0A en 0xDC80

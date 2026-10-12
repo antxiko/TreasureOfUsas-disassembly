@@ -54,12 +54,12 @@ L_8047:
 	ld hl,0c8a5h		;8047   ; apunta a la espera hasta la siguiente letra
 	dec (hl)			;804a
 	ret nz			;804b
-	ld a,(0c8aah)		;804c
+	ld a,(0c8aah)		;804c   ; lee el recuadro del texto, por borrar
 	and a			;804f
 	jr z,L_8059		;8050
 	call recuadro_del_texto		;8052   ; recuadro_del_texto: borra el recuadro, su marco y sus lineas segun 0xC8A9
 	xor a			;8055
-	ld (0c8aah),a		;8056
+	ld (0c8aah),a		;8056   ; guarda el recuadro del texto, por borrar
 L_8059:
 	call 054aah		;8059   ; banco_12_en_a000: pone el banco 12 en 0xA000
 	ld hl,(0c8a1h)		;805c   ; lee el puntero del texto a maquina y el byte siguiente (16 bits)
@@ -97,7 +97,7 @@ L_8090:
 	ld (hl),a			;809b
 	call posicion_del_texto		;809c   ; posicion_del_texto: 0xC8A7 y 0xC8A3 = (0x30, 0x58)
 	ld a,001h		;809f
-	ld (0c8aah),a		;80a1
+	ld (0c8aah),a		;80a1   ; guarda el recuadro del texto, por borrar
 L_80A4:
 	jp 05464h		;80a4   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 posicion_del_texto:		; 0xC8A7 y 0xC8A3 = (0x30, 0x58)
@@ -110,7 +110,7 @@ L_80B3:
 	ld (0c8a0h),a		;80b4   ; guarda el texto a maquina en marcha
 	inc a			;80b7
 	ld (0c8a6h),a		;80b8   ; guarda el texto a maquina ha acabado
-	ld (0c8abh),a		;80bb
+	ld (0c8abh),a		;80bb   ; guarda el texto a maquina ya ha salido
 	jr L_80A4		;80be
 recuadro_del_texto:		; borra el recuadro, su marco y sus lineas segun 0xC8A9
 	ld hl,04a28h		;80c0
@@ -150,7 +150,7 @@ texto_de_la_antesala:		; el texto a maquina de la antesala: si no esta en marcha
 	ld a,(0c240h)		;810d   ; lee el personaje que se lleva (0 o 1)
 	ld (0c8a9h),a		;8110   ; guarda el personaje del texto
 	call empieza_texto_de_ruina		;8113   ; empieza_texto_de_ruina: con 12: el texto a maquina de la ruina (p12:B603)
-	ld hl,0c8b0h		;8116
+	ld hl,0c8b0h		;8116   ; apunta a el texto de los nombres por animo
 	ld (0c8a1h),hl		;8119   ; guarda el puntero del texto a maquina y el byte siguiente (16 bits)
 	ld a,(0c2b0h)		;811c   ; lee la ficha del personaje 0 (14 bytes)
 	ld b,a			;811f
@@ -192,12 +192,12 @@ L_815A:
 	jr L_8154		;8166
 nombres_de_estado:		; con 12: los nombres de estado de los dos personajes en 0xC8B0
 	call 054aah		;8168   ; banco_12_en_a000: pone el banco 12 en 0xA000
-	ld de,0c8b0h		;816b
+	ld de,0c8b0h		;816b   ; apunta a el texto de los nombres por animo
 	ld a,(0002bh)		;816e
 	and 00fh		;8171
 	ld a,(0c240h)		;8173   ; lee el personaje que se lleva (0 o 1)
 	jr nz,L_81BD		;8176
-	ld de,0c8b0h		;8178
+	ld de,0c8b0h		;8178   ; apunta a el texto de los nombres por animo
 	and a			;817b
 	ld hl,0b73ch		;817c
 	ld a,(0c2b6h)		;817f   ; lee el estado del personaje 0
@@ -321,7 +321,7 @@ entra_jefe:		; con 9: los sprites 0x28 y 0x29 y la paleta del jefe de la pantall
 	jr nz,$-43		;8240
 	call 054afh		;8242   ; banco_9_en_a000: pone el banco 9 en 0xA000
 	xor a			;8245
-	ld (0cc37h),a		;8246
+	ld (0cc37h),a		;8246   ; guarda el registro del jefe en la lista de la pantalla
 	call busca_de_la_pantalla		;8249   ; busca_de_la_pantalla: con 9: el registro de p09:B12B[0xC211 - 1] de la pantalla; acarreo si no hay
 	ret c			;824c
 	cp 0ffh		;824d
@@ -585,7 +585,7 @@ L_83E4:
 	jr nz,L_83E4		;83fd
 	ret			;83ff
 actor_por_tipo:		; segun 0xC316 y el tipo: cuentas y p02:84AC
-	ld a,(0c316h)		;8400
+	ld a,(0c316h)		;8400   ; lee en la sala del final de fase
 	or a			;8403
 	jr z,L_8412		;8404
 	ld a,(ix+000h)		;8406   ; lee el tipo del actor
@@ -1129,7 +1129,7 @@ pon_pieza:		; el byte D en la pieza E del actor 0xDE83
 	pop hl			;879f
 	ret			;87a0
 prepara_la_pantalla:		; borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p02:87B6)
-	ld hl,0cc40h		;87a1
+	ld hl,0cc40h		;87a1   ; apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 	ld bc,0000fh		;87a4
 	call 05f08h		;87a7   ; borra: pone a cero BC + 1 bytes desde HL
 	call 054afh		;87aa   ; banco_9_en_a000: pone el banco 9 en 0xA000
@@ -1139,8 +1139,8 @@ prepara_la_pantalla:		; borra 0xCC40-0xCC4F y prepara el jefe de la pantalla (p0
 prepara_jefe:		; pone a cero las cuentas del jefe y busca el de la pantalla (p02:9195)
 	xor a			;87b6   ; todas las cuentas del jefe a su valor inicial
 	ld (0c312h),a		;87b7
-	ld (0cc35h),a		;87ba
-	ld (0cc37h),a		;87bd
+	ld (0cc35h),a		;87ba   ; guarda el registro de 0xCC40 en curso
+	ld (0cc37h),a		;87bd   ; guarda el registro del jefe en la lista de la pantalla
 	ld (0cc3ch),a		;87c0
 	inc a			;87c3
 	ld (0cc38h),a		;87c4
@@ -1216,7 +1216,7 @@ anota_cc40:		; anota el registro de HL en el primer hueco de 0xCC40
 	ld (de),a			;882c
 	ret			;882d
 hueco_cc40:		; DE = el primer hueco libre de 0xCC40 (4 de 4 bytes)
-	ld de,0cc40h		;882e
+	ld de,0cc40h		;882e   ; apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 	ld b,004h		;8831
 L_8833:
 	ld a,(de)			;8833   ; el primer registro libre (0) de 0xCC40; 4 de 4 bytes
@@ -1230,14 +1230,14 @@ L_8833:
 	ret			;883c
 cuadro_de_cc40:		; los 4 registros de 0xCC40 y el dibujo del de 0xCC35
 	call recorre_cc40		;883d   ; recorre_cc40: los 4 registros de 0xCC40
-	ld a,(0cc35h)		;8840
+	ld a,(0cc35h)		;8840   ; lee el registro de 0xCC40 en curso
 	ld hl,0cc50h		;8843
 	call 04083h		;8846   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;8849
 	or a			;884a
 	ret z			;884b
-	ld a,(0cc35h)		;884c
-	ld hl,0cc40h		;884f
+	ld a,(0cc35h)		;884c   ; lee el registro de 0xCC40 en curso
+	ld hl,0cc40h		;884f   ; apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 	add a,a			;8852
 	add a,a			;8853
 	call 04083h		;8854   ; hl_mas_a: HL = HL + A
@@ -1257,7 +1257,7 @@ cuadro_de_cc40:		; los 4 registros de 0xCC40 y el dibujo del de 0xCC35
 	call dibujo_cc35_doble		;8866   ; dibujo_cc35_doble: p02:89CD y dos piezas mas de (0x80, 0x38) y (0x98, 0x38)
 	ret			;8869
 recorre_cc40:		; los 4 registros de 0xCC40
-	ld hl,0cc40h		;886a
+	ld hl,0cc40h		;886a   ; apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 	ld b,004h		;886d
 L_886F:
 	push bc			;886f   ; cada uno de los 4 registros de 0xCC40 que no esta libre
@@ -1371,16 +1371,16 @@ cuenta_cc36:		; 0xCC3D = 3, 0xCC36 - 1 y el siguiente de 0xCC37 (0-3)
 	ret nz			;890c
 L_890D:
 	call espera_cc3c		;890d   ; espera_cc3c: (HL) = 0x30 o 0x60 segun 0xCC3C
-	ld a,(0cc37h)		;8910
+	ld a,(0cc37h)		;8910   ; lee el registro del jefe en la lista de la pantalla
 	cp 004h		;8913
 	jr c,L_891B		;8915
 	xor a			;8917
-	ld (0cc37h),a		;8918
+	ld (0cc37h),a		;8918   ; guarda el registro del jefe en la lista de la pantalla
 L_891B:
-	ld (0cc35h),a		;891b
-	ld hl,0cc37h		;891e
+	ld (0cc35h),a		;891b   ; guarda el registro de 0xCC40 en curso
+	ld hl,0cc37h		;891e   ; apunta a el registro del jefe en la lista de la pantalla
 	inc (hl)			;8921
-	ld hl,0cc40h		;8922
+	ld hl,0cc40h		;8922   ; apunta a los 4 registros de actores que esperan (4 bytes cada uno)
 	add a,a			;8925
 	add a,a			;8926
 	call 04083h		;8927   ; hl_mas_a: HL = HL + A
@@ -1417,12 +1417,12 @@ L_891B:
 	call crea_actor_0		;895f   ; crea_actor_0: p02:8615 con B = 0
 	jp 054afh		;8962   ; banco_9_en_a000: pone el banco 9 en 0xA000
 L_8965:
-	ld a,(0cc35h)		;8965
-	ld (0cc37h),a		;8968
+	ld a,(0cc35h)		;8965   ; lee el registro de 0xCC40 en curso
+	ld (0cc37h),a		;8968   ; guarda el registro del jefe en la lista de la pantalla
 	ret			;896b
 L_896C:
 	xor a			;896c
-	ld (0cc37h),a		;896d
+	ld (0cc37h),a		;896d   ; guarda el registro del jefe en la lista de la pantalla
 	ret			;8970
 L_8971:
 	ld a,080h		;8971
@@ -1493,7 +1493,7 @@ dibujo_cc35:		; copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
 	pop de			;89e1
 	ret			;89e2
 L_89E3:
-	ld a,(0cc35h)		;89e3
+	ld a,(0cc35h)		;89e3   ; lee el registro de 0xCC40 en curso
 	ld hl,0cc50h		;89e6
 	call 04083h		;89e9   ; hl_mas_a: HL = HL + A
 	ld a,(hl)			;89ec
@@ -1509,8 +1509,8 @@ L_89E3:
 	ld (0cc39h),a		;89fd
 	ld a,001h		;8a00
 	ld (hl),a			;8a02
-	ld a,(0cc35h)		;8a03
-	ld (0cc37h),a		;8a06
+	ld a,(0cc35h)		;8a03   ; lee el registro de 0xCC40 en curso
+	ld (0cc37h),a		;8a06   ; guarda el registro del jefe en la lista de la pantalla
 dibujo_cc35_doble:		; p02:89CD y dos piezas mas de (0x80, 0x38) y (0x98, 0x38)
 	call dibujo_cc35		;8a09   ; dibujo_cc35: copia 24 x 16 de la fila 0xCC35 con TIMP (0x40)
 	push de			;8a0c
@@ -1925,7 +1925,7 @@ copia_84_y_c310:		; copia 0x10 x 0x20 de (0x84, 0) a (0xA4, 0) y sigue segun 0xC
 	ld bc,01020h		;8c76
 	xor a			;8c79
 	call 04bdeh		;8c7a   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
-	ld a,(0c310h)		;8c7d
+	ld a,(0c310h)		;8c7d   ; lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	cp 003h		;8c80
 	ret c			;8c82
 	push af			;8c83
@@ -1965,10 +1965,10 @@ copia_9060:		; copia 0x70 x 0x70 de (0x60, 0x90) a (0x34, 0x48)
 	jp 04841h		;8cd3   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 prepara_la_sala_5:		; 0xC314 = 0x10, 0xC312 y 0xC310 a cero, y en la sala 5 lo suyo
 	ld a,010h		;8cd6
-	ld (0c314h),a		;8cd8
+	ld (0c314h),a		;8cd8   ; guarda la cuenta de la sala del final de fase o de la sala 5
 	xor a			;8cdb
 	ld (0c312h),a		;8cdc
-	ld (0c310h),a		;8cdf
+	ld (0c310h),a		;8cdf   ; guarda el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	ld a,(0c20ah)		;8ce2   ; lee en la sala de la puerta 5
 	or a			;8ce5
 	ret z			;8ce6
@@ -1981,7 +1981,7 @@ cuadro_de_la_sala_5:		; en la sala 5, despacha 0xC310 (tabla p02:8D01)
 	ld a,(0c20ah)		;8cf6   ; lee en la sala de la puerta 5
 	or a			;8cf9
 	ret z			;8cfa
-	ld a,(0c310h)		;8cfb
+	ld a,(0c310h)		;8cfb   ; lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	call 0408dh		;8cfe   ; despacha: salta a la palabra A de la tabla pegada detras del `call`
 
 ; ----------------------------------------------------------------------
@@ -2026,7 +2026,7 @@ L_8D32:
 	ld a,024h		;8d32
 	call 056e3h		;8d34   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 suma_c310:		; 0xC310 + 1
-	ld hl,0c310h		;8d37
+	ld hl,0c310h		;8d37   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;8d3a
 L_8D3B:
 	ret			;8d3b
@@ -2061,7 +2061,7 @@ L_8D5E:
 	ld bc,02001h		;8d64
 	xor a			;8d67
 	call 04bdeh		;8d68   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
-	ld hl,0c314h		;8d6b
+	ld hl,0c314h		;8d6b   ; apunta a la cuenta de la sala del final de fase o de la sala 5
 	ld a,(hl)			;8d6e
 	cp 00fh		;8d6f
 	jr z,L_8D75		;8d71
@@ -2076,7 +2076,7 @@ L_8D7F:
 	call paso_c888		;8d7f   ; paso_c888: cada 4 cuadros, el siguiente paso del dibujo de 0xC888 (p02:8F06)
 	ret nc			;8d82
 	ld a,040h		;8d83
-	ld (0c314h),a		;8d85
+	ld (0c314h),a		;8d85   ; guarda la cuenta de la sala del final de fase o de la sala 5
 	jr suma_c310		;8d88
 copia_6098:		; copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
 	ld hl,06098h		;8d8a
@@ -2086,7 +2086,7 @@ copia_6098:		; copia 24 x 16 de (0x98, 0x60) a (0x4C, 0x78)
 	jp 04bdeh		;8d95   ; copia_rectangulo: HMMM (0xD0): B x C de (H, L) a (D, E); A = pagina origen | destino * 4
 L_8D98:
 	call color_12_parpadea		;8d98   ; color_12_parpadea: el color 12 de la paleta de p02:8E26 segun la cuenta de cuadros
-	ld hl,0c314h		;8d9b
+	ld hl,0c314h		;8d9b   ; apunta a la cuenta de la sala del final de fase o de la sala 5
 	dec (hl)			;8d9e
 	ret nz			;8d9f
 	call copia_8078		;8da0   ; copia_8078: p02:8D8A y dos copias de 16 x 16 de (0x78, 0x80)
@@ -2216,7 +2216,7 @@ L_8E64:
 	cp b			;8e6b
 	jr z,L_8E77		;8e6c
 	call 06811h		;8e6e   ; accion_6: accion 6, los colores del personaje y sin invencible (0xC256 = 0)
-	ld hl,0c310h		;8e71
+	ld hl,0c310h		;8e71   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;8e74
 	inc (hl)			;8e75
 	ret			;8e76
@@ -2320,7 +2320,7 @@ L_8F11:
 	jp 00047h		;8f13   ; BIOS WRTVDP - Writes data in the VDP-register
 sala_del_final_de_fase:		; en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), cuentas a cero, 0xC316 = 1, juegos 0x27 y 0x30, p09:BED3 y el actor 0x23
 	xor a			;8f16
-	ld (0c316h),a		;8f17
+	ld (0c316h),a		;8f17   ; guarda en la sala del final de fase
 	call 054a5h		;8f1a   ; banco_15_en_a000: pone el banco 15 en 0xA000 (p00:54B9)
 	ld a,(0c211h)		;8f1d   ; lee la fase (1-25: ruina * 5 + puerta)
 	dec a			;8f20
@@ -2333,11 +2333,11 @@ sala_del_final_de_fase:		; en la pantalla de p15:BE8E[fase]: 0xD500 (p12:B4D2), 
 	jp nz,05a56h		;8f2f   ; paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
 	call lee_d500		;8f32   ; lee_d500: con 12: los 4 bytes de la fase de p12:B4D2 a 0xD500
 	xor a			;8f35
-	ld (0c310h),a		;8f36
-	ld (0c314h),a		;8f39
+	ld (0c310h),a		;8f36   ; guarda el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
+	ld (0c314h),a		;8f39   ; guarda la cuenta de la sala del final de fase o de la sala 5
 	ld (0c21ch),a		;8f3c   ; guarda el jefe vencido (no queda ningun 0x19)
 	inc a			;8f3f
-	ld (0c316h),a		;8f40
+	ld (0c316h),a		;8f40   ; guarda en la sala del final de fase
 	call 05a56h		;8f43   ; paleta_del_personaje: las paletas p00:5A79/5A80 segun 0xC240
 	ld a,027h		;8f46
 	call 055f0h		;8f48   ; juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
@@ -2366,10 +2366,10 @@ lee_d500:		; con 12: los 4 bytes de la fase de p12:B4D2 a 0xD500
 	add a,a			;8f75
 	ld hl,0b4d2h		;8f76
 	call 04083h		;8f79   ; hl_mas_a: HL = HL + A
-	ld de,0d500h		;8f7c
+	ld de,0d500h		;8f7c   ; apunta a las dos posiciones de la sala del final de fase
 	ld bc,00004h		;8f7f
 	ldir		;8f82
-	ld hl,0d500h		;8f84
+	ld hl,0d500h		;8f84   ; apunta a las dos posiciones de la sala del final de fase
 	ld b,002h		;8f87
 L_8F89:
 	ld a,(hl)			;8f89
@@ -2397,14 +2397,14 @@ L_8FA1:
 	djnz L_8FA1		;8fa8
 	ret			;8faa
 cuadro_del_final_de_fase:		; con 0xC316 y sin morir: la cuenta 0xC314 y despacha 0xC310 (tabla p02:8FBF)
-	ld a,(0c316h)		;8fab
+	ld a,(0c316h)		;8fab   ; lee en la sala del final de fase
 	or a			;8fae
 	ret z			;8faf
 	ld a,(0c24bh)		;8fb0   ; lee la accion del personaje (4 muere, 5 escalera)
 	cp 004h		;8fb3
 	ret z			;8fb5
 	call cuenta_c314		;8fb6   ; cuenta_c314: 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
-	ld a,(0c310h)		;8fb9
+	ld a,(0c310h)		;8fb9   ; lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	call 0408dh		;8fbc   ; despacha: salta a la palabra A de la tabla pegada detras del `call`
 
 ; ----------------------------------------------------------------------
@@ -2428,19 +2428,19 @@ L_8FCB:
 	ld a,(0c480h)		;8fcb
 	or a			;8fce
 	ret nz			;8fcf
-	ld hl,0c310h		;8fd0
+	ld hl,0c310h		;8fd0   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;8fd3
 L_8FD4:
 	ret			;8fd4
 L_8FD5:
-	ld hl,0c310h		;8fd5
+	ld hl,0c310h		;8fd5   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;8fd8
 	call 054afh		;8fd9   ; banco_9_en_a000: pone el banco 9 en 0xA000
 	ld a,(0c31bh)		;8fdc
 	call paleta_de_jefe		;8fdf   ; paleta_de_jefe: con 9: la paleta p09:B781[p09:B74A[A - 1] - 1]
 	call 05464h		;8fe2   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
 	ld c,022h		;8fe5
-	ld a,(0c319h)		;8fe7
+	ld a,(0c319h)		;8fe7   ; lee los 3 bytes de la fase de p09:BED3
 	ld d,a			;8fea
 	ld e,020h		;8feb
 	push ix		;8fed
@@ -2471,7 +2471,7 @@ L_8FFC:
 	ld a,(hl)			;9009
 	cp 016h		;900a
 	ret nz			;900c
-	ld hl,0c310h		;900d
+	ld hl,0c310h		;900d   ; apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 	inc (hl)			;9010
 	ret			;9011
 dibuja_903d:		; 3 x 4 fichas transparentes de p02:903D junto al personaje
@@ -2530,7 +2530,7 @@ lee_c319:		; con 9: 3 bytes de p09:BED3 + 3 * (0xC211 - 1) a 0xC319
 	pop af			;9055
 	ld hl,0bed3h		;9056
 	call 04083h		;9059   ; hl_mas_a: HL = HL + A
-	ld de,0c319h		;905c
+	ld de,0c319h		;905c   ; apunta a los 3 bytes de la fase de p09:BED3
 	ld bc,00003h		;905f
 	ldir		;9062
 	jp 05464h		;9064   ; bancos_1_2_3: pone los bancos 1-2-3 y su copia en 0xF0F1-0xF0F3
@@ -2558,14 +2558,14 @@ L_9088:
 	ld a,001h		;908b
 	ld (0c216h),a		;908d
 	xor a			;9090
-	ld (0c316h),a		;9091
+	ld (0c316h),a		;9091   ; guarda en la sala del final de fase
 	ld (0c271h),a		;9094
 	ret			;9097
 cuenta_c314:		; 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
-	ld a,(0c314h)		;9098
+	ld a,(0c314h)		;9098   ; lee la cuenta de la sala del final de fase o de la sala 5
 	or a			;909b
 	ret z			;909c
-	ld hl,0c314h		;909d
+	ld hl,0c314h		;909d   ; apunta a la cuenta de la sala del final de fase o de la sala 5
 	dec (hl)			;90a0
 	ld a,088h		;90a1
 	call z,056e3h		;90a3   ; sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
@@ -2574,7 +2574,7 @@ cuenta_c314:		; 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
 	ld b,010h		;90a9
 	ld c,a			;90ab
 	ld a,(hl)			;90ac
-	ld hl,(0d500h)		;90ad
+	ld hl,(0d500h)		;90ad   ; lee las dos posiciones de la sala del final de fase y el byte siguiente (16 bits)
 	add a,l			;90b0
 	ld l,a			;90b1
 	ld de,(0d502h)		;90b2
@@ -2582,7 +2582,7 @@ cuenta_c314:		; 0xC314 - 1 (a cero, el sonido 0x88) y el dibujo de 0xD500
 	jp 04c73h		;90b7   ; copia_con_operacion: LMMM (0x90 | operacion): B x C de (H, L) a (D, E); A = paginas y operacion (0x48: TIMP)
 cuenta_30_d502:		; 0xC314 = 0x30 y p02:8F94 con DE = (0xD502)
 	ld a,030h		;90ba
-	ld (0c314h),a		;90bc
+	ld (0c314h),a		;90bc   ; guarda la cuenta de la sala del final de fase o de la sala 5
 	ld de,(0d502h)		;90bf
 	ld a,001h		;90c3
 	jp L_8F94		;90c5
@@ -2590,13 +2590,13 @@ cuadro_c314:		; con 0xC316: la cuenta 0xC314 y, con 0xC310 >= 2, copia 16 x 0x30
 	ld a,(0c316h)		;90c8   ; con 0xC316 y sin la cuenta de 0xC314
 	or a			;90cb
 	ret z			;90cc
-	ld a,(0c314h)		;90cd
+	ld a,(0c314h)		;90cd   ; lee la cuenta de la sala del final de fase o de la sala 5
 	or a			;90d0
 	jr nz,cuenta_c314		;90d1
 	ld a,(0c310h)		;90d3   ; 0xC310 >= 2: copia 16 x 0x30 de 0xD500 a 0xD502
 	cp 002h		;90d6
 	ret c			;90d8
-	ld hl,(0d500h)		;90d9
+	ld hl,(0d500h)		;90d9   ; lee las dos posiciones de la sala del final de fase y el byte siguiente (16 bits)
 	ld de,(0d502h)		;90dc
 	ld bc,01030h		;90e0
 	xor a			;90e3
@@ -2717,7 +2717,7 @@ busca_de_la_pantalla:		; con 9: el registro de p09:B12B[0xC211 - 1] de la pantal
 	ret z			;91a2
 	call registro_de_la_pantalla		;91a3   ; registro_de_la_pantalla: avanza de 4 en 4 hasta el de la pantalla 0xC212; acarreo en el 0xFF
 	ret c			;91a6
-	ld a,(0cc37h)		;91a7
+	ld a,(0cc37h)		;91a7   ; lee el registro del jefe en la lista de la pantalla
 	add a,a			;91aa
 	add a,a			;91ab
 	call 04083h		;91ac   ; hl_mas_a: HL = HL + A

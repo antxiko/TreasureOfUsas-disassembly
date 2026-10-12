@@ -206,13 +206,19 @@ C 0x94A0 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0x94B9 ficha_de_pagina_1: la ficha A de la pagina 1 a (D, E) de la pagina 1 (HMMM)
 C 0x94BC avanza_ocho: D + 8, y E + 8 si D da la vuelta
 C 0x966B lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
+C 0x9676 guarda la cuenta del parpadeo de la ruina
+C 0x9679 apunta a la escena de la ruina empezada
+C 0x967E apunta a la cuenta del parpadeo de la ruina
 C 0x9689 lee la ruina (0-4)
 C 0x968F palabra_a: HL = la palabra A de la tabla HL
 C 0x969E ficha: la ficha A de la pagina 1 (p00:4E2B) a (D, E): pagina 0, o 1 si 0xC20B
+C 0x96A7 guarda el parpadeo de la ruina acabado
 C 0x96BB lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
 C 0x96C4 lista_de_fichas: lista de fichas de HL con la tabla de colores DE: [n] y n x [c][destino][cuantas][origen]
 C 0x96CA rle_a_vram_con_destino: lee la direccion de VRAM de (DE) y sigue en p00:492C
 C 0x96EA pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
+C 0x96EE guarda el paso del fundido del titulo (0-7)
+C 0x96F1 guarda el color en curso del fundido del titulo
 C 0x96F7 apunta a los metabloques (16 fichas cada uno)
 C 0x96FA rle: RLE de DE a HL: 0 acaba, n < 0x80 repite el siguiente, si no copia n & 0x7F
 C 0x96FD apunta a los metabloques (16 fichas cada uno)
@@ -222,21 +228,34 @@ C 0x9725 guarda la cuenta de cuadros
 C 0x9730 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
 C 0x9733 pantalla_encendida: R#1 con el bit 6 (pantalla) y sprites encendidos
 C 0x974F pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
+C 0x9755 apunta a el paso del sprite del titulo
 C 0x9762 hl_mas_a: HL = HL + A
 C 0x9765 apunta a los atributos de los sprites en RAM
 C 0x976F apunta a los colores de los sprites en RAM (16 por sprite)
 C 0x977C atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0x9798 apunta a el color en curso del fundido del titulo
 C 0x97A2 hl_mas_a: HL = HL + A
+C 0x97D0 lee el paso del fundido del titulo (0-7)
+C 0x97E2 lee el paso del fundido del titulo (0-7)
+C 0x97F1 lee el paso del fundido del titulo (0-7)
 C 0x97FC pon_color: el color A de la paleta = D (0RRR0BBB) y E (00000GGG), copia en 0xF680
 C 0x980C apunta a los atributos de los sprites en RAM
 C 0x9821 apunta a los colores de los sprites en RAM (16 por sprite)
 C 0x982E atributos_a_vram: 0x280 bytes de 0xDC00 (colores y atributos de sprites) a la VRAM 0xF400
+C 0x9833 guarda el titulo, listo
+C 0x9837 apunta a el titulo, listo
 C 0x983D borra: pone a cero BC + 1 bytes desde HL
+C 0x9840 apunta a la linea del prologo en curso
 C 0x9846 borra: pone a cero BC + 1 bytes desde HL
+C 0x9856 lee la linea del prologo
+C 0x985A apunta a la linea del prologo en curso
 C 0x9864 hl_mas_a: HL = HL + A
 C 0x9868 de_mas_a: DE = DE + A
+C 0x9871 guarda el prologo, acabado
 C 0x987A borra_rectangulo: HMMV con 0xFF en la pagina 0
 C 0x9880 texto: texto de HL: [X][Y], caracteres, 0xFE otra posicion, 0xFF acaba
+C 0x9895 lee la cuenta de la linea del prologo (8 pasos)
+C 0x989C apunta a la linea del prologo en curso
 C 0x98A1 texto_en_de: el texto de HL en la posicion (D, E) que ya hay, con C (p00:4D4A sin leer [X][Y])
 C 0x9ED6 apaga_y_borra_todo: pantalla apagada, sprites escondidos y la pagina 0 borrada
 C 0x9ED9 pantalla_apagada: R#1 sin el bit 6 y sprites apagados (R#8)
@@ -268,6 +287,7 @@ C 0x9F5B apunta a la ficha del personaje 0 (14 bytes)
 C 0x9F64 de_mas_a: DE = DE + A
 C 0x9F70 hl_mas_a: HL = HL + A
 C 0x9F75 lee las monedas (16 bits) y el byte siguiente (16 bits)
+C 0x9F78 guarda las monedas al entrar en INFORMATION y el byte siguiente (16 bits)
 C 0x9F7F lineas_verticales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4B0C)
 C 0x9F85 lineas_horizontales: lineas [X][Y][largo] de HL hasta 0xFF (p00:4AD4)
 C 0x9F95 tres_cifras: 3 pares de cifras de HL (p00:479C)

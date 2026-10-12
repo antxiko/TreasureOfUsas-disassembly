@@ -538,9 +538,11 @@ C 0xA9A6 orbita: cada 2 cuadros, la posicion de p03:AA3C[(ix+0x1F) & 0x0E] alred
 C 0xA9A9 lee la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xA9B0 borra_tipo_22: borra el primer actor de tipo 0x22
 C 0xA9BB borra_todos_los_actores: p02:83D6 con los 8 actores de 0xC400
+C 0xA9C6 apunta a los 3 bytes de la fase de p09:BED3
 C 0xA9D3 crea_actor_0: p02:8615 con B = 0
 C 0xA9DA juego_de_sprites: con 7-8-9: el juego A de p08:9338 y el que lo acompana (p08:9410)
 C 0xA9DF sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
+C 0xA9E2 apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0xA9EC guarda el jefe vencido (no queda ningun 0x19)
 C 0xA9EF lee la accion del personaje (4 muere, 5 escalera)
 C 0xA9FB apunta a los 8 actores (0x80 bytes cada uno)
@@ -874,7 +876,9 @@ C 0xB234 lee la cuenta de cuadros del juego
 C 0xB23F ajuste_de_pantalla: R#18 (ajuste de la imagen) = D
 C 0xB242 baja la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278)
 C 0xB246 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
+C 0xB259 lee la cuenta del globo de animo
 C 0xB25E lee la accion del personaje (4 muere, 5 escalera)
+C 0xB264 lee el golpe de Cles en marcha
 C 0xB269 lee hay disparos en marcha
 C 0xB277 lee el sentido del personaje
 C 0xB27D lee si el actor se mueve (p02:8367)
@@ -892,7 +896,9 @@ C 0xB2F8 guarda la Y del globo
 C 0xB2FE guarda la Y del sprite 8 en RAM
 C 0xB301 cuenta_c272: 0xC272 - 1; a cero, esconde los sprites de 0xDE20/24 y p00:5ABD
 C 0xB304 lee hay disparos en marcha
+C 0xB30A lee el golpe de Cles en marcha
 C 0xB316 despacha: salta a la palabra A de la tabla pegada detras del `call`
+C 0xB321 apunta a la cuenta del globo de animo
 C 0xB328 globo_encima: los sprites 8 y 9 en (Y - 0x30, X - 8) del personaje, patrones 0x28 y 0x2C y sus colores (p01:765B)
 C 0xB32D guarda la Y del sprite 8 en RAM
 C 0xB330 guarda la Y del sprite 9 en RAM
@@ -957,6 +963,7 @@ C 0xB49A lee el paso del actor
 C 0xB4A2 compara con la Y del actor
 C 0xB4A6 sube el paso del actor
 C 0xB4A9 velocidad_y_l: (ix+7, 8) = L (H = 0)
+C 0xB4AC lee los 3 bytes de la fase de p09:BED3
 C 0xB4B6 sonido: el sonido A: 0 para, 0xFD-0xFF especiales, >= 0x80 musica, 0x40-0x6F, 0x70-0x7F, si no efecto
 C 0xB4BD crea_actor_0: p02:8615 con B = 0
 C 0xB4C3 las banderas de choque del actor (bit 0 personaje, bit 1 disparos) = 0x00
@@ -977,8 +984,10 @@ C 0xB524 lee el paso del actor
 C 0xB52A fotograma_9a_9b: el fotograma 0x9A / 0x9B cada 32 cuadros
 C 0xB52D dibujo_b587: copia (ix+0x11) lineas de (0x50, 0x98 + B) con TIMP
 C 0xB530 lee en la sala de la puerta 5
+C 0xB536 lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0xB53C sube el paso del actor
 C 0xB53F la cuenta del actor (cuadros o lineas que quedan, segun el tipo; p02:847C, p02:9278) = 0x20
+C 0xB557 lee el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0xB55F lee la cuenta de cuadros del juego
 C 0xB56A guarda el fotograma del actor (p02:8A42)
 C 0xB56E dibujo_b514: copia (ix+0x11) lineas a (0x88, 0x80) (LMMM 0x40)
@@ -1013,6 +1022,7 @@ C 0xB604 lee la cuenta de cuadros del juego
 C 0xB60D hl_mas_a: HL = HL + A
 C 0xB613 fotograma_a_fa80: un fotograma de cada personaje a la VRAM desde 0xFA80 (p00:5B6E)
 C 0xB61E accion_6: accion 6, los colores del personaje y sin invencible (0xC256 = 0)
+C 0xB621 apunta a el paso de la sala del final de fase o de la sala 5 (+ 1 al coger las clases 5-7)
 C 0xB625 borra_actor: tipo 0, libera sus piezas y esconde sus sprites
 C 0xB628 vuelve_un_personaje_456: con 4-5-6: p06:BC36 y vuelve con 1-2-3
 C 0xB62F lee la Y del actor

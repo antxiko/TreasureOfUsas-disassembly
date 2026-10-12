@@ -173,6 +173,7 @@ imagenes: $(ROM)
 	$(PYIMG) tools/personajes.py dispara $(IMG)/wit_dispara.gif
 	$(PYIMG) tools/escenas.py todas $(IMG)
 	$(PYIMG) tools/objetos.py $(IMG)/objetos.png
+	$(PYIMG) tools/actores.py anima $(IMG)/enemigos.gif
 	$(PYIMG) tools/retratos.py hoja $(IMG)/retratos.png
 	$(PYIMG) tools/retratos.py habla $(IMG)/retratos_hablan.gif
 

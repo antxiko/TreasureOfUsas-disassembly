@@ -408,7 +408,7 @@ L_62E2:
 L_62FB:
 	call cuenta_c8e1		;62fb   ; cuenta_c8e1: cada 16 cuadros, 0xC8E1 + 0xC8E2
 	ld hl,0c21fh		;62fe   ; apunta a el paso de la escena
-	ld b,(hl)			;6301   ; el paso de la escena del mar:
+	ld b,(hl)			;6301   ; la escena de la ruina 1 (el mar; tabla p04:60AD):
 	djnz L_631A		;6302   ; paso 1: los sprites 0-1 avanzan sobre la ola y parpadean...
 	call sprites_de01		;6304   ; sprites_de01: 2 sprites desde 0xDE01 en rango (p04:6292)
 	ld hl,0de02h		;6307   ; apunta a el patron del sprite 0 en RAM
@@ -553,9 +553,9 @@ L_640A:
 llena_dc00:		; B bytes de 0xDC00 con C
 	ld hl,0dc00h		;6460   ; apunta a los colores de los sprites en RAM (16 por sprite)
 llena_hl:		; B bytes de HL con C
-	ld (hl),c			;6463
+	ld (hl),c			;6463   ; C en (HL)...
 	inc hl			;6464
-	djnz llena_hl		;6465
+	djnz llena_hl		;6465   ; ...B veces
 	ret			;6467
 copia_a_de00:		; BC bytes de HL a 0xDE00 (los atributos de sprites)
 	ld de,0de00h		;6468   ; apunta a los atributos de los sprites en RAM
@@ -576,21 +576,21 @@ dos_lineas_horizontales:		; dos lineas horizontales (p00:4B98) desde L + (DE)
 	push hl			;647a
 	ld a,l			;647b
 	exx			;647c
-	ld l,a			;647d
-	ld b,008h		;647e
+	ld l,a			;647d   ; L' = la Y del primer par
+	ld b,008h		;647e   ; 8 pares de lineas, cada uno 8 a la derecha
 L_6480:
 	exx			;6480
 	ld l,a			;6481
-	ld a,(de)			;6482
+	ld a,(de)			;6482   ; la Y + la altura de la ola de esa columna (DE)
 	inc de			;6483
 	add a,l			;6484
 	ld l,a			;6485
-	ld bc,00802h		;6486
+	ld bc,00802h		;6486   ; 8 puntos con el color 2...
 	call 04b98h		;6489   ; linea_horizontal_guardando_todo: p00:4AD4 sin tocar HL, DE ni BC
-	inc l			;648c
+	inc l			;648c   ; ...y una linea mas abajo con el 4
 	ld c,004h		;648d
 	call 04b98h		;648f   ; linea_horizontal_guardando_todo: p00:4AD4 sin tocar HL, DE ni BC
-	ld a,h			;6492
+	ld a,h			;6492   ; la columna siguiente, 8 a la derecha
 	add a,008h		;6493
 	ld h,a			;6495
 	exx			;6496
@@ -604,7 +604,7 @@ cuenta_c8e1:		; cada 16 cuadros, 0xC8E1 + 0xC8E2
 	and 00fh		;64a0
 	ret nz			;64a2
 	ld hl,0c8e2h		;64a3
-	ld a,(hl)			;64a6
+	ld a,(hl)			;64a6   ; 0xC8E1 + 0xC8E2: la fase de la ola sube o baja...
 	dec hl			;64a7
 	add a,(hl)			;64a8
 	ld (hl),a			;64a9
@@ -614,13 +614,13 @@ cuenta_c8e1:		; cada 16 cuadros, 0xC8E1 + 0xC8E2
 	ld b,001h		;64ae
 	jr L_64B8		;64b0
 L_64B2:
-	cp 003h		;64b2
+	cp 003h		;64b2   ; ...a 3, baja (0xC8E2 = -1)
 	ld b,0ffh		;64b4
 	jr nz,L_64B9		;64b6
 L_64B8:
 	ld (hl),b			;64b8
 L_64B9:
-	ld b,a			;64b9
+	ld b,a			;64b9   ; (fase + 1) * 8 + 0x60: la fila de la ola en la pagina 1...
 	inc b			;64ba
 	xor a			;64bb
 	ld c,008h		;64bc
@@ -629,20 +629,20 @@ L_64BE:
 	djnz L_64BE		;64bf
 	add a,060h		;64c1
 	ld l,a			;64c3
-	ld h,0c0h		;64c4
+	ld h,0c0h		;64c4   ; ...de (0xC0, fila) a (0x60, 0x6C), 0x40 x 8
 	ld de,0606ch		;64c6
 	ld bc,04008h		;64c9
 	jp 04841h		;64cc   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 sube_de0c:		; 0xDE0C + 2 hasta 0x8B; despues los colores de 0xDC30
 	ld de,0c8e3h		;64cf
-	ld a,(de)			;64d2
+	ld a,(de)			;64d2   ; con 0xC8E3, nada
 	or a			;64d3
 	ret nz			;64d4
 	ld hl,0de0ch		;64d5   ; apunta a la Y del sprite 3 en RAM
-	inc (hl)			;64d8
+	inc (hl)			;64d8   ; el sprite 3 baja 2 por cuadro...
 	inc (hl)			;64d9
 	ld a,(hl)			;64da
-	cp 08bh		;64db
+	cp 08bh		;64db   ; ...hasta la Y 0x8B: luego el color 0 en sus 16 lineas
 	ret c			;64dd
 	ld hl,0dc30h		;64de
 	ld bc,01000h		;64e1
@@ -665,7 +665,7 @@ parpadeo_de02_64:		; cada 64 cuadros, 0xDE02 xor 0xC0
 	and 03fh		;64ee
 	ret nz			;64f0
 	ld hl,0de02h		;64f1   ; apunta a el patron del sprite 0 en RAM
-	ld a,0c0h		;64f4
+	ld a,0c0h		;64f4   ; el patron, alternando 0xC0
 	xor (hl)			;64f6
 	ld (hl),a			;64f7
 	ret			;64f8
@@ -673,9 +673,9 @@ sprite_de01_ola:		; 0xDE00 segun p04:629B y el parpadeo de 0xDE02
 	ld hl,0de01h		;64f9   ; apunta a la X del sprite 0 en RAM
 	call altura_de_la_ola		;64fc   ; altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
 	dec hl			;64ff
-	add a,00eh		;6500
+	add a,00eh		;6500   ; la Y del sprite 0: la ola + 0x0E
 	ld (hl),a			;6502
-	ld a,(0c003h)		;6503   ; lee la cuenta de cuadros
+	ld a,(0c003h)		;6503   ; cada 8 cuadros, su patron alterna el bit 2
 	and 007h		;6506
 	ret nz			;6508
 	ld a,004h		;6509
@@ -685,27 +685,27 @@ sprite_de01_ola:		; 0xDE00 segun p04:629B y el parpadeo de 0xDE02
 	ret			;6510
 L_6511:
 	ld hl,0c21fh		;6511   ; apunta a el paso de la escena
-	ld b,(hl)			;6514
+	ld b,(hl)			;6514   ; la escena de la ruina 2: paso 0
 	inc l			;6515
 	inc l			;6516
 	djnz L_654F		;6517
-	dec (hl)			;6519
+	dec (hl)			;6519   ; la espera...
 	jp nz,L_6232		;651a
-	ld (hl),030h		;651d
-	ld a,(0c8e5h)		;651f
+	ld (hl),030h		;651d   ; 0x30 cuadros
+	ld a,(0c8e5h)		;651f   ; la paleta p06:B444[4 - 0xC8E5]: un fundido
 	neg		;6522
 	add a,004h		;6524
 	ld hl,0b444h		;6526
 	call 0543ah		;6529   ; palabra_a: HL = la palabra A de la tabla HL
 	call 04a9dh		;652c   ; pon_paleta: ternas [color][RB][G] de HL hasta 0xFF
-	ld hl,0c8e5h		;652f
+	ld hl,0c8e5h		;652f   ; 0xC8E5 pasos
 	dec (hl)			;6532
 	jp nz,L_6232		;6533
-	ld bc,0200dh		;6536
+	ld bc,0200dh		;6536   ; los colores de los sprites: 0x0D en 0x20 lineas, 0 en 0x10
 	call llena_dc00		;6539   ; llena_dc00: B bytes de 0xDC00 con C
 	ld bc,01000h		;653c
 	call llena_hl		;653f   ; llena_hl: B bytes de HL con C
-	ld hl,0c8e4h		;6542
+	ld hl,0c8e4h		;6542   ; 0xC8E4 = 3 y 0xC8E5 = 0
 	ld (hl),003h		;6545
 	inc hl			;6547
 	ld (hl),000h		;6548
@@ -720,20 +720,20 @@ L_654F:
 	ld (hl),040h		;655b   ; cada 0x40 cuadros, un sprite mas (patron 0x74, Y 0x70) con la X de 0xC8E5
 	ld hl,0c8e4h		;655d
 	ex de,hl			;6560
-	ld a,(de)			;6561
+	ld a,(de)			;6561   ; C = cuantos quedan
 	ld c,a			;6562
 	inc de			;6563
-	neg		;6564
+	neg		;6564   ; el sprite 3 - C
 	add a,003h		;6566
 	add a,a			;6568
 	add a,a			;6569
 	ld hl,0de00h		;656a   ; apunta a los atributos de los sprites en RAM
 	call 04083h		;656d   ; hl_mas_a: HL = HL + A
-	ld (hl),074h		;6570
+	ld (hl),074h		;6570   ; Y 0x74...
 	inc hl			;6572
-	ld (hl),070h		;6573
+	ld (hl),070h		;6573   ; ...X 0x70...
 	inc hl			;6575
-	ld a,(de)			;6576
+	ld a,(de)			;6576   ; ...y patron de 0xC8E5
 	ld (hl),a			;6577
 	add a,008h		;6578   ; la X siguiente, 8 mas a la derecha
 	ld (de),a			;657a
@@ -741,7 +741,7 @@ L_654F:
 	dec (hl)			;657e
 	ret nz			;657f
 	ld hl,0c8e4h		;6580
-	ld (hl),060h		;6583
+	ld (hl),060h		;6583   ; 0xC8E4 = 0x60 y 0xC8E5 = 4
 	inc hl			;6585
 	ld (hl),004h		;6586
 	ld a,040h		;6588
@@ -751,15 +751,15 @@ L_658D:
 	dec (hl)			;658f
 	jp nz,L_6232		;6590
 	ld (hl),040h		;6593
-	ld bc,02018h		;6595
+	ld bc,02018h		;6595   ; 24 x 32
 	ld hl,0c8e4h		;6598
-	ld a,(hl)			;659b
+	ld a,(hl)			;659b   ; la Y de 0xC8E4 + 0x18...
 	add a,c			;659c
 	ld e,a			;659d
 	ld (hl),a			;659e
-	ld d,0e0h		;659f
+	ld d,0e0h		;659f   ; ...en la X 0xE0 de la pagina 1...
 	ex de,hl			;65a1
-	ld de,07074h		;65a2
+	ld de,07074h		;65a2   ; ...a (0x70, 0x74) de la pagina 0
 	call 04841h		;65a5   ; copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 	ld hl,0c8e5h		;65a8   ; 0xC8E5 veces; luego p04:6698
 	dec (hl)			;65ab
@@ -768,15 +768,15 @@ L_658D:
 L_65B2:
 	djnz L_65C1		;65b2
 	call anima_de00		;65b4   ; anima_de00: parpadeo de 0xDE02 y avance de 0xDE01
-	ld a,(0de09h)		;65b7   ; lee la X del sprite 2 en RAM
+	ld a,(0de09h)		;65b7   ; hasta que el sprite 2 llega a la X 0xA4
 	cp 0a4h		;65ba
 	jp c,L_6232		;65bc
-	scf			;65bf
+	scf			;65bf   ; acarreo: acabada
 	ret			;65c0
 L_65C1:
 	ld hl,07074h		;65c1   ; 5 copias de 24 x 32 de (0x70, 0x74) a (0xE0, 0x60), de 0x18 en 0x18
 	push hl			;65c4
-	ld bc,02018h		;65c5
+	ld bc,02018h		;65c5   ; 24 x 32, de 0x18 en 0x18 lineas
 	push bc			;65c8
 	ld de,0e060h		;65c9
 	push de			;65cc
@@ -784,7 +784,7 @@ L_65C1:
 	ld b,005h		;65ce
 L_65D0:
 	exx			;65d0
-	ld a,004h		;65d1
+	ld a,004h		;65d1   ; de la pagina 0 a la 1
 	call copia_rectangulo_guardando		;65d3   ; copia_rectangulo_guardando: p00:4BDE sin tocar los registros
 	ld a,018h		;65d6
 	add a,e			;65d8
@@ -810,71 +810,71 @@ L_65E4:
 	jp L_622B		;65f8
 sprites_6020:		; 16 bytes de p04:6020 a 0xDE14 y dos colores de sprite
 	ld hl,06020h		;65fb
-	ld de,0de14h		;65fe   ; apunta a la Y del sprite 5 en RAM
+	ld de,0de14h		;65fe   ; los sprites 5-8 de p04:6020
 	ld bc,00010h		;6601
 	ldir		;6604
-	ld hl,0dc50h		;6606
+	ld hl,0dc50h		;6606   ; colores del sprite 5: 7 y 0x49
 	ld b,001h		;6609
 	ld de,00749h		;660b
 	call colores_de_sprite		;660e   ; colores_de_sprite: B veces: 16 bytes con D y 16 con E
 	ld b,001h		;6611
-	ld de,00c4bh		;6613
+	ld de,00c4bh		;6613   ; los del 6: 0x0C y 0x4B
 	jp colores_de_sprite		;6616   ; colores_de_sprite: B veces: 16 bytes con D y 16 con E
 L_6619:
 	ld hl,0c21fh		;6619   ; 0xC21F: el paso; la cuenta en 0xC221
 	ld b,(hl)			;661c
 	inc l			;661d
 	inc l			;661e
-	djnz L_6628		;661f
+	djnz L_6628		;661f   ; la escena de la ruina 3: paso 1, la espera
 	dec (hl)			;6621
 	jp nz,L_6746		;6622
-	jp L_6891		;6625
+	jp L_6891		;6625   ; y el texto 1 (p04:6891)
 L_6628:
-	djnz L_6630		;6628
+	djnz L_6630		;6628   ; paso 2: el cursor parpadea mientras salen las letras
 	call cursor_parpadea		;662a   ; cursor_parpadea: cada 8 cuadros, sin texto en marcha, el cursor 0x1F / 0x20
 	jp L_6136		;662d
 L_6630:
-	djnz L_6645		;6630
+	djnz L_6645		;6630   ; paso 3: la espera, la pantalla borrada y el texto 0
 	dec (hl)			;6632
 	jp nz,L_6746		;6633
 	call borra_pantalla_escena		;6636   ; borra_pantalla_escena: borra 0xFF x 0x60 desde (0, 0)
 	jp L_68A5		;6639
 borra_pantalla_escena:		; borra 0xFF x 0x60 desde (0, 0)
 	ld hl,00000h		;663c
-	ld bc,0ff60h		;663f
+	ld bc,0ff60h		;663f   ; 0xFF x 0x60 desde (0, 0)
 	jp 05e2fh		;6642   ; borra_rectangulo: HMMV con 0xFF en la pagina 0
 L_6645:
-	djnz L_664D		;6645
+	djnz L_664D		;6645   ; paso 4: el cursor y las letras
 	call cursor_parpadea		;6647   ; cursor_parpadea: cada 8 cuadros, sin texto en marcha, el cursor 0x1F / 0x20
 	jp L_615D		;664a
 L_664D:
-	djnz L_6660		;664d
+	djnz L_6660		;664d   ; paso 5: la cuenta...
 	dec (hl)			;664f
 	jp z,L_6698		;6650
 	ld a,(hl)			;6653
-	cp 090h		;6654
+	cp 090h		;6654   ; ...a 0x90 el mapa...
 	call z,mapa_y_vuelve		;6656   ; mapa_y_vuelve: p04:7296 y vuelve atras
-	cp 0a0h		;6659
+	cp 0a0h		;6659   ; ...a 0xA0, los 10 bytes de p04:6850
 	call z,copia_6850_a_d20d		;665b   ; copia_6850_a_d20d: 10 bytes de p04:6850 a 0xD20D y p04:71FE
 	or a			;665e
 	ret			;665f
 L_6660:
-	djnz L_666B		;6660
+	djnz L_666B		;6660   ; paso 6: el texto de las monedas
 	call borra_pantalla_escena		;6662   ; borra_pantalla_escena: borra 0xFF x 0x60 desde (0, 0)
 	call texto_68d6		;6665   ; texto_68d6: el texto p04:68D6 y p00:4785
 	jp L_66EF		;6668
 L_666B:
-	djnz L_6682		;666b
+	djnz L_6682		;666b   ; paso 7: la espera...
 	dec (hl)			;666d
 	jp nz,L_6746		;666e
-	ld de,00200h		;6671
+	ld de,00200h		;6671   ; ...+ 200 monedas (BCD, la recompensa)...
 	call 055b9h		;6674   ; suma_monedas: las monedas (0xC259, BCD) + E (y D al byte alto)
 	call texto_68d6		;6677   ; texto_68d6: el texto p04:68D6 y p00:4785
-	ld a,002h		;667a
+	ld a,002h		;667a   ; ...con el sonido 2
 	call 05451h		;667c   ; sonido_y_456: el sonido A y los bancos 4-5-6
 	jp L_66EF		;667f
 L_6682:
-	djnz L_669E		;6682
+	djnz L_669E		;6682   ; paso 8: la espera y la escena siguiente con sus sprites
 	dec (hl)			;6684
 	jp nz,L_6746		;6685
 	ld hl,0c220h		;6688   ; apunta a la escena (0-11)

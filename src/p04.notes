@@ -311,7 +311,6 @@ C 0x62CD B = 7 para quien llama
 C 0x62E3 cada sprite con su Y en la ola
 C 0x62EF cada 8 cuadros...
 C 0x62F5 ...un punto a la derecha
-C 0x6301 el paso de la escena del mar:
 C 0x6302 paso 1: los sprites 0-1 avanzan sobre la ola y parpadean...
 C 0x6312 ...hasta la X 0x54
 C 0x631A paso 2: los sprites 1-2, el parpadeo y el de 64 cuadros...
@@ -337,6 +336,63 @@ C 0x6428 ...4 pares de lineas de la ola en las Y 0x68, 0x70, 0x78 y 0x80...
 C 0x6440 ...parada...
 C 0x6444 ...los sprites de p04:6014...
 C 0x644D ...el color 0x0D en 0x20 lineas y 0 en 0x10
+C 0x6463 C en (HL)...
+C 0x6465 ...B veces
+C 0x647D L' = la Y del primer par
+C 0x647E 8 pares de lineas, cada uno 8 a la derecha
+C 0x6482 la Y + la altura de la ola de esa columna (DE)
+C 0x6486 8 puntos con el color 2...
+C 0x648C ...y una linea mas abajo con el 4
+C 0x6492 la columna siguiente, 8 a la derecha
+C 0x64A6 0xC8E1 + 0xC8E2: la fase de la ola sube o baja...
+C 0x64B2 ...a 3, baja (0xC8E2 = -1)
+C 0x64B9 (fase + 1) * 8 + 0x60: la fila de la ola en la pagina 1...
+C 0x64C4 ...de (0xC0, fila) a (0x60, 0x6C), 0x40 x 8
+C 0x64D2 con 0xC8E3, nada
+C 0x64D8 el sprite 3 baja 2 por cuadro...
+C 0x64DB ...hasta la Y 0x8B: luego el color 0 en sus 16 lineas
+C 0x64F4 el patron, alternando 0xC0
+C 0x6500 la Y del sprite 0: la ola + 0x0E
+C 0x6503 cada 8 cuadros, su patron alterna el bit 2
+C 0x6519 la espera...
+C 0x651D 0x30 cuadros
+C 0x651F la paleta p06:B444[4 - 0xC8E5]: un fundido
+C 0x652F 0xC8E5 pasos
+C 0x6536 los colores de los sprites: 0x0D en 0x20 lineas, 0 en 0x10
+C 0x6542 0xC8E4 = 3 y 0xC8E5 = 0
+C 0x6561 C = cuantos quedan
+C 0x6564 el sprite 3 - C
+C 0x6570 Y 0x74...
+C 0x6573 ...X 0x70...
+C 0x6576 ...y patron de 0xC8E5
+C 0x6583 0xC8E4 = 0x60 y 0xC8E5 = 4
+C 0x6595 24 x 32
+C 0x659B la Y de 0xC8E4 + 0x18...
+C 0x659F ...en la X 0xE0 de la pagina 1...
+C 0x65A2 ...a (0x70, 0x74) de la pagina 0
+C 0x65B7 hasta que el sprite 2 llega a la X 0xA4
+C 0x65BF acarreo: acabada
+C 0x65C5 24 x 32, de 0x18 en 0x18 lineas
+C 0x65D1 de la pagina 0 a la 1
+C 0x65FE los sprites 5-8 de p04:6020
+C 0x6606 colores del sprite 5: 7 y 0x49
+C 0x6613 los del 6: 0x0C y 0x4B
+C 0x6625 y el texto 1 (p04:6891)
+C 0x6628 paso 2: el cursor parpadea mientras salen las letras
+C 0x6630 paso 3: la espera, la pantalla borrada y el texto 0
+C 0x663F 0xFF x 0x60 desde (0, 0)
+C 0x6645 paso 4: el cursor y las letras
+C 0x664D paso 5: la cuenta...
+C 0x6654 ...a 0x90 el mapa...
+C 0x6659 ...a 0xA0, los 10 bytes de p04:6850
+C 0x6660 paso 6: el texto de las monedas
+C 0x666B paso 7: la espera...
+C 0x6671 ...+ 200 monedas (BCD, la recompensa)...
+C 0x667A ...con el sonido 2
+C 0x6682 paso 8: la espera y la escena siguiente con sus sprites
+C 0x6301 la escena de la ruina 1 (el mar; tabla p04:60AD):
+C 0x6514 la escena de la ruina 2: paso 0
+C 0x661F la escena de la ruina 3: paso 1, la espera
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x6085 guion_de_la_escena las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)
@@ -568,7 +624,6 @@ C 0x64EB lee la cuenta de cuadros
 C 0x64F1 apunta a el patron del sprite 0 en RAM
 C 0x64F9 apunta a la X del sprite 0 en RAM
 C 0x64FC altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
-C 0x6503 lee la cuenta de cuadros
 C 0x650B apunta a el patron del sprite 0 en RAM
 C 0x6511 apunta a el paso de la escena
 C 0x6529 palabra_a: HL = la palabra A de la tabla HL
@@ -581,10 +636,8 @@ C 0x656A apunta a los atributos de los sprites en RAM
 C 0x656D hl_mas_a: HL = HL + A
 C 0x65A5 copia_de_pagina_1: p00:4BDE de la pagina 1 a la 0
 C 0x65B4 anima_de00: parpadeo de 0xDE02 y avance de 0xDE01
-C 0x65B7 lee la X del sprite 2 en RAM
 C 0x65D3 copia_rectangulo_guardando: p00:4BDE sin tocar los registros
 C 0x65E5 bloque_4x3: 4 x 3 fichas de HL con TIMP desde (D, E); cada fila desde D = 0xE0
-C 0x65FE apunta a la Y del sprite 5 en RAM
 C 0x660E colores_de_sprite: B veces: 16 bytes con D y 16 con E
 C 0x6616 colores_de_sprite: B veces: 16 bytes con D y 16 con E
 C 0x662A cursor_parpadea: cada 8 cuadros, sin texto en marcha, el cursor 0x1F / 0x20

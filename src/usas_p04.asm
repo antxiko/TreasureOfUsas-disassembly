@@ -273,10 +273,10 @@ borra_recuadro_4636:		; borra 0x44 x 0x0C en (0x46, 0x36) y p06:A494
 	ld bc,0440ch		;6249
 	jp borra_y_marco		;624c   ; borra_y_marco: borra el rectangulo y p06:A494
 parpadeo_de_2:		; p04:6251 con B = 2
-	ld b,002h		;624f
+	ld b,002h		;624f   ; dos sprites
 parpadeo_de_sprites:		; cada 16 cuadros, el bit 2 de B sprites de HL (de 4 en 4) con C
 	ld a,(0c003h)		;6251   ; lee la cuenta de cuadros
-	and 00fh		;6254
+	and 00fh		;6254   ; cada 16 cuadros
 	ret nz			;6256
 L_6257:
 	ld a,004h		;6257   ; el bit 2 del byte de color de cada sprite cambia (xor), y OR con C
@@ -291,10 +291,10 @@ L_6257:
 	ret			;6262
 anima_de00:		; parpadeo de 0xDE02 y avance de 0xDE01
 	ld hl,0de02h		;6263   ; apunta a el patron del sprite 0 en RAM
-	ld c,000h		;6266
+	ld c,000h		;6266   ; sin mas bits (C = 0)
 	call parpadeo_de_2		;6268   ; parpadeo_de_2: p04:6251 con B = 2
 	ld hl,0de01h		;626b   ; apunta a la X del sprite 0 en RAM
-	ld b,007h		;626e
+	ld b,007h		;626e   ; cada 8 cuadros
 	jr avanza_sprites		;6270
 anima_de08:		; parpadeo de 0xDE0A y avance de 0xDE09
 	ld hl,0de0ah		;6272   ; apunta a el patron del sprite 2 en RAM
@@ -305,10 +305,10 @@ anima_de08:		; parpadeo de 0xDE0A y avance de 0xDE09
 avanza_sprites:		; cada B cuadros, + 1 a 3 sprites de HL (de 4 en 4)
 	ld a,(0c003h)		;627f   ; lee la cuenta de cuadros
 	and b			;6282
-	ret nz			;6283
-	ld b,003h		;6284
+	ret nz			;6283   ; solo cuando la cuenta & B es cero
+	ld b,003h		;6284   ; 3 sprites
 suma_sprites:		; + 1 a B sprites de HL (de 4 en 4)
-	inc (hl)			;6286   ; + 1 a la Y de B sprites
+	inc (hl)			;6286   ; + 1 al byte de HL de B sprites (la X, con 0xDE01 o 0xDE05)
 	inc hl			;6287
 	inc hl			;6288
 	inc hl			;6289
@@ -332,7 +332,7 @@ DATA_resto_6291:
 
 
 sprite_en_rango:		; el sprite de HL entre 0x5C y 0x9C
-	ld a,(hl)			;6292   ; la Y del sprite: por debajo de 0x5C nada; a 0x9C, p04:62BD
+	ld a,(hl)			;6292   ; la X del sprite: por debajo de 0x5C nada; a 0x9C, p04:62BD; entre medias su Y sigue la ola
 	cp 05ch		;6293
 	ret c			;6295
 	cp 09ch		;6296
@@ -340,14 +340,14 @@ sprite_en_rango:		; el sprite de HL entre 0x5C y 0x9C
 	ret nc			;629a
 altura_de_la_ola:		; la altura de p04:6035 segun (HL) y 0xC8E1
 	push hl			;629b
-	ld a,(hl)			;629c
+	ld a,(hl)			;629c   ; (X - 0x60) / 8: la columna de la ola...
 	sub 060h		;629d
 	rra			;629f
 	rra			;62a0
 	rra			;62a1
 	and 00fh		;62a2
 	ld c,a			;62a4
-	ld a,(0c8e1h)		;62a5
+	ld a,(0c8e1h)		;62a5   ; ...en la fila 0xC8E1 de p04:6035 (8 por fila)
 	add a,a			;62a8
 	add a,a			;62a9
 	add a,a			;62aa
@@ -355,24 +355,24 @@ altura_de_la_ola:		; la altura de p04:6035 segun (HL) y 0xC8E1
 	call 04083h		;62ae   ; hl_mas_a: HL = HL + A
 	ld a,c			;62b1
 	call 04083h		;62b2   ; hl_mas_a: HL = HL + A
-	ld a,(hl)			;62b5
+	ld a,(hl)			;62b5   ; la altura + 0x5C...
 	add a,05ch		;62b6
 	pop hl			;62b8
 L_62B9:
-	dec hl			;62b9
+	dec hl			;62b9   ; ...es la Y del sprite (el byte de antes)
 	ld (hl),a			;62ba
 	inc hl			;62bb
 	ret			;62bc
 L_62BD:
-	ld a,05ch		;62bd
+	ld a,05ch		;62bd   ; a 0x9C, la Y 0x5C
 	jr L_62B9		;62bf
 baja_de05:		; cada 16 cuadros, 0xDE05 - 1
 	ld a,(0c003h)		;62c1   ; lee la cuenta de cuadros
-	and 00fh		;62c4
+	and 00fh		;62c4   ; cada 16 cuadros
 	ret nz			;62c6
 	ld hl,0de05h		;62c7   ; apunta a la X del sprite 1 en RAM
 	call resta_sprite		;62ca   ; resta_sprite: (HL) - 1 y p04:6292
-	ld b,007h		;62cd
+	ld b,007h		;62cd   ; B = 7 para quien llama
 	ret			;62cf
 sprites_de05:		; p04:62E0 con 0xDE05 y B = 2
 	ld b,002h		;62d0
@@ -390,7 +390,7 @@ L_62E0:
 	push hl			;62e1
 L_62E2:
 	push bc			;62e2
-	call sprite_en_rango		;62e3   ; sprite_en_rango: el sprite de HL entre 0x5C y 0x9C
+	call sprite_en_rango		;62e3   ; cada sprite con su Y en la ola
 	inc hl			;62e6
 	inc hl			;62e7
 	inc hl			;62e8
@@ -399,38 +399,38 @@ L_62E2:
 	djnz L_62E2		;62eb
 	pop hl			;62ed
 	pop bc			;62ee
-	ld a,(0c003h)		;62ef   ; lee la cuenta de cuadros
+	ld a,(0c003h)		;62ef   ; cada 8 cuadros...
 	and 007h		;62f2
 	ret nz			;62f4
-	call suma_sprites		;62f5   ; suma_sprites: + 1 a B sprites de HL (de 4 en 4)
+	call suma_sprites		;62f5   ; ...un punto a la derecha
 	ld b,007h		;62f8
 	ret			;62fa
 L_62FB:
 	call cuenta_c8e1		;62fb   ; cuenta_c8e1: cada 16 cuadros, 0xC8E1 + 0xC8E2
 	ld hl,0c21fh		;62fe   ; apunta a el paso de la escena
-	ld b,(hl)			;6301
-	djnz L_631A		;6302
+	ld b,(hl)			;6301   ; el paso de la escena del mar:
+	djnz L_631A		;6302   ; paso 1: los sprites 0-1 avanzan sobre la ola y parpadean...
 	call sprites_de01		;6304   ; sprites_de01: 2 sprites desde 0xDE01 en rango (p04:6292)
 	ld hl,0de02h		;6307   ; apunta a el patron del sprite 0 en RAM
 	ld c,000h		;630a
 	call parpadeo_de_2		;630c   ; parpadeo_de_2: p04:6251 con B = 2
 	ld a,(0de01h)		;630f   ; lee la X del sprite 0 en RAM
-	cp 054h		;6312
+	cp 054h		;6312   ; ...hasta la X 0x54
 	jp c,L_6232		;6314
 	jp L_6698		;6317
 L_631A:
-	djnz L_6336		;631a
+	djnz L_6336		;631a   ; paso 2: los sprites 1-2, el parpadeo y el de 64 cuadros...
 	call sprites_de05		;631c   ; sprites_de05: p04:62E0 con 0xDE05 y B = 2
 	ld hl,0de06h		;631f   ; apunta a el patron del sprite 1 en RAM
 	ld bc,00200h		;6322
 	call parpadeo_de_sprites		;6325   ; parpadeo_de_sprites: cada 16 cuadros, el bit 2 de B sprites de HL (de 4 en 4) con C
 	call parpadeo_de02_64		;6328   ; parpadeo_de02_64: cada 64 cuadros, 0xDE02 xor 0xC0
 	ld a,(0de05h)		;632b   ; lee la X del sprite 1 en RAM
-	cp 078h		;632e
+	cp 078h		;632e   ; ...hasta la X 0x78
 	jp c,L_6232		;6330
 	jp L_6698		;6333
 L_6336:
-	djnz L_636E		;6336
+	djnz L_636E		;6336   ; paso 3: los 0-1 hasta la X 0x78...
 	call sprites_de01		;6338   ; sprites_de01: 2 sprites desde 0xDE01 en rango (p04:6292)
 	ld hl,0de02h		;633b   ; apunta a el patron del sprite 0 en RAM
 	ld c,000h		;633e
@@ -438,21 +438,21 @@ L_6336:
 	ld a,(0de01h)		;6343   ; lee la X del sprite 0 en RAM
 	cp 078h		;6346
 	jp c,L_6232		;6348
-	ld a,030h		;634b
+	ld a,030h		;634b   ; ...luego el patron 0x30, la Y 0x6C...
 	ld (0de02h),a		;634d   ; guarda el patron del sprite 0 en RAM
 	ld a,06ch		;6350
 	ld (0de00h),a		;6352   ; guarda los atributos de los sprites en RAM
-	ld de,0de0ch		;6355   ; apunta a la Y del sprite 3 en RAM
+	ld de,0de0ch		;6355   ; ...el sprite 3 de p04:601D...
 	ld hl,0601dh		;6358
 	ld bc,00003h		;635b
 	ldir		;635e
-	ld hl,0dc30h		;6360
+	ld hl,0dc30h		;6360   ; ...con el color 4 en 16 lineas, y 0x80 cuadros
 	ld bc,01004h		;6363
 	call llena_hl		;6366   ; llena_hl: B bytes de HL con C
 	ld a,080h		;6369
 	jp L_622B		;636b
 L_636E:
-	djnz L_6392		;636e
+	djnz L_6392		;636e   ; paso 4: los 1-2, el sprite 3 sube y el 0 en la ola...
 	call sprites_de05		;6370   ; sprites_de05: p04:62E0 con 0xDE05 y B = 2
 	ld hl,0de06h		;6373   ; apunta a el patron del sprite 1 en RAM
 	ld bc,00200h		;6376
@@ -460,13 +460,13 @@ L_636E:
 	call sube_de0c		;637c   ; sube_de0c: 0xDE0C + 2 hasta 0x8B; despues los colores de 0xDC30
 	call sprite_de01_ola		;637f   ; sprite_de01_ola: 0xDE00 segun p04:629B y el parpadeo de 0xDE02
 	ld a,(0de05h)		;6382   ; lee la X del sprite 1 en RAM
-	cp 0a0h		;6385
+	cp 0a0h		;6385   ; ...hasta la X 0xA0; luego el patron 0xD0 al sprite 2
 	jp c,L_6232		;6387
 	ld a,0d0h		;638a
 	ld (0de0ah),a		;638c   ; guarda el patron del sprite 2 en RAM
 	jp L_6698		;638f
 L_6392:
-	djnz L_63B4		;6392
+	djnz L_63B4		;6392   ; paso 5: el sprite 1 vuelve atras...
 	call baja_de05		;6394   ; baja_de05: cada 16 cuadros, 0xDE05 - 1
 	ld hl,0de06h		;6397   ; apunta a el patron del sprite 1 en RAM
 	ld bc,001c0h		;639a
@@ -474,20 +474,20 @@ L_6392:
 	call sprite_de01_ola		;63a0   ; sprite_de01_ola: 0xDE00 segun p04:629B y el parpadeo de 0xDE02
 	ld hl,0de05h		;63a3   ; apunta a la X del sprite 1 en RAM
 	ld a,(hl)			;63a6
-	cp 080h		;63a7
+	cp 080h		;63a7   ; ...hasta la X 0x80: patron 0x38 y 0x28 cuadros
 	jp nc,L_6232		;63a9
 	inc hl			;63ac
 	ld (hl),038h		;63ad
 	ld a,028h		;63af
 	jp L_622B		;63b1
 L_63B4:
-	djnz L_63D5		;63b4
+	djnz L_63D5		;63b4   ; paso 6: el sprite 1 en la ola durante la cuenta...
 	ld hl,0de05h		;63b6   ; apunta a la X del sprite 1 en RAM
 	call altura_de_la_ola		;63b9   ; altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
 	ld hl,0c221h		;63bc   ; apunta a la cuenta de la escena
 	dec (hl)			;63bf
 	jp nz,L_6232		;63c0
-	xor a			;63c3
+	xor a			;63c3   ; ...luego el 0 sin patron y el 1 con el 8
 	ld (0de02h),a		;63c4   ; guarda el patron del sprite 0 en RAM
 	ld hl,0de01h		;63c7   ; apunta a la X del sprite 0 en RAM
 	call altura_de_la_ola		;63ca   ; altura_de_la_ola: la altura de p04:6035 segun (HL) y 0xC8E1
@@ -495,19 +495,19 @@ L_63B4:
 	ld (0de06h),a		;63cf   ; guarda el patron del sprite 1 en RAM
 	jp L_6698		;63d2
 L_63D5:
-	djnz L_63F3		;63d5
+	djnz L_63F3		;63d5   ; paso 7: los dos avanzan y parpadean...
 	call sprites_b2		;63d7   ; sprites_b2: p04:62DD con B = 2
 	ld hl,0de02h		;63da   ; apunta a el patron del sprite 0 en RAM
 	ld bc,00200h		;63dd
 	call parpadeo_de_sprites		;63e0   ; parpadeo_de_sprites: cada 16 cuadros, el bit 2 de B sprites de HL (de 4 en 4) con C
 	ld a,(0de05h)		;63e3   ; lee la X del sprite 1 en RAM
-	cp 09eh		;63e6
+	cp 09eh		;63e6   ; ...hasta la X 0x9E; el patron 0x10 al sprite 2
 	jp c,L_6232		;63e8
 	ld a,010h		;63eb
 	ld (0de0ah),a		;63ed   ; guarda el patron del sprite 2 en RAM
 	jp L_6698		;63f0
 L_63F3:
-	djnz L_640A		;63f3
+	djnz L_640A		;63f3   ; paso 8: hasta la X 0xA8...
 	call sprites_de01		;63f5   ; sprites_de01: 2 sprites desde 0xDE01 en rango (p04:6292)
 	ld hl,0de02h		;63f8   ; apunta a el patron del sprite 0 en RAM
 	ld c,000h		;63fb
@@ -515,21 +515,21 @@ L_63F3:
 	ld a,(0de01h)		;6400   ; lee la X del sprite 0 en RAM
 	cp 0a8h		;6403
 	jp c,L_6232		;6405
-	scf			;6408
+	scf			;6408   ; ...y acarreo: acabada
 	ret			;6409
 L_640A:
-	ld hl,0c8e0h		;640a
+	ld hl,0c8e0h		;640a   ; paso 0: 0xC8E0-0xC8E5 a cero...
 	ld bc,00005h		;640d
 	call 05f08h		;6410   ; borra: pone a cero BC + 1 bytes desde HL
-	ld hl,0c068h		;6413
+	ld hl,0c068h		;6413   ; ...el mar: HMMV de 0x40 x 0x20 en (0xC0, 0x68) de la pagina 1, color 0x77...
 	ld bc,04020h		;6416
 	ld a,077h		;6419
 	ld d,001h		;641b
 	call 04ba2h		;641d   ; rellena_rectangulo: HMMV (0xC0): rectangulo B x C en (H, L) de la pagina D con el color A
-	ld a,001h		;6420
+	ld a,001h		;6420   ; ...la ola en marcha (0xC8E0, 0xC8E2)...
 	ld (0c8e0h),a		;6422
 	ld (0c8e2h),a		;6425
-	ld hl,0c068h		;6428
+	ld hl,0c068h		;6428   ; ...4 pares de lineas de la ola en las Y 0x68, 0x70, 0x78 y 0x80...
 	ld de,06035h		;642b
 	call dos_lineas_horizontales		;642e   ; dos_lineas_horizontales: dos lineas horizontales (p00:4B98) desde L + (DE)
 	ld l,070h		;6431
@@ -538,12 +538,12 @@ L_640A:
 	call dos_lineas_horizontales		;6438   ; dos_lineas_horizontales: dos lineas horizontales (p00:4B98) desde L + (DE)
 	ld l,080h		;643b
 	call dos_lineas_horizontales		;643d   ; dos_lineas_horizontales: dos lineas horizontales (p00:4B98) desde L + (DE)
-	xor a			;6440
+	xor a			;6440   ; ...parada...
 	ld (0c8e0h),a		;6441
-	ld hl,06014h		;6444
+	ld hl,06014h		;6444   ; ...los sprites de p04:6014...
 	ld bc,00008h		;6447
 	call copia_a_de00		;644a   ; copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
-	ld hl,0dc00h		;644d   ; apunta a los colores de los sprites en RAM (16 por sprite)
+	ld hl,0dc00h		;644d   ; ...el color 0x0D en 0x20 lineas y 0 en 0x10
 	ld bc,0200dh		;6450
 	call llena_hl		;6453   ; llena_hl: B bytes de HL con C
 	ld bc,01000h		;6456

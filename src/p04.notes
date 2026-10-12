@@ -209,8 +209,6 @@ F 0x7FE2 16
 # --- A MANO: comentarios, nombres y bloques ---
 C 0x6257 el bit 2 del byte de color de cada sprite cambia (xor), y OR con C
 C 0x625C 4 bytes por sprite
-C 0x6286 + 1 a la Y de B sprites
-C 0x6292 la Y del sprite: por debajo de 0x5C nada; a 0x9C, p04:62BD
 C 0x649D cada 16 cuadros, 0xC8E1 + 0xC8E2
 C 0x64AB a cero: B = 1
 C 0x654F paso 2 de la escena: la animacion y la cuenta de 0xC221
@@ -295,6 +293,50 @@ C 0x6232 sin acarreo: sigue
 C 0x6234 en (0x46, 0x26), de 0x4C x 0x1C
 C 0x623D en (0x66, 0x26), de 0x54 x 0x1C
 C 0x6246 en (0x46, 0x36), de 0x44 x 0x0C
+C 0x6286 + 1 al byte de HL de B sprites (la X, con 0xDE01 o 0xDE05)
+C 0x6292 la X del sprite: por debajo de 0x5C nada; a 0x9C, p04:62BD; entre medias su Y sigue la ola
+C 0x624F dos sprites
+C 0x6254 cada 16 cuadros
+C 0x6266 sin mas bits (C = 0)
+C 0x626E cada 8 cuadros
+C 0x6283 solo cuando la cuenta & B es cero
+C 0x6284 3 sprites
+C 0x629C (X - 0x60) / 8: la columna de la ola...
+C 0x62A5 ...en la fila 0xC8E1 de p04:6035 (8 por fila)
+C 0x62B5 la altura + 0x5C...
+C 0x62B9 ...es la Y del sprite (el byte de antes)
+C 0x62BD a 0x9C, la Y 0x5C
+C 0x62C4 cada 16 cuadros
+C 0x62CD B = 7 para quien llama
+C 0x62E3 cada sprite con su Y en la ola
+C 0x62EF cada 8 cuadros...
+C 0x62F5 ...un punto a la derecha
+C 0x6301 el paso de la escena del mar:
+C 0x6302 paso 1: los sprites 0-1 avanzan sobre la ola y parpadean...
+C 0x6312 ...hasta la X 0x54
+C 0x631A paso 2: los sprites 1-2, el parpadeo y el de 64 cuadros...
+C 0x632E ...hasta la X 0x78
+C 0x6336 paso 3: los 0-1 hasta la X 0x78...
+C 0x634B ...luego el patron 0x30, la Y 0x6C...
+C 0x6355 ...el sprite 3 de p04:601D...
+C 0x6360 ...con el color 4 en 16 lineas, y 0x80 cuadros
+C 0x636E paso 4: los 1-2, el sprite 3 sube y el 0 en la ola...
+C 0x6385 ...hasta la X 0xA0; luego el patron 0xD0 al sprite 2
+C 0x6392 paso 5: el sprite 1 vuelve atras...
+C 0x63A7 ...hasta la X 0x80: patron 0x38 y 0x28 cuadros
+C 0x63B4 paso 6: el sprite 1 en la ola durante la cuenta...
+C 0x63C3 ...luego el 0 sin patron y el 1 con el 8
+C 0x63D5 paso 7: los dos avanzan y parpadean...
+C 0x63E6 ...hasta la X 0x9E; el patron 0x10 al sprite 2
+C 0x63F3 paso 8: hasta la X 0xA8...
+C 0x6408 ...y acarreo: acabada
+C 0x640A paso 0: 0xC8E0-0xC8E5 a cero...
+C 0x6413 ...el mar: HMMV de 0x40 x 0x20 en (0xC0, 0x68) de la pagina 1, color 0x77...
+C 0x6420 ...la ola en marcha (0xC8E0, 0xC8E2)...
+C 0x6428 ...4 pares de lineas de la ola en las Y 0x68, 0x70, 0x78 y 0x80...
+C 0x6440 ...parada...
+C 0x6444 ...los sprites de p04:6014...
+C 0x644D ...el color 0x0D en 0x20 lineas y 0 en 0x10
 
 # --- ANOTACIONES AUTOMATICAS (seccion que reescribe tools/anota.py; no editar a mano) ---
 L 0x6085 guion_de_la_escena las escenas: con la tecla 0x10 se salta (salvo la ruina 5 o la escena 4); despacha por la ruina (tabla p04:60AD)
@@ -459,9 +501,6 @@ C 0x62C7 apunta a la X del sprite 1 en RAM
 C 0x62CA resta_sprite: (HL) - 1 y p04:6292
 C 0x62D2 apunta a la X del sprite 1 en RAM
 C 0x62DD apunta a la X del sprite 0 en RAM
-C 0x62E3 sprite_en_rango: el sprite de HL entre 0x5C y 0x9C
-C 0x62EF lee la cuenta de cuadros
-C 0x62F5 suma_sprites: + 1 a B sprites de HL (de 4 en 4)
 C 0x62FB cuenta_c8e1: cada 16 cuadros, 0xC8E1 + 0xC8E2
 C 0x62FE apunta a el paso de la escena
 C 0x6304 sprites_de01: 2 sprites desde 0xDE01 en rango (p04:6292)
@@ -479,7 +518,6 @@ C 0x6340 parpadeo_de_2: p04:6251 con B = 2
 C 0x6343 lee la X del sprite 0 en RAM
 C 0x634D guarda el patron del sprite 0 en RAM
 C 0x6352 guarda los atributos de los sprites en RAM
-C 0x6355 apunta a la Y del sprite 3 en RAM
 C 0x6366 llena_hl: B bytes de HL con C
 C 0x6370 sprites_de05: p04:62E0 con 0xDE05 y B = 2
 C 0x6373 apunta a el patron del sprite 1 en RAM
@@ -516,7 +554,6 @@ C 0x6433 dos_lineas_horizontales: dos lineas horizontales (p00:4B98) desde L + (
 C 0x6438 dos_lineas_horizontales: dos lineas horizontales (p00:4B98) desde L + (DE)
 C 0x643D dos_lineas_horizontales: dos lineas horizontales (p00:4B98) desde L + (DE)
 C 0x644A copia_a_de00: BC bytes de HL a 0xDE00 (los atributos de sprites)
-C 0x644D apunta a los colores de los sprites en RAM (16 por sprite)
 C 0x6453 llena_hl: B bytes de HL con C
 C 0x6459 llena_hl: B bytes de HL con C
 C 0x6460 apunta a los colores de los sprites en RAM (16 por sprite)

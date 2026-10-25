@@ -50,3 +50,30 @@ línea, FE da la palabra al otro) y plano.
 Los nombres y los comentarios automáticos salen de `tools/anotaciones.py`,
 cada uno con la rutina donde se lee; `tools/anota.py` los escribe en las
 notas.
+
+## Código compartido con otros cartuchos de Konami
+
+Este desensamblado se ha comparado, instrucción por instrucción, con
+todos los demás de Konami de la serie. Cuenta un bloque cuando las
+mismas instrucciones, al menos seis desde una etiqueta hasta su `ret`
+o su salto sin condición, están en los dos cartuchos; las direcciones
+no se miran, porque cambian de un cartucho a otro. De los otros 57,
+**43** tienen al menos un bloque en común con este; estos son los
+que más comparten:
+
+| Cartucho | Bloques | Instrucciones | Por ejemplo (aquí = allí) |
+|---|---:|---:|---|
+| [Ganbare Goemon! Karakuri Dōchū](https://antxiko.github.io/GanbareGoemon-disassembly/es/) | 62 | 987 | `hmmc` (p00:4C22) |
+| [Vampire Killer](https://antxiko.github.io/VampireKiller-disassembly/es/) | 58 | 935 | `hmmc` (p00:4C22) |
+| [King Kong 2: Yomigaeru Densetsu](https://antxiko.github.io/KingKong2-disassembly/es/) | 52 | 752 | `copia_con_operacion` (p00:4C73) = `lmmm` |
+| [Hinotori](https://antxiko.github.io/Hinotori-disassembly/es/) | 41 | 682 | `copia_con_operacion` (p00:4C73) = `lmmm` |
+| [The Pro Yakyuu Gekitotsu Pennant Race](https://antxiko.github.io/PennantRace-disassembly/es/) | 38 | 626 | `hmmc` (p00:4C22) = `rectangulo_desde_ram` |
+| [Metal Gear](https://antxiko.github.io/MetalGear-disassembly/es/) | 35 | 572 | `copia_con_operacion` (p00:4C73) = `copia_logica` |
+| [Gekitotsu Pennant Race 2](https://antxiko.github.io/PennantRace2-disassembly/es/) | 27 | 387 | `lista_de_fichas` (p00:529C) = `dibujos` |
+| [Hai no Majutsushi - Mahjong 2](https://antxiko.github.io/Majutsushi-disassembly/es/) | 26 | 274 | `rle_a_vram_con_destino` (p00:4926) = `vuelca_lista_vram` |
+| [Konami’s Game Master 2](https://antxiko.github.io/GameMaster2-disassembly/es/) | 24 | 452 | `hmmc` (p00:4C22) = `vdp_hmmc` |
+| [The Maze of Galious](https://antxiko.github.io/MazeOfGalious-disassembly/es/) | 15 | 170 | `busca_otros_cartuchos` (p06:B751) = `mira_las_ranuras` |
+
+La matriz entera, los 58 cartuchos entre sí, está en
+[Las rutinas](https://antxiko.github.io/MSX-disassembly-database/es/LAS-RUTINAS.html) de la base de datos de la
+serie, con el método y el programa que la mide.

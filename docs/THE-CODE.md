@@ -49,3 +49,30 @@ breaks the line, FE hands the word to the other one) and plain.
 The names and the automatic comments come from `tools/anotaciones.py`, each
 with the routine where it is read; `tools/anota.py` writes them into the
 notes.
+
+## Code shared with other Konami cartridges
+
+This disassembly has been compared, instruction by instruction, with
+every other Konami one in the series. A block counts when the same
+instructions, at least six of them from a label to its `ret` or its
+unconditional jump, are in both cartridges; the addresses are left
+aside, because they change from one cartridge to the next. Of the
+other 57, **43** have at least one block in common with this one;
+these are the ones that share the most:
+
+| Cartridge | Blocks | Instructions | For example (here = there) |
+|---|---:|---:|---|
+| [Ganbare Goemon! Karakuri Dōchū](https://antxiko.github.io/GanbareGoemon-disassembly/) | 62 | 987 | `hmmc` (p00:4C22) |
+| [Vampire Killer](https://antxiko.github.io/VampireKiller-disassembly/) | 58 | 935 | `hmmc` (p00:4C22) |
+| [King Kong 2: Yomigaeru Densetsu](https://antxiko.github.io/KingKong2-disassembly/) | 52 | 752 | `copia_con_operacion` (p00:4C73) = `lmmm` |
+| [Hinotori](https://antxiko.github.io/Hinotori-disassembly/) | 41 | 682 | `copia_con_operacion` (p00:4C73) = `lmmm` |
+| [The Pro Yakyuu Gekitotsu Pennant Race](https://antxiko.github.io/PennantRace-disassembly/) | 38 | 626 | `hmmc` (p00:4C22) = `rectangulo_desde_ram` |
+| [Metal Gear](https://antxiko.github.io/MetalGear-disassembly/) | 35 | 572 | `copia_con_operacion` (p00:4C73) = `copia_logica` |
+| [Gekitotsu Pennant Race 2](https://antxiko.github.io/PennantRace2-disassembly/) | 27 | 387 | `lista_de_fichas` (p00:529C) = `dibujos` |
+| [Hai no Majutsushi - Mahjong 2](https://antxiko.github.io/Majutsushi-disassembly/) | 26 | 274 | `rle_a_vram_con_destino` (p00:4926) = `vuelca_lista_vram` |
+| [Konami’s Game Master 2](https://antxiko.github.io/GameMaster2-disassembly/) | 24 | 452 | `hmmc` (p00:4C22) = `vdp_hmmc` |
+| [The Maze of Galious](https://antxiko.github.io/MazeOfGalious-disassembly/) | 15 | 170 | `busca_otros_cartuchos` (p06:B751) = `mira_las_ranuras` |
+
+The whole matrix, the 58 cartridges against each other, is on
+[The routines](https://antxiko.github.io/MSX-disassembly-database/THE-ROUTINES.html) in the series database, along
+with the method and the program that measures it.

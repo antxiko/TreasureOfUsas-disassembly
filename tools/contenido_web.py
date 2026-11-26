@@ -84,110 +84,6 @@ PORTADA = {
     ),
 }
 
-HALLAZGOS = {
-    "es": [
-        ("La m&uacute;sica cambia con el &aacute;nimo",
-         "<p>La de cada ruina suena m&aacute;s alta o m&aacute;s baja, y con otro "
-         "instrumento, seg&uacute;n el &aacute;nimo del que entra "
-         "(<code>p15:BE7A</code>, <code>p13:625D</code>): feliz, dos semitonos "
-         "m&aacute;s alta; tranquilo, como est&aacute; escrita; triste y "
-         "enfadado, uno o dos m&aacute;s baja. Se oye en "
-         "<a href=\"LA-MUSICA.html\">La m&uacute;sica</a>, sacada del motor y "
-         "cotejada con openMSX.</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("El &aacute;nimo cambia el juego",
-         "<p>Cada protagonista tiene cuatro estados: feliz, tranquilo, triste y "
-         "enfadado (<code>p06:A644</code>). Wit feliz da un segundo salto en el "
-         "aire, una vez por salto (<code>p01:64F1</code>); Cles feliz sigue "
-         "andando sobre el vac&iacute;o 32 cuadros mientras no suelte la "
-         "direcci&oacute;n (<code>p01:62C7</code>).</p>"
-         "<p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("Un disparo y un golpe por estado",
-         "<p>El disparo de Wit es el tipo 4 menos el estado: ondas, barra, bola "
-         "o rayo (<code>p01:6B0D</code>); el golpe de Cles, el estado m&aacute;s "
-         "6 (<code>p09:B7C9</code>). Cles enfadado pega fuerte y rompe la caja "
-         "grande (<code>p01:7398</code>, <code>p01:7431</code>). Feliz no "
-         "empuja bloques; los otros tres estados, cada uno a su velocidad "
-         "(<code>p01:7BD0</code>).</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("Los objetos 喜楽哀怒",
-         "<p>Cada uno pone su estado de &aacute;nimo "
-         "(<code>p01:75EE</code>), y cada ruina fija el de salida "
-         "(<code>p00:4575</code>).</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("La pausa es una tienda",
-         "<p>En INFORMATION se compran SPD y JMP con monedas "
-         "(<code>p06:A0EA</code>). Los precios dependen del personaje: Wit 70 "
-         "y 60, Cles 50 y 80 (<code>p06:BF6C</code>).</p>"
-         "<p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("Otros cartuchos de Konami",
-         "<p>El juego busca en las dem&aacute;s ranuras cuatro n&uacute;meros "
-         "de cat&aacute;logo (<code>p06:B751</code>). Con el RC-749 (The Maze of Galious) se empieza "
-         "con 100 monedas (<code>p00:45F7</code>); con el RC-750 (Metal Gear), "
-         "el da&ntilde;o a la mitad (<code>p01:72FF</code>); con el RC-751 (Nemesis 2), F5 "
-         "CONTINUE tras GAME OVER (<code>p00:4427</code>); con el RC-752 (F1 "
-         "Spirit), lo de estar feliz, siempre (<code>p01:64F1</code>, "
-         "<code>p01:62C7</code>).</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("Dos idiomas en un cartucho",
-         "<p>Un MSX japon&eacute;s da los textos en japon&eacute;s; cualquier "
-         "otro, en ingl&eacute;s (<code>0x002B</code>, "
-         "<code>p05:9849</code>). La fuente lleva hiragana y 28 kanji "
-         "(<code>p14:9289</code>).</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
-        ("Las claves son los nombres de las ruinas",
-         "<p>Al llegar a las ruinas 1-4, un mapa hace parpadear la ruina y "
-         "escribe a m&aacute;quina su clave: JUBA RUINS, HARAPPA RUINS, "
-         "GANDHARA RUINS o MOHENJO DARO (<code>p06:A2BB</code>). En el "
-         "t&iacute;tulo, CTRL o el bot&oacute;n B piden la clave (KEYWORD, "
-         "<code>p00:4643</code>), y con ella se empieza en esa ruina "
-         "(<code>p00:45CB</code>).</p><p>Le&iacute;do en el c&oacute;digo.</p>"),
-    ],
-    "en": [
-        ("The music changes with the mood",
-         "<p>Each ruin's tune plays higher or lower, and with another "
-         "instrument, depending on the mood of whoever goes in "
-         "(<code>p15:BE7A</code>, <code>p13:625D</code>): happy, two semitones "
-         "higher; calm, as written; sad and angry, one or two lower. Hear it in "
-         "<a href=\"THE-MUSIC.html\">The music</a>, taken from the engine and "
-         "checked against openMSX.</p><p>Read in the code.</p>"),
-        ("Mood changes the game",
-         "<p>Each hero has four states: happy, calm, sad and angry "
-         "(<code>p06:A644</code>). A happy Wit jumps a second time in the air, "
-         "once per jump (<code>p01:64F1</code>); a happy Cles keeps walking on "
-         "thin air for 32 frames as long as the direction is held "
-         "(<code>p01:62C7</code>).</p><p>Read in the code.</p>"),
-        ("One shot and one blow per state",
-         "<p>Wit's shot is type 4 minus the state: waves, bar, ball or beam "
-         "(<code>p01:6B0D</code>); Cles's blow is the state plus 6 "
-         "(<code>p09:B7C9</code>). An angry Cles hits hard and breaks the big "
-         "crate (<code>p01:7398</code>, <code>p01:7431</code>). Happy, nobody "
-         "pushes blocks; the other three states push them, each at its own "
-         "speed (<code>p01:7BD0</code>).</p><p>Read in the code.</p>"),
-        ("The 喜楽哀怒 items",
-         "<p>Each one sets its mood (<code>p01:75EE</code>), and each ruin sets "
-         "the starting one (<code>p00:4575</code>).</p><p>Read in the "
-         "code.</p>"),
-        ("The pause is a shop",
-         "<p>In INFORMATION you buy SPD and JMP with coins "
-         "(<code>p06:A0EA</code>). The prices depend on the character: Wit 70 "
-         "and 60, Cles 50 and 80 (<code>p06:BF6C</code>).</p>"
-         "<p>Read in the code.</p>"),
-        ("Other Konami cartridges",
-         "<p>The game looks in the other slots for four catalogue numbers "
-         "(<code>p06:B751</code>). With RC-749 (The Maze of Galious) you start with 100 coins "
-         "(<code>p00:45F7</code>); with RC-750 (Metal Gear), half the damage "
-         "(<code>p01:72FF</code>); with RC-751 (Nemesis 2), F5 CONTINUE after GAME OVER "
-         "(<code>p00:4427</code>); with RC-752 (F1 Spirit), the happy powers, "
-         "always (<code>p01:64F1</code>, <code>p01:62C7</code>).</p>"
-         "<p>Read in the code.</p>"),
-        ("Two languages in one cartridge",
-         "<p>A Japanese MSX gets the texts in Japanese; any other, in English "
-         "(<code>0x002B</code>, <code>p05:9849</code>). The font holds hiragana "
-         "and 28 kanji (<code>p14:9289</code>).</p><p>Read in the code.</p>"),
-        ("The passwords are the names of the ruins",
-         "<p>On reaching ruins 1-4, a map makes the ruin blink and types out "
-         "its password: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS or MOHENJO "
-         "DARO (<code>p06:A2BB</code>). On the title screen, CTRL or button B "
-         "asks for it (KEYWORD, <code>p00:4643</code>), and with it you start "
-         "at that ruin (<code>p00:45CB</code>).</p><p>Read in the code.</p>"),
-    ],
-}
 
 # (imagen, pie en castellano, pie en ingles). El logotipo de la cabecera es
 # LOGOTIPO: el titulo que pinta el cartucho, no un montaje.
@@ -245,3 +141,43 @@ GALERIA = [
      "One of the ending scenes, with the tiles left by the previous one "
      "(<code>p04:71D5</code>)."),
 ]
+ESTILO = '\n:root{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;--linea:#23262e;\n  --rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}\n@media (prefers-color-scheme:light){:root{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;\n  --panel:#f7f6f2;--linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}}\n:root[data-theme="dark"]{--tinta:#cfd0d4;--suave:#83868f;--fondo:#000;--panel:#0c0e13;\n  --linea:#23262e;--rojo:#ff897d;--cyan:#65dbef;--verde:#3eb849;--oro:#ded087}\n:root[data-theme="light"]{--tinta:#191a1e;--suave:#5a5d66;--fondo:#e9e7e1;--panel:#f7f6f2;\n  --linea:#d0cdc5;--rojo:#b23f34;--cyan:#1c6b7c;--verde:#2b7734;--oro:#8a7420}\n*{box-sizing:border-box}\nbody{margin:0;background:var(--fondo);color:var(--tinta);padding:0 1.25rem 6rem;\n  font:15px/1.7 ui-monospace,"SF Mono",Menlo,Consolas,monospace}\n.w{max-width:1120px;margin:0 auto}\n.n{max-width:68ch}\nh1,h2,h3,h4{font-weight:400;text-wrap:balance}\na{color:var(--cyan)}\nimg{image-rendering:pixelated;max-width:100%;height:auto;display:block}\nheader.top{display:flex;flex-direction:column;align-items:center;gap:1.5rem;\n  padding:4rem 0 2rem;text-align:center}\nheader.top img{width:min(100%,642px)}\n.claim{max-width:60ch;color:var(--suave);font-size:1.05rem}\n.claim b{color:var(--tinta);font-weight:400}\n.ficha{display:flex;flex-wrap:wrap;justify-content:center;gap:0 1.5rem;width:100%;\n  font-size:12px;letter-spacing:.08em;text-transform:uppercase;color:var(--suave);\n  border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);padding:.85rem 0}\n.ficha b{color:var(--rojo);font-weight:400}\nnav{display:flex;flex-wrap:wrap;gap:1.25rem;justify-content:center;padding:1.25rem 0;\n  font-size:12px;letter-spacing:.08em;text-transform:uppercase}\nnav a{color:var(--suave);text-decoration:none;border-bottom:1px solid transparent}\nnav a:hover,nav a:focus{color:var(--tinta);border-bottom-color:var(--rojo)}\nnav.docs{border-top:1px solid var(--linea);border-bottom:1px solid var(--linea);\n  margin-bottom:1rem}\nsection{margin-top:4.5rem;scroll-margin-top:1rem}\nsection>h2{font-size:1rem;letter-spacing:.1em;text-transform:uppercase;\n  border-left:3px solid var(--rojo);padding-left:.9rem;margin:0 0 1.5rem}\n.cifras{display:grid;gap:1px;background:var(--linea);border:1px solid var(--linea);\n  grid-template-columns:repeat(auto-fit,minmax(160px,1fr))}\n.cifra{background:var(--panel);padding:1.1rem}\n.cifra b{display:block;font-size:1.7rem;color:var(--oro);font-weight:400;\n  font-variant-numeric:tabular-nums;line-height:1.2}\n.cifra span{font-size:11px;letter-spacing:.07em;text-transform:uppercase;color:var(--suave)}\n.hall{border-top:1px solid var(--linea);padding-top:1.75rem;margin-top:2.5rem}\n.hall:first-of-type{border-top:0;padding-top:0;margin-top:0}\n.hall h3{margin:0 0 .75rem;font-size:1.15rem;color:var(--rojo)}\n.hall h4{color:var(--oro);margin:1.5rem 0 .5rem;font-size:.95rem}\n.hall p{margin:0 0 1rem}\npre.asm{background:var(--panel);border-left:2px solid var(--verde);margin:1.25rem 0;\n  padding:1rem 1.1rem;overflow-x:auto;font-size:13px;line-height:1.6;color:var(--tinta)}\n.par{display:grid;gap:1.25rem;grid-template-columns:1fr}\n@media(min-width:820px){.par{grid-template-columns:1fr 1fr}}\n.par figure{margin:0}\ntable{border-collapse:collapse;width:100%;margin:1.25rem 0;font-size:13px;display:block;\n  overflow-x:auto}\nth,td{text-align:left;padding:.5rem .75rem;border-bottom:1px solid var(--linea)}\nth{color:var(--suave);font-weight:400;font-size:11px;letter-spacing:.07em;text-transform:uppercase}\ntd.num{font-variant-numeric:tabular-nums;color:var(--oro)}\n.nivel{margin-top:2rem}\n.nivel h3{margin:0 0 .9rem;font-size:.95rem;letter-spacing:.06em;text-transform:uppercase}\n.nivel em{color:var(--cyan);font-style:normal}\n.sep{color:var(--suave);margin:0 .6rem}\n.rejilla{display:grid;gap:.9rem;grid-template-columns:repeat(auto-fill,minmax(250px,1fr))}\n.rejilla figure{margin:0;background:var(--panel);box-shadow:0 0 0 1px var(--linea)}\n.rejilla figcaption{display:flex;justify-content:space-between;padding:.45rem .65rem;\n  font-size:11px;color:var(--suave);border-top:1px solid var(--linea)}\n.dir{font-variant-numeric:tabular-nums;color:var(--verde)}\nfooter{margin-top:5rem;padding-top:1.5rem;border-top:1px solid var(--linea);\n  color:var(--suave);font-size:12px}\n\n/* Aviso de trabajo en curso: tiene que verse antes que las cifras, porque un\n   100% mal leido hace mas dano que no ponerlo. */\n.aviso{background:#3a2a10;border-left:3px solid var(--oro);margin:1.5rem auto;\n  padding:1rem 1.2rem;max-width:900px;border-radius:4px}\n.aviso p{margin:0;color:var(--tinta);font-size:15px;line-height:1.65}\n.galeria{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));\n  gap:1.5rem;margin:1.5rem 0}\n.galeria figure{margin:0}\n.galeria img{width:100%;height:auto;image-rendering:pixelated;\n  border:1px solid var(--linea);border-radius:3px}\n.galeria figcaption{color:var(--suave);font-size:13px;margin-top:.5rem}\naudio{display:block;width:100%;max-width:640px;margin:.75rem 0 1.5rem}\n'
+
+EDITOR = 'Konami'
+
+# La portada: las cifras y el pie tal como estaban
+for _i, _c in {'es': ([('100 %', 'del binario explicado'), ('2.536', 'rutinas con nombre'), ('40,1 %', 'del listado comentado'), ('41.458', 'bytes de código'), ('89.614', 'bytes de datos'), ('0', 'bytes sin identificar')], 'El cartucho en cifras', 'Esto es trabajo de documentación y preservación: el código y los gráficos siguen siendo de sus autores y de Konami, y la imagen del cartucho no se distribuye.'), 'en': ([('100%', 'of the binary explained'), ('2,536', 'named routines'), ('40.1%', 'of the listing commented'), ('41,458', 'bytes of code'), ('89,614', 'bytes of data'), ('0', 'bytes unidentified')], 'The cartridge in numbers', 'This is documentation and preservation work: the code and artwork still belong to their authors and to Konami, and the cartridge image is not distributed.')}.items():
+    PORTADA[_i]["cifras"] = _c[0]
+    PORTADA[_i]["h_num"] = _c[1]
+    PORTADA[_i]["pie_leg"] = _c[2]
+
+PAGINAS = [
+    [('THE-GAME.html', 'EL-JUEGO.html', 'The game', 'El juego',
+      'what the game is and how it plays',
+      'qu&eacute; es el juego y c&oacute;mo se juega'),
+     ('THE-PICTURES.html', 'LAS-IMAGENES.html', 'What the cartridge draws', 'Lo que el cartucho dibuja',
+      'every picture drawn from the ROM, with its caption',
+      'todas las im&aacute;genes dibujadas desde la ROM, con su pie'),
+     ('THE-MUSIC.html', 'LA-MUSICA.html', 'The music', 'La m&#250;sica',
+      'the tunes, from its own sound engine',
+      'las m&uacute;sicas, de su propio motor de sonido')],
+    [('CURIOSITIES.html', 'CURIOSIDADES.html', 'Curiosities', 'Curiosidades',
+      'what turned up when taking it apart, and what is still open',
+      'lo que apareci&oacute; al desmontarlo y lo que queda abierto')],
+    [('UNDER-THE-HOOD.html', 'POR-DENTRO.html', 'Under the hood', 'Por dentro',
+      'getting started, the cartridge and the code',
+      'empezar, el cartucho y el c&oacute;digo')],
+]
+
+VIEJAS = {
+    'FINDINGS.html': 'CURIOSITIES.html',
+    'HALLAZGOS.html': 'CURIOSIDADES.html',
+    'GETTING-STARTED.html': 'UNDER-THE-HOOD.html',
+    'EMPEZAR.html': 'POR-DENTRO.html',
+    'OPEN-QUESTIONS.html': 'CURIOSITIES.html',
+    'PREGUNTAS-ABIERTAS.html': 'CURIOSIDADES.html',
+    'THE-CARTRIDGE.html': 'UNDER-THE-HOOD.html',
+    'EL-CARTUCHO.html': 'POR-DENTRO.html',
+    'THE-CODE.html': 'UNDER-THE-HOOD.html',
+    'EL-CODIGO.html': 'POR-DENTRO.html',
+}

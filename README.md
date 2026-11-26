@@ -23,7 +23,7 @@ The website: <https://antxiko.github.io/TreasureOfUsas-disassembly/>
 
 The cartridge image is not distributed. Put yours in the root as `usas.rom`
 (sha256 `11e0b842...`) and run `make`. The details are in
-[GETTING-STARTED](docs/GETTING-STARTED.md).
+[GETTING-STARTED](docs/UNDER-THE-HOOD.md).
 
 ## Legal
 

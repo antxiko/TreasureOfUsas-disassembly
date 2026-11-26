@@ -23,7 +23,7 @@ La web: <https://antxiko.github.io/TreasureOfUsas-disassembly/es/>
 
 La imagen del cartucho no se distribuye. Pon la tuya en la raíz como
 `usas.rom` (sha256 `11e0b842...`) y ejecuta `make`. El detalle, en
-[EMPEZAR](docs/es/EMPEZAR.md).
+[EMPEZAR](docs/es/POR-DENTRO.md).
 
 ## Legal
 

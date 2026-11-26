@@ -65,7 +65,7 @@ password: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS or MOHENJO DARO
 
 Each has four states (happy, calm, sad and angry), and each state changes
 their jump, their shot or blow and the way they push: it is in
-[Findings](FINDINGS.md). The faces on the INFORMATION screen change with the
+[Findings](CURIOSITIES.html). The faces on the INFORMATION screen change with the
 state and move their mouths every 8 frames while they talk (`p06:A774`).
 
 ![The faces](imagenes/retratos_hablan.gif)

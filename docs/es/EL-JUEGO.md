@@ -65,7 +65,7 @@ máquina su clave: JUBA RUINS, HARAPPA RUINS, GANDHARA RUINS o MOHENJO DARO
 
 Cada uno tiene cuatro estados (feliz, tranquilo, triste y enfadado) y cada
 estado cambia su salto, su disparo o golpe y su forma de empujar: está en
-[Hallazgos](HALLAZGOS.md). Las caras de la pantalla INFORMATION cambian con el
+[Hallazgos](CURIOSIDADES.html). Las caras de la pantalla INFORMATION cambian con el
 estado y mueven la boca cada 8 cuadros mientras hablan (`p06:A774`).
 
 ![Las caras](../imagenes/retratos_hablan.gif)
